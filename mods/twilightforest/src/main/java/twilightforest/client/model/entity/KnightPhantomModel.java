@@ -146,11 +146,11 @@ public class KnightPhantomModel extends HumanoidModel<KnightPhantomRenderState> 
 
 			stack.scale(1 / 1.1F, 1 / 1.1F, 1 / 1.1F);
 			stack.translate(0.0F, 0.25F, 0.0F);
-			collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(KnightPhantomRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+			twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(KnightPhantomRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 			stack.popPose();
 		} else {
 			stack.translate(0.0F, 0.25F, 0.0F);
-			collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(KnightPhantomRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+			twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(KnightPhantomRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 			stack.scale(1.1F, 1.1F, 1.1F);
 			stack.translate(0.0F, 0.05F, 0.0F);
 			collector.submitModelPart(this.helmet, stack, RenderTypes.entityCutout(PHANTOM_ARMOR_TEXTURE), light, overlay, null);

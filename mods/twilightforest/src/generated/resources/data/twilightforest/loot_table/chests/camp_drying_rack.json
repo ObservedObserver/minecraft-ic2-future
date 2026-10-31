@@ -2,7 +2,6 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:empty",
@@ -53,7 +52,6 @@
           "value": {
             "pools": [
               {
-                "bonus_rolls": 0.0,
                 "entries": [
                   {
                     "type": "minecraft:item",
@@ -72,7 +70,7 @@
                     "name": "minecraft:leather_boots"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               }
             ]
           },
@@ -83,7 +81,7 @@
           "name": "twilightforest:gelatinous_slime_drop"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "twilightforest:chests/camp_drying_rack"

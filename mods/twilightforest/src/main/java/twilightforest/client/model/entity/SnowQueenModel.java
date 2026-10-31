@@ -115,8 +115,8 @@ public class SnowQueenModel extends HumanoidModel<SnowQueenRenderState> implemen
 		// in beam phase, arms forwards
 		if (state.phase == Phase.BEAM) {
 			if (state.breathing) {
-				float f6 = Mth.sin(state.attackTime * Mth.PI);
-				float f7 = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * Mth.PI);
+				float f6 = Mth.sin(state.swingAnimation * Mth.PI);
+				float f7 = Mth.sin((1.0F - (1.0F - state.swingAnimation) * (1.0F - state.swingAnimation)) * Mth.PI);
 				this.rightArm.zRot = 0.0F;
 				this.leftArm.zRot = 0.0F;
 				this.rightArm.yRot = -(0.1F - f6 * 0.6F);
@@ -141,6 +141,6 @@ public class SnowQueenModel extends HumanoidModel<SnowQueenRenderState> implemen
 
 	@Override
 	public void renderTrophy(PoseStack stack, SubmitNodeCollector collector, int light, int overlay, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress, ItemDisplayContext context) {
-		collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(SnowQueenRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+		twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(SnowQueenRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 	}
 }

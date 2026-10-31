@@ -93,7 +93,7 @@ public class FireJetBlockEntity extends BlockEntity {
 		if (level instanceof ServerLevel serverLevel && te.counter % 5 == 0) {
 			// find entities in the area of effect
 			List<Entity> entitiesInRange = level.getEntitiesOfClass(Entity.class,
-				new AABB(pos.offset(-2, 0, -2).getCenter(), pos.offset(2, 4, 2).getCenter()));
+				new AABB(net.minecraft.world.phys.Vec3.atCenterOf(pos.offset(-2, 0, -2)), net.minecraft.world.phys.Vec3.atCenterOf(pos.offset(2, 4, 2))));
 			// fire!
 			for (Entity entity : entitiesInRange) {
 				if (!entity.fireImmune()) {

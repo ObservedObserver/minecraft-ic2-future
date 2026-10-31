@@ -25,12 +25,13 @@ public class LiverootBlock extends Block {
 
 	@Override
 	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
-		if (stack.getItem().canPerformAction(stack, ItemAbilities.AXE_STRIP)) {
+		if (twilightforest.util.ToolActionHelper.uses(stack, net.minecraft.world.item.component.BlockTransformers.AXE)) {
 			level.setBlockAndUpdate(pos, TFBlocks.ROOT_BLOCK.get().defaultBlockState());
 			if (level instanceof ServerLevel serverLevel) {
 				dropFromBlockInteractLootTable(
 					serverLevel,
 					TFLootTables.LIVEROOT_STRIP_DROPS,
+					pos,
 					state,
 					null,
 					stack,
@@ -38,7 +39,7 @@ public class LiverootBlock extends Block {
 					(server, itemStack) -> Block.popResource(server, pos, itemStack)
 				);
 			}
-			level.playSound(null, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
+			level.playSound(null, pos, SoundEvents.AXE_STRIP.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
 			stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 			return InteractionResult.SUCCESS;
 		}

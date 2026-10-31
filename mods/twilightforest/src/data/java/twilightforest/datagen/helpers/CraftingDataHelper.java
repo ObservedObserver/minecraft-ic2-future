@@ -33,8 +33,8 @@ import twilightforest.tags.TFItemTags;
 import twilightforest.init.TFBlocks;
 
 public abstract class CraftingDataHelper extends RecipeProvider {
-	public CraftingDataHelper(RecipeOutput output, HolderLookup.Provider provider) {
-		super(provider, output);
+	public CraftingDataHelper(net.minecraft.data.worldgen.BootstrapContext<Recipe<?>> recipes, net.minecraft.data.worldgen.BootstrapContext<net.minecraft.advancements.Advancement> advancements) {
+		super(recipes, advancements);
 	}
 
 	protected final void charmRecipe(HolderGetter<Item> getter, String name, DeferredItem<? extends Item> result, DeferredItem<? extends Item> item) {
@@ -231,8 +231,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	@SafeVarargs
-	protected final DataComponentPatch.Builder buildEnchants(HolderLookup.Provider provider, Pair<ResourceKey<Enchantment>, Integer>... enchantments) {
-		HolderLookup.RegistryLookup<Enchantment> lookup = provider.lookupOrThrow(Registries.ENCHANTMENT);
+	protected final DataComponentPatch.Builder buildEnchants(HolderGetter<Enchantment> lookup, Pair<ResourceKey<Enchantment>, Integer>... enchantments) {
 		var itemEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
 		for (var pair : enchantments) {
 			itemEnchants.set(lookup.getOrThrow(pair.getFirst()), pair.getSecond());

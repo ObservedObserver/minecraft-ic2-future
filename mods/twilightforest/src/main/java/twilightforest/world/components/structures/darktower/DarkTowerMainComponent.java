@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.darktower;
 
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,12 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
-import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import twilightforest.TwilightForestMod;
 import twilightforest.tags.TFBlockTags;
 import twilightforest.init.*;
@@ -73,7 +72,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 	}
 
 	@Override
-	public void addChildren(StructurePiece parent, StructurePieceAccessor list, RandomSource rand) {
+	public void addChildren(StructurePiece parent, StructurePiecesBuilder list, RandomSource rand) {
 		if (parent != null && parent instanceof TFStructureComponentOld) {
 			this.deco = ((TFStructureComponentOld) parent).deco;
 		}
@@ -184,7 +183,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 	/**
 	 * Make a bridge that leads to an entrance tower
 	 */
-	private boolean makeEntranceTower(StructurePieceAccessor list, RandomSource rand, int index, int x, int y, int z, int childSize, int childHeight, Rotation rotation) {
+	private boolean makeEntranceTower(StructurePiecesBuilder list, RandomSource rand, int index, int x, int y, int z, int childSize, int childHeight, Rotation rotation) {
 		Direction direction = getStructureRelativeRotation(rotation);
 		int[] dx = offsetTowerCoords(x, y, z, 5, direction);
 
@@ -199,7 +198,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 	/**
 	 * Make a bridge that leads to a new large-size tower
 	 */
-	private boolean makeNewLargeTower(StructurePieceAccessor list, RandomSource rand, int index, int x, int y, int z, Rotation rotation) {
+	private boolean makeNewLargeTower(StructurePiecesBuilder list, RandomSource rand, int index, int x, int y, int z, Rotation rotation) {
 
 		int wingSize = 15;
 		int wingHeight = 56;
@@ -219,7 +218,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 	/**
 	 * Make a bridge that leads to a boss trap tower
 	 */
-	private boolean makeBossTrapWing(StructurePieceAccessor list, RandomSource rand, int index, int x, int y, int z, Rotation rotation) {
+	private boolean makeBossTrapWing(StructurePiecesBuilder list, RandomSource rand, int index, int x, int y, int z, Rotation rotation) {
 
 		int wingSize = 11;
 		int wingHeight = 9;
@@ -240,7 +239,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 	 * Attach a roof to this tower.
 	 */
 	@Override
-	public void makeARoof(StructurePiece parent, StructurePieceAccessor list, RandomSource rand) {
+	public void makeARoof(StructurePiece parent, StructurePiecesBuilder list, RandomSource rand) {
 		if (this.getGenDepth() < 2) {
 			super.makeARoof(parent, list, rand);
 		}
@@ -1008,7 +1007,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 		this.setBlockStateRotated(world, netherDeco.blockState, 6, y + 1, 13, rotation, sbb);
 		this.setBlockStateRotated(world, netherDeco.blockState, 6, y + (isTop ? 4 : 9), 13, rotation, sbb);
 
-		this.setSpawnerRotated(world, 6, y + 3, 13, rotation, EntityType.BLAZE, sbb);
+		this.setSpawnerRotated(world, 6, y + 3, 13, rotation, net.minecraft.world.entity.EntityTypes.BLAZE, sbb);
 
 		// destruction blob
 		destroyTower(world, decoRNG, 12, y, 3, 2, sbb);
@@ -1078,7 +1077,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 		int dy = getWorldY(y + 1);
 		int dz = getZWithOffsetRotated(x, z, rotation);
 		if (sbb.isInside(new BlockPos(dx, dy, dz))) {
-			ResourceKey<ConfiguredFeature<?, ?>> treeGen = switch (treeNum) {
+			ResourceKey<Feature> treeGen = switch (treeNum) {
 				case 1 ->
 					// jungle tree
 					// made a custom one so it doesnt cut through the floor
@@ -1095,7 +1094,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 			// grow a tree
 
 			for (int i = 0; i < 100; i++) {
-				var configuredFeatureHolder = world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(treeGen);
+				var configuredFeatureHolder = world.registryAccess().lookupOrThrow(Registries.FEATURE).get(treeGen);
 
 				if (configuredFeatureHolder.isPresent()) {
 					if (configuredFeatureHolder.get().value().place(world, generator, world.getRandom(), new BlockPos(dx, dy, dz))) {

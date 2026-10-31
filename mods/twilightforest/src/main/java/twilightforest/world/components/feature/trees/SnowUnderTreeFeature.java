@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.trees;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,18 +11,17 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 
-public class SnowUnderTreeFeature extends Feature<NoneFeatureConfiguration> {
+public class SnowUnderTreeFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 
 	public SnowUnderTreeFeature(Codec<NoneFeatureConfiguration> config) {
 		super(config);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> ctx) {
 		BlockPos pos = ctx.origin();
 		WorldGenLevel world = ctx.level();
 		BlockPos.MutableBlockPos mPos = new BlockPos.MutableBlockPos();

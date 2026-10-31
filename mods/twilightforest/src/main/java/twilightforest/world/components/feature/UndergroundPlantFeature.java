@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -7,16 +8,15 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.BlockStateConfiguration;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.landmarks.LandmarkUtil;
 
 import java.util.Optional;
 
-public class UndergroundPlantFeature extends Feature<BlockStateConfiguration> {
+public class UndergroundPlantFeature extends ConfiguredFeatureBase<BlockStateConfiguration> {
 	int maxCount;
 	boolean spawnInStructure;
 
@@ -47,7 +47,7 @@ public class UndergroundPlantFeature extends Feature<BlockStateConfiguration> {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<BlockStateConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<BlockStateConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
@@ -67,7 +67,7 @@ public class UndergroundPlantFeature extends Feature<BlockStateConfiguration> {
 				continue;
 			}
 
-			BlockState state = ctx.config().state;
+			BlockState state = ctx.config().state();
 			Optional<StructureStart> structureStart = LandmarkUtil.locateNearestLandmarkStart(world, SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
 			if (state.is(TFBlocks.TROLLVIDR) && random.nextInt(10) == 0)
 				state = TFBlocks.UNRIPE_TROLLBER.get().defaultBlockState();

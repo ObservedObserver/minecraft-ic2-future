@@ -266,7 +266,10 @@ public abstract class TFStructureComponentOld extends TFStructureComponent imple
 			world.setBlock(pos, Blocks.OAK_SIGN.defaultBlockState().setValue(StandingSignBlock.ROTATION, this.getOrientation().get2DDataValue() * 4), Block.UPDATE_CLIENTS);
 
 			if (world.getBlockEntity(pos) instanceof SignBlockEntity sign) {
-				sign.frontText = sign.frontText.setMessage(1, Component.literal(string0)).setMessage(2, Component.literal(string1));
+				var messages = new java.util.ArrayList<>(sign.frontText.getMessages(false));
+				messages.set(1, Component.literal(string0));
+				messages.set(2, Component.literal(string1));
+				sign.frontText = new net.minecraft.world.level.block.entity.SignText(messages, messages, sign.frontText.getColor(), sign.frontText.hasGlowingText());
 			}
 		}
 	}

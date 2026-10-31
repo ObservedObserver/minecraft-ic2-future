@@ -92,7 +92,7 @@ public class LichPerimeterFence extends TwilightJigsawPiece implements PieceBear
 	}
 
 	@Override
-	public void addJigsaws(TwilightJigsawPiece parent, StructurePieceAccessor pieceAccessor, Structure.GenerationContext context) {
+	public void addJigsaws(TwilightJigsawPiece parent, StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context) {
 		super.addJigsaws(parent, pieceAccessor, context);
 
 		Direction ladderDirection = this.getSourceJigsaw().orientation().top().getOpposite();
@@ -122,7 +122,7 @@ public class LichPerimeterFence extends TwilightJigsawPiece implements PieceBear
 	}
 
 	@Override
-	protected void processJigsaw(TwilightJigsawPiece parent, StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
+	protected void processJigsaw(TwilightJigsawPiece parent, StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
 	}
 
 	public List<JigsawRecord> getLeftJunctions() {
@@ -349,8 +349,8 @@ public class LichPerimeterFence extends TwilightJigsawPiece implements PieceBear
 		if (!chunkBounds.isInside(zombiePos))
 			return;
 
-		var knot = EntityUtil.createEntityIgnoreException(level, EntityType.LEASH_KNOT);
-		var boundedEntity = EntityUtil.createEntityIgnoreException(level, EntityType.ZOMBIE);
+		var knot = EntityUtil.createEntityIgnoreException(level, net.minecraft.world.entity.EntityTypes.LEASH_KNOT);
+		var boundedEntity = EntityUtil.createEntityIgnoreException(level, net.minecraft.world.entity.EntityTypes.ZOMBIE);
 		if (knot == null || boundedEntity == null)
 			return;
 

@@ -1,6 +1,6 @@
 package twilightforest.datagen.data.tags;
 
-import net.minecraft.data.tags.TagAppender;
+import twilightforest.datagen.helpers.ValueTagAppender;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -115,7 +115,7 @@ public abstract class BlockItemTagGenerator {
 			TFBlocks.RAINBOW_OAK_SAPLING.get());
 
 
-		this.tag(BlockTags.LOGS_THAT_BURN, ItemTags.LOGS_THAT_BURN).addTags(
+		this.tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("logs_that_burn")), ItemTags.LOGS_THAT_BURN).addTags(
 			TFBlockTags.TWILIGHT_OAK_LOGS,
 			TFBlockTags.CANOPY_LOGS,
 			TFBlockTags.MANGROVE_LOGS,
@@ -125,9 +125,9 @@ public abstract class BlockItemTagGenerator {
 			TFBlockTags.MINING_LOGS,
 			TFBlockTags.SORTING_LOGS);
 
-		this.tag(BlockTags.SLABS, ItemTags.SLABS).add(TFBlocks.AURORA_SLAB.get());
+		this.tag(BlockTags.SLABS, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.withDefaultNamespace("slabs"))).add(TFBlocks.AURORA_SLAB.get());
 		this.tag(BlockTags.WALLS, ItemTags.WALLS).add(TFBlocks.WROUGHT_IRON_FENCE.get());
-		this.tag(BlockTags.STAIRS, ItemTags.STAIRS).add(
+		this.tag(BlockTags.STAIRS, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.withDefaultNamespace("stairs"))).add(
 			TFBlocks.CASTLE_BRICK_STAIRS.get(),
 			TFBlocks.WORN_CASTLE_BRICK_STAIRS.get(),
 			TFBlocks.CRACKED_CASTLE_BRICK_STAIRS.get(),
@@ -164,7 +164,7 @@ public abstract class BlockItemTagGenerator {
 			TFBlocks.MINING_TRAPDOOR.get(),
 			TFBlocks.SORTING_TRAPDOOR.get());
 
-		this.tag(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS).add(TFBlocks.THORN_ROSE.get());
+		this.tag(BlockTags.SMALL_FLOWERS, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.withDefaultNamespace("small_flowers"))).add(TFBlocks.THORN_ROSE.get());
 		this.tag(BlockTags.DAMPENS_VIBRATIONS, ItemTags.DAMPENS_VIBRATIONS).addTag(TFBlockTags.CLOUDS).add(TFBlocks.ARCTIC_FUR_BLOCK.get());
 		this.tag(BlockTags.DIRT, ItemTags.DIRT).add(TFBlocks.UBEROUS_SOIL.get());
 		this.tag(BlockTags.STANDING_SIGNS, ItemTags.SIGNS).add(
@@ -356,5 +356,5 @@ public abstract class BlockItemTagGenerator {
 			TFBlocks.SNOWY_CLOUD.get());
 	}
 
-	protected abstract TagAppender<Block, Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag);
+	protected abstract ValueTagAppender<Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag);
 }

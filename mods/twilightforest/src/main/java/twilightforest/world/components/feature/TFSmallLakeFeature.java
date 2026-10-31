@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -9,9 +10,8 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.tags.TFBlockTags;
@@ -19,7 +19,7 @@ import twilightforest.tags.TFBlockTags;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
-public class TFSmallLakeFeature extends Feature<TFSmallLakeFeature.Configuration> {
+public class TFSmallLakeFeature extends ConfiguredFeatureBase<TFSmallLakeFeature.Configuration> {
 	private static final BlockState AIR = Blocks.CAVE_AIR.defaultBlockState();
 
 	public TFSmallLakeFeature(Codec<TFSmallLakeFeature.Configuration> codec) {
@@ -27,7 +27,7 @@ public class TFSmallLakeFeature extends Feature<TFSmallLakeFeature.Configuration
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<TFSmallLakeFeature.Configuration> context) {
+	public boolean place(FeaturePlacementContext<TFSmallLakeFeature.Configuration> context) {
 		BlockPos blockpos = context.origin();
 		WorldGenLevel worldgenlevel = context.level();
 		RandomSource randomsource = context.random();
@@ -155,9 +155,9 @@ public class TFSmallLakeFeature extends Feature<TFSmallLakeFeature.Configuration
 	public record Configuration(BlockStateProvider fluid, @Nullable BlockStateProvider barrier, @Nullable BlockStateProvider ice) implements FeatureConfiguration {
 		public static final Codec<TFSmallLakeFeature.Configuration> CODEC = RecordCodecBuilder.create(
 			instance -> instance.group(
-					BlockStateProvider.CODEC.fieldOf("fluid").forGetter(Configuration::fluid),
-					BlockStateProvider.CODEC.optionalFieldOf("barrier").forGetter(configuration -> Optional.ofNullable(configuration.barrier())),
-					BlockStateProvider.CODEC.optionalFieldOf("ice").forGetter(configuration -> Optional.ofNullable(configuration.ice()))
+					twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("fluid").forGetter(Configuration::fluid),
+					twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.optionalFieldOf("barrier").forGetter(configuration -> Optional.ofNullable(configuration.barrier())),
+					twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.optionalFieldOf("ice").forGetter(configuration -> Optional.ofNullable(configuration.ice()))
 				)
 				.apply(instance, TFSmallLakeFeature.Configuration::new)
 		);

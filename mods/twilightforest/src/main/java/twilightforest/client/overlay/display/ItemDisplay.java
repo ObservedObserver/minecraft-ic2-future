@@ -1,20 +1,20 @@
 package twilightforest.client.overlay.display;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface ItemDisplay {
 
-	void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth);
+	void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth);
 
 	default DisplayPosition displayPosition() {
 		return DisplayPosition.DEFAULT;
 	}
 
-	Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth);
+	Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth);
 
 	enum DisplayPosition {
 		TOP,

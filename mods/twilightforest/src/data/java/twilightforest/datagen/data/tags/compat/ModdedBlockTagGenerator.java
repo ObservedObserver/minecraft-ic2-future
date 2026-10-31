@@ -3,7 +3,7 @@ package twilightforest.datagen.data.tags.compat;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import twilightforest.datagen.helpers.ValueTagsProvider;
 import net.minecraft.world.level.block.Block;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
@@ -11,7 +11,7 @@ import twilightforest.tags.TFBlockTags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ModdedBlockTagGenerator extends IntrinsicHolderTagsProvider<Block> {
+public class ModdedBlockTagGenerator extends ValueTagsProvider<Block> {
 
 	public ModdedBlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future) {
 		super(output, Registries.BLOCK, future, block -> block.builtInRegistryHolder().key(), TwilightForestMod.ID);

@@ -14,7 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.timeline.Timelines;
 import tamaized.beanification.Autowired;
@@ -28,7 +28,7 @@ public abstract class BiomeHelper {
 	@Autowired
 	private static TFGrassColorModifierEnumExtension grassColorModifierEnumExtension;
 
-	public static Biome.BiomeBuilder twilightForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder twilightForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
@@ -50,11 +50,11 @@ public abstract class BiomeHelper {
 			.downfall(0.5F)
 			.putAttributes(defaultEnvironmentBuilder())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder denseForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder denseForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
@@ -79,14 +79,14 @@ public abstract class BiomeHelper {
 			.temperature(0.7F)
 			.downfall(0.8F)
 			.putAttributes(defaultEnvironmentBuilder()
-				.set(EnvironmentAttributes.WATER_FOG_COLOR, 0x005522)
+				.set(EnvironmentAttributes.WATER_FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x005522))
 				.set(EnvironmentAttributes.AMBIENT_PARTICLES, List.of(new AmbientParticle(TFParticleType.WANDERING_FIREFLY.get(), 0.001F))))
 			.specialEffects(new BiomeSpecialEffects.Builder().waterColor(0x005522).build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder fireflyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder fireflyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
@@ -113,11 +113,11 @@ public abstract class BiomeHelper {
 			.downfall(1.0F)
 			.putAttributes(defaultEnvironmentBuilder())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder clearing(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder clearing(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
@@ -135,11 +135,11 @@ public abstract class BiomeHelper {
 			.downfall(0.4F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder oakSavanna(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder oakSavanna(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_TAIGA_2);
@@ -161,11 +161,11 @@ public abstract class BiomeHelper {
 			.putAttributes(defaultEnvironmentBuilderNoParticles()
 				.set(EnvironmentAttributes.SNOW_GOLEM_MELTS, true))
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder enchantedForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder enchantedForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 		BiomeDefaultFeatures.addDefaultSoftDisks(biome);
 		BiomeDefaultFeatures.addDefaultGrass(biome);
@@ -203,11 +203,11 @@ public abstract class BiomeHelper {
 				.foliageColorOverride(0x00FFFF)
 				.grassColorOverride(0x00FFFF)
 				.grassColorModifier(grassColorModifierEnumExtension.ENCHANTED_FOREST).build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder spookyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder spookyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
 
@@ -230,9 +230,9 @@ public abstract class BiomeHelper {
 			.temperature(0.5F)
 			.downfall(1.0F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0x827391)
-				.set(EnvironmentAttributes.WATER_FOG_COLOR, 0xBC8857)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x20224A)
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x827391))
+				.set(EnvironmentAttributes.WATER_FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0xBC8857))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x20224A))
 				.set(EnvironmentAttributes.FOG_START_DISTANCE, 16.0F)
 				.set(EnvironmentAttributes.FOG_END_DISTANCE, 64.0F)
 				.set(EnvironmentAttributes.SKY_FOG_END_DISTANCE, 64.0F))
@@ -242,18 +242,18 @@ public abstract class BiomeHelper {
 				.grassColorOverride(0xC45123)
 				.foliageColorOverride(0xFF8501)
 				.grassColorModifier(grassColorModifierEnumExtension.SPOOKY_FOREST).build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
-				.addSpawn(MobCategory.MONSTER, 50, new MobSpawnSettings.SpawnerData(EntityType.SPIDER, 1, 2))
-				.addMobCharge(EntityType.SPIDER, 0.75D, 0.25D)
-				.addSpawn(MobCategory.MONSTER, 20, new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 2))
-				.addMobCharge(EntityType.SKELETON, 0.85D, 0.25D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.SKELETON_DRUID.get(), 1, 1))
+			.putAttributes(new TFSpawnSettingsBuilder()
+				.addSpawn(MobCategory.MONSTER, 50, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SPIDER, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.SPIDER, 0.75D, 0.25D)
+				.addSpawn(MobCategory.MONSTER, 20, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.SKELETON, 0.85D, 0.25D)
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.SKELETON_DRUID.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.SKELETON_DRUID.get(), 0.95D, 0.25D)
-				.addSpawn(MobCategory.AMBIENT, 20, new MobSpawnSettings.SpawnerData(EntityType.BAT, 2, 4)).build())
+				.addSpawn(MobCategory.AMBIENT, 20, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.BAT, net.minecraft.util.valueproviders.UniformInt.of(2, 4))).attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder mushroomForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder mushroomForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
@@ -280,11 +280,11 @@ public abstract class BiomeHelper {
 			.downfall(0.8F)
 			.putAttributes(defaultEnvironmentBuilder())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder denseMushroomForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder denseMushroomForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
@@ -309,25 +309,25 @@ public abstract class BiomeHelper {
 			.downfall(1.0F)
 			.putAttributes(defaultEnvironmentBuilder())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder finalPlateau(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder finalPlateau(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		return new Biome.BiomeBuilder()
 			.temperature(1.0F)
 			.downfall(0.2F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles()
-				.set(EnvironmentAttributes.CLOUD_COLOR, 0))
+				.set(EnvironmentAttributes.CLOUD_COLOR, net.minecraft.util.ARGB.vector4fFromARGB32(0)))
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
+			.putAttributes(new TFSpawnSettingsBuilder()
 				.creatureGenerationProbability(0.3f)
-				.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.RAVEN.get(), 4, 4))
-				.build())
+				.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.RAVEN.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 4)))
+				.attributes())
 			.generationSettings(new BiomeGenerationSettings.Builder(featureGetter, carverGetter).build());
 	}
 
-	public static Biome.BiomeBuilder thornlands(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder thornlands(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		commonFeaturesWithoutBuildings(biome);
@@ -338,11 +338,11 @@ public abstract class BiomeHelper {
 			.downfall(0.2F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder().build())
+			.putAttributes(new TFSpawnSettingsBuilder().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder highlands(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder highlands(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA);
@@ -363,11 +363,11 @@ public abstract class BiomeHelper {
 			.downfall(0.7F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(defaultMobSpawning().build())
+			.putAttributes(defaultMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder highlandsUnderground(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder highlandsUnderground(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		addHighlandCaves(biome);
@@ -377,11 +377,11 @@ public abstract class BiomeHelper {
 			.downfall(0.0F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(undergroundMobSpawning().build())
+			.putAttributes(undergroundMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder stream(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder stream(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, AquaticPlacements.SEAGRASS_NORMAL);
@@ -397,11 +397,11 @@ public abstract class BiomeHelper {
 			.downfall(0.1F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder().build())
+			.putAttributes(new TFSpawnSettingsBuilder().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder lake(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder lake(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, AquaticPlacements.SEAGRASS_DEEP);
@@ -417,11 +417,11 @@ public abstract class BiomeHelper {
 			.downfall(0.1F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder().build())
+			.putAttributes(new TFSpawnSettingsBuilder().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder swamp(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder swamp(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SWAMP_RASPBERRY_BUSHES);
@@ -444,9 +444,9 @@ public abstract class BiomeHelper {
 			.temperature(0.8F)
 			.downfall(0.9F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0x003F21)
-				.set(EnvironmentAttributes.WATER_FOG_COLOR, 0x95B55F)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x002112))
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x003F21))
+				.set(EnvironmentAttributes.WATER_FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x95B55F))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x002112)))
 				.modifyAttribute(EnvironmentAttributes.WATER_FOG_END_DISTANCE, FloatModifier.MULTIPLY, 0.85F)
 			.specialEffects(defaultAmbientBuilder()
 				.grassColorOverride(0x5C694E)
@@ -454,16 +454,16 @@ public abstract class BiomeHelper {
 				.waterColor(0x95B55F)
 				.grassColorModifier(grassColorModifierEnumExtension.SWAMP)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
-				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE, 1, 2))
-				.addMobCharge(EntityType.ZOMBIE, 0.7D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.MOSQUITO_SWARM.get(), 1, 1))
+			.putAttributes(new TFSpawnSettingsBuilder()
+				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ZOMBIE, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.ZOMBIE, 0.7D, 0.15D)
+				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.MOSQUITO_SWARM.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.MOSQUITO_SWARM.get(), 0.7D, 0.15D)
-				.build())
+				.attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder fireSwamp(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder fireSwamp(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA_2);
@@ -483,9 +483,9 @@ public abstract class BiomeHelper {
 			.temperature(1.0F)
 			.downfall(0.4F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0x380A00)
-				.set(EnvironmentAttributes.WATER_FOG_COLOR, 0x6C2C2C)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x002112)
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x380A00))
+				.set(EnvironmentAttributes.WATER_FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x6C2C2C))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x002112))
 				.set(EnvironmentAttributes.SNOW_GOLEM_MELTS, true)
 				.set(EnvironmentAttributes.AMBIENT_PARTICLES, List.of(new AmbientParticle(ParticleTypes.WHITE_ASH, 0.015f))))
 				.modifyAttribute(EnvironmentAttributes.WATER_FOG_END_DISTANCE, FloatModifier.MULTIPLY, 0.85F)
@@ -494,11 +494,11 @@ public abstract class BiomeHelper {
 				.grassColorOverride(0x572E23)
 				.foliageColorOverride(0x64260F)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder().build())
+			.putAttributes(new TFSpawnSettingsBuilder().attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder darkForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder darkForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		addDarkForestVegetation(biome);
@@ -508,50 +508,50 @@ public abstract class BiomeHelper {
 			.temperature(0.7F)
 			.downfall(0.8F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0x000000)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x000000)
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x000000))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x000000))
 				.set(EnvironmentAttributes.SKY_LIGHT_FACTOR, 0.0F))
 			.specialEffects(defaultAmbientBuilder()
 				.grassColorOverride(0x4B6754)
 				.foliageColorOverride(0x3B5E3F)
 				.grassColorModifier(grassColorModifierEnumExtension.DARK_FOREST)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
+			.putAttributes(new TFSpawnSettingsBuilder()
 				.creatureGenerationProbability(0.05f)
-				.addSpawn(MobCategory.MONSTER, 2, new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 1, 2))
-				.addMobCharge(EntityType.ENDERMAN, 0.75D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE, 1, 2))
-				.addMobCharge(EntityType.ZOMBIE, 0.7D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 2))
-				.addMobCharge(EntityType.SKELETON, 0.8D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.MIST_WOLF.get(), 1, 1))
+				.addSpawn(MobCategory.MONSTER, 2, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.ENDERMAN, 0.75D, 0.15D)
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ZOMBIE, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.ZOMBIE, 0.7D, 0.15D)
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 2)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.SKELETON, 0.8D, 0.15D)
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.MIST_WOLF.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.MIST_WOLF.get(), 0.75D, 0.2D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.SKELETON_DRUID.get(), 1, 1))
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.SKELETON_DRUID.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.SKELETON_DRUID.get(), 0.8D, 0.2D)
-				.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(TFEntities.KING_SPIDER.get(), 1, 1))
+				.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(TFEntities.KING_SPIDER.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.KING_SPIDER.get(), 0.85D, 0.25D)
-				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), 1, 3))
+				.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 3)))
 				.addMobCharge(TFEntities.KOBOLD.get(), 0.7D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 2, new MobSpawnSettings.SpawnerData(EntityType.WITCH, 1, 1))
-				.addMobCharge(EntityType.WITCH, 0.75D, 0.15D)
-				.build())
+				.addSpawn(MobCategory.MONSTER, 2, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.WITCH, net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
+				.addMobCharge(net.minecraft.world.entity.EntityTypes.WITCH, 0.75D, 0.15D)
+				.attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder darkForestCenter(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder darkForestCenter(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		return darkForest(featureGetter, carverGetter)
-			.setAttribute(EnvironmentAttributes.FOG_COLOR, 0x493000)
+			.setAttribute(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x493000))
 			.setAttribute(EnvironmentAttributes.SKY_LIGHT_FACTOR, Timelines.NIGHT_SKY_LIGHT_FACTOR)
-			.setAttribute(EnvironmentAttributes.CLOUD_COLOR, 0)
+			.setAttribute(EnvironmentAttributes.CLOUD_COLOR, net.minecraft.util.ARGB.vector4fFromARGB32(0))
 			.specialEffects(defaultAmbientBuilder()
 				.grassColorOverride(0x667540)
 				.foliageColorOverride(0xF9821E)
 				.grassColorModifier(grassColorModifierEnumExtension.DARK_FOREST_CENTER)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder().build());
+			.putAttributes(new TFSpawnSettingsBuilder().attributes());
 	}
 
-	public static Biome.BiomeBuilder snowyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder snowyForest(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SNOWY_BLUEBERRY_BUSHES);
@@ -571,23 +571,23 @@ public abstract class BiomeHelper {
 			.temperature(0.09F)
 			.downfall(0.9F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0xFFFFFF)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x808080))
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0xFFFFFF))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x808080)))
 			.specialEffects(defaultAmbientBuilder()
 				.foliageColorOverride(0xFFFFFF)
 				.grassColorOverride(0xFFFFFF)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
+			.putAttributes(new TFSpawnSettingsBuilder()
 				.creatureGenerationProbability(0.05F)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.WINTER_WOLF.get(), 1, 1))
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.WINTER_WOLF.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.WINTER_WOLF.get(), 0.6D, 0.15D)
-				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.YETI.get(), 1, 1))
+				.addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(TFEntities.YETI.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)))
 				.addMobCharge(TFEntities.YETI.get(), 0.6D, 0.15D)
-				.build())
+				.attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder glacier(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder glacier(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 		BiomeDefaultFeatures.addSurfaceFreezing(biome);
 		addCaves(biome);
@@ -596,20 +596,20 @@ public abstract class BiomeHelper {
 			.temperature(0.08F)
 			.downfall(0.1F)
 			.putAttributes(EnvironmentAttributeMap.builder()
-				.set(EnvironmentAttributes.FOG_COLOR, 0x361F88)
-				.set(EnvironmentAttributes.SKY_COLOR, 0x130D28))
+				.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x361F88))
+				.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x130D28)))
 			.specialEffects(defaultAmbientBuilder()
 				.foliageColorOverride(0xFFFFFF)
 				.grassColorOverride(0xFFFFFF)
 				.build())
-			.mobSpawnSettings(new MobSpawnSettings.Builder()
+			.putAttributes(new TFSpawnSettingsBuilder()
 				.creatureGenerationProbability(0.15f)
-				.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.PENGUIN.get(), 2, 4))
-				.build())
+				.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.PENGUIN.get(), net.minecraft.util.valueproviders.UniformInt.of(2, 4)))
+				.attributes())
 			.generationSettings(biome.build());
 	}
 
-	public static Biome.BiomeBuilder underground(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static Biome.BiomeBuilder underground(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		BiomeDefaultFeatures.addDefaultSoftDisks(biome);
@@ -623,7 +623,7 @@ public abstract class BiomeHelper {
 			.downfall(0.0F)
 			.putAttributes(defaultEnvironmentBuilderNoParticles())
 			.specialEffects(defaultAmbientBuilder().build())
-			.mobSpawnSettings(undergroundMobSpawning().build())
+			.putAttributes(undergroundMobSpawning().attributes())
 			.generationSettings(biome.build());
 	}
 
@@ -745,9 +745,9 @@ public abstract class BiomeHelper {
 
 	public static EnvironmentAttributeMap.Builder defaultEnvironmentBuilderNoParticles() {
 		return EnvironmentAttributeMap.builder()
-			.set(EnvironmentAttributes.FOG_COLOR, 0xC0FFD8)
-			.set(EnvironmentAttributes.WATER_FOG_COLOR, 0x050533)
-			.set(EnvironmentAttributes.SKY_COLOR, 0x20224A);
+			.set(EnvironmentAttributes.FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0xC0FFD8))
+			.set(EnvironmentAttributes.WATER_FOG_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x050533))
+			.set(EnvironmentAttributes.SKY_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(0x20224A));
 	}
 
 	// Defaults
@@ -756,7 +756,7 @@ public abstract class BiomeHelper {
 		return new BiomeSpecialEffects.Builder().waterColor(0x3F76E4);
 	}
 
-	public static BiomeGenerationSettings.Builder defaultGenSettingBuilder(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+	public static BiomeGenerationSettings.Builder defaultGenSettingBuilder(HolderGetter<PlacedFeature> featureGetter, HolderGetter<WorldCarver> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		BiomeDefaultFeatures.addDefaultSoftDisks(biome);
@@ -771,35 +771,35 @@ public abstract class BiomeHelper {
 		return biome;
 	}
 
-	public static MobSpawnSettings.Builder defaultMobSpawning() {
-		MobSpawnSettings.Builder spawnInfo = new MobSpawnSettings.Builder();
+	public static TFSpawnSettingsBuilder defaultMobSpawning() {
+		TFSpawnSettingsBuilder spawnInfo = new TFSpawnSettingsBuilder();
 
 		spawnInfo.creatureGenerationProbability(0.15f);
 
-		spawnInfo.addSpawn(MobCategory.CREATURE, 12, new MobSpawnSettings.SpawnerData(TFEntities.BIGHORN_SHEEP.get(), 4, 4));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.BOAR.get(), 4, 4));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(EntityType.CHICKEN, 4, 4));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(TFEntities.DEER.get(), 4, 5));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 5, new MobSpawnSettings.SpawnerData(EntityType.WOLF, 4, 4));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(TFEntities.TINY_BIRD.get(), 4, 8));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.SQUIRREL.get(), 2, 4));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.DWARF_RABBIT.get(), 4, 5));
-		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.RAVEN.get(), 1, 2));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 12, new MobSpawnSettings.SpawnerData(TFEntities.BIGHORN_SHEEP.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 4)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.BOAR.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 4)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.CHICKEN, net.minecraft.util.valueproviders.UniformInt.of(4, 4)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(TFEntities.DEER.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 5)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 5, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.WOLF, net.minecraft.util.valueproviders.UniformInt.of(4, 4)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(TFEntities.TINY_BIRD.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 8)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.SQUIRREL.get(), net.minecraft.util.valueproviders.UniformInt.of(2, 4)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.DWARF_RABBIT.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 5)));
+		spawnInfo.addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(TFEntities.RAVEN.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)));
 
 		return spawnInfo;
 	}
 
-	public static MobSpawnSettings.Builder undergroundMobSpawning() {
-		MobSpawnSettings.Builder spawnInfo = new MobSpawnSettings.Builder();
+	public static TFSpawnSettingsBuilder undergroundMobSpawning() {
+		TFSpawnSettingsBuilder spawnInfo = new TFSpawnSettingsBuilder();
 
-		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(EntityType.SPIDER, 2, 3)).addMobCharge(EntityType.SPIDER, 0.2D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE, 1, 2)).addMobCharge(EntityType.ZOMBIE, 0.2D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 1)).addMobCharge(EntityType.SKELETON, 0.3D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 1, 1)).addMobCharge(EntityType.CREEPER, 0.35D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(EntityType.SLIME, 2, 4)).addMobCharge(EntityType.SLIME, 0.2D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 1, 2)).addMobCharge(EntityType.ENDERMAN, 0.4D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), 1, 3)).addMobCharge(TFEntities.KOBOLD.get(), 0.2D, 0.15D);
-		spawnInfo.addSpawn(MobCategory.AMBIENT, 10, new MobSpawnSettings.SpawnerData(EntityType.BAT, 1, 1));
+		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SPIDER, net.minecraft.util.valueproviders.UniformInt.of(2, 3))).addMobCharge(net.minecraft.world.entity.EntityTypes.SPIDER, 0.2D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ZOMBIE, net.minecraft.util.valueproviders.UniformInt.of(1, 2))).addMobCharge(net.minecraft.world.entity.EntityTypes.ZOMBIE, 0.2D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 1))).addMobCharge(net.minecraft.world.entity.EntityTypes.SKELETON, 0.3D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.CREEPER, net.minecraft.util.valueproviders.UniformInt.of(1, 1))).addMobCharge(net.minecraft.world.entity.EntityTypes.CREEPER, 0.35D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SLIME, net.minecraft.util.valueproviders.UniformInt.of(2, 4))).addMobCharge(net.minecraft.world.entity.EntityTypes.SLIME, 0.2D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.util.valueproviders.UniformInt.of(1, 2))).addMobCharge(net.minecraft.world.entity.EntityTypes.ENDERMAN, 0.4D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.MONSTER, 10, new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 3))).addMobCharge(TFEntities.KOBOLD.get(), 0.2D, 0.15D);
+		spawnInfo.addSpawn(MobCategory.AMBIENT, 10, new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.BAT, net.minecraft.util.valueproviders.UniformInt.of(1, 1)));
 
 		return spawnInfo;
 	}

@@ -1,17 +1,17 @@
 package twilightforest.world.components.feature.trollcave;
 
+import twilightforest.world.components.feature.runtime.MushroomFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.HugeBrownMushroomFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.HugeMushroomFeatureConfiguration;
 import twilightforest.util.features.FeatureLogic;
 
 // [VanillaCopy]
-public class TrollHugeBrownMushroomFeature extends HugeBrownMushroomFeature {
+public class TrollHugeBrownMushroomFeature extends MushroomFeatureBase {
 	public TrollHugeBrownMushroomFeature(Codec<HugeMushroomFeatureConfiguration> config) {
 		super(config);
 	}

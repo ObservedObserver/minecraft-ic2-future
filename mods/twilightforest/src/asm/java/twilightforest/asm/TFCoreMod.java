@@ -7,6 +7,7 @@ import twilightforest.asm.transformers.block.SlimeBlockBounceUpTransformer;
 import twilightforest.asm.transformers.block.SlimeBlockMomentumTransformer;
 import twilightforest.asm.transformers.block.UnrestrainedFrictionTransformer;
 import twilightforest.asm.transformers.chunk.ChunkStatusTaskTransformer;
+import twilightforest.asm.transformers.carver.TFCaveGenerationTransformer;
 import twilightforest.asm.transformers.cloud.IsRainingAtTransformer;
 import twilightforest.asm.transformers.conquered.StructureStartLoadStaticTransformer;
 import twilightforest.asm.transformers.entity.PathFinderUnrestrainedByLeashTransformer;
@@ -40,7 +41,10 @@ public class TFCoreMod implements ClassProcessorProvider {
 		collector.add(new SlimeBlockBounceUpTransformer());
 		collector.add(new UnrestrainedFrictionTransformer());
 
-		// chunk
+		// carver
+        collector.add(new TFCaveGenerationTransformer());
+
+        // chunk
 		collector.add(new ChunkStatusTaskTransformer());
 
 		// cloud

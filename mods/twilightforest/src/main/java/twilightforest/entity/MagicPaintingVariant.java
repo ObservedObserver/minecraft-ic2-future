@@ -1,5 +1,6 @@
 package twilightforest.entity;
 
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
@@ -137,7 +138,7 @@ public record MagicPaintingVariant(int width, int height, List<Layer> layers, Co
 				ExtraCodecs.POSITIVE_FLOAT.fieldOf("max").forGetter(OpacityModifier::max),
 				Codec.FLOAT.optionalFieldOf("from").forGetter((modifier) -> Float.isNaN(modifier.from()) ? Optional.empty() : Optional.of(modifier.from())),
 				Codec.FLOAT.optionalFieldOf("to").forGetter((modifier) -> Float.isNaN(modifier.to()) ? Optional.empty() : Optional.of(modifier.to())),
-				RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("item_stack").forGetter(OpacityModifier::itemTriggers),
+				RegistryCodecs.holderSet(Registries.ITEM).fieldOf("item_stack").forGetter(OpacityModifier::itemTriggers),
 				MOB_EFFECT_CATEGORY_CODEC.optionalFieldOf("effect_category").forGetter((modifier) -> modifier.effectCategory().isEmpty() ? Optional.empty() : modifier.effectCategory())
 			).apply(recordCodecBuilder, OpacityModifier::create));
 

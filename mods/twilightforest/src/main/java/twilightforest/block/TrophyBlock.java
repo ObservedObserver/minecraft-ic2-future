@@ -24,11 +24,7 @@ import twilightforest.enums.BossVariant;
 public class TrophyBlock extends AbstractTrophyBlock {
 
 	public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
-	public static final MapCodec<TrophyBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			BossVariant.CODEC.fieldOf("variant").forGetter(AbstractTrophyBlock::getVariant),
-			Codec.INT.fieldOf("pedestal_comparator_strength").forGetter(AbstractTrophyBlock::getComparatorValue),
-			propertiesCodec())
-		.apply(instance, TrophyBlock::new));
+
 	public static final VoxelShape GHAST_SHAPE = Block.box(4.0D, 8.0D, 4.0D, 12.0D, 16.0D, 12.0D);
 	protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D);
 	protected static final VoxelShape YETI_X_SHAPE = Block.box(3.0D, 0.0D, 4.0D, 13.0D, 11.0D, 12.0D);
@@ -40,11 +36,6 @@ public class TrophyBlock extends AbstractTrophyBlock {
 	public TrophyBlock(BossVariant variant, int value, BlockBehaviour.Properties properties) {
 		super(variant, value, properties);
 		this.registerDefaultState(this.getStateDefinition().any().setValue(TrophyBlock.ROTATION, 0));
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

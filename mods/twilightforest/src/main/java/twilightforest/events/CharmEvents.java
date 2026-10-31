@@ -120,7 +120,7 @@ public class CharmEvents {
 			}
 
 			if (player instanceof ServerPlayer serverPlayer) {
-				PacketDistributor.sendToPlayer(serverPlayer, new SpawnCharmPacket(new ItemStack(charm1 ? TFItems.CHARM_OF_LIFE_1.get() : TFItems.CHARM_OF_LIFE_2.get()), TFSounds.CHARM_LIFE.getKey()));
+				PacketDistributor.sendToPlayer(serverPlayer, new SpawnCharmPacket(new ItemStack(charm1 ? TFItems.CHARM_OF_LIFE_1.get() : TFItems.CHARM_OF_LIFE_2.get()), TFSounds.CHARM_LIFE.unwrapKey().orElseThrow()));
 				serverPlayer.awardStat(TFStats.LIFE_CHARMS_ACTIVATED.get());
 			}
 
@@ -342,7 +342,7 @@ public class CharmEvents {
 					.resultOrPartial(TwilightForestMod.LOGGER::error)
 					.orElse(ItemStack.EMPTY);
 				if (!charm.isEmpty()) {
-					PacketDistributor.sendToPlayer(serverPlayer, new SpawnCharmPacket(charm, TFSounds.CHARM_KEEP.getKey()));
+					PacketDistributor.sendToPlayer(serverPlayer, new SpawnCharmPacket(charm, TFSounds.CHARM_KEEP.unwrapKey().orElseThrow()));
 				}
 				serverPlayer.awardStat(TFStats.KEEPING_CHARMS_ACTIVATED.get());
 			}

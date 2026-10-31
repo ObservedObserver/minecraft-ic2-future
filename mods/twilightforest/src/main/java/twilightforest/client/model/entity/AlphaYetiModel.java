@@ -149,8 +149,8 @@ public class AlphaYetiModel extends HumanoidModel<AlphaYetiRenderState> implemen
 		this.rightLeg.yRot = 0.0F;
 		this.leftLeg.yRot = 0.0F;
 
-		float f6 = Mth.sin(state.attackTime * Mth.PI);
-		float f7 = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * Mth.PI);
+		float f6 = Mth.sin(state.swingAnimation * Mth.PI);
+		float f7 = Mth.sin((1.0F - (1.0F - state.swingAnimation) * (1.0F - state.swingAnimation)) * Mth.PI);
 		this.rightArm.zRot = 0.0F;
 		this.leftArm.zRot = 0.0F;
 		this.rightArm.yRot = -(0.1F - f6 * 0.6F);
@@ -219,6 +219,6 @@ public class AlphaYetiModel extends HumanoidModel<AlphaYetiRenderState> implemen
 	public void renderTrophy(PoseStack stack, SubmitNodeCollector collector, int light, int overlay, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress, ItemDisplayContext context) {
 		stack.scale(0.2F, 0.2F, 0.2F);
 		stack.translate(0.0F, -1.5F, 0.0F);
-		collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(AlphaYetiRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+		twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(AlphaYetiRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 	}
 }

@@ -14,12 +14,12 @@ public class AssetsGenerator {
 		DataGenerator generator = event.getGenerator();
 		PackOutput output = generator.getPackOutput();
 
-		generator.addProvider(true, new AtlasGenerator(output, event.getLookupProvider()));
+		generator.addProvider(true, new AtlasGenerator(output, event.getWorldLookupProvider()));
 		generator.addProvider(true, new EquipmentAssetsGenerator(output));
 		generator.addProvider(true, new ModelGenerator(output));
 		generator.addProvider(true, new ParticleGenerator(output));
 		generator.addProvider(true, new SoundGenerator(output));
 		//run last because of subtitles
-		generator.addProvider(true, new LangGenerator(output, event.getLookupProvider()));
+		generator.addProvider(true, new LangGenerator(output, event.getWorldLookupProvider()));
 	}
 }

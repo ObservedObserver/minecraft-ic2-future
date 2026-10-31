@@ -128,7 +128,7 @@ public abstract class StructureTemplateDefinitionProvider extends JsonCodecProvi
 	}
 
 	protected Holder.Reference<TemplateMarkerHandlerList> getMarkers(HolderLookup.Provider provider, ResourceKey<TemplateMarkerHandlerList> key) {
-		return Holder.Reference.createStandAlone(provider.lookupOrThrow(TFRegistries.Keys.TEMPLATE_MARKER_HANDLER_LIST), key);
+		return provider.lookupOrThrow(TFRegistries.Keys.TEMPLATE_MARKER_HANDLER_LIST).getOrThrow(key);
 	}
 
 	@Override

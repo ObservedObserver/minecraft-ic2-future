@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.trollcave;
 
+import twilightforest.world.components.feature.runtime.MushroomFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -7,15 +8,19 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.HugeRedMushroomFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.HugeMushroomFeatureConfiguration;
 import twilightforest.util.features.FeatureLogic;
 
 
 // [VanillaCopy]
-public class TrollHugeRedMushroomFeature extends HugeRedMushroomFeature {
+public class TrollHugeRedMushroomFeature extends MushroomFeatureBase {
 	public TrollHugeRedMushroomFeature(Codec<HugeMushroomFeatureConfiguration> config) {
 		super(config);
+	}
+
+	@Override
+	protected int getTreeRadiusForHeight(int trunkHeight, int treeHeight, int leafRadius, int y) {
+		return y >= treeHeight - 3 && y <= treeHeight ? leafRadius : 0;
 	}
 
 	@Override

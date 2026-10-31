@@ -1,0 +1,6 @@
+{
+  "type": "twilightforest:lampposts",
+  "config": {
+    "state": "twilightforest:cicada_jar"
+  }
+}

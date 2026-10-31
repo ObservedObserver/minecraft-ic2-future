@@ -6,8 +6,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.HugeMushroomFeatureConfiguration;
 
 public class RedCanopyMushroomFeature extends CanopyMushroomFeature {
 	/**
@@ -25,7 +25,7 @@ public class RedCanopyMushroomFeature extends CanopyMushroomFeature {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<HugeMushroomFeatureConfiguration> context) {
+	public boolean place(FeaturePlacementContext<HugeMushroomFeatureConfiguration> context) {
 		return super.place(context);
 	}
 

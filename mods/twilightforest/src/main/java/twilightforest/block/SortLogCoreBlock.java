@@ -31,15 +31,10 @@ import java.util.Map;
 public class SortLogCoreBlock extends SpecialMagicLogBlock {
 
 	private final BlockCapabilityDirectionalCache<ResourceHandler<ItemResource>> capabilityCache = new BlockCapabilityDirectionalCache<>();
-	private static final MapCodec<SpecialMagicLogBlock> CODEC = simpleCodec(SortLogCoreBlock::new);
+
 
 	public SortLogCoreBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends DirectionalBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

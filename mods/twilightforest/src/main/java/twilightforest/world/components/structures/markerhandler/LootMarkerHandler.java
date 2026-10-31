@@ -19,7 +19,7 @@ import twilightforest.init.custom.TemplateMarkerHandlers;
 
 public record LootMarkerHandler(BlockStateProvider provider, ResourceKey<LootTable> lootTable) implements TemplateMarkerHandler {
 	public static final MapCodec<LootMarkerHandler> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-		BlockStateProvider.CODEC.fieldOf("loot_block").forGetter(LootMarkerHandler::provider),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("loot_block").forGetter(LootMarkerHandler::provider),
 		ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("loot_table").forGetter(LootMarkerHandler::lootTable)
 	).apply(instance, LootMarkerHandler::new));
 

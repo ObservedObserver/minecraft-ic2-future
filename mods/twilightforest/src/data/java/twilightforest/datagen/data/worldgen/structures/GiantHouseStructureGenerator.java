@@ -38,8 +38,8 @@ public class GiantHouseStructureGenerator {
                 TerrainAdjustment.NONE
             ),
             ControlledSpawns.ControlledSpawningConfig.create(List.of(WeightedList.<MobSpawnSettings.SpawnerData>builder() // cloud monsters
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.GIANT_MINER.get(), 1, 1), 10)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), 1, 1), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.GIANT_MINER.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             ), WeightedList.of(), WeightedList.of())
         );

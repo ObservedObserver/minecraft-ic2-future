@@ -34,8 +34,8 @@ public class EntityCache {
             return null;
         }
 
-        if (type == EntityType.PLAYER) {
-            type = EntityType.MANNEQUIN;
+        if (type == net.minecraft.world.entity.EntityTypes.PLAYER) {
+            type = net.minecraft.world.entity.EntityTypes.MANNEQUIN;
         }
 
         try {
@@ -43,7 +43,7 @@ public class EntityCache {
                 long start = System.currentTimeMillis();
                 CompoundTag tag = new CompoundTag();
                 tag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(t).toString());
-                Entity created = EntityType.loadEntityRecursive(tag, level, EntitySpawnReason.COMMAND, input -> {
+                Entity created = EntityType.loadEntityRecursive(tag, level, new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.COMMAND, false), input -> {
                     input.setId(-1);
                     input.setYRot(0.0F);
                     input.setYHeadRot(0.0F);
@@ -51,7 +51,7 @@ public class EntityCache {
                     input.setOldRot();
                     input.setCustomNameVisible(false);
                     input.needsSync = false;
-                    input.hurtMarked = false;
+                    input.syncVelocity = false;
                     if (input instanceof Mob mob) {
                         mob.setNoAi(true);
                     }
@@ -74,7 +74,7 @@ public class EntityCache {
 
     @Nullable
     public static ItemEntity fetchItemEntity(ItemStack itemStack) {
-        if (itemStack.isEmpty() || !(fetchEntity(EntityType.ITEM) instanceof ItemEntity itemEntity))
+        if (itemStack.isEmpty() || !(fetchEntity(net.minecraft.world.entity.EntityTypes.ITEM) instanceof ItemEntity itemEntity))
             return null;
 
         itemEntity.setItem(itemStack);

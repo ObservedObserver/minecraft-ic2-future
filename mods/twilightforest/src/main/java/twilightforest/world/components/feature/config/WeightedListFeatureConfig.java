@@ -1,12 +1,12 @@
 package twilightforest.world.components.feature.config;
 
+import net.minecraft.world.level.levelgen.feature.Feature;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.util.random.WeightedList;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import java.util.Optional;
@@ -26,13 +26,11 @@ public class WeightedListFeatureConfig implements FeatureConfiguration {
 	}
 
 	@Override
-	public Stream<Holder<ConfiguredFeature<?, ?>>> getSubFeatures() {
+	public Stream<Holder<Feature>> getSubFeatures() {
 		return this.randomFeatures.unwrap()
 			.stream()
 			.map(Weighted::value)
 			.map(Holder::value)
-			.map(PlacedFeature::feature)
-			.map(Holder::value)
-			.flatMap(ConfiguredFeature::getSubFeatures);
+			.flatMap(PlacedFeature::getFeatures);
 	}
 }

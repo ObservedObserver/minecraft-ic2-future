@@ -2,7 +2,7 @@ package twilightforest.client.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
@@ -23,8 +23,8 @@ public class QuestingRamIndicatorOverlay {
 	@Autowired(dist = Dist.CLIENT)
 	private static QuestingRamCurrentContext questingRamCurrentContext;
 
-	public static void render(Minecraft minecraft, GuiGraphicsExtractor graphics, Gui gui, Player player) {
-		if (player != null && !minecraft.options.hideGui && TFConfig.showQuestRamCrosshairIndicator) {
+	public static void render(Minecraft minecraft, GuiGraphicsExtractor graphics, Hud gui, Player player) {
+		if (player != null && !minecraft.gui.hud.isHidden() && TFConfig.showQuestRamCrosshairIndicator) {
 			if (minecraft.options.getCameraType().isFirstPerson() && (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || gui.canRenderCrosshairForSpectator(minecraft.hitResult)) && minecraft.crosshairPickEntity instanceof QuestRam ram) {
 				ItemStack stack = player.getInventory().getItem(player.getInventory().getSelectedSlot());
 				if (!stack.isEmpty()) {

@@ -1,0 +1,7 @@
+{
+  "type": "twilightforest:fallen_small_log",
+  "config": {
+    "hollow": "twilightforest:hollow_mangrove_log_horizontal",
+    "normal": "twilightforest:mangrove_log"
+  }
+}

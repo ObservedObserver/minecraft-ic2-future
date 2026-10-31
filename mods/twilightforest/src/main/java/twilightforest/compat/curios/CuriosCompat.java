@@ -88,13 +88,8 @@ public class CuriosCompat {
 			if (!player.level().isClientSide() && playerData.contains(CharmEvents.CONSUMED_CHARM_TAG) && player.hasData(TFDataAttachments.CHARM_INVENTORY) && !player.getData(TFDataAttachments.CHARM_INVENTORY).isEmpty()) {
 				//Keep all Curios items
 				CuriosApi.getCuriosInventory(player).ifPresent(modifiable -> {
-					for (int i = 0; i < modifiable.getSlots(); ++i) {
-						int finalI = i;
-						//TODO: This is just what Curios does.
-						@SuppressWarnings("removal")
-						Predicate<ItemStack> isEquippedCurio = stack -> stack == modifiable.getEquippedCurios().getStackInSlot(finalI);
-						event.addOverride(isEquippedCurio, DropRule.ALWAYS_KEEP);
-					}
+					// This event evaluates equipped Curios only. Keep every equipped item, including equal stacks.
+					event.addOverride(stack -> true, DropRule.ALWAYS_KEEP);
 				});
 			}
 		}

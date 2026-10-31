@@ -32,14 +32,14 @@ public class TrollCaveStructureGenerator {
     public static TrollCaveStructure buildTrollCaveConfig(BootstrapContext<Structure> context) {
         return new TrollCaveStructure(
             ControlledSpawns.ControlledSpawningConfig.create(List.of(WeightedList.<MobSpawnSettings.SpawnerData>builder()
-                .add(new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 1, 2), 5)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 2), 10)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.TROLL.get(), 1, 2), 20)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.WITCH, 1, 1), 5)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.CREEPER, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 5)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.TROLL.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 20)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.WITCH, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 5)
                 .build()
             , WeightedList.<MobSpawnSettings.SpawnerData>builder()
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.GIANT_MINER.get(), 1, 1), 10)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), 1, 1), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.GIANT_MINER.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             ), WeightedList.of(), WeightedList.of()),
             context.lookup(TFRegistries.Keys.STRUCTURE_SPELEOTHEM_SETTINGS).getOrThrow(StructureSpeleothemConfigs.TROLL_CAVE),

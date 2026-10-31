@@ -21,12 +21,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "twilightforest:twilight_oak_log",
-                  "Properties": {
-                    "axis": "y"
-                  }
-                }
+                "output_state": "twilightforest:twilight_oak_log"
               }
             ]
           },
@@ -44,12 +39,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "twilightforest:canopy_log",
-                  "Properties": {
-                    "axis": "y"
-                  }
-                }
+                "output_state": "twilightforest:canopy_log"
               }
             ]
           },
@@ -67,12 +57,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:oak_log",
-                  "Properties": {
-                    "axis": "y"
-                  }
-                }
+                "output_state": "minecraft:oak_log"
               }
             ]
           },
@@ -90,12 +75,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:birch_log",
-                  "Properties": {
-                    "axis": "y"
-                  }
-                }
+                "output_state": "minecraft:birch_log"
               }
             ]
           },

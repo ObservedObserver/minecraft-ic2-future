@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.core.registries.codec.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -37,15 +37,15 @@ public class HollowTreeStructure extends Structure implements DecorationClearanc
 		DecorationConfig.CODEC.fieldOf(DecorationClearance.CODEC_NAME).forGetter(s -> s.decorationConfig),
 		IntProviders.codec(16, 128).fieldOf("height").forGetter(s -> s.height),
 		IntProviders.codec(1, 8).fieldOf("radius").forGetter(s -> s.radius),
-		BlockStateProvider.CODEC.fieldOf("log").forGetter(s -> s.log),
-		BlockStateProvider.CODEC.fieldOf("wood").forGetter(s -> s.wood),
-		BlockStateProvider.CODEC.fieldOf("root").forGetter(s -> s.root),
-		BlockStateProvider.CODEC.fieldOf("leaves").forGetter(s -> s.leaves),
-		BlockStateProvider.CODEC.fieldOf("vine").forGetter(s -> s.vine),
-		BlockStateProvider.CODEC.fieldOf("bug").forGetter(s -> s.bug),
-		BlockStateProvider.CODEC.fieldOf("dungeon_wood").forGetter(s -> s.dungeonWood),
-		BlockStateProvider.CODEC.fieldOf("dungeon_air").forGetter(s -> s.dungeonAir),
-		BlockStateProvider.CODEC.fieldOf("dungeon_loot_block").forGetter(s -> s.dungeonLootBlock),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("log").forGetter(s -> s.log),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("wood").forGetter(s -> s.wood),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("root").forGetter(s -> s.root),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("leaves").forGetter(s -> s.leaves),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("vine").forGetter(s -> s.vine),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("bug").forGetter(s -> s.bug),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("dungeon_wood").forGetter(s -> s.dungeonWood),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("dungeon_air").forGetter(s -> s.dungeonAir),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("dungeon_loot_block").forGetter(s -> s.dungeonLootBlock),
 		ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("dungeon_loot_table").forGetter(s -> s.dungeonLootTable),
 		RegistryFixedCodec.create(Registries.ENTITY_TYPE).fieldOf("dungeon_monster").forGetter(s -> s.dungeonMonster),
 		Codec.BOOL.optionalFieldOf("allow_in_water", false).forGetter(s -> s.allowInWater)
@@ -127,7 +127,7 @@ public class HollowTreeStructure extends Structure implements DecorationClearanc
 
 		if (height < 16 || (!this.allowInWater && seaFloorY < worldY))
 			return Optional.empty();
-		if (!this.getModifiedStructureSettings().biomes().contains(context.chunkGenerator().getBiomeSource().getNoiseBiome(x >> 2, worldY >> 2, z >> 2, context.randomState().sampler())))
+		if (!this.getModifiedStructureSettings().biomes().contains(context.biomeResolver().getNoiseBiome(x >> 2, worldY >> 2, z >> 2)))
 			return Optional.empty();
 
 		int radius = this.radius.sample(random);

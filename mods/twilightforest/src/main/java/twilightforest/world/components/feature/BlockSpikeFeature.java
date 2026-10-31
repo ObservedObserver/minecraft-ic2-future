@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -14,16 +15,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import twilightforest.tags.TFBlockTags;
 import twilightforest.util.features.FeatureLogic;
 import twilightforest.world.components.speleothem.Stalactite;
 
 import java.util.List;
 
-public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
+public class BlockSpikeFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 	public static final Stalactite STONE_STALACTITE = new Stalactite(Either.right(Blocks.STONE), 0.25F, 11, 1);
 
 	public BlockSpikeFeature(Codec<NoneFeatureConfiguration> codec) {
@@ -31,7 +31,7 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> context) {
 		RandomSource random = context.random();
 		return startSpike(context.level(), context.origin(), STONE_STALACTITE, random, false);
 	}

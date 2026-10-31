@@ -28,15 +28,10 @@ import java.util.List;
 
 public class TransLogCoreBlock extends SpecialMagicLogBlock {
 
-	private static final MapCodec<SpecialMagicLogBlock> CODEC = simpleCodec(TransLogCoreBlock::new);
+
 
 	public TransLogCoreBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends DirectionalBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

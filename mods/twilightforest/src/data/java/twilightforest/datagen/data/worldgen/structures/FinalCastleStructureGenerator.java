@@ -30,25 +30,25 @@ public class FinalCastleStructureGenerator {
         return new FinalCastleStructure( // TODO Re-enable mob spawns when proper castle mobs are created
             ControlledSpawns.ControlledSpawningConfig.create(List.of(WeightedList.<MobSpawnSettings.SpawnerData>builder()
                 // plain parts of the castle, like the tower maze
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), 1, 2), 10)
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), 1, 1), 10)
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.HARBINGER_CUBE.get(), 1, 1), 10)
-                //.add(new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 1, 1), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.HARBINGER_CUBE.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             , WeightedList.<MobSpawnSettings.SpawnerData>builder()
                 // internal castle
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), 1, 2), 10)
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), 1, 1), 10)
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.HARBINGER_CUBE.get(), 1, 1), 10)
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), 1, 1), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.KOBOLD.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.HARBINGER_CUBE.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             , WeightedList.<MobSpawnSettings.SpawnerData>builder()
                 // dungeons
-                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), 1, 1), 10)
+                //.add(new MobSpawnSettings.SpawnerData(TFEntities.ADHERENT.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             , WeightedList.<MobSpawnSettings.SpawnerData>builder()
                 // forge
-                //.add(new MobSpawnSettings.SpawnerData(EntityType.BLAZE, 1, 1), 10)
+                //.add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.BLAZE, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build()
             ), WeightedList.of(), WeightedList.of()),
             new AdvancementLockedStructure.AdvancementLockConfig(List.of(TwilightForestMod.prefix("progress_troll"))),

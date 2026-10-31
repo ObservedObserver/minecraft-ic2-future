@@ -24,13 +24,13 @@ public class GiantToolGroupingModifier extends LootModifier {
 
 	public static final MapCodec<GiantToolGroupingModifier> CODEC = RecordCodecBuilder.mapCodec(inst -> LootModifier.codecStart(inst).apply(inst, GiantToolGroupingModifier::new));
 
-	public GiantToolGroupingModifier(LootItemCondition[] conditions, int priority) {
+	public GiantToolGroupingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, int priority) {
 		super(conditions, priority);
 	}
 
 	@Override
 	protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-		if (context.getParameter(LootContextParams.THIS_ENTITY) instanceof Player player) {
+		if (context.getOptional(LootContextParams.THIS_ENTITY) instanceof Player player) {
 			if (!generatedLoot.isEmpty() && generatedLoot.getFirst().getItem() instanceof BlockItem block) {
 				if (CONVERSIONS.containsKey(block.getBlock())) { // Should be true but let's double-check
 					var attachment = player.getData(TFDataAttachments.GIANT_PICKAXE_MINING);

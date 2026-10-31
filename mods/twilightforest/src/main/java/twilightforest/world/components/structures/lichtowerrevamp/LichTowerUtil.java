@@ -38,16 +38,16 @@ public class LichTowerUtil {
 
 	private final Supplier<StructureProcessor> roomSpawners = Suppliers.memoize(() -> SpawnerProcessor.compile(2, 0.8f, Object2IntMaps.unmodifiable(Util.make(new Object2IntArrayMap<>(), map -> {
 		// 1/3 chance for any spider variant, 1/3 chance for skeleton, 1/3 chance for zombie
-		map.put(EntityType.SPIDER, 1);
-		map.put(EntityType.CAVE_SPIDER, 1);
+		map.put(net.minecraft.world.entity.EntityTypes.SPIDER, 1);
+		map.put(net.minecraft.world.entity.EntityTypes.CAVE_SPIDER, 1);
 		map.put(TFEntities.SWARM_SPIDER.get(), 1);
 		map.put(TFEntities.HEDGE_SPIDER.get(), 1);
-		map.put(EntityType.SKELETON, 4);
-		map.put(EntityType.ZOMBIE, 4);
+		map.put(net.minecraft.world.entity.EntityTypes.SKELETON, 4);
+		map.put(net.minecraft.world.entity.EntityTypes.ZOMBIE, 4);
 	}))));
 	private final Supplier<StructureProcessor> centralSpawners = Suppliers.memoize(() -> SpawnerProcessor.compile(4, Object2IntMaps.unmodifiable(Util.make(new Object2IntArrayMap<>(), map -> {
-		map.put(EntityType.SKELETON, 2);
-		map.put(EntityType.ZOMBIE, 1);
+		map.put(net.minecraft.world.entity.EntityTypes.SKELETON, 2);
+		map.put(net.minecraft.world.entity.EntityTypes.ZOMBIE, 1);
 		map.put(TFEntities.SWARM_SPIDER.get(), 1);
 	}))));
 	private final Supplier<List<Block>> STAIR_DECAY_BLOCKS = Suppliers.memoize(() -> List.of(

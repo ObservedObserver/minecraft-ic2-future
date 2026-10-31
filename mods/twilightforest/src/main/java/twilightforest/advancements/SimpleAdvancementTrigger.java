@@ -2,10 +2,10 @@ package twilightforest.advancements;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.ContextAwarePredicate;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import twilightforest.init.TFAdvancements;
 
@@ -22,10 +22,10 @@ public class SimpleAdvancementTrigger extends SimpleCriterionTrigger<SimpleAdvan
 		this.trigger(player, (instance) -> true);
 	}
 
-	public record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance {
+	public record TriggerInstance(Optional<net.minecraft.core.Holder<LootItemCondition>> player) implements SimpleInstance {
 
 		public static final Codec<SimpleAdvancementTrigger.TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SimpleAdvancementTrigger.TriggerInstance::player))
+				LootItemCondition.CODEC.optionalFieldOf("player").forGetter(SimpleAdvancementTrigger.TriggerInstance::player))
 			.apply(instance, SimpleAdvancementTrigger.TriggerInstance::new));
 
 		public static Criterion<SimpleAdvancementTrigger.TriggerInstance> makeTFPortal() {

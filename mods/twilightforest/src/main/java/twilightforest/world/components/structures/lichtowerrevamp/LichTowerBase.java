@@ -1,5 +1,7 @@
 package twilightforest.world.components.structures.lichtowerrevamp;
 
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -60,7 +62,7 @@ public final class LichTowerBase extends TwilightJigsawPiece implements PieceBea
 	}
 
 	@Override
-	protected void processJigsaw(TwilightJigsawPiece parent, StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
+	protected void processJigsaw(TwilightJigsawPiece parent, StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
 		switch (connection.target()) {
 			case "twilightforest:lich_tower/tower_below" -> LichTowerSegment.buildTowerBySegments(pieceAccessor, context, connection.pos(), connection.orientation(), this, this.structureManager, context.random().nextIntBetweenInclusive(12, 15));
 			case "twilightforest:lich_tower/bridge" -> {
@@ -141,7 +143,7 @@ public final class LichTowerBase extends TwilightJigsawPiece implements PieceBea
 		return 1;
 	}
 
-	private static class TrimProcessor extends StructureProcessor {
+	private static class TrimProcessor implements StructureProcessor {
 		private static final TrimProcessor INSTANCE = new TrimProcessor();
 
 		@Nullable
@@ -152,11 +154,11 @@ public final class LichTowerBase extends TwilightJigsawPiece implements PieceBea
 				return null;
 			}
 
-			return super.process(level, origin, centerBottom, originalBlockInfo, modifiedBlockInfo, settings, template);
+			return modifiedBlockInfo;
 		}
 
 		@Override
-		protected StructureProcessorType<?> getType() {
+		public MapCodec<? extends StructureProcessor> codec() {
 			return null; // not serialized
 		}
 	}

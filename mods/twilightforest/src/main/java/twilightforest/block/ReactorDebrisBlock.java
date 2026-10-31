@@ -21,15 +21,10 @@ import twilightforest.init.TFBlockEntities;
 
 public class ReactorDebrisBlock extends BaseEntityBlock {
 
-	public static final MapCodec<ReactorDebrisBlock> CODEC = simpleCodec(ReactorDebrisBlock::new);
+
 
 	public ReactorDebrisBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

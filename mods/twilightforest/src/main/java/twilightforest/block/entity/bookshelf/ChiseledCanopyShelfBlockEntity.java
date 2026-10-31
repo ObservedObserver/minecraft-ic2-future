@@ -106,6 +106,15 @@ public class ChiseledCanopyShelfBlockEntity extends ChiseledBookShelfBlockEntity
 		this.setChanged();
 	}
 
+	@Override
+	public void setEntityData(net.minecraft.world.item.component.TypedEntityData<EntityType<?>> data, RandomSource random) {
+		this.spawner.setEntityData(data, this.level, random, this.worldPosition);
+		if (this.level != null) {
+			this.level.setBlockAndUpdate(this.worldPosition, this.getBlockState().setValue(ChiseledCanopyShelfBlock.SPAWNER, true));
+		}
+		this.setChanged();
+	}
+
 	public BookshelfSpawner getSpawner() {
 		return this.spawner;
 	}

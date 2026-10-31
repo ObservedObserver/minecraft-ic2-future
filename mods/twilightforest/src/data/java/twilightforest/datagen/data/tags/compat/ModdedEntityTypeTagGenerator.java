@@ -2,17 +2,19 @@ package twilightforest.datagen.data.tags.compat;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.EntityTypeTagsProvider;
+import twilightforest.datagen.helpers.ValueTagsProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.registries.Registries;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFEntities;
 import twilightforest.tags.TFEntityTypeTags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ModdedEntityTypeTagGenerator extends EntityTypeTagsProvider {
+public class ModdedEntityTypeTagGenerator extends ValueTagsProvider<EntityType<?>> {
 
 	public ModdedEntityTypeTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-		super(output, provider, TwilightForestMod.ID);
+		super(output, Registries.ENTITY_TYPE, provider, type -> type.builtInRegistryHolder().unwrapKey().orElseThrow(), TwilightForestMod.ID);
 	}
 
 	@Override

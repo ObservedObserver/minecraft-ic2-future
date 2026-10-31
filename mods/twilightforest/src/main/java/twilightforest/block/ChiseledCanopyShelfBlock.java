@@ -55,7 +55,7 @@ public class ChiseledCanopyShelfBlock extends ChiseledBookShelfBlock {
 	}
 
 	@Override
-	public boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
+	public boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter, ItemStack ignitingItem) {
 		if (level.getBlockState(pos).getValue(SPAWNER) && level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof ChiseledCanopyShelfBlockEntity shelf) {
 			for (int i = 0; i < ChiseledCanopyShelfBlock.SLOT_OCCUPIED_PROPERTIES.size(); i++) {
 				BooleanProperty property = ChiseledCanopyShelfBlock.SLOT_OCCUPIED_PROPERTIES.get(i);
@@ -65,7 +65,7 @@ public class ChiseledCanopyShelfBlock extends ChiseledBookShelfBlock {
 			}
 			return level.destroyBlock(pos, false);
 		}
-		return super.onCaughtFire(state, level, pos, face, igniter);
+		return super.onCaughtFire(state, level, pos, face, igniter, ignitingItem);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class ChiseledCanopyShelfBlock extends ChiseledBookShelfBlock {
 	}
 
 	@Override
-	public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity entity, ItemStack stack) {
+	public void playerDestroy(net.minecraft.server.level.ServerLevel level, net.minecraft.server.level.ServerPlayer player, BlockPos pos, BlockState state, @Nullable BlockEntity entity, ItemStack stack) {
 		if (level instanceof ServerLevel serverLevel && state.getValue(SPAWNER)) {
 			level.playSound(null, pos, TFSounds.DEATH_TOME_DEATH.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 			ParticlePacket particlePacket = new ParticlePacket();

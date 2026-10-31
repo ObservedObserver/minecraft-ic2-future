@@ -1,9 +1,8 @@
 package twilightforest.config;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.yggdrasil.ProfileResult;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.minecraft.SessionService;
+import com.mojang.authlib.services.ProfileResult;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -22,7 +21,6 @@ import twilightforest.TwilightForestMod;
 import twilightforest.network.SyncUncraftingTableConfigPacket;
 import twilightforest.util.PlayerHelper;
 
-import java.net.Proxy;
 import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
@@ -234,8 +232,7 @@ public class TFConfig {
 				@Override
 				public void run() {
 					GAME_PROFILES.clear();
-					YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
-					MinecraftSessionService session = service.createMinecraftSessionService();
+					SessionService session = net.minecraft.client.Minecraft.getInstance().services().sessionService();
 					for (String stringUUID : config.giantSkinUUIDs.get()) {
 						try {
 							ProfileResult result = session.fetchProfile(UUID.fromString(stringUUID), false);

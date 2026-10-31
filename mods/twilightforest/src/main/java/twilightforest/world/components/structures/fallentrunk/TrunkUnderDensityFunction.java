@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class TrunkUnderDensityFunction extends Beardifier {
+public class TrunkUnderDensityFunction extends Beardifier implements twilightforest.world.components.chunkgenerators.PointDensityFunction {
 	private final boolean isBigTree;
 	private final boolean isXOriented;
 	private final RandomSource random;  // used to create dirt mounds
@@ -52,17 +52,17 @@ public class TrunkUnderDensityFunction extends Beardifier {
 	}
 
 	@Override
-	public double compute(FunctionContext context) {
-		int x = context.blockX();
-		int y = context.blockY();
-		int z = context.blockZ();
+	public double computeAt(int blockX, int blockY, int blockZ) {
+		int x = blockX;
+		int y = blockY;
+		int z = blockZ;
 
 		int horizontalDistanceX = Math.max(0, Math.max(boundingBox.minX() - x, x - boundingBox.maxX()));
 		int horizontalDistanceZ = Math.max(0, Math.max(boundingBox.minZ() - z, z - boundingBox.maxZ()));
 		int adjustedGroundLevel = boundingBox.minY() + groundLevelDelta + (isBigTree ? 1 : 0);
 		int verticalDistance = y - adjustedGroundLevel;
 
-		double moundContribution = computeMoundsContribution(context);
+		double moundContribution = computeMoundsContribution(blockX, blockY, blockZ);
 		if (moundContribution > 0)
 			return moundContribution;
 		return flatSurroundingTerrain(horizontalDistanceX, verticalDistance, horizontalDistanceZ);
@@ -91,10 +91,10 @@ public class TrunkUnderDensityFunction extends Beardifier {
 		return -y * factor / verticalScale * (Math.exp(-normalizedDistance / (Math.max(1 - normalizedDistance, 1e-8))));
 	}
 
-	protected double computeMoundsContribution(FunctionContext context) {
-		int x = context.blockX() - boundingBox.minX();
-		int y = context.blockY() - boundingBox.minY();
-		int z = context.blockZ() - boundingBox.minZ();
+	protected double computeMoundsContribution(int blockX, int blockY, int blockZ) {
+		int x = blockX - boundingBox.minX();
+		int y = blockY - boundingBox.minY();
+		int z = blockZ - boundingBox.minZ();
 		int radius = getRadius(boundingBox);
 		double ax = Math.abs((isXOriented ? z : x) - radius + 1);
 		double az = Math.abs(y - radius + 1);
@@ -108,7 +108,7 @@ public class TrunkUnderDensityFunction extends Beardifier {
 
 		double max = -1D;
 		for (TanhHillFunction h : tanhHillFunctions) {
-			double value = h.compute(context);
+			double value = h.computeAt(blockX, blockY, blockZ);
 			if (value > max)
 				max = value;
 		}
@@ -142,4 +142,9 @@ public class TrunkUnderDensityFunction extends Beardifier {
 	private static int getRadius(int diameter) {
 		return (int) Math.ceil(diameter / 2D);
 	}
+    @Override public double minValue() { return Double.NEGATIVE_INFINITY; }
+    @Override public double maxValue() { return Double.POSITIVE_INFINITY; }
+    @Override public com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.levelgen.densityfunction.DensityFunction> codec() {
+        throw new UnsupportedOperationException("Runtime structure density cannot be encoded");
+    }
 }

@@ -13,15 +13,16 @@ import twilightforest.datagen.data.worldgen.*;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
+public final class RegistryDataGenerator {
 
-	public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-		.add(Registries.CONFIGURED_FEATURE, TFConfiguredFeatureGenerator::bootstrap)
+	public static void gather(net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent event) {
+        event.gatherFor("minecraft", TwilightForestMod.ID)
+		.add(Registries.FEATURE, TFConfiguredFeatureGenerator::bootstrap)
 		.add(Registries.PLACED_FEATURE, TFPlacedFeatureGenerator::bootstrap)
 		.add(TFRegistries.Keys.STRUCTURE_SPELEOTHEM_SETTINGS, StructureSpeleothemConfigGenerator::bootstrap)
 		.add(Registries.STRUCTURE, TFStructureGenerator::bootstrap)
 		.add(Registries.STRUCTURE_SET, TFStructureSetGenerator::bootstrap)
-		.add(Registries.CONFIGURED_CARVER, TFCaveCarverGenerator::bootstrap)
+		.add(Registries.CARVER, TFCaveCarverGenerator::bootstrap)
 		.add(Registries.DENSITY_FUNCTION, TFDensityFunctionGenerator::bootstrap)
 		.add(Registries.NOISE_SETTINGS, TFDimensionGenerator::bootstrapNoise)
 		.add(TFRegistries.Keys.BIOME_STACK, TFBiomeLayerGenerator::bootstrap)
@@ -43,9 +44,13 @@ public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
 		.add(Registries.ENCHANTMENT, TFEnchantmentsGenerator::bootstrap)
 		.add(TFRegistries.Keys.TEMPLATE_MARKER_HANDLER_LIST, TemplateMarkerHandlerGenerator::bootstrap)
 		.add(Registries.TIMELINE, TFTimelineGenerator::bootstrap)
-		.add(Registries.WORLD_CLOCK, TFWorldClockGenerator::bootstrap);
+		.add(Registries.WORLD_CLOCK, TFWorldClockGenerator::bootstrap)
+        .add(Registries.CONTEXT_INT_PROVIDER, context -> {
+            for (int chance : new int[]{10,30,50,65,85}) context.register(net.minecraft.resources.ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, TwilightForestMod.prefix("compostable/legacy_"+chance)), new twilightforest.loot.runtime.LegacyCompostLayers(chance / 100.0F));
+        })
+        .add(Registries.ADVANCEMENT, new TFAdvancementProvider())
+        .add(Registries.LOOT_TABLE, new twilightforest.datagen.data.loot.LootGenerator())
+        .add(net.minecraft.data.recipes.RecipeProvider.asBootstrap(twilightforest.datagen.data.recipes.CraftingGenerator::new));
 
-	public RegistryDataGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-		super(output, provider, BUILDER, Set.of("minecraft", TwilightForestMod.ID));
-	}
+    }
 }

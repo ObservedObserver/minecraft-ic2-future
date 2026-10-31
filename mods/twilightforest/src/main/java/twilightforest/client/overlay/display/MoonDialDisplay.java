@@ -1,7 +1,7 @@
 package twilightforest.client.overlay.display;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class MoonDialDisplay implements ItemDisplay {
 
 	@Override
-	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		Optional<MoonPhase> phase = item.getOrDefault(TFDataComponents.MOON_DIAL_PHASE, Optional.empty());
 		int phaseIndex = (phase.isPresent()) ? phase.orElseThrow().index() : 0;
 		FormattedCharSequence formattedcharsequence = this.getText(item).getVisualOrderText();
@@ -31,7 +31,7 @@ public class MoonDialDisplay implements ItemDisplay {
 	}
 
 	@Override
-	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		int textWidth = minecraft.font.width(this.getText(item).getVisualOrderText());
 		return new Bounds(Math.max(0, (widestWidgetWidth / 2 - 5) - (textWidth / 2)), 0, textWidth + 10, minecraft.font.lineHeight);
 	}

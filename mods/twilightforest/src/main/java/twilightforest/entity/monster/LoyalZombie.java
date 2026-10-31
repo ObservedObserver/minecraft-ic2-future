@@ -44,7 +44,6 @@ import twilightforest.init.TFSounds;
 
 public class LoyalZombie extends TamableAnimal {
 
-	private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(LoyalZombie.class, EntityDataSerializers.BOOLEAN);
 	private static final Identifier SPEED_MODIFIER_BABY_ID = Identifier.withDefaultNamespace("baby");
 	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_ID, 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
 	private static final EntityDimensions BABY_DIMENSIONS = TFEntities.LOYAL_ZOMBIE.get().getDimensions().scale(0.5F).withEyeHeight(0.93F);
@@ -70,7 +69,6 @@ public class LoyalZombie extends TamableAnimal {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_BABY_ID, false);
 	}
 
 	@Override
@@ -188,23 +186,11 @@ public class LoyalZombie extends TamableAnimal {
 
 	}
 
-	@Override
-	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-		if (DATA_BABY_ID.equals(key)) {
-			this.refreshDimensions();
-		}
-
-		super.onSyncedDataUpdated(key);
-	}
 
 	@Override
-	public boolean isBaby() {
-		return this.getEntityData().get(DATA_BABY_ID);
-	}
-
-	@Override
-	public void setBaby(boolean baby) {
-		this.getEntityData().set(DATA_BABY_ID, baby);
+	public void setAge(int newAge) {
+		super.setAge(newAge);
+		boolean baby = newAge < 0;
 		if (!this.level().isClientSide()) {
 			AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
 			attributeinstance.removeModifier(SPEED_MODIFIER_BABY_ID);
@@ -213,6 +199,9 @@ public class LoyalZombie extends TamableAnimal {
 			}
 		}
 	}
+
+	@Override
+	public boolean canAgeUp() { return false; }
 
 	@Override
 	public EntityDimensions getDefaultDimensions(Pose pose) {

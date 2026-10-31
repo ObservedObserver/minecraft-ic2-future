@@ -2,46 +2,43 @@
   "type": "minecraft:entity",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "modifier": [
             {
-              "add": false,
+              "type": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "max": 11.0,
-                "min": 6.0
-              },
-              "function": "minecraft:set_count"
+                "max": 11,
+                "min": 6
+              }
             },
             {
+              "type": "minecraft:enchanted_count_increase",
               "count": {
                 "type": "minecraft:uniform",
                 "max": 1.0,
                 "min": 0.0
               },
-              "enchantment": "minecraft:looting",
-              "function": "minecraft:enchanted_count_increase"
+              "enchantment": "minecraft:looting"
             },
             {
+              "type": "twilightforest:multiplayer_addition",
               "extra_count_per_player": {
                 "type": "minecraft:uniform",
-                "max": 4.0,
-                "min": 2.0
-              },
-              "function": "twilightforest:multiplayer_addition"
+                "max": 4,
+                "min": 2
+              }
             }
           ],
           "name": "twilightforest:naga_scale"
         }
       ],
       "name": "naga_scales",
-      "rolls": 1.0
+      "rolls": 1
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -49,7 +46,7 @@
         }
       ],
       "name": "naga_trophy",
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "twilightforest:entities/naga"

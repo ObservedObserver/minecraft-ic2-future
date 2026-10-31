@@ -25,7 +25,7 @@ public class ProtectionBoxRenderer extends EntityRenderer<ProtectionBox, Protect
 	}
 
 	@Override
-	public boolean shouldRender(ProtectionBox entity, Frustum frustum, double x, double y, double z) {
+	public boolean shouldRender(ProtectionBox entity, Frustum frustum, double x, double y, double z, float partialTicks) {
 		return true;
 	}
 
@@ -36,7 +36,7 @@ public class ProtectionBoxRenderer extends EntityRenderer<ProtectionBox, Protect
 		if (state.life < 20) alpha = state.life / 20.0F;
 
 		this.boxModel.setupAnim(state);
-		submitNodeCollector.submitModel(this.boxModel, state, poseStack, TFRenderTypes.PROTECTION_BOX, state.lightCoords, OverlayTexture.NO_OVERLAY, ARGB.white(alpha), null, state.outlineColor, null);
+		twilightforest.client.renderer.ModelSubmission.submit(submitNodeCollector, this.boxModel, state, poseStack, TFRenderTypes.PROTECTION_BOX, state.lightCoords, OverlayTexture.NO_OVERLAY, ARGB.white(alpha), null, state.outlineColor, null);
 	}
 
 	@Override

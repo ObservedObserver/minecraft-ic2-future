@@ -5,7 +5,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+import com.mojang.serialization.MapCodec;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import twilightforest.TwilightForestMod;
@@ -20,7 +20,7 @@ public final class TFFeatureModifiers {
 
 	public static final DeferredRegister<FoliagePlacerType<?>> FOLIAGE_PLACERS = DeferredRegister.create(Registries.FOLIAGE_PLACER_TYPE, TwilightForestMod.ID);
 	public static final DeferredRegister<TreeDecoratorType<?>> TREE_DECORATORS = DeferredRegister.create(Registries.TREE_DECORATOR_TYPE, TwilightForestMod.ID);
-	public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, TwilightForestMod.ID);
+	public static final DeferredRegister<MapCodec<? extends PlacementModifier>> PLACEMENT_MODIFIERS = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, TwilightForestMod.ID);
 	public static final DeferredRegister<TrunkPlacerType<?>> TRUNK_PLACERS = DeferredRegister.create(Registries.TRUNK_PLACER_TYPE, TwilightForestMod.ID);
 
 	public static final DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<BranchingTrunkPlacer>> TRUNK_BRANCHING = TRUNK_PLACERS.register("branching_trunk_placer", () -> new TrunkPlacerType<>(BranchingTrunkPlacer.CODEC));
@@ -33,12 +33,12 @@ public final class TFFeatureModifiers {
 	public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<TreeRootsDecorator>> TREE_ROOTS = TREE_DECORATORS.register("tree_roots", () -> new TreeDecoratorType<>(TreeRootsDecorator.CODEC));
 	public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DangleFromTreeDecorator>> DANGLING_DECORATOR = TREE_DECORATORS.register("dangle_from_tree_decorator", () -> new TreeDecoratorType<>(DangleFromTreeDecorator.CODEC));
 
-	public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<AvoidLandmarkModifier>> NO_STRUCTURE = registerPlacer("no_structure", () -> () -> AvoidLandmarkModifier.CODEC);
-	public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ChunkCenterModifier>> CHUNK_CENTERER = registerPlacer("chunk_centerer", () -> () -> ChunkCenterModifier.CODEC);
-	public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ChunkBlanketingModifier>> CHUNK_BLANKETING = registerPlacer("chunk_blanketing", () -> () -> ChunkBlanketingModifier.CODEC);
+	public static final DeferredHolder<MapCodec<? extends PlacementModifier>, MapCodec<AvoidLandmarkModifier>> NO_STRUCTURE = registerPlacer("no_structure", () -> AvoidLandmarkModifier.CODEC);
+	public static final DeferredHolder<MapCodec<? extends PlacementModifier>, MapCodec<ChunkCenterModifier>> CHUNK_CENTERER = registerPlacer("chunk_centerer", () -> ChunkCenterModifier.CODEC);
+	public static final DeferredHolder<MapCodec<? extends PlacementModifier>, MapCodec<ChunkBlanketingModifier>> CHUNK_BLANKETING = registerPlacer("chunk_blanketing", () -> ChunkBlanketingModifier.CODEC);
 
 	//goofy but needed
-	private static <P extends PlacementModifier> DeferredHolder<PlacementModifierType<?>, PlacementModifierType<P>> registerPlacer(String name, Supplier<PlacementModifierType<P>> factory) {
+	private static <P extends PlacementModifier> DeferredHolder<MapCodec<? extends PlacementModifier>, MapCodec<P>> registerPlacer(String name, Supplier<MapCodec<P>> factory) {
 		return PLACEMENT_MODIFIERS.register(name, factory);
 	}
 }

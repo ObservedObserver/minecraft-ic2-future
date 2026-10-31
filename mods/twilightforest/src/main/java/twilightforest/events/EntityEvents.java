@@ -21,7 +21,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -133,7 +133,7 @@ public class EntityEvents {
 			EntityTransformation dataMap = event.getEntity().getType().builtInRegistryHolder().getData(TFDataMaps.OMINOUS_FIRE);
 
 			if (event.getEntity() instanceof ServerPlayer player) {
-				var zombie = EntityType.ZOMBIE.create(player.level(), EntitySpawnReason.CONVERSION);
+				var zombie = net.minecraft.world.entity.EntityTypes.ZOMBIE.create(player.level(), EntitySpawnReason.CONVERSION);
 				zombie.setData(TFDataAttachments.ZOMBIFIED_PLAYER, player.getGameProfile());
 				zombie.setCustomName(player.getName());
 				zombie.copyPosition(player);
@@ -210,7 +210,7 @@ public class EntityEvents {
 		if (source.getMsgId().equals("arrow") && trueSource instanceof Player player) {
 
 			if (player.getItemInHand(player.getUsedItemHand()).is(TFItems.TRIPLE_BOW.get())) {
-				living.invulnerableTime = 0;
+				living.setInvulnerableTime(0);
 			}
 		}
 	}
@@ -257,7 +257,7 @@ public class EntityEvents {
 
 				if (entity instanceof LivingEntity entityBlocking) {
 					if (entityBlocking.isBlocking() && entityBlocking.getUseItem().getUseDuration(entityBlocking) - entityBlocking.getUseItemRemainingTicks() <= TFConfig.shieldParryTicks) {
-						projectile.deflect(ProjectileDeflection.AIM_DEFLECT, entityBlocking, EntityReference.of(entityBlocking), true);
+						projectile.deflect(ProjectileDeflection.AIM_DEFLECT, entityBlocking, EntityReference.of(entityBlocking), true, 1.0D);
 						event.setCanceled(true);
 					}
 				}
@@ -310,7 +310,7 @@ public class EntityEvents {
 						}
 					}
 					stack.consume(1, event.getEntity());
-					event.getEntity().swing(event.getHand());
+					event.getEntity().swing(event.getHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
 					if (event.getEntity() instanceof ServerPlayer)
 						event.getEntity().awardStat(TFStats.SKULL_CANDLES_MADE.get());
 					//this is to prevent anything from being placed afterwords
@@ -373,7 +373,7 @@ public class EntityEvents {
 	}
 
 	public static void gatherPotentialSpawns(StructureManager structureManager, MobCategory classification, BlockPos pos, Consumer<Weighted<MobSpawnSettings.SpawnerData>> consumer) {
-		List<StructureStart> structureStarts = structureManager.startsForStructure(ChunkPos.containing(pos), s -> s instanceof ControlledSpawns);
+		List<StructureStart> structureStarts = structureManager.startsForStructure(net.minecraft.core.SectionPos.blockToSectionCoord(pos.getX()), net.minecraft.core.SectionPos.blockToSectionCoord(pos.getZ()), s -> s instanceof ControlledSpawns);
 
 		for (StructureStart start : structureStarts) {
 			if (start.getStructure() instanceof ControlledSpawns landmark) {
@@ -506,23 +506,23 @@ public class EntityEvents {
 	}
 
 	private void stopEndermenFromGrabbingBlocksInTF(EntityJoinLevelEvent event) {
-		if (event.getEntity() instanceof EnderMan enderMan) {
+		if (event.getEntity() instanceof Enderman enderMan) {
 			enderMan.goalSelector.getAvailableGoals().stream()
-				.filter(g -> g.getGoal() instanceof EnderMan.EndermanTakeBlockGoal)
+				.filter(g -> g.getGoal() instanceof Enderman.EndermanTakeBlockGoal)
 				.findAny()
 				.ifPresent(g -> {
 					enderMan.goalSelector.removeGoal(g.getGoal());
-					enderMan.goalSelector.addGoal(g.getPriority(), new ExtendedEndermanTakeBlockGoal((EnderMan.EndermanTakeBlockGoal) g.getGoal(), enderMan));
+					enderMan.goalSelector.addGoal(g.getPriority(), new ExtendedEndermanTakeBlockGoal((Enderman.EndermanTakeBlockGoal) g.getGoal(), enderMan));
 				});
 		}
 	}
 
-	static class ExtendedEndermanTakeBlockGoal extends EnderMan.EndermanTakeBlockGoal {
+	static class ExtendedEndermanTakeBlockGoal extends Enderman.EndermanTakeBlockGoal {
 
-		private final EnderMan.EndermanTakeBlockGoal delegate;
-		private final EnderMan enderman;
+		private final Enderman.EndermanTakeBlockGoal delegate;
+		private final Enderman enderman;
 
-		public ExtendedEndermanTakeBlockGoal(EnderMan.EndermanTakeBlockGoal delegate, EnderMan enderman) {
+		public ExtendedEndermanTakeBlockGoal(Enderman.EndermanTakeBlockGoal delegate, Enderman enderman) {
 			super(enderman);
 			this.delegate = delegate;
 			this.enderman = enderman;

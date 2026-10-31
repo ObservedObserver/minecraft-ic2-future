@@ -1,0 +1,7 @@
+{
+  "parent": "twilightforest:block/legacy_signs/template_hanging_sign_rot_3",
+  "textures": {
+    "all": "twilightforest:entity/signs/hanging/transformation",
+    "particle": "twilightforest:block/stripped_transformation_log"
+  }
+}

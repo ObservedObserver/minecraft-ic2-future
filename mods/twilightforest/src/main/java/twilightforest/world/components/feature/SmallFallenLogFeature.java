@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,8 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.block.HorizontalHollowLogBlock;
 import twilightforest.enums.HollowLogVariants;
@@ -19,14 +19,14 @@ import twilightforest.init.TFBlocks;
 import twilightforest.util.features.FeatureUtil;
 import twilightforest.world.components.feature.config.HollowLogConfig;
 
-public class SmallFallenLogFeature extends Feature<HollowLogConfig> {
+public class SmallFallenLogFeature extends ConfiguredFeatureBase<HollowLogConfig> {
 
 	public SmallFallenLogFeature(Codec<HollowLogConfig> configIn) {
 		super(configIn);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<HollowLogConfig> ctx) {
+	public boolean place(FeaturePlacementContext<HollowLogConfig> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();

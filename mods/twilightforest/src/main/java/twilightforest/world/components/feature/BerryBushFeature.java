@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -11,8 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import twilightforest.block.SnowLoggable;
 import twilightforest.tags.TFBlockTags;
 import twilightforest.util.TFMathUtil;
@@ -21,7 +21,7 @@ import twilightforest.world.components.feature.config.BerryBushConfig;
 
 import java.util.List;
 
-public class BerryBushFeature extends Feature<BerryBushConfig> {
+public class BerryBushFeature extends ConfiguredFeatureBase<BerryBushConfig> {
 	private static final float DEFAULT_RIPE_PROBABILITY = 0.2F;
 
 	public BerryBushFeature(Codec<BerryBushConfig> codec) {
@@ -29,7 +29,7 @@ public class BerryBushFeature extends Feature<BerryBushConfig> {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<BerryBushConfig> context) {
+	public boolean place(FeaturePlacementContext<BerryBushConfig> context) {
 		WorldGenLevel level = context.level();
 		BlockPos pos = context.origin();
 		BlockState stateToPlace = context.config().bushState();

@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -8,9 +9,8 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import twilightforest.entity.passive.Raven;
 import twilightforest.init.TFEntities;
 import twilightforest.util.features.FeatureUtil;
@@ -20,14 +20,14 @@ import twilightforest.util.features.FeatureUtil;
  *
  * @author Ben
  */
-public class MonolithFeature extends Feature<NoneFeatureConfiguration> {
+public class MonolithFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 
 	public MonolithFeature(Codec<NoneFeatureConfiguration> configIn) {
 		super(configIn);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();

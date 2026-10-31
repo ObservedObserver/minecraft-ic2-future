@@ -31,7 +31,7 @@ public class YetiCaveStructureGenerator {
     public static YetiCaveStructure buildYetiCaveConfig(BootstrapContext<Structure> context) {
         return new YetiCaveStructure(
             ControlledSpawns.ControlledSpawningConfig.firstIndexMonsters(WeightedList.<MobSpawnSettings.SpawnerData>builder()
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.YETI.get(), 1, 2), 5)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.YETI.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 5)
                 .build()
             ),
             new AdvancementLockedStructure.AdvancementLockConfig(List.of(TwilightForestMod.prefix("progress_lich"))),

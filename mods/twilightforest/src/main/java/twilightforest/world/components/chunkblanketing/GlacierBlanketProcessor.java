@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -17,9 +17,9 @@ import twilightforest.init.custom.ChunkBlanketProcessors;
 
 public record GlacierBlanketProcessor(HolderSet<Biome> biomesForApplication, BlockStateProvider glacierBody, BlockStateProvider glacierTop, int height) implements ChunkBlanketProcessor.SimpleProcessor {
 	public static final MapCodec<GlacierBlanketProcessor> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-		RegistryCodecs.homogeneousList(Registries.BIOME, true).fieldOf("biome_mask").forGetter(GlacierBlanketProcessor::biomesForApplication),
-		BlockStateProvider.CODEC.fieldOf("body_block").forGetter(GlacierBlanketProcessor::glacierBody),
-		BlockStateProvider.CODEC.fieldOf("top_block").forGetter(GlacierBlanketProcessor::glacierTop),
+		RegistryCodecs.holderSet(Registries.BIOME, true).fieldOf("biome_mask").forGetter(GlacierBlanketProcessor::biomesForApplication),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("body_block").forGetter(GlacierBlanketProcessor::glacierBody),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("top_block").forGetter(GlacierBlanketProcessor::glacierTop),
 		Codec.INT.fieldOf("height").forGetter(GlacierBlanketProcessor::height)
 	).apply(inst, GlacierBlanketProcessor::new));
 

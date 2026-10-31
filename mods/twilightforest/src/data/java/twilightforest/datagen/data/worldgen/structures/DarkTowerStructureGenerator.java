@@ -30,22 +30,22 @@ public class DarkTowerStructureGenerator {
     public static DarkTowerStructure buildDarkTowerConfig(BootstrapContext<Structure> context) {
         return new DarkTowerStructure(
             ControlledSpawns.ControlledSpawningConfig.create(List.of(WeightedList.<MobSpawnSettings.SpawnerData>builder()
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GOLEM.get(), 1, 2), 10)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 2), 10)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 1, 1), 5)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 1, 2), 2)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.WITCH, 1, 1), 1)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GHASTLING.get(), 1, 2), 10)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_BROODLING.get(), 4, 4), 10)
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.PINCH_BEETLE.get(), 1, 1), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GOLEM.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.CREEPER, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 5)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 2)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.WITCH, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 1)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GHASTLING.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_BROODLING.get(), net.minecraft.util.valueproviders.UniformInt.of(4, 4)), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.PINCH_BEETLE.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 10)
                 .build(),
                 // roof ghasts
                 WeightedList.<MobSpawnSettings.SpawnerData>builder()
-                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GHASTGUARD.get(), 1, 2), 10)
+                .add(new MobSpawnSettings.SpawnerData(TFEntities.CARMINITE_GHASTGUARD.get(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
                 .build()
             ), WeightedList.of(), WeightedList.<MobSpawnSettings.SpawnerData>builder()
                 // aquarium squids (only in aquariums between y = 35 and y = 64. :/)
-                .add(new MobSpawnSettings.SpawnerData(EntityType.SQUID, 4, 4), 10)
+                .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SQUID, net.minecraft.util.valueproviders.UniformInt.of(4, 4)), 10)
                 .build()
             ),
             new AdvancementLockedStructure.AdvancementLockConfig(List.of(TwilightForestMod.prefix("progress_knights"))),

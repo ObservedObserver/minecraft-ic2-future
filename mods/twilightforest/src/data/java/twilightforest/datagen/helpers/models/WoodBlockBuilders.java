@@ -82,7 +82,7 @@ public abstract class WoodBlockBuilders extends BlockModelGenerators {
 		this.blockStateOutput.accept(createSimpleBlock(block, sapling));
 		MultiVariant potted = plainVariant(type.getCrossPot().create(pottedBlock, type.getPlantTextureMapping(block), this.modelOutput));
 		this.blockStateOutput.accept(createSimpleBlock(pottedBlock, potted));
-		this.registerSimpleItemModel(block.asItem(), type.createItemModel(this, block));
+		this.registerSimpleItemModel(block.asItem(), type.createItemModelUsingBlockTexture(this, block));
 	}
 
 	public void generateButton(Block button, TextureMapping mapping) {
@@ -117,19 +117,39 @@ public abstract class WoodBlockBuilders extends BlockModelGenerators {
 		this.registerSimpleItemModel(pressurePlate, unpressed);
 	}
 
-	public void generateSign(Block floor, Block wall, TextureMapping mapping) {
-		MultiVariant model = plainVariant(ModelTemplates.PARTICLE_ONLY.create(floor, mapping, this.modelOutput));
-		this.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(floor, model));
-		this.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(wall, model));
-		this.registerSimpleFlatItemModel(floor.asItem());
-	}
+    public void generateSign(Block floor, Block wall, TextureMapping mapping) {
+        String wood=BuiltInRegistries.BLOCK.getKey(floor).getPath().replaceFirst("_sign$", "");
+        TextureMapping textures=new TextureMapping()
+            .put(TextureSlot.ALL,new Material(TwilightForestMod.prefix("entity/signs/"+wood)))
+            .put(TextureSlot.PARTICLE,mapping.get(TextureSlot.PARTICLE));
+        this.blockStateOutput.accept(BlockModelGenerators.createSign(floor,
+            this.signVariant(floor,"_rot_0","sign_rot_0",textures), this.signVariant(floor,"_rot_1","sign_rot_1",textures),
+            this.signVariant(floor,"_rot_2","sign_rot_2",textures), this.signVariant(floor,"_rot_3","sign_rot_3",textures)));
+        this.blockStateOutput.accept(MultiVariantGenerator.dispatch(wall,this.signVariant(wall,"","wall_sign",textures))
+            .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING_ALT));
+        this.registerSimpleFlatItemModel(floor.asItem());
+    }
 
-	public void generateHangingSign(Block ceiling, Block wall, Block particle) {
-		MultiVariant sign = plainVariant(ModelTemplates.PARTICLE_ONLY.create(ceiling, new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(particle)), this.modelOutput));
-		this.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ceiling, sign));
-		this.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(wall, sign));
-		this.registerSimpleFlatItemModel(ceiling.asItem());
-	}
+    public void generateHangingSign(Block ceiling, Block wall, Block particle) {
+        String wood=BuiltInRegistries.BLOCK.getKey(ceiling).getPath().replaceFirst("_hanging_sign$", "");
+        TextureMapping textures=new TextureMapping()
+            .put(TextureSlot.ALL,new Material(TwilightForestMod.prefix("entity/signs/hanging/"+wood)))
+            .put(TextureSlot.PARTICLE,TextureMapping.getBlockTexture(particle));
+        this.blockStateOutput.accept(BlockModelGenerators.createHangingSign(ceiling,
+            this.signVariant(ceiling,"_rot_0","hanging_sign_rot_0",textures), this.signVariant(ceiling,"_rot_1","hanging_sign_rot_1",textures),
+            this.signVariant(ceiling,"_rot_2","hanging_sign_rot_2",textures), this.signVariant(ceiling,"_rot_3","hanging_sign_rot_3",textures),
+            this.signVariant(ceiling,"_attached_rot_0","attached_hanging_sign_rot_0",textures), this.signVariant(ceiling,"_attached_rot_1","attached_hanging_sign_rot_1",textures),
+            this.signVariant(ceiling,"_attached_rot_2","attached_hanging_sign_rot_2",textures), this.signVariant(ceiling,"_attached_rot_3","attached_hanging_sign_rot_3",textures)));
+        this.blockStateOutput.accept(MultiVariantGenerator.dispatch(wall,this.signVariant(wall,"","wall_hanging_sign",textures))
+            .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING_ALT));
+        this.registerSimpleFlatItemModel(ceiling.asItem());
+    }
+
+    private MultiVariant signVariant(Block block,String suffix,String template,TextureMapping textures) {
+        ModelTemplate model=new ModelTemplate(java.util.Optional.of(TwilightForestMod.prefix("block/legacy_signs/template_"+template)),
+            java.util.Optional.empty(),TextureSlot.ALL,TextureSlot.PARTICLE);
+        return plainVariant(model.create(ModelLocationUtils.getModelLocation(block,suffix),textures,this.modelOutput));
+    }
 
 	public void generateSlab(Block slab, Block full, TextureMapping mapping) {
 		Identifier bottom = ModelTemplates.SLAB_BOTTOM.create(slab, mapping, this.modelOutput);

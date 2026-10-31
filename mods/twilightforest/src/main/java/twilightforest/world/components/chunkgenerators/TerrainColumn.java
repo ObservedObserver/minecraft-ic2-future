@@ -7,11 +7,11 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectSortedMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.core.registries.codec.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import twilightforest.util.Codecs;
 
 import java.util.Map;
@@ -24,9 +24,9 @@ public final class TerrainColumn implements Comparable<TerrainColumn> {
 		instance.group(
 			RegistryFixedCodec.create(Registries.BIOME).fieldOf("key_biome").forGetter(o -> o.keyBiome),
 			Codecs.doubleTreeCodec(Biome.CODEC).fieldOf("biome_layers").forGetter(o -> o.biomes),
-			DensityFunction.HOLDER_HELPER_CODEC.fieldOf("depth").forGetter(o -> o.noiseDepth),
-			DensityFunction.HOLDER_HELPER_CODEC.fieldOf("scale").forGetter(o -> o.noiseScale),
-			DensityFunction.HOLDER_HELPER_CODEC.fieldOf("weight").forGetter(o -> o.noiseWeight)
+			DensityFunction.CODEC.fieldOf("depth").forGetter(o -> o.noiseDepth),
+			DensityFunction.CODEC.fieldOf("scale").forGetter(o -> o.noiseScale),
+			DensityFunction.CODEC.fieldOf("weight").forGetter(o -> o.noiseWeight)
 		).apply(instance, TerrainColumn::new));
 	private final ResourceKey<Biome> resourceKey;
 	private final Holder<Biome> keyBiome;
@@ -82,17 +82,16 @@ public final class TerrainColumn implements Comparable<TerrainColumn> {
 		return this.biomes.double2ObjectEntrySet().stream().reduce(reducer).map(Map.Entry::getValue).orElse(other);
 	}
 
-	public double depth(DensityFunction.FunctionContext context) {
-		return this.noiseDepth.compute(context);
-	}
-
-	public double scale(DensityFunction.FunctionContext context) {
-		return this.noiseScale.compute(context);
-	}
-
-	public double weight(DensityFunction.FunctionContext context) {
-		return this.noiseWeight.compute(context);
-	}
+    public Compiled compile(DensityFunction.CompileContext context) {
+        return new Compiled(noiseDepth.compileSampler(context), noiseScale.compileSampler(context), noiseWeight.compileSampler(context));
+    }
+    public TerrainColumn rewriteChildren(net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule rule) {
+        return new TerrainColumn(keyBiome, biomes, rule.rewrite(noiseDepth), rule.rewrite(noiseScale), rule.rewrite(noiseWeight));
+    }
+    public int domainAxes() { return noiseDepth.domainAxes() | noiseScale.domainAxes() | noiseWeight.domainAxes(); }
+    public record Compiled(net.minecraft.world.level.levelgen.densityfunction.DensitySampler depth,
+            net.minecraft.world.level.levelgen.densityfunction.DensitySampler scale,
+            net.minecraft.world.level.levelgen.densityfunction.DensitySampler weight) { }
 
 	public ResourceKey<Biome> getResourceKey() {
 		return this.resourceKey;

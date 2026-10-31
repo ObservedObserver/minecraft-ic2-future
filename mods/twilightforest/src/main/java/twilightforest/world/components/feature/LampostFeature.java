@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -8,12 +9,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.BlockStateConfiguration;
 import twilightforest.init.TFBlocks;
 
-public class LampostFeature extends Feature<BlockStateConfiguration> {
+public class LampostFeature extends ConfiguredFeatureBase<BlockStateConfiguration> {
 
 	private static final Rotation[] ROTATIONS = Rotation.values();
 	//private final BlockState lamp;
@@ -23,7 +23,7 @@ public class LampostFeature extends Feature<BlockStateConfiguration> {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<BlockStateConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<BlockStateConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
@@ -49,7 +49,7 @@ public class LampostFeature extends Feature<BlockStateConfiguration> {
 		for (int dy = 0; dy < height; dy++) {
 			world.setBlock(pos.above(dy), TFBlocks.CANOPY_FENCE.get().defaultBlockState(), Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
 		}
-		world.setBlock(pos.above(height), config.state.rotate(ROTATIONS[rand.nextInt(ROTATIONS.length)]), Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+		world.setBlock(pos.above(height), config.state().rotate(ROTATIONS[rand.nextInt(ROTATIONS.length)]), Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
 		return true;
 	}
 }

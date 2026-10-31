@@ -21,12 +21,7 @@
       "type": "minecraft:block_predicate_filter",
       "predicate": {
         "type": "minecraft:would_survive",
-        "state": {
-          "Name": "twilightforest:torchberry_plant",
-          "Properties": {
-            "has_torchberries": "false"
-          }
-        }
+        "state": "twilightforest:torchberry_plant"
       }
     },
     {

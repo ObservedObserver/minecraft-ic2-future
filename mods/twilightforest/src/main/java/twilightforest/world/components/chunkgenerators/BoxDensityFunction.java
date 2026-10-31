@@ -3,17 +3,16 @@ package twilightforest.world.components.chunkgenerators;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.Beardifier;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunctions;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 
 import java.util.List;
 
-public class BoxDensityFunction implements DensityFunction.SimpleFunction {
+public class BoxDensityFunction implements PointDensityFunction {
 	public static final MapCodec<BoxDensityFunction> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
 		Codec.INT.fieldOf("minX").forGetter(f -> f.minX),
 		Codec.INT.fieldOf("minY").forGetter(f -> f.minY),
@@ -25,7 +24,7 @@ public class BoxDensityFunction implements DensityFunction.SimpleFunction {
 		Codec.DOUBLE.fieldOf("maxValue").forGetter(f -> f.maxValue),
 		TerrainAdjustment.CODEC.fieldOf("beardifier").forGetter(f -> f.terrainAdjustment)
 	).apply(inst, BoxDensityFunction::new));
-	public static final KeyDispatchDataCodec<BoxDensityFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
+
 
 	private final int minX, minY, minZ, maxX, maxY, maxZ;
 	private final double minValue, maxValue;
@@ -60,10 +59,7 @@ public class BoxDensityFunction implements DensityFunction.SimpleFunction {
 	}
 
 	@Override // Parallels vanilla Beardifier behavior
-	public double compute(FunctionContext context) {
-		int blockX = context.blockX();
-		int blockY = context.blockY();
-		int blockZ = context.blockZ();
+	public double computeAt(int blockX, int blockY, int blockZ) {
 
 		// Dist is zero if inside the box
 		int xDist = Math.max(0, Math.max(this.minX - blockX, blockX - this.maxX));
@@ -77,9 +73,9 @@ public class BoxDensityFunction implements DensityFunction.SimpleFunction {
 		};
 
 		double densityValue = switch (this.terrainAdjustment) {
-			case BURY -> Beardifier.getBuryContribution(xDist, yDist * 0.5, zDist);
+			case BURY -> Beardifier.getBuryContribution(xDist, yDist * 0.5F, zDist);
 			case BEARD_THIN, BEARD_BOX -> Beardifier.getBeardContribution(xDist, yDist, zDist, distAboveBottom) * 0.8;
-			case ENCAPSULATE -> Beardifier.getBuryContribution(xDist * 0.5, yDist * 0.5, zDist * 0.5) * 0.8;
+			case ENCAPSULATE -> Beardifier.getBuryContribution(xDist * 0.5F, yDist * 0.5F, zDist * 0.5F) * 0.8;
 			default -> 0;
 		};
 
@@ -97,7 +93,7 @@ public class BoxDensityFunction implements DensityFunction.SimpleFunction {
 	}
 
 	@Override
-	public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-		return KEY_CODEC;
+	public MapCodec<? extends DensityFunction> codec() {
+		return CODEC;
 	}
 }

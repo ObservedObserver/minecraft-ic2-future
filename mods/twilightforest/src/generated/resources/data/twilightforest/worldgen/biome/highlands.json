@@ -1,11 +1,102 @@
 {
   "attributes": {
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.15,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "twilightforest:bighorn_sheep",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 4
+              },
+              "weight": 12
+            },
+            {
+              "type": "twilightforest:boar",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 4
+              },
+              "weight": 10
+            },
+            {
+              "type": "minecraft:chicken",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 4
+              },
+              "weight": 10
+            },
+            {
+              "type": "twilightforest:deer",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 5,
+                "min_inclusive": 4
+              },
+              "weight": 15
+            },
+            {
+              "type": "minecraft:wolf",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 4
+              },
+              "weight": 5
+            },
+            {
+              "type": "twilightforest:tiny_bird",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 15
+            },
+            {
+              "type": "twilightforest:squirrel",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 2
+              },
+              "weight": 10
+            },
+            {
+              "type": "twilightforest:dwarf_rabbit",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 5,
+                "min_inclusive": 4
+              },
+              "weight": 10
+            },
+            {
+              "type": "twilightforest:raven",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 10
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
     "minecraft:visual/fog_color": "#c0ffd8",
     "minecraft:visual/sky_color": "#20224a",
     "minecraft:visual/water_fog_color": "#050533"
   },
   "carvers": "twilightforest:highland_caves",
-  "creature_spawn_probability": 0.15,
   "downfall": 0.7,
   "effects": {
     "water_color": "#3f76e4"
@@ -56,71 +147,5 @@
     ]
   ],
   "has_precipitation": true,
-  "spawn_costs": {},
-  "spawners": {
-    "ambient": [],
-    "axolotls": [],
-    "creature": [
-      {
-        "type": "twilightforest:bighorn_sheep",
-        "maxCount": 4,
-        "minCount": 4,
-        "weight": 12
-      },
-      {
-        "type": "twilightforest:boar",
-        "maxCount": 4,
-        "minCount": 4,
-        "weight": 10
-      },
-      {
-        "type": "minecraft:chicken",
-        "maxCount": 4,
-        "minCount": 4,
-        "weight": 10
-      },
-      {
-        "type": "twilightforest:deer",
-        "maxCount": 5,
-        "minCount": 4,
-        "weight": 15
-      },
-      {
-        "type": "minecraft:wolf",
-        "maxCount": 4,
-        "minCount": 4,
-        "weight": 5
-      },
-      {
-        "type": "twilightforest:tiny_bird",
-        "maxCount": 8,
-        "minCount": 4,
-        "weight": 15
-      },
-      {
-        "type": "twilightforest:squirrel",
-        "maxCount": 4,
-        "minCount": 2,
-        "weight": 10
-      },
-      {
-        "type": "twilightforest:dwarf_rabbit",
-        "maxCount": 5,
-        "minCount": 4,
-        "weight": 10
-      },
-      {
-        "type": "twilightforest:raven",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 10
-      }
-    ],
-    "misc": [],
-    "monster": [],
-    "underground_water_creature": [],
-    "water_ambient": [],
-    "water_creature": []
-  },
   "temperature": 0.4
 }

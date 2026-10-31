@@ -118,7 +118,7 @@ public abstract class TFStructureComponent extends StructurePiece implements Spa
 			final BlockPos pos = new BlockPos(this.getWorldX(x, z), this.getWorldY(y), this.getWorldZ(x, z));
 
 			if (sbb.isInside(pos)) {
-				final Display.TextDisplay display = new Display.TextDisplay(EntityType.TEXT_DISPLAY, world.getLevel());
+				final Display.TextDisplay display = new Display.TextDisplay(net.minecraft.world.entity.EntityTypes.TEXT_DISPLAY, world.getLevel());
 				display.setText(Component.literal(s));
 				display.setBillboardConstraints(billboardConstraint);
 				display.snapTo(pos.getX() + 0.5, pos.getY() + additionalYOffset, pos.getZ() + 0.5, 0, 0);
@@ -152,7 +152,7 @@ public abstract class TFStructureComponent extends StructurePiece implements Spa
 			}
 
 			if (BLOCKS_NEEDING_POSTPROCESSING.get().contains(blockstateIn.getBlock())) {
-				worldIn.getChunk(blockpos).markPosForPostprocessing(blockpos);
+				worldIn.getChunk(blockpos).markPosForPostProcessing(blockpos);
 			}
 
 		}
@@ -161,11 +161,11 @@ public abstract class TFStructureComponent extends StructurePiece implements Spa
 	@SuppressWarnings({"SameParameterValue", "unused"})
 	protected void setDebugEntity(Level world, BlockPos blockpos, String s) {
 		if (shouldDebug()) {
-			final Sheep sheep = new Sheep(EntityType.SHEEP, world);
+			final Sheep sheep = new Sheep(net.minecraft.world.entity.EntityTypes.SHEEP, world);
 			sheep.setCustomName(Component.literal(s));
 			sheep.setNoAi(true);
 			sheep.snapTo(blockpos.getX() + 0.5, blockpos.getY() + 10, blockpos.getZ() + 0.5, 0, 0);
-			sheep.setInvulnerable(true);
+			sheep.setPermanentlyInvulnerable(true);
 			sheep.setInvisible(true);
 			sheep.setCustomNameVisible(true);
 			sheep.setSilent(true);

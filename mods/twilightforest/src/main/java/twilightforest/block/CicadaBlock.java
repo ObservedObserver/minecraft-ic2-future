@@ -21,15 +21,10 @@ import twilightforest.loot.TFLootTables;
 
 public class CicadaBlock extends CritterBlock {
 
-	public static final MapCodec<CicadaBlock> CODEC = simpleCodec(CicadaBlock::new);
+
 
 	public CicadaBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

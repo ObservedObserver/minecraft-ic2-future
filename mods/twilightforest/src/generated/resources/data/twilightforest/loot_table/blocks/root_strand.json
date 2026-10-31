@@ -2,35 +2,31 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:alternatives",
           "children": [
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "ability": "shears_dig",
-                  "condition": "neoforge:can_item_perform_ability"
-                }
-              ],
+              "condition": {
+                "type": "neoforge:can_item_perform_ability",
+                "ability": "shears_dig"
+              },
               "name": "twilightforest:root_strand"
             },
             {
               "type": "minecraft:item",
-              "functions": [
+              "modifier": [
                 {
-                  "add": false,
+                  "type": "minecraft:set_count",
                   "count": {
                     "type": "minecraft:uniform",
-                    "max": 3.0,
-                    "min": 1.0
-                  },
-                  "function": "minecraft:set_count"
+                    "max": 3,
+                    "min": 1
+                  }
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "name": "minecraft:stick"
@@ -38,7 +34,7 @@
           ]
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "twilightforest:blocks/root_strand"

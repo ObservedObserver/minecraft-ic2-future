@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.trees;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
@@ -11,10 +12,9 @@ import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import twilightforest.world.components.feature.runtime.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -34,14 +34,14 @@ import java.util.function.BiConsumer;
  */
 
 //Lots of things from TreeFeature, but we're checking for dirt to place on
-public class DarkCanopyTreeFeature extends Feature<TreeConfiguration> {
+public class DarkCanopyTreeFeature extends ConfiguredFeatureBase<TreeConfiguration> {
 
 	public DarkCanopyTreeFeature(Codec<TreeConfiguration> config) {
 		super(config);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<TreeConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<TreeConfiguration> ctx) {
 		WorldGenLevel reader = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
@@ -129,7 +129,7 @@ public class DarkCanopyTreeFeature extends Feature<TreeConfiguration> {
 	//Mostly [VanillaCopy] of TreeFeature.doPlace, edits noted
 	private boolean doPlace(WorldGenLevel level, RandomSource random, BlockPos pos, BiConsumer<BlockPos, BlockState> consumer, BiConsumer<BlockPos, BlockState> consumer1, FoliagePlacer.FoliageSetter foliageSetter, TreeConfiguration config) {
 		int i = config.trunkPlacer.getTreeHeight(random);
-		int j = config.foliagePlacer.foliageHeight(random, i, config);
+		int j = config.foliagePlacer.foliageHeight(random, i, config.nativeFeature());
 		int k = i - j;
 		int l = config.foliagePlacer.foliageRadius(random, k);
 		BlockPos blockpos = config.rootPlacer.map((placer) -> placer.getTrunkOrigin(pos, random)).orElse(pos);
@@ -139,12 +139,12 @@ public class DarkCanopyTreeFeature extends Feature<TreeConfiguration> {
 			OptionalInt optionalint = config.minimumSize.minClippedHeight();
 			int k1 = this.getMaxFreeTreeHeight(level, i, blockpos, config);
 			if (k1 >= i || optionalint.isPresent() && k1 >= optionalint.getAsInt()) {
-				if (config.rootPlacer.isPresent() && !config.rootPlacer.get().placeRoots(level, consumer, random, pos, blockpos, config)) {
+				if (config.rootPlacer.isPresent() && !config.rootPlacer.get().placeRoots(level, consumer, random, pos, blockpos, config.nativeFeature())) {
 					return false;
 				} else {
-					List<FoliagePlacer.FoliageAttachment> list = config.trunkPlacer.placeTrunk(level, consumer1, random, k1, blockpos, config);
+					List<FoliagePlacer.FoliageAttachment> list = config.trunkPlacer.placeTrunk(level, consumer1, random, k1, blockpos, config.nativeFeature());
 					list.forEach((attachment) -> {
-						config.foliagePlacer.createFoliage(level, foliageSetter, random, config, k1, attachment, j, l);
+						config.foliagePlacer.createFoliage(level, foliageSetter, random, config.nativeFeature(), k1, attachment, j, l);
 					});
 					return true;
 				}

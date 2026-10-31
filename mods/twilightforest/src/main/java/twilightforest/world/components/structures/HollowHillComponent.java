@@ -111,7 +111,7 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		}
 
 		// Cakes!
-		//drainWater(generator, writeableBounds, this.boundingBox, world, this.hillSize * 3 + 2, Blocks.MAGENTA_CANDLE.defaultBlockState(), center.getX(), center.getZ(), drainRadius * drainRadius, Blocks.CAKE.defaultBlockState());
+		//drainWater(generator, writeableBounds, this.boundingBox, world, this.hillSize * 3 + 2, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.MAGENTA).defaultBlockState(), center.getX(), center.getZ(), drainRadius * drainRadius, Blocks.CAKE.defaultBlockState());
 	}
 
 	public static void drainWater(ChunkGenerator generator, BoundingBox chunkBox, BoundingBox structureBox, CommonLevelAccessor level, int maxDepth, BlockState airState, int xCenter, int zCenter, double radiusSq, BlockState undergroundBlock) {
@@ -261,7 +261,7 @@ public class HollowHillComponent extends TFStructureComponentOld {
 			return this.getLevel3Mob(rand);
 		}
 
-		return EntityType.SPIDER;
+		return net.minecraft.world.entity.EntityTypes.SPIDER;
 	}
 
 	/**
@@ -269,9 +269,9 @@ public class HollowHillComponent extends TFStructureComponentOld {
 	 */
 	public EntityType<?> getLevel1Mob(RandomSource rand) {
 		return switch (rand.nextInt(10)) {
-			case 3, 4, 5 -> EntityType.SPIDER;
-			case 6, 7 -> EntityType.ZOMBIE;
-			case 8 -> EntityType.SILVERFISH;
+			case 3, 4, 5 -> net.minecraft.world.entity.EntityTypes.SPIDER;
+			case 6, 7 -> net.minecraft.world.entity.EntityTypes.ZOMBIE;
+			case 8 -> net.minecraft.world.entity.EntityTypes.SILVERFISH;
 			case 9 -> TFEntities.REDCAP.get();
 			default -> TFEntities.SWARM_SPIDER.get();
 		};
@@ -282,10 +282,10 @@ public class HollowHillComponent extends TFStructureComponentOld {
 	 */
 	public EntityType<?> getLevel2Mob(RandomSource rand) {
 		return switch (rand.nextInt(10)) {
-			case 3, 4, 5 -> EntityType.ZOMBIE;
-			case 6, 7 -> EntityType.SKELETON;
+			case 3, 4, 5 -> net.minecraft.world.entity.EntityTypes.ZOMBIE;
+			case 6, 7 -> net.minecraft.world.entity.EntityTypes.SKELETON;
 			case 8 -> TFEntities.SWARM_SPIDER.get();
-			case 9 -> EntityType.CAVE_SPIDER;
+			case 9 -> net.minecraft.world.entity.EntityTypes.CAVE_SPIDER;
 			default -> TFEntities.REDCAP.get();
 		};
 	}
@@ -298,9 +298,9 @@ public class HollowHillComponent extends TFStructureComponentOld {
 			case 0 -> TFEntities.SLIME_BEETLE.get();
 			case 1 -> TFEntities.FIRE_BEETLE.get();
 			case 2 -> TFEntities.PINCH_BEETLE.get();
-			case 3, 4, 5 -> EntityType.SKELETON;
-			case 6, 7, 8 -> EntityType.CAVE_SPIDER;
-			case 9 -> EntityType.CREEPER;
+			case 3, 4, 5 -> net.minecraft.world.entity.EntityTypes.SKELETON;
+			case 6, 7, 8 -> net.minecraft.world.entity.EntityTypes.CAVE_SPIDER;
+			case 9 -> net.minecraft.world.entity.EntityTypes.CREEPER;
 			default -> TFEntities.WRAITH.get();
 		};
 	}

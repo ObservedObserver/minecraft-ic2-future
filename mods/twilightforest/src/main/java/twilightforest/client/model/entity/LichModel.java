@@ -87,8 +87,8 @@ public class LichModel extends HumanoidModel<LichRenderState> implements TrophyB
 		this.collar.skipDraw = state.isShadowClone;
 
 		if (state.phase != 3) {
-			float ogSin = Mth.sin(state.attackTime * Mth.PI);
-			float otherSin = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * Mth.PI);
+			float ogSin = Mth.sin(state.swingAnimation * Mth.PI);
+			float otherSin = Mth.sin((1.0F - (1.0F - state.swingAnimation) * (1.0F - state.swingAnimation)) * Mth.PI);
 			if (state.ageInTicks > 0 && state.deathTime <= 0) {
 				this.leftArm.zRot = 0.5F;
 				this.leftArm.yRot = 0.1F - ogSin * 0.6F;
@@ -147,6 +147,6 @@ public class LichModel extends HumanoidModel<LichRenderState> implements TrophyB
 	@Override
 	public void renderTrophy(PoseStack stack, SubmitNodeCollector collector, int light, int overlay, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress, ItemDisplayContext context) {
 		stack.translate(0.0F, 0.25F, 0.0F);
-		collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(LichRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+		twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(LichRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 	}
 }

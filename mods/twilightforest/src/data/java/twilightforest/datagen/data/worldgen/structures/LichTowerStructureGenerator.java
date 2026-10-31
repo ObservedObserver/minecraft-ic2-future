@@ -30,15 +30,15 @@ public class LichTowerStructureGenerator {
     @SuppressWarnings("unchecked")
     public static LichTowerStructure buildLichTowerConfig(BootstrapContext<Structure> context) {
         WeightedList<MobSpawnSettings.SpawnerData> yardSpawns = WeightedList.<MobSpawnSettings.SpawnerData>builder()
-            .add(new MobSpawnSettings.SpawnerData(TFEntities.RISING_ZOMBIE.value(), 1, 2), 2)
+            .add(new MobSpawnSettings.SpawnerData(TFEntities.RISING_ZOMBIE.value(), net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 2)
             .build();
         WeightedList<MobSpawnSettings.SpawnerData> interiorSpawns = WeightedList.<MobSpawnSettings.SpawnerData>builder()
-            .add(new MobSpawnSettings.SpawnerData(EntityType.ZOMBIE, 1, 2), 10)
-            .add(new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 2), 10)
-            .add(new MobSpawnSettings.SpawnerData(EntityType.CREEPER, 1, 1), 1)
-            .add(new MobSpawnSettings.SpawnerData(EntityType.ENDERMAN, 1, 2), 1)
-            .add(new MobSpawnSettings.SpawnerData(TFEntities.DEATH_TOME.value(), 2, 3), 10)
-            .add(new MobSpawnSettings.SpawnerData(EntityType.WITCH, 1, 1), 1)
+            .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ZOMBIE, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+            .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.SKELETON, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 10)
+            .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.CREEPER, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 1)
+            .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.util.valueproviders.UniformInt.of(1, 2)), 1)
+            .add(new MobSpawnSettings.SpawnerData(TFEntities.DEATH_TOME.value(), net.minecraft.util.valueproviders.UniformInt.of(2, 3)), 10)
+            .add(new MobSpawnSettings.SpawnerData(net.minecraft.world.entity.EntityTypes.WITCH, net.minecraft.util.valueproviders.UniformInt.of(1, 1)), 1)
             .build();
         ControlledSpawns.ControlledSpawningConfig monsters = ControlledSpawns.ControlledSpawningConfig.justMonsters(
             yardSpawns,

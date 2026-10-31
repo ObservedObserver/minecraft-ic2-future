@@ -1,6 +1,7 @@
 package twilightforest.datagen.data.loot;
+import net.minecraft.data.loot.LootTableSubProvider;
 
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -21,10 +22,8 @@ import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.loot.CanItemPerformAbility;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -46,13 +45,13 @@ public class BlockLootTables extends BlockLootSubProvider {
 	private static final float[] RARE_SAPLING_DROP_RATES = new float[]{0.025F, 0.027777778F, 0.03125F, 0.041666668F, 0.1F};
 	private static final LootItemCondition.Builder HAS_SHEARS = CanItemPerformAbility.canItemPerformAbility(ItemAbilities.SHEARS_DIG);
 
-	public BlockLootTables(HolderLookup.Provider provider) {
+	public BlockLootTables(LootTableSubProvider.Context provider) {
 		super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
 	}
 
 	@Override
 	protected void generate() {
-		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+		net.minecraft.core.HolderGetter<Enchantment> registrylookup = this.output.lookup(Registries.ENCHANTMENT);
 
 		dropSelf(TFBlocks.TOWERWOOD.get());
 		dropSelf(TFBlocks.ENCASED_TOWERWOOD.get());
@@ -97,7 +96,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.HUGE_MUSHGLOOM_STEM.get(), createMushroomBlockDrop(TFBlocks.HUGE_MUSHGLOOM_STEM.get(), TFBlocks.MUSHGLOOM.get()));
 		add(TFBlocks.TROLLVIDR.get(), createShearsOnlyDrop(TFBlocks.TROLLVIDR.get()));
 		add(TFBlocks.UNRIPE_TROLLBER.get(), createShearsOnlyDrop(TFBlocks.UNRIPE_TROLLBER.get()));
-		add(TFBlocks.TROLLBER.get(), createShearsDispatchTable(TFBlocks.TROLLBER.get(), LootItem.lootTableItem(TFItems.TORCHBERRIES.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(4.0F, 8.0F))).apply(ApplyBonusCount.addOreBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE)))));
+		add(TFBlocks.TROLLBER.get(), createShearsDispatchTable(TFBlocks.TROLLBER.get(), LootItem.lootTableItem(TFItems.TORCHBERRIES.get()).apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(4, 8))).apply(ApplyBonusCount.addOreBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE)))));
 		dropSelf(TFBlocks.HUGE_LILY_PAD.get());
 		dropSelf(TFBlocks.HUGE_WATER_LILY.get());
 		dropSelf(TFBlocks.CASTLE_BRICK.get());
@@ -149,9 +148,9 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.MAZE_SLIME_BLOCK.get());
 		add(TFBlocks.RED_THREAD.get(), redThread());
 		dropWhenSilkTouch(TFBlocks.HEDGE.get());
-		add(TFBlocks.ROOT_BLOCK.get(), createSingleItemTableWithSilkTouch(TFBlocks.ROOT_BLOCK.get(), Items.STICK, UniformGenerator.between(3, 5)));
+		add(TFBlocks.ROOT_BLOCK.get(), createSingleItemTableWithSilkTouch(TFBlocks.ROOT_BLOCK.get(), Items.STICK, net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(3, 5)));
 		add(TFBlocks.LIVEROOT_BLOCK.get(), createSilkTouchDispatchTable(TFBlocks.LIVEROOT_BLOCK.get(), applyExplosionCondition(TFBlocks.LIVEROOT_BLOCK.get(), LootItem.lootTableItem(TFItems.LIVEROOT.get()).apply(ApplyBonusCount.addOreBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))));
-		add(TFBlocks.MANGROVE_ROOT.get(), createSingleItemTableWithSilkTouch(TFBlocks.MANGROVE_ROOT.get(), Items.STICK, UniformGenerator.between(3, 5)));
+		add(TFBlocks.MANGROVE_ROOT.get(), createSingleItemTableWithSilkTouch(TFBlocks.MANGROVE_ROOT.get(), Items.STICK, net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(3, 5)));
 		dropSelf(TFBlocks.UNCRAFTING_TABLE.get());
 		add(TFBlocks.BRAZIER.get(), block -> this.createSinglePropConditionTable(block, BrazierBlock.HALF, DoubleBlockHalf.LOWER));
 
@@ -159,7 +158,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 			this.applyExplosionCondition(
 				TFBlocks.MASON_JAR.get(),
 				LootPool.lootPool()
-					.setRolls(ConstantValue.exactly(1.0F))
+					.setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 					.add(
 						LootItem.lootTableItem(TFBlocks.MASON_JAR.get())
 							.apply(
@@ -178,7 +177,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 			this.applyExplosionCondition(
 				TFBlocks.FIREFLY_JAR.get(),
 				LootPool.lootPool()
-					.setRolls(ConstantValue.exactly(1.0F))
+					.setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 					.add(
 						LootItem.lootTableItem(TFBlocks.FIREFLY_JAR.get())
 							.apply(
@@ -193,7 +192,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 			this.applyExplosionCondition(
 				TFBlocks.CICADA_JAR.get(),
 				LootPool.lootPool()
-					.setRolls(ConstantValue.exactly(1.0F))
+					.setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 					.add(
 						LootItem.lootTableItem(TFBlocks.CICADA_JAR.get())
 							.apply(
@@ -223,7 +222,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.FIDDLEHEAD.get(), createShearsOnlyDrop(TFBlocks.FIDDLEHEAD.get()));
 		dropSelf(TFBlocks.MUSHGLOOM.get());
 		add(TFBlocks.TORCHBERRY_PLANT.get(), torchberryPlant(TFBlocks.TORCHBERRY_PLANT.get()));
-		add(TFBlocks.ROOT_STRAND.get(), block -> createShearsDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
+		add(TFBlocks.ROOT_STRAND.get(), block -> createShearsDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(1, 3))))));
 		add(TFBlocks.FALLEN_LEAVES.get(), this.fallenLeaves());
 		dropSelf(TFBlocks.SMOKER.get());
 		dropSelf(TFBlocks.ENCASED_SMOKER.get());
@@ -452,7 +451,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.CANOPY_WALL_SIGN.get(), createSingleItemTable(TFBlocks.CANOPY_SIGN.get().asItem()));
 		add(TFBlocks.CANOPY_HANGING_SIGN.get(), createSingleItemTable(TFBlocks.CANOPY_HANGING_SIGN.get().asItem()));
 		add(TFBlocks.CANOPY_WALL_HANGING_SIGN.get(), createSingleItemTable(TFBlocks.CANOPY_HANGING_SIGN.get().asItem()));
-		add(TFBlocks.CANOPY_BOOKSHELF.get(), createSingleItemTableWithSilkTouch(TFBlocks.CANOPY_BOOKSHELF.get(), Items.BOOK, ConstantValue.exactly(2.0F)));
+		add(TFBlocks.CANOPY_BOOKSHELF.get(), createSingleItemTableWithSilkTouch(TFBlocks.CANOPY_BOOKSHELF.get(), Items.BOOK, net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(2)));
 		dropSelf(TFBlocks.CHISELED_CANOPY_BOOKSHELF.get());
 		dropSelf(TFBlocks.CANOPY_BANISTER.get());
 		dropSelf(TFBlocks.CANOPY_CHEST.get());
@@ -628,45 +627,45 @@ public class BlockLootTables extends BlockLootSubProvider {
 		ominousCandle(TFBlocks.OMINOUS_BLACK_CANDLE);
 	}
 
-	private void registerLeavesNoSapling(Block leaves, HolderLookup.RegistryLookup<Enchantment> registrylookup) {
+	private void registerLeavesNoSapling(Block leaves, net.minecraft.core.HolderGetter<Enchantment> registrylookup) {
 		LootPoolEntryContainer.Builder<?> sticks = applyExplosionDecay(leaves, LootItem.lootTableItem(Items.STICK)
-			.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+			.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(1, 2)))
 			.when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F)));
 		add(leaves, createSilkTouchOrShearsDispatchTable(leaves, sticks));
 	}
 
 	private LootTable.Builder hollowLog(Block log) {
-		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+		net.minecraft.core.HolderGetter<Enchantment> registrylookup = this.output.lookup(Registries.ENCHANTMENT);
 		return LootTable.lootTable()
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(log.asItem()).when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(Blocks.SHORT_GRASS).when(this.hasSilkTouch()).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS_AND_GRASS)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(TFBlocks.MOSS_PATCH.get()).when(this.hasSilkTouch()).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS_AND_GRASS)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(TFBlocks.MOSS_PATCH.get()).when(this.hasSilkTouch()).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(Items.SNOWBALL).when(this.hasSilkTouch()).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.SNOW)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(Blocks.VINE).when(this.hasSilkTouch()).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.VINE)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(Blocks.LADDER).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.LADDER)))))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(Blocks.LADDER).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(log).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.LADDER_WATERLOGGED)))));
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(log.asItem()).when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(2, 4))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(Blocks.SHORT_GRASS).when(this.hasSilkTouch()).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS_AND_GRASS)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(TFBlocks.MOSS_PATCH.get()).when(this.hasSilkTouch()).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS_AND_GRASS)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(TFBlocks.MOSS_PATCH.get()).when(this.hasSilkTouch()).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.MOSS)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(Items.SNOWBALL).when(this.hasSilkTouch()).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(HorizontalHollowLogBlock.VARIANT, HollowLogVariants.Horizontal.SNOW)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(Blocks.VINE).when(this.hasSilkTouch()).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.VINE)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(Blocks.LADDER).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.LADDER)))))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(Blocks.LADDER).when(MatchBlock.blockMatches(this.blocks, log, StatePropertiesPredicate.Builder.properties().hasProperty(ClimbableHollowLogBlock.VARIANT, HollowLogVariants.Climbable.LADDER_WATERLOGGED)))));
 	}
 
 	private LootTable.Builder verticalHollowLog(Block log) {
-		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+		net.minecraft.core.HolderGetter<Enchantment> registrylookup = this.output.lookup(Registries.ENCHANTMENT);
 		return LootTable.lootTable()
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(log.asItem()).when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))));
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
+				.add(LootItem.lootTableItem(log.asItem()).when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(2, 4))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))));
 	}
 
 	// [VanillaCopy] super.droppingWithChancesAndSticks, but non-silk touch parameter can be an item instead of a block
 	private LootTable.Builder silkAndStick(Block block, ItemLike nonSilk, float... nonSilkFortune) {
-		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-		return createSilkTouchOrShearsDispatchTable(block, this.applyExplosionCondition(block, LootItem.lootTableItem(nonSilk.asItem())).when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), nonSilkFortune))).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when((HAS_SHEARS.or(this.hasSilkTouch())).invert()).add(applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))).when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
+		net.minecraft.core.HolderGetter<Enchantment> registrylookup = this.output.lookup(Registries.ENCHANTMENT);
+		return createSilkTouchOrShearsDispatchTable(block, this.applyExplosionCondition(block, LootItem.lootTableItem(nonSilk.asItem())).when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), nonSilkFortune))).withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1)).when((new net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.Builder().or(HAS_SHEARS).or(this.hasSilkTouch())).invert()).add(applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.between(1, 2)))).when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
 	}
 
 	private void addTFBush(Block block, ResourceKey<LootTable> berry) {
@@ -678,10 +677,9 @@ public class BlockLootTables extends BlockLootSubProvider {
 				.withPool(
 					LootPool.lootPool()
 						.when(
-							LootItemBlockStatePropertyCondition.hasBlockStateProperties(bush)
-								.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TFBushBlock.AGE, 3))
+							MatchBlock.blockMatches(this.blocks, bush, StatePropertiesPredicate.Builder.properties().hasProperty(TFBushBlock.AGE, 3))
 						)
-						.add(NestedLootTable.lootTableReference(berry))
+						.add(NestedLootTable.lootTableReference(this.output.lookup(Registries.LOOT_TABLE).getOrThrow(berry)))
 				)
 				.withPool(
 					LootPool.lootPool()
@@ -711,105 +709,93 @@ public class BlockLootTables extends BlockLootSubProvider {
 	private static LootTable.Builder skullChestInfo(Block block) {
 		return LootTable.lootTable()
 			.withPool(LootPool.lootPool()
-				.setRolls(ConstantValue.exactly(1))
+				.setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 				.add(LootItem.lootTableItem(block)
 					.apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(DataComponents.CUSTOM_NAME))));
 	}
 
 	private LootTable.Builder particleSpawner() {
-		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 				.add(this.applyExplosionDecay(TFBlocks.FIREFLY_SPAWNER.get(), LootItem.lootTableItem(TFBlocks.FIREFLY_SPAWNER.get()))))
 			.withPool(LootPool.lootPool()
 				.add(AlternativesEntry.alternatives(AlternativesEntry.alternatives(FireflySpawnerBlock.RADIUS.getPossibleValues(), layer ->
 					LootItem.lootTableItem(TFBlocks.FIREFLY.get())
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.FIREFLY_SPAWNER.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(FireflySpawnerBlock.RADIUS, layer)))
-						.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layer - 1)))))));
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.FIREFLY_SPAWNER.get(), StatePropertiesPredicate.Builder.properties().hasProperty(FireflySpawnerBlock.RADIUS, layer)))
+						.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(layer - 1)))))));
 	}
 
 	protected LootTable.Builder torchberryPlant(Block pBlock) {
 		return LootTable.lootTable()
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 				.add(LootItem.lootTableItem(pBlock).when(HAS_SHEARS)))
-			.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+			.withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 				.add(LootItem.lootTableItem(TFItems.TORCHBERRIES.get())
-					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(pBlock).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TorchberryPlantBlock.HAS_BERRIES, true)))));
+					.when(MatchBlock.blockMatches(this.blocks, pBlock, StatePropertiesPredicate.Builder.properties().hasProperty(TorchberryPlantBlock.HAS_BERRIES, true)))));
 	}
 
 	protected LootTable.Builder redThread() {
 		return LootTable.lootTable()
 			.withPool(LootPool.lootPool()
 				.add(this.applyExplosionDecay(TFBlocks.RED_THREAD.get(), LootItem.lootTableItem(TFBlocks.RED_THREAD.get())
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.EAST, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.WEST, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.NORTH, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.SOUTH, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.UP, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.RED_THREAD.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(PipeBlock.DOWN, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(-1.0F), true)))));
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(-1), true)))));
 	}
 
 	protected LootTable.Builder rope() {
 		return LootTable.lootTable()
 			.withPool(LootPool.lootPool()
 				.add(this.applyExplosionDecay(TFBlocks.ROPE.get(), LootItem.lootTableItem(TFBlocks.ROPE.get())
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.ROPE.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(RopeBlock.X, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.ROPE.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(RopeBlock.Y, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
-						.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
-							.setProperties(StatePropertiesPredicate.Builder.properties()
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1), true)
+						.when(MatchBlock.blockMatches(this.blocks, TFBlocks.ROPE.get(), StatePropertiesPredicate.Builder.properties()
 								.hasProperty(RopeBlock.Z, true))))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(-1.0F), true)))));
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(-1), true)))));
 	}
 
 	protected LootTable.Builder fallenLeaves() {
 		return LootTable.lootTable().withPool(LootPool.lootPool()
 			.add(AlternativesEntry.alternatives(AlternativesEntry.alternatives(FallenLeavesBlock.LAYERS.getPossibleValues(), layer ->
 				LootItem.lootTableItem(TFBlocks.FALLEN_LEAVES.get())
-					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.FALLEN_LEAVES.get())
-						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(FallenLeavesBlock.LAYERS, layer)))
-					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layer)))).when(HAS_SHEARS))));
+					.when(MatchBlock.blockMatches(this.blocks, TFBlocks.FALLEN_LEAVES.get(), StatePropertiesPredicate.Builder.properties().hasProperty(FallenLeavesBlock.LAYERS, layer)))
+					.apply(SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(layer)))).when(HAS_SHEARS))));
 	}
 
 	protected void ominousCandle(DeferredBlock<OminousCandleBlock> block) {
 		this.add(block.get(), LootTable.lootTable()
 			.withPool(
 				LootPool.lootPool()
-					.setRolls(ConstantValue.exactly(1.0F))
+					.setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1))
 					.add(
 						this.applyExplosionDecay(
 							block.get(),
 							LootItem.lootTableItem(block.get().candle)
 								.apply(
 									List.of(2, 3, 4),
-									value -> SetItemCountFunction.setCount(ConstantValue.exactly((float) value))
+									value -> SetItemCountFunction.setCount(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(value))
 										.when(
-											LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
-												.setProperties(
+											MatchBlock.blockMatches(this.blocks, block.get(),
 													StatePropertiesPredicate.Builder.properties().hasProperty(OminousCandleBlock.CANDLES, value)
 												)
 										)
@@ -822,16 +808,16 @@ public class BlockLootTables extends BlockLootSubProvider {
 	//[VanillaCopy] of a few different methods from BlockLoot. These are here just so we can use the modded shears thing
 	@Override
 	protected LootTable.Builder createShearsDispatchTable(Block block, LootPoolEntryContainer.Builder<?> builder) {
-		return createSelfDropDispatchTable(block, HAS_SHEARS, builder);
+		return createSelfDropDispatchTable(block, net.minecraft.core.Holder.direct(HAS_SHEARS.build()), builder);
 	}
 
 	@Override
 	protected LootTable.Builder createSilkTouchOrShearsDispatchTable(Block block, LootPoolEntryContainer.Builder<?> builder) {
-		return createSelfDropDispatchTable(block, HAS_SHEARS.or(this.hasSilkTouch()), builder);
+		return createSelfDropDispatchTable(block, net.minecraft.core.Holder.direct(new net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.Builder().or(HAS_SHEARS).or(this.hasSilkTouch()).build()), builder);
 	}
 
 	protected LootTable.Builder createShearsOnlyDrop(ItemLike p_124287_) {
-		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(HAS_SHEARS).add(LootItem.lootTableItem(p_124287_)));
+		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly(1)).when(HAS_SHEARS).add(LootItem.lootTableItem(p_124287_)));
 	}
 
 	@Override

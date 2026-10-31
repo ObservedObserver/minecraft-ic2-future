@@ -3,15 +3,12 @@ package twilightforest.asmhooks;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.util.StaticCache2D;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.status.ChunkStep;
-import net.minecraft.world.level.chunk.status.WorldGenContext;
 import net.minecraft.world.level.levelgen.Beardifier;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunctions;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -27,6 +24,7 @@ import java.util.List;
 
 @SuppressWarnings({"JavadocReference", "unused"})
 public class WorldgenHooks {
+	private static final java.util.concurrent.atomic.AtomicBoolean MISSING_REGION_REPORTED = new java.util.concurrent.atomic.AtomicBoolean();
 
 	/**
 	 * {@link twilightforest.asm.transformers.beardifier.InjectCustomTerrainBeardifierDuringCreateNoiseChunkTransformer}<p/>
@@ -34,18 +32,22 @@ public class WorldgenHooks {
 	 * Injection point:<br/>
 	 * {@link net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator#createNoiseChunk(ChunkAccess, StructureManager, Blender, RandomState)}
 	 */
-	public static DensityFunctions.BeardifierOrMarker gatherCustomTerrain(Beardifier vanilla, StructureManager structureManager, ChunkAccess chunkAccess) {
+	public static Beardifier gatherCustomTerrain(Beardifier vanilla, StructureManager structureManager, ChunkAccess chunkAccess, RandomState randomState) {
 		ChunkPos chunkPos = chunkAccess.getPos();
-		List<StructureStart> structureStarts = structureManager.startsForStructure(chunkPos, s -> s instanceof CustomDensitySource);
+		List<StructureStart> structureStarts = structureManager.startsForStructure(chunkPos.x(), chunkPos.z(), s -> s instanceof CustomDensitySource);
 
 		if (structureStarts.isEmpty())
 			return vanilla;
 
-		ObjectArrayList<DensityFunction> customStructureTerraforms = new ObjectArrayList<>(structureStarts.size());
+		ObjectArrayList<net.minecraft.world.level.levelgen.densityfunction.DensitySampler> customStructureTerraforms = new ObjectArrayList<>(structureStarts.size());
+
+		// These functions are chunk-specific. A local compiler avoids retaining every
+		// generated structure in the RandomState-wide sampler cache.
+		var compiler = new net.minecraft.world.level.levelgen.densityfunction.DensityFunctionCompiler(randomState.densityFunctionCompiler.context);
 
 		for (StructureStart structureStart : structureStarts)
 			if (structureStart.getStructure() instanceof CustomDensitySource customDensitySource)
-				customStructureTerraforms.add(customDensitySource.getStructureTerraformer(chunkPos, structureStart));
+				customStructureTerraforms.add(compiler.getSampler(customDensitySource.getStructureTerraformer(chunkPos, structureStart)));
 
 		return customStructureTerraforms.isEmpty() ? vanilla : new CustomTerrainBeardifier(vanilla, customStructureTerraforms);
 	}
@@ -54,10 +56,15 @@ public class WorldgenHooks {
 	 * {@link twilightforest.asm.transformers.chunk.ChunkStatusTaskTransformer}<p/>
 	 *
 	 * Injection Point:<br/>
-	 * {@link net.minecraft.world.level.chunk.status.ChunkStatusTasks#generateSurface(WorldGenContext, ChunkStep, StaticCache2D, ChunkAccess)}
+	 * The start of NoiseBasedChunkGenerator.generateCarvers, after buildTerrain has built the surface.
 	 */
 	public static void chunkBlanketing(ChunkAccess access, WorldGenRegion region) {
-		ChunkBlanketProcessors.chunkBlanketing(access, region);
+		// buildTerrain also supports callers without a live world-generation region.
+		if (region != null) {
+			ChunkBlanketProcessors.chunkBlanketing(access, region);
+		} else if (MISSING_REGION_REPORTED.compareAndSet(false, true)) {
+			twilightforest.TwilightForestMod.LOGGER.debug("Skipping TF coverings for terrain generation without WorldGenRegion at {}", access.getPos());
+		}
 	}
 
 	/**

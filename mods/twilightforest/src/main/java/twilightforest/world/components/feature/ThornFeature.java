@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,19 +14,18 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.WorldUtil;
 import twilightforest.world.components.feature.config.ThornsConfig;
 
-public class ThornFeature extends Feature<ThornsConfig> {
+public class ThornFeature extends ConfiguredFeatureBase<ThornsConfig> {
 	public ThornFeature(Codec<ThornsConfig> config) {
 		super(config);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<ThornsConfig> ctx) {
+	public boolean place(FeaturePlacementContext<ThornsConfig> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
@@ -49,7 +49,7 @@ public class ThornFeature extends Feature<ThornsConfig> {
 			if (!avoidGiantCloud || checkIsUnderCloud(world, pos, dPos)) {
 				if (Math.abs(dPos.getX() - oPos.getX()) < config.maxSpread() && Math.abs(dPos.getZ() - oPos.getZ()) < config.maxSpread() && canPlaceThorns(world, dPos)) {
 					world.setBlock(dPos, TFBlocks.BROWN_THORNS.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, dir.getAxis()), Block.UPDATE_CLIENTS);
-					world.getChunk(dPos).markPosForPostprocessing(dPos);
+					world.getChunk(dPos).markPosForPostProcessing(dPos);
 
 					// did we make it to the end?
 					if (i == length - 1) {

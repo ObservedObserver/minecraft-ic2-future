@@ -115,7 +115,6 @@ public class ClientRegistrationEvents {
 	private void setup(IEventBus bus) {
 		bus.addListener(EntityRenderersEvent.AddLayers.class, this::attachRenderLayers);
 		bus.addListener(this::bakeCustomModels);
-		bus.addListener(this::clientSetup);
 		bus.addListener(this::registerStandalone);
 		bus.addListener(this::registerClientReloadListeners);
 		bus.addListener(this::registerAtlases);
@@ -141,7 +140,7 @@ public class ClientRegistrationEvents {
 		bus.addListener(ColorHandler::registerBlockColors);
 		bus.addListener(ColorHandler::registerItemColors);
 
-		bus.addListener(RegisterRenderPipelinesEvent.class, event -> event.registerPipeline(TFRenderPipelines.AURORA));
+		bus.addListener(RegisterRenderPipelinesEvent.class, event -> TFRenderPipelines.PIPELINES.forEach(event::registerPipeline));
 
 		bus.addListener(OverlayHandler::registerOverlays);
 
@@ -212,18 +211,6 @@ public class ClientRegistrationEvents {
 		}
 	}
 
-	private void clientSetup(FMLClientSetupEvent evt) {
-		evt.enqueueWork(() -> {
-			Sheets.addWoodType(TFWoodTypes.TWILIGHT_OAK_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.CANOPY_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.MANGROVE_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.DARK_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.TIME_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.TRANSFORMATION_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.MINING_WOOD_TYPE);
-			Sheets.addWoodType(TFWoodTypes.SORTING_WOOD_TYPE);
-		});
-	}
 
 	private void registerAtlases(RegisterTextureAtlasesEvent event) {
 		event.register(new AtlasManager.AtlasConfig(MagicPaintingAtlasInfo.ATLAS_LOCATION, MagicPaintingAtlasInfo.ATLAS_INFO_LOCATION, false));
@@ -536,12 +523,10 @@ public class ClientRegistrationEvents {
 	private void registerClientExtensions(RegisterClientExtensionsEvent event) {
 		event.registerBlock(new IClientBlockExtensions() {
 			@Override
-			public boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
-				if (level.getRandom().nextBoolean() && target instanceof BlockHitResult hitResult) { // No clue why the parameter isn't blockHitResult, this should be always true, but we check just in case
-					BlockPos pos = hitResult.getBlockPos();
+			public boolean addHitEffects(BlockState state, Level level, BlockPos pos, Direction side, ParticleEngine manager) {
+				if (level.getRandom().nextBoolean()) {
 					BlockState blockstate = level.getBlockState(pos);
 					if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-						Direction side = hitResult.getDirection();
 
 						int posX = pos.getX();
 						int posY = pos.getY();
@@ -674,16 +659,16 @@ public class ClientRegistrationEvents {
 	private void registerCustomRenderData(RegisterRenderStateModifiersEvent event) {
 		event.registerMapModifier(new MagicMapPlayerIconRenderer());
 		ConqueredMapIconRenderer conquered = new ConqueredMapIconRenderer();
-		event.registerMapDecorationModifier(TFMapDecorations.QUEST_GROVE.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.NAGA_COURTYARD.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.LICH_TOWER.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.LABYRINTH.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.HYDRA_LAIR.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.KNIGHT_STRONGHOLD.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.DARK_TOWER.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.YETI_LAIR.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.AURORA_PALACE.getKey(), conquered);
-		event.registerMapDecorationModifier(TFMapDecorations.FINAL_CASTLE.getKey(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.QUEST_GROVE.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.NAGA_COURTYARD.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.LICH_TOWER.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.LABYRINTH.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.HYDRA_LAIR.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.KNIGHT_STRONGHOLD.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.DARK_TOWER.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.YETI_LAIR.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.AURORA_PALACE.unwrapKey().orElseThrow(), conquered);
+		event.registerMapDecorationModifier(TFMapDecorations.FINAL_CASTLE.unwrapKey().orElseThrow(), conquered);
 
 		event.registerEntityModifier(new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {}, (LivingEntity living, LivingEntityRenderState state) -> {
 			if (living.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BlockItem head && head.getBlock() instanceof AbstractTrophyBlock)
@@ -721,7 +706,10 @@ public class ClientRegistrationEvents {
 
 	private void registerCustomEnvironmentRenderers(RegisterCustomEnvironmentEffectRendererEvent event) {
 		event.registerSkyboxRenderer(TwilightForestRenderInfo.SKY_RENDERER, new TwilightForestRenderInfo());
-		event.registerWeatherEffectRenderer(TwilightForestRenderInfo.WEATHER_RENDERER, new TwilightForestRenderInfo());
+		TwilightForestRenderInfo weather = new TwilightForestRenderInfo();
+		event.registerWeatherEffectRenderer(TwilightForestRenderInfo.WEATHER_RENDERER, weather);
+		net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.GameShuttingDownEvent ignored) -> weather.closeWeather());
+		net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut ignored) -> weather.closeWeather());
 	}
 
 	private void registerComponentTooltips(RegisterTooltipAppendersEvent event) {

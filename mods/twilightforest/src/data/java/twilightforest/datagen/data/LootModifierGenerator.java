@@ -1,6 +1,6 @@
 package twilightforest.datagen.data;
 
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -24,7 +24,7 @@ public class LootModifierGenerator extends GlobalLootModifierProvider {
 
 	@Override
 	protected void start() {
-		add("fiery_pick_smelting", new FieryToolSmeltingModifier(new LootItemCondition[]{MatchTool.toolMatches(ItemPredicate.Builder.item().of(registries.lookupOrThrow(Registries.ITEM), TFItems.FIERY_PICKAXE.get())).build()}, IGlobalLootModifier.DEFAULT_PRIORITY));
-		add("giant_pick_grouping", new GiantToolGroupingModifier(new LootItemCondition[]{GiantPickUsedCondition.builder(LootContext.EntityTarget.THIS).build()}, IGlobalLootModifier.DEFAULT_PRIORITY));
+		add("fiery_pick_smelting", new FieryToolSmeltingModifier(java.util.Optional.of(net.minecraft.core.Holder.direct(MatchTool.toolMatches(ItemPredicate.Builder.item().of(registries.lookupOrThrow(Registries.ITEM), TFItems.FIERY_PICKAXE.get())).build())), IGlobalLootModifier.DEFAULT_PRIORITY));
+		add("giant_pick_grouping", new GiantToolGroupingModifier(java.util.Optional.of(net.minecraft.core.Holder.direct(GiantPickUsedCondition.builder(LootContext.EntityTarget.THIS).build())), IGlobalLootModifier.DEFAULT_PRIORITY));
 	}
 }

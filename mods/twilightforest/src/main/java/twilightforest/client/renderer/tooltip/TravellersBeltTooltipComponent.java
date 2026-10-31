@@ -22,7 +22,7 @@ public class TravellersBeltTooltipComponent implements ClientTooltipComponent {
 	public TravellersBeltTooltipComponent(TravellersArmorBeltItem.Tooltip tooltip) {
 		ItemContainerContents contents = tooltip.contents();
 		for (int i = 0; i < 9; i++) {
-			ItemStack stack = contents.getSlots() <= i ? ItemStack.EMPTY : contents.getStackInSlot(i);
+			ItemStack stack = contents.getSlots() <= i ? ItemStack.EMPTY : contents.getTemplateInSlot(i).map(net.minecraft.world.item.ItemStackTemplate::create).orElse(ItemStack.EMPTY);
 			this.contents.add(stack);
 		}
 	}

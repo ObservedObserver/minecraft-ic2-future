@@ -1,6 +1,6 @@
 package twilightforest.client;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -194,7 +194,7 @@ public class UncraftingScreen extends AbstractRecipeBookScreen<UncraftingMenu> {
 					pX,
 					pY,
 					DefaultTooltipPositioner.INSTANCE,
-					container.slots.get(2 + i).getItem().get(DataComponents.TOOLTIP_STYLE));
+					container.slots.get(2 + i).getItem().get(DataComponents.TOOLTIP_STYLE), false);
 			}
 		}
 
@@ -206,7 +206,7 @@ public class UncraftingScreen extends AbstractRecipeBookScreen<UncraftingMenu> {
 				pX,
 				pY,
 				DefaultTooltipPositioner.INSTANCE,
-				null);
+				null, false);
 		} else {
 			super.extractTooltip(graphics, pX, pY);
 		}

@@ -18,15 +18,10 @@ import twilightforest.loot.TFLootTables;
 
 public class FireflyBlock extends CritterBlock {
 
-	public static final MapCodec<FireflyBlock> CODEC = simpleCodec(FireflyBlock::new);
+
 
 	public FireflyBlock(BlockBehaviour.Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

@@ -83,6 +83,12 @@ public class SinisterSpawnerBlockEntity extends BlockEntity implements Spawner {
 		this.setChanged();
 	}
 
+	@Override
+	public void setEntityData(net.minecraft.world.item.component.TypedEntityData<EntityType<?>> data, RandomSource random) {
+		this.spawner.setEntityData(data, this.level, random, this.worldPosition);
+		this.setChanged();
+	}
+
 	public SinisterSpawnerLogic getSpawner() {
 		return this.spawner;
 	}

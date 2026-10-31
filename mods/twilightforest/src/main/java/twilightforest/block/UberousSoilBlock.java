@@ -83,7 +83,7 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 			return;
 		}
 		if (above.isSolid()) {
-			FarmlandBlock.turnToDirt(null, state, level, pos);
+			((FarmlandBlock) Blocks.FARMLAND).turnToBaseBlock(null, state, level, pos);
 			return;
 		}
 
@@ -152,7 +152,7 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 	@Override
 	@SuppressWarnings("deprecation")
 	//check each side of the block, as well as above and below each of those positions for valid spots
-	public boolean isValidBonemealTarget(LevelReader getter, BlockPos pos, BlockState state) {
+	public boolean isValidBonemealTarget(LevelReader getter, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource bonemealSource) {
 		for (Direction dir : Direction.values()) {
 			if (dir != Direction.UP && dir != Direction.DOWN) {
 				BlockState blockAt = getter.getBlockState(pos.relative(dir));
@@ -180,7 +180,7 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 	}
 
 	@Override
-	public boolean isBonemealSuccess(Level level, RandomSource rand, BlockPos pos, BlockState state) {
+	public boolean isBonemealSuccess(Level level, RandomSource rand, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource bonemealSource) {
 		return true;
 	}
 
@@ -188,7 +188,7 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 	@SuppressWarnings("deprecation")
 	//check each side of the block, as well as above and below each of those positions to check for a place to put a block
 	//the above and below checks allow the patch to jump to a new y level, makes spreading easier
-	public void performBonemeal(ServerLevel level, RandomSource rand, BlockPos pos, BlockState state) {
+	public void performBonemeal(ServerLevel level, RandomSource rand, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource bonemealSource) {
 		List<Direction> directions = Arrays.asList(Direction.values());
 		Collections.shuffle(directions);
 		for (Direction dir : directions) {

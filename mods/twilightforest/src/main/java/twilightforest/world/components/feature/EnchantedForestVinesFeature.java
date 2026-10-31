@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -11,21 +12,20 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import twilightforest.init.TFBlocks;
 
 import java.util.*;
 
-public class EnchantedForestVinesFeature extends Feature<NoneFeatureConfiguration> {
+public class EnchantedForestVinesFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 	private static final int rarity = 7;
 	private static final int extraRarityOnTrees = 8;
 
 	public EnchantedForestVinesFeature(Codec<NoneFeatureConfiguration> codec) {super(codec);}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> context) {
 		WorldGenLevel world = context.level();
 		setAllPossibleStates(world, context.random(), context.origin());
 		return true;
@@ -97,7 +97,7 @@ public class EnchantedForestVinesFeature extends Feature<NoneFeatureConfiguratio
 	}
 
 	private boolean isSuitableBiome(WorldGenLevel world, BlockPos pos) {
-		return Objects.requireNonNull(world.getBiome(pos).getKey()).identifier().getPath().equals("enchanted_forest");
+		return Objects.requireNonNull(world.getBiome(pos).unwrapKey().orElseThrow()).identifier().getPath().equals("enchanted_forest");
 	}
 
 	private boolean isTree(BlockState state) {

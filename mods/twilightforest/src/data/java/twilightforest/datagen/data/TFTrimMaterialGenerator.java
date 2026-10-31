@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
-import net.minecraft.world.item.equipment.trim.MaterialAssetGroup;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import twilightforest.init.TFMaterialAssetGroup;
 import twilightforest.init.TFTrimMaterials;
@@ -21,10 +21,10 @@ public class TFTrimMaterialGenerator {
         register(context, TFTrimMaterials.CARMINITE, TFMaterialAssetGroup.CARMINITE, Style.EMPTY.withColor(10092544));
     }
 
-    private static void register(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, MaterialAssetGroup group, Style color) {
+    private static void register(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, Identifier paletteId, Style color) {
         String descriptionId = Util.makeDescriptionId("trim_material", trimKey.identifier());
         Component materialComponent = Component.translatable(descriptionId).withStyle(color);
-        TrimMaterial material = new TrimMaterial(group, materialComponent);
+        TrimMaterial material = new TrimMaterial(paletteId, materialComponent);
         context.register(trimKey, material);
     }
 

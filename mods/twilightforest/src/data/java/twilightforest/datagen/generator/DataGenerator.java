@@ -27,10 +27,7 @@ public class DataGenerator {
 		net.minecraft.data.DataGenerator generator = event.getGenerator();
 		PackOutput output = event.getGenerator().getPackOutput();
 
-		//datapack registry things
-		DatapackBuiltinEntriesProvider datapackProvider = new RegistryDataGenerator(output, event.getLookupProvider());
-		CompletableFuture<HolderLookup.Provider> lookupProvider = datapackProvider.getRegistryProvider();
-		generator.addProvider(true, datapackProvider);
+		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getWorldLookupProvider();
 
 		//tags
 		generator.addProvider(true, new BannerPatternTagGenerator(output, lookupProvider));
@@ -48,10 +45,10 @@ public class DataGenerator {
 		generator.addProvider(true, new WoodPaletteTagGenerator(output, lookupProvider));
 
 		//the other stuff
-		generator.addProvider(true, new CraftingGeneratorRunner(output, lookupProvider));
+
 		generator.addProvider(true, new DataMapGenerator(output, lookupProvider));
-		generator.addProvider(true, new LootGenerator(output, lookupProvider));
-		generator.addProvider(true, new LootModifierGenerator(output, lookupProvider));
+
+		generator.addProvider(true, new LootModifierGenerator(output, event.getReloadableLookupProvider()));
 		generator.addProvider(true, new QuestGenerator(output));
 		generator.addProvider(true, new RecipePriorityGenerator(output, lookupProvider));
 		generator.addProvider(true, new StalactiteGenerator(output));
@@ -59,7 +56,7 @@ public class DataGenerator {
 		generator.addProvider(true, new FinalCastleStructureDefinitionGenerator(output, lookupProvider));
 		generator.addProvider(true, new LichTowerStructureDefinitionGenerator(output, lookupProvider));
 		generator.addProvider(true, new NagaCourtyardStructureDefinitionGenerator(output, lookupProvider));
-		generator.addProvider(true, new TFAdvancementProvider(output, lookupProvider));
+
 		generator.addProvider(true, new TFStructureUpdater("structures", output, event.getResourceManager(PackType.SERVER_DATA)));
 	}
 }

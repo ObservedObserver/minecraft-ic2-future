@@ -12,17 +12,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.phys.Vec3;
 import twilightforest.init.TFParticleType;
 
-public class TransformationLeavesBlock extends LeavesBlock {
+public class TransformationLeavesBlock extends net.minecraft.world.level.block.FallingParticlesLeavesBlock {
 
-	public static final MapCodec<TransformationLeavesBlock> CODEC = simpleCodec(TransformationLeavesBlock::new);
+
 
 	public TransformationLeavesBlock(BlockBehaviour.Properties properties) {
-		super(1.0F, properties);
-	}
-
-	@Override
-	public MapCodec<? extends LeavesBlock> codec() {
-		return CODEC;
+		super(1.0F, net.minecraft.world.level.block.sounds.AmbientLeavesBlockSoundPlayer.noAmbientSound(), properties);
 	}
 
 	@Override

@@ -15,16 +15,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MiniatureStructureBlock extends HorizontalDirectionalBlock {
 
-	public static final MapCodec<MiniatureStructureBlock> CODEC = simpleCodec(MiniatureStructureBlock::new);
+
 
 	public MiniatureStructureBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH));
-	}
-
-	@Override
-	protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

@@ -78,8 +78,7 @@ public class MazeSlimeRenderer extends MobRenderer<MazeSlime, SlimeRenderState, 
 				if (flag) renderType = RenderTypes.outline(TEXTURE);
 				else renderType = RenderTypes.entityTranslucent(TEXTURE);
 
-				submitNodeCollector.order(1)
-					.submitModel(this.model, state, poseStack, renderType, lightCoords, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
+				twilightforest.client.renderer.ModelSubmission.submit(submitNodeCollector.order(1), this.model, state, poseStack, renderType, lightCoords, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
 			}
 		}
 	}

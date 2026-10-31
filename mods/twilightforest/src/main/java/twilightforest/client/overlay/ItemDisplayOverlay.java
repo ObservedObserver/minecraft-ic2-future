@@ -2,7 +2,7 @@ package twilightforest.client.overlay;
 
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,8 +21,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ItemDisplayOverlay {
-	public static void render(GuiGraphicsExtractor graphics, Minecraft minecraft, Window window, Gui gui, Player player) {
-		if (player == null || gui.getDebugOverlay().showDebugScreen() || minecraft.options.hideGui)
+	public static void render(GuiGraphicsExtractor graphics, Minecraft minecraft, Window window, Hud gui, Player player) {
+		if (player == null || gui.getDebugOverlay().showDebugScreen() || minecraft.gui.hud.isHidden())
 			return;
 
 		ItemStack goggles = player.getItemBySlot(EquipmentSlot.HEAD);
@@ -41,7 +41,7 @@ public class ItemDisplayOverlay {
 		renderHolders(graphics, minecraft, gui, player, typesToRender, widest);
 	}
 
-	private static void renderHolders(GuiGraphicsExtractor graphics, Minecraft minecraft, Gui gui, Player player, List<DisplayHolder> typesToRender, int widest) {
+	private static void renderHolders(GuiGraphicsExtractor graphics, Minecraft minecraft, Hud gui, Player player, List<DisplayHolder> typesToRender, int widest) {
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(TFConfig.itemDisplayXOffs, TFConfig.itemDisplayYOffs);
 		graphics.pose().scale((float) TFConfig.itemDisplayScale, (float) TFConfig.itemDisplayScale);
@@ -57,7 +57,7 @@ public class ItemDisplayOverlay {
 		graphics.pose().popMatrix();
 	}
 
-	private static int fillDisplayHolders(List<DisplayHolder> typesToRender, ItemDisplayContents contents, Minecraft minecraft, Gui gui, Player player) {
+	private static int fillDisplayHolders(List<DisplayHolder> typesToRender, ItemDisplayContents contents, Minecraft minecraft, Hud gui, Player player) {
 		int widest = 0;
 
 		NonNullList<ItemStack> items = contents.items();

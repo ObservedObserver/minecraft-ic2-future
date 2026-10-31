@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.trollcave;
 
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -14,10 +15,9 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -80,7 +80,7 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 	}
 
 	@Override
-	public void addChildren(StructurePiece parent, StructurePieceAccessor list, RandomSource rand) {
+	public void addChildren(StructurePiece parent, StructurePiecesBuilder list, RandomSource rand) {
 		// make 4 caves
 		for (final Rotation caveRotation : RotationUtil.ROTATIONS) {
 			BlockPos dest = getValidOpening(rand, caveRotation);
@@ -93,7 +93,7 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		vault.addChildren(this, list, rand);
 	}
 
-	protected boolean makeSmallerCave(StructurePieceAccessor list, RandomSource rand, int index, int x, int y, int z, int caveSize, int caveHeight, Rotation rotation) {
+	protected boolean makeSmallerCave(StructurePiecesBuilder list, RandomSource rand, int index, int x, int y, int z, int caveSize, int caveHeight, Rotation rotation) {
 		Direction direction = getStructureRelativeRotation(rotation);
 		BlockPos dest = offsetTowerCCoords(x, y, z, caveSize, direction);
 
@@ -231,7 +231,7 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 	/**
 	 * Use the generator at the surface above specified coords
 	 */
-	protected void generateAtSurface(WorldGenLevel world, ChunkGenerator generator, ResourceKey<ConfiguredFeature<?, ?>> feature, RandomSource rand, int x, int z, BoundingBox sbb) {
+	protected void generateAtSurface(WorldGenLevel world, ChunkGenerator generator, ResourceKey<Feature> feature, RandomSource rand, int x, int z, BoundingBox sbb) {
 		// are the coordinates in our bounding box?
 		int dx = getWorldX(x, z);
 		int dz = getWorldZ(x, z);
@@ -241,7 +241,7 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		for (int i = 0; i < 15; i++) {
 			pos.move(0, 1, 0);
 			if (sbb.isInside(pos) && world.getBlockState(pos.above()).isAir()) {
-				world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(feature).get().value().place(world, generator, rand, pos);
+				world.registryAccess().lookupOrThrow(Registries.FEATURE).get(feature).get().value().place(world, generator, rand, pos);
 				break;
 			}
 		}

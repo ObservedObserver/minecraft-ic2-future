@@ -16,8 +16,11 @@ import twilightforest.init.TFParticleType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AreaProtectionPacket implements CustomPacketPayload {
+
+	private static final AtomicInteger NEXT_CLIENT_ID = new AtomicInteger(-1);
 
 	public static final Type<AreaProtectionPacket> TYPE = new Type<>(TwilightForestMod.prefix("add_protection_box"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, AreaProtectionPacket> STREAM_CODEC = CustomPacketPayload.codec(AreaProtectionPacket::write, AreaProtectionPacket::new);
@@ -65,18 +68,7 @@ public class AreaProtectionPacket implements CustomPacketPayload {
 				@Override
 				public void run() {
 					ClientLevel level = ctx.player().level() instanceof ClientLevel clientLevel ? clientLevel : Minecraft.getInstance().level;
-					message.sbb.forEach(box -> {
-						for (Entity entity : level.entitiesForRendering()) {
-							if (entity instanceof ProtectionBox prot) {
-								if (prot.lifeTime > 0 && prot.matches(box)) {
-									prot.resetLifetime();
-									return;
-								}
-							}
-						}
-
-						level.addEntity(new ProtectionBox(level, box));
-					});
+					message.sbb.forEach(box -> addProtectionBox(level, box));
 
 					for (int i = 0; i < 20; i++) {
 						double vx = level.getRandom().nextGaussian() * 0.02D;
@@ -92,5 +84,24 @@ public class AreaProtectionPacket implements CustomPacketPayload {
 				}
 			});
 		}
+	}
+
+	static void addProtectionBox(ClientLevel level, BoundingBox bounds) {
+		for (Entity entity : level.entitiesForRendering()) {
+			if (entity instanceof ProtectionBox box && box.lifeTime > 0 && box.matches(bounds)) {
+				box.resetLifetime();
+				return;
+			}
+		}
+		ProtectionBox box = new ProtectionBox(level, bounds);
+		// 26.3 client levels return zero from getNextEntityId; these visual-only
+		// entities have no server spawn packet to supply an ID. Avoid live IDs
+		// because ClientLevel.addEntity would otherwise replace that entity.
+		int id;
+		do {
+			id = NEXT_CLIENT_ID.getAndUpdate(previous -> previous == Integer.MIN_VALUE ? -1 : previous - 1);
+		} while (level.getEntity(id) != null);
+		box.setId(id);
+		level.addEntity(box);
 	}
 }

@@ -1,7 +1,7 @@
 package twilightforest.client.overlay.display;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -47,7 +47,7 @@ public class ClockDisplay implements ItemDisplay {
 	}
 
 	@Override
-	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		FormattedCharSequence formattedcharsequence = this.getText(minecraft).getVisualOrderText();
 //		if (minecraft.level.dimensionType().natural()) {
 //			int k = this.getFrameForTime(minecraft.level.dimensionType().fixedTime().orElse(minecraft.level.getDayTime())).frame;
@@ -66,7 +66,7 @@ public class ClockDisplay implements ItemDisplay {
 	}
 
 	@Override
-	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		int textWidth = minecraft.font.width(this.getText(minecraft));
 		boolean natural = /*minecraft.level.dimensionType().natural();*/ true;
 		return new Bounds(Math.max(0, (widestWidgetWidth / 2 - (natural ? 5 : 0)) - (textWidth / 2)), 0, textWidth + (natural ? 10 : 0), minecraft.font.lineHeight);

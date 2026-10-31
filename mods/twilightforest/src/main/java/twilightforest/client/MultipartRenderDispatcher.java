@@ -59,18 +59,17 @@ public class MultipartRenderDispatcher implements DebugRenderer.SimpleDebugRende
 		TickRateManager tickRateManager = level.tickRateManager();
 		Frustum frustum = event.getFrustum();
 		Vec3 cameraPos = event.getCamera().position();
-		boolean showOutlines = event.getLevelRenderer().shouldShowEntityOutlines();
+		boolean showOutlines = renderState.shouldShowEntityOutlines;
 		List<PartRender> renders = new ArrayList<>();
 
 		TFPart.forEachPart(level.entitiesForRendering(), part -> {
 			EntityRenderer<Entity, EntityRenderState> renderer = BakedMultiPartRenderers.lookup(part.renderer());
-			if (!renderer.shouldRender(part, frustum, cameraPos.x(), cameraPos.y(), cameraPos.z()))
+			if (!renderer.shouldRender(part, frustum, cameraPos.x(), cameraPos.y(), cameraPos.z(), deltaTracker.getGameTimeDeltaPartialTick(!tickRateManager.isEntityFrozen(part))))
 				return;
 
 			EntityRenderState state = renderer.createRenderState(part, deltaTracker.getGameTimeDeltaPartialTick(!tickRateManager.isEntityFrozen(part)));
 			renders.add(new PartRender(renderer, state));
-			if (showOutlines && state.appearsGlowing())
-				renderState.haveGlowingEntities = true;
+			if (!showOutlines) state.outlineColor = 0;
 		});
 
 		renderState.setRenderData(this.partRenders, renders);
@@ -88,7 +87,7 @@ public class MultipartRenderDispatcher implements DebugRenderer.SimpleDebugRende
 
 		for (PartRender render : renders) {
 			EntityRenderState state = render.state();
-			if (!renderState.haveGlowingEntities)
+			if (!renderState.shouldShowEntityOutlines)
 				state.outlineColor = 0;
 
 			Vec3 offset = render.renderer().getRenderOffset(state);

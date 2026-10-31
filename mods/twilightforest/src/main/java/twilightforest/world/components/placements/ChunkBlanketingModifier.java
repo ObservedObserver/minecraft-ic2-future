@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -14,8 +14,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-import twilightforest.init.TFFeatureModifiers;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -23,12 +21,12 @@ import java.util.stream.Stream;
 
 // Ideally, you should not be mixing this with other decorators unless you know what you're doing
 // This litters memory with 256 block positions for each chunk. USE SPARINGLY
-public class ChunkBlanketingModifier extends PlacementModifier {
+public class ChunkBlanketingModifier implements PlacementModifier {
 
 	public static final MapCodec<ChunkBlanketingModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.floatRange(0.0f, 1.0f).fieldOf("integrity").forGetter(o -> o.integrity),
 		Heightmap.Types.CODEC.fieldOf("heightmap").forGetter(o -> o.heightmap),
-		RegistryCodecs.homogeneousList(Registries.BIOME).optionalFieldOf("biome_lock").forGetter(o -> o.biomeRLOptional)
+		RegistryCodecs.holderSet(Registries.BIOME).optionalFieldOf("biome_lock").forGetter(o -> o.biomeRLOptional)
 	).apply(instance, ChunkBlanketingModifier::new));
 
 	public final float integrity;
@@ -45,7 +43,6 @@ public class ChunkBlanketingModifier extends PlacementModifier {
 		return new ChunkBlanketingModifier(0.7f, Heightmap.Types.OCEAN_FLOOR_WG, Optional.of(thorns));
 	}
 
-	@Override
 	public Stream<BlockPos> getPositions(PlacementContext context, RandomSource random, BlockPos placement) {
 		ArrayList<BlockPos> coordinates = new ArrayList<>();
 
@@ -72,7 +69,11 @@ public class ChunkBlanketingModifier extends PlacementModifier {
 	}
 
 	@Override
-	public PlacementModifierType<?> type() {
-		return TFFeatureModifiers.CHUNK_BLANKETING.get();
-	}
+	public MapCodec<ChunkBlanketingModifier> codec() { return CODEC; }
+    @Override
+    public void modify(PlacementContext context, RandomSource random, BlockPos origin, java.util.function.Consumer<BlockPos> output) {
+        // Keep the original stream construction before downstream placement. In
+        // particular, blanketing rolls all candidate positions before applying them.
+        getPositions(context, random, origin).forEach(output);
+    }
 }

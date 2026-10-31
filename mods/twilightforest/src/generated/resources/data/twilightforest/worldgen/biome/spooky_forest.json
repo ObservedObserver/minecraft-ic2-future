@@ -1,5 +1,67 @@
 {
   "attributes": {
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.1,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "minecraft:skeleton": {
+            "charge": 0.85,
+            "energy_budget": 0.25
+          },
+          "minecraft:spider": {
+            "charge": 0.75,
+            "energy_budget": 0.25
+          },
+          "twilightforest:skeleton_druid": {
+            "charge": 0.95,
+            "energy_budget": 0.25
+          }
+        },
+        "spawns_by_category": {
+          "ambient": [
+            {
+              "type": "minecraft:bat",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 2
+              },
+              "weight": 20
+            }
+          ],
+          "monster": [
+            {
+              "type": "minecraft:spider",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 50
+            },
+            {
+              "type": "minecraft:skeleton",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 20
+            },
+            {
+              "type": "twilightforest:skeleton_druid",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 1,
+                "min_inclusive": 1
+              },
+              "weight": 5
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
     "minecraft:visual/fog_color": "#827391",
     "minecraft:visual/fog_end_distance": 64.0,
     "minecraft:visual/fog_start_distance": 16.0,
@@ -72,55 +134,5 @@
     ]
   ],
   "has_precipitation": true,
-  "spawn_costs": {
-    "minecraft:skeleton": {
-      "charge": 0.85,
-      "energy_budget": 0.25
-    },
-    "minecraft:spider": {
-      "charge": 0.75,
-      "energy_budget": 0.25
-    },
-    "twilightforest:skeleton_druid": {
-      "charge": 0.95,
-      "energy_budget": 0.25
-    }
-  },
-  "spawners": {
-    "ambient": [
-      {
-        "type": "minecraft:bat",
-        "maxCount": 4,
-        "minCount": 2,
-        "weight": 20
-      }
-    ],
-    "axolotls": [],
-    "creature": [],
-    "misc": [],
-    "monster": [
-      {
-        "type": "minecraft:spider",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 50
-      },
-      {
-        "type": "minecraft:skeleton",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 20
-      },
-      {
-        "type": "twilightforest:skeleton_druid",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 5
-      }
-    ],
-    "underground_water_creature": [],
-    "water_ambient": [],
-    "water_creature": []
-  },
   "temperature": 0.5
 }

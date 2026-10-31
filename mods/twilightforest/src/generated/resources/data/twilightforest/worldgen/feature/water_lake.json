@@ -1,0 +1,11 @@
+{
+  "type": "twilightforest:small_lake",
+  "config": {
+    "fluid": {
+      "id": "minecraft:water",
+      "properties": {
+        "level": "0"
+      }
+    }
+  }
+}

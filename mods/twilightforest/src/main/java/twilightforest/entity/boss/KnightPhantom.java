@@ -330,7 +330,7 @@ public class KnightPhantom extends BaseTFBoss {
 		if (!damageSource.is(DamageTypeTags.BYPASSES_SHIELD) && itemstack != null && !flag) {
 			Vec3 vec3 = damageSource.getSourcePosition();
 			if (vec3 != null) {
-				Vec3 vec31 = this.calculateViewVector(0.0F, this.getYHeadRot());
+				Vec3 vec31 = Entity.calculateViewVector(0.0F, this.getYHeadRot());
 				Vec3 vec32 = vec3.vectorTo(this.position());
 				vec32 = (new Vec3(vec32.x, 0.0F, vec32.z)).normalize();
 				return vec32.dot(vec31) < (double) 0.0F;
@@ -346,8 +346,8 @@ public class KnightPhantom extends BaseTFBoss {
 	}
 
 	@Override
-	public void knockback(double damage, double xRatio, double zRatio) {
-		this.hurtMarked = true;
+	public void knockback(double damage, double xRatio, double zRatio, net.minecraft.world.damagesource.DamageSource source, float incomingDamage, boolean comesFromEffect) {
+		this.syncVelocity = true;
 		float f = Mth.sqrt((float) (xRatio * xRatio + zRatio * zRatio));
 		float distance = 0.2F;
 		this.setDeltaMovement(new Vec3(this.getDeltaMovement().x() / 2.0D, this.getDeltaMovement().y() / 2.0D, this.getDeltaMovement().z() / 2.0D));

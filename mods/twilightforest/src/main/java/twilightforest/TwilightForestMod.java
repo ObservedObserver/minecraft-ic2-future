@@ -44,8 +44,10 @@ public final class TwilightForestMod {
 		ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> ConfigurationScreen::new);
 
 		TFItems.ITEMS.register(bus);
+        bus.addListener(net.neoforged.neoforge.event.ModifyDefaultComponentsEvent.class, TFDefaultItemComponents::modify);
 		TFStats.STATS.register(bus);
 		TFLoot.NUMBERS.register(bus);
+        TFLoot.INT_NUMBERS.register(bus);
 		TFBlocks.BLOCKS.register(bus);
 		TFPOITypes.POIS.register(bus);
 		TFSounds.SOUNDS.register(bus);

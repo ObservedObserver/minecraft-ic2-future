@@ -62,7 +62,7 @@ public class TravellersArmorBeltItem extends TravellersArmorItem {
 		boolean hasChanged = false;
 		for (int slotIndex = 0; slotIndex < 9; slotIndex++) {
 			ItemStack inventoryStack = inventory.getItem(slotIndex);
-			ItemStack beltStack = containerContents.getSlots() <= slotIndex ? ItemStack.EMPTY : containerContents.getStackInSlot(slotIndex);
+			ItemStack beltStack = containerContents.getSlots() <= slotIndex ? ItemStack.EMPTY : containerContents.getTemplateInSlot(slotIndex).map(net.minecraft.world.item.ItemStackTemplate::create).orElse(ItemStack.EMPTY);
 			if (inventoryStack.canFitInsideContainerItems() && !inventoryStack.is(TFItemTags.TRAVELLERS_BELT_BLACKLISTED) && (isSwapHotbarActive || inventoryStack.isEmpty())) {
 				hotbarStacks.set(slotIndex, inventoryStack);
 				inventory.setItem(slotIndex, beltStack);

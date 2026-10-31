@@ -2,20 +2,17 @@
   "type": "minecraft:entity",
   "pools": [
     {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "twilightforest:is_minion",
-          "inverse": true
-        }
-      ],
+      "condition": {
+        "type": "twilightforest:is_minion",
+        "inverse": true
+      },
       "entries": [
         {
           "type": "minecraft:loot_table",
           "value": "minecraft:entities/ghast"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "twilightforest:entities/carminite_ghastling"

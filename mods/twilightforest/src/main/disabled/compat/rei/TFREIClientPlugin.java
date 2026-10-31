@@ -225,7 +225,7 @@ public class TFREIClientPlugin implements REIClientPlugin {
 	public static ItemEntity createItemEntity(ItemStack stack) {
 		//unfortunately entity creation is required here.
 		//If I pull from my cache the items all render as the same block/item, depending on what was last rendered on screen
-		ItemEntity entity = EntityType.ITEM.create(Minecraft.getInstance().level);
+		ItemEntity entity = net.minecraft.world.entity.EntityTypes.ITEM.create(Minecraft.getInstance().level);
 
 		if (entity != null) {
 			entity.setItem(stack);

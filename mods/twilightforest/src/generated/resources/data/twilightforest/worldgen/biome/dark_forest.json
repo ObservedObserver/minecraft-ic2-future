@@ -1,11 +1,126 @@
 {
   "attributes": {
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.05,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "minecraft:enderman": {
+            "charge": 0.75,
+            "energy_budget": 0.15
+          },
+          "minecraft:skeleton": {
+            "charge": 0.8,
+            "energy_budget": 0.15
+          },
+          "minecraft:witch": {
+            "charge": 0.75,
+            "energy_budget": 0.15
+          },
+          "minecraft:zombie": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          },
+          "twilightforest:king_spider": {
+            "charge": 0.85,
+            "energy_budget": 0.25
+          },
+          "twilightforest:kobold": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          },
+          "twilightforest:mist_wolf": {
+            "charge": 0.75,
+            "energy_budget": 0.2
+          },
+          "twilightforest:skeleton_druid": {
+            "charge": 0.8,
+            "energy_budget": 0.2
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "minecraft:enderman",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 2
+            },
+            {
+              "type": "minecraft:zombie",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 5
+            },
+            {
+              "type": "minecraft:skeleton",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 5
+            },
+            {
+              "type": "twilightforest:mist_wolf",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 1,
+                "min_inclusive": 1
+              },
+              "weight": 5
+            },
+            {
+              "type": "twilightforest:skeleton_druid",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 1,
+                "min_inclusive": 1
+              },
+              "weight": 5
+            },
+            {
+              "type": "twilightforest:king_spider",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 1,
+                "min_inclusive": 1
+              },
+              "weight": 1
+            },
+            {
+              "type": "twilightforest:kobold",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 3,
+                "min_inclusive": 1
+              },
+              "weight": 10
+            },
+            {
+              "type": "minecraft:witch",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 1,
+                "min_inclusive": 1
+              },
+              "weight": 2
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
     "minecraft:visual/fog_color": "#000000",
     "minecraft:visual/sky_color": "#000000",
     "minecraft:visual/sky_light_factor": 0.0
   },
   "carvers": "twilightforest:tf_caves",
-  "creature_spawn_probability": 0.05,
   "downfall": 0.8,
   "effects": {
     "foliage_color": "#3b5e3f",
@@ -48,98 +163,5 @@
     ]
   ],
   "has_precipitation": true,
-  "spawn_costs": {
-    "minecraft:enderman": {
-      "charge": 0.75,
-      "energy_budget": 0.15
-    },
-    "minecraft:skeleton": {
-      "charge": 0.8,
-      "energy_budget": 0.15
-    },
-    "minecraft:witch": {
-      "charge": 0.75,
-      "energy_budget": 0.15
-    },
-    "minecraft:zombie": {
-      "charge": 0.7,
-      "energy_budget": 0.15
-    },
-    "twilightforest:king_spider": {
-      "charge": 0.85,
-      "energy_budget": 0.25
-    },
-    "twilightforest:kobold": {
-      "charge": 0.7,
-      "energy_budget": 0.15
-    },
-    "twilightforest:mist_wolf": {
-      "charge": 0.75,
-      "energy_budget": 0.2
-    },
-    "twilightforest:skeleton_druid": {
-      "charge": 0.8,
-      "energy_budget": 0.2
-    }
-  },
-  "spawners": {
-    "ambient": [],
-    "axolotls": [],
-    "creature": [],
-    "misc": [],
-    "monster": [
-      {
-        "type": "minecraft:enderman",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 2
-      },
-      {
-        "type": "minecraft:zombie",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 5
-      },
-      {
-        "type": "minecraft:skeleton",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 5
-      },
-      {
-        "type": "twilightforest:mist_wolf",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 5
-      },
-      {
-        "type": "twilightforest:skeleton_druid",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 5
-      },
-      {
-        "type": "twilightforest:king_spider",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 1
-      },
-      {
-        "type": "twilightforest:kobold",
-        "maxCount": 3,
-        "minCount": 1,
-        "weight": 10
-      },
-      {
-        "type": "minecraft:witch",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 2
-      }
-    ],
-    "underground_water_creature": [],
-    "water_ambient": [],
-    "water_creature": []
-  },
   "temperature": 0.7
 }

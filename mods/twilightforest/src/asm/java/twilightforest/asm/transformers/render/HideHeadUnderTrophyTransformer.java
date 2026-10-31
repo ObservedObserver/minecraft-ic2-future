@@ -29,41 +29,38 @@ public class HideHeadUnderTrophyTransformer extends SimpleMethodProcessor {
 			"net/minecraft/client/model/Model",
 			"setupAnim",
 			"(Ljava/lang/Object;)V"
-		).findFirst().ifPresent(target -> {
+		).findFirst().map(target -> {
 			node.instructions.insert(target, ASMUtil.listOf(
 				new VarInsnNode(Opcodes.ALOAD, 1),
 				new MethodInsnNode(Opcodes.INVOKESTATIC,
 					"twilightforest/asmhooks/RenderHooks",
 					"applyHeadVisibility",
-					"(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;)V",
+					"(Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer$Submit;)V",
 					false)
 			));
-		});
+			return target;
+		}).orElseThrow(() -> new IllegalStateException("Missing native model setupAnim target"));
 
-		ASMUtil.findLast(ASMUtil.findMethodInstructions(
-			node,
-			Opcodes.INVOKEVIRTUAL,
-			"com/mojang/blaze3d/vertex/PoseStack",
-			"popPose",
-			"()V"
-		)).ifPresent(target -> {
+		var returns = ASMUtil.findInstructions(node, Opcodes.RETURN).toList();
+		if (returns.isEmpty()) throw new IllegalStateException("Missing model prepare return");
+		for (var target : returns) {
 			node.instructions.insertBefore(target, ASMUtil.listOf(
 				new VarInsnNode(Opcodes.ALOAD, 1),
 				new MethodInsnNode(Opcodes.INVOKESTATIC,
 					"twilightforest/asmhooks/RenderHooks",
 					"restoreHeadVisibility",
-					"(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;)V",
+					"(Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer$Submit;)V",
 					false)
 			));
-		});
+		}
 	}
 
 	@Override
 	public Set<SimpleMethodProcessor.Target> targets() {
 		return Set.of(new SimpleMethodProcessor.Target(
 				"net.minecraft.client.renderer.feature.ModelFeatureRenderer",
-				"renderModel",
-				"(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V"
+				"prepareModel",
+				"(Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer$Submit;)V"
 			)
 		);
 	}

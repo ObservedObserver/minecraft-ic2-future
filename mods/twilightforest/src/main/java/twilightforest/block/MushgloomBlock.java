@@ -30,7 +30,7 @@ public class MushgloomBlock extends MushroomBlock {
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(LevelReader getter, BlockPos pos, BlockState state) {
+	public boolean isValidBonemealTarget(LevelReader getter, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource bonemealSource) {
 		return false;
 	}
 }

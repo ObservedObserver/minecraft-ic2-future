@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.trees;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -16,9 +17,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 //[VanillaCopy] of TreeFeature but allows trees on snow
-public class SnowTreeFeature extends Feature<TreeConfiguration> {
+public class SnowTreeFeature extends ConfiguredFeatureBase<TreeConfiguration> {
 	public SnowTreeFeature(Codec<TreeConfiguration> codec) {
 		super(codec);
 	}
@@ -51,7 +51,7 @@ public class SnowTreeFeature extends Feature<TreeConfiguration> {
 
 	private boolean doPlace(WorldGenLevel level, RandomSource random, BlockPos pos, BiConsumer<BlockPos, BlockState> consumer, BiConsumer<BlockPos, BlockState> consumer1, FoliagePlacer.FoliageSetter setter, TreeConfiguration config) {
 		int i = config.trunkPlacer.getTreeHeight(random);
-		int j = config.foliagePlacer.foliageHeight(random, i, config);
+		int j = config.foliagePlacer.foliageHeight(random, i, config.nativeFeature());
 		int k = i - j;
 		int l = config.foliagePlacer.foliageRadius(random, k);
 		BlockPos blockpos = config.rootPlacer.map((p_225286_) -> p_225286_.getTrunkOrigin(pos, random)).orElse(pos);
@@ -61,12 +61,12 @@ public class SnowTreeFeature extends Feature<TreeConfiguration> {
 			OptionalInt optionalint = config.minimumSize.minClippedHeight();
 			int k1 = this.getMaxFreeTreeHeight(level, i, blockpos, config);
 			if (k1 >= i || optionalint.isPresent() && k1 >= optionalint.getAsInt()) {
-				if (config.rootPlacer.isPresent() && !config.rootPlacer.get().placeRoots(level, consumer, random, pos, blockpos, config)) {
+				if (config.rootPlacer.isPresent() && !config.rootPlacer.get().placeRoots(level, consumer, random, pos, blockpos, config.nativeFeature())) {
 					return false;
 				} else {
-					List<FoliagePlacer.FoliageAttachment> list = config.trunkPlacer.placeTrunk(level, consumer1, random, k1, blockpos, config);
+					List<FoliagePlacer.FoliageAttachment> list = config.trunkPlacer.placeTrunk(level, consumer1, random, k1, blockpos, config.nativeFeature());
 					list.forEach((p_225279_) -> {
-						config.foliagePlacer.createFoliage(level, setter, random, config, k1, p_225279_, j, l);
+						config.foliagePlacer.createFoliage(level, setter, random, config.nativeFeature(), k1, p_225279_, j, l);
 					});
 					return true;
 				}
@@ -103,7 +103,7 @@ public class SnowTreeFeature extends Feature<TreeConfiguration> {
 	}
 
 	@Override
-	public final boolean place(FeaturePlaceContext<TreeConfiguration> context) {
+	public final boolean place(FeaturePlacementContext<TreeConfiguration> context) {
 		WorldGenLevel worldgenlevel = context.level();
 		RandomSource randomsource = context.random();
 		BlockPos blockpos = context.origin();

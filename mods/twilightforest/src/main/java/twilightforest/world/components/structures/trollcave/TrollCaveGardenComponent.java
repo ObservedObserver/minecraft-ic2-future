@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.trollcave;
 
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -14,10 +15,9 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import twilightforest.init.TFBiomes;
 import twilightforest.init.TFConfiguredFeatures;
@@ -44,7 +44,7 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 	}
 
 	@Override
-	public void addChildren(StructurePiece parent, StructurePieceAccessor list, RandomSource rand) {
+	public void addChildren(StructurePiece parent, StructurePiecesBuilder list, RandomSource rand) {
 		// add a cloud
 	}
 
@@ -100,7 +100,7 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 		this.placeSpeleothems(world, rand, sbb, decoRNG);
 	}
 
-	protected void generate(WorldGenLevel world, ChunkGenerator generator, ResourceKey<ConfiguredFeature<?, ?>> feature, RandomSource rand, int x, int y, int z, BoundingBox sbb) {
+	protected void generate(WorldGenLevel world, ChunkGenerator generator, ResourceKey<Feature> feature, RandomSource rand, int x, int y, int z, BoundingBox sbb) {
 		// are the coordinates in our bounding box?
 		int dx = getWorldX(x, z);
 		int dy = getWorldY(y);
@@ -108,7 +108,7 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 
 		BlockPos pos = new BlockPos(dx, dy, dz);
 		if (sbb.isInside(pos)) {
-			world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(feature).get().value().place(world, generator, rand, pos);
+			world.registryAccess().lookupOrThrow(Registries.FEATURE).get(feature).get().value().place(world, generator, rand, pos);
 		}
 	}
 }

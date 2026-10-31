@@ -151,19 +151,19 @@ public class EntityTypeTagGenerator extends ModdedEntityTypeTagGenerator {
 
 		this.tag(TFEntityTypeTags.LICH_POPPABLES)
 			.addTag(EntityTypeTags.SKELETONS)
-			.add(EntityType.ZOMBIE, EntityType.ENDERMAN, EntityType.SPIDER, EntityType.CREEPER, TFEntities.SWARM_SPIDER.get())
+			.add(net.minecraft.world.entity.EntityTypes.ZOMBIE, net.minecraft.world.entity.EntityTypes.ENDERMAN, net.minecraft.world.entity.EntityTypes.SPIDER, net.minecraft.world.entity.EntityTypes.CREEPER, TFEntities.SWARM_SPIDER.get())
 			.remove(Tags.EntityTypes.BOSSES);
 
 		this.tag(TFEntityTypeTags.LIFEDRAIN_DROPS_NO_FLESH).addTag(EntityTypeTags.SKELETONS).addTag(EntityTypeTags.FROG_FOOD).add(
-			EntityType.BLAZE,
-			EntityType.BREEZE,
-			EntityType.IRON_GOLEM,
-			EntityType.PHANTOM,
-			EntityType.SHULKER,
-			EntityType.SKELETON_HORSE,
-			EntityType.SNOW_GOLEM,
-			EntityType.VEX,
-			EntityType.WITHER,
+			net.minecraft.world.entity.EntityTypes.BLAZE,
+			net.minecraft.world.entity.EntityTypes.BREEZE,
+			net.minecraft.world.entity.EntityTypes.IRON_GOLEM,
+			net.minecraft.world.entity.EntityTypes.PHANTOM,
+			net.minecraft.world.entity.EntityTypes.SHULKER,
+			net.minecraft.world.entity.EntityTypes.SKELETON_HORSE,
+			net.minecraft.world.entity.EntityTypes.SNOW_GOLEM,
+			net.minecraft.world.entity.EntityTypes.VEX,
+			net.minecraft.world.entity.EntityTypes.WITHER,
 			TFEntities.CARMINITE_GOLEM.get(),
 			TFEntities.DEATH_TOME.get(),
 			TFEntities.ICE_CRYSTAL.get(),
@@ -179,12 +179,12 @@ public class EntityTypeTagGenerator extends ModdedEntityTypeTagGenerator {
 		this.tag(TFEntityTypeTags.RIDES_OBSTRUCT_SNATCHING).add(TFEntities.PINCH_BEETLE.get(), TFEntities.YETI.get(), TFEntities.ALPHA_YETI.get());
 		this.tag(TFEntityTypeTags.DONT_KILL_BUGS).add(TFEntities.MOONWORM_SHOT.get());
 		this.tag(TFEntityTypeTags.SORTABLE_ENTITIES).add(
-			EntityType.CHEST_MINECART,
-			EntityType.HOPPER_MINECART,
-			EntityType.LLAMA,
-			EntityType.TRADER_LLAMA,
-			EntityType.DONKEY,
-			EntityType.MULE);
+			net.minecraft.world.entity.EntityTypes.CHEST_MINECART,
+			net.minecraft.world.entity.EntityTypes.HOPPER_MINECART,
+			net.minecraft.world.entity.EntityTypes.LLAMA,
+			net.minecraft.world.entity.EntityTypes.TRADER_LLAMA,
+			net.minecraft.world.entity.EntityTypes.DONKEY,
+			net.minecraft.world.entity.EntityTypes.MULE);
 
 		this.tag(TFEntityTypeTags.MULTIPLAYER_INCLUSIVE_ENTITIES).add(
 			TFEntities.NAGA.get(),
@@ -201,13 +201,13 @@ public class EntityTypeTagGenerator extends ModdedEntityTypeTagGenerator {
 		this.tag(TFEntityTypeTags.LICH_DEFLECTS_PHASE_2).add(TFEntities.WAND_BOLT.get(), TFEntities.LICH_BOLT.get(), TFEntities.LICH_BOMB.get());
 
 		this.tag(TFEntityTypeTags.HEDGE_DAMAGE_IMMUNE).add(
-			EntityType.SPIDER,
-			EntityType.CAVE_SPIDER,
+			net.minecraft.world.entity.EntityTypes.SPIDER,
+			net.minecraft.world.entity.EntityTypes.CAVE_SPIDER,
 			TFEntities.HEDGE_SPIDER.get(),
 			TFEntities.SWARM_SPIDER.get(),
 			TFEntities.KING_SPIDER.get(),
 			TFEntities.CARMINITE_BROODLING.get(),
-			EntityType.ITEM
+			net.minecraft.world.entity.EntityTypes.ITEM
 		);
 
 		this.tag(TFEntityTypeTags.PROGRESSION_LOCK_VULNERABLE).add(TFEntities.KOBOLD.get());

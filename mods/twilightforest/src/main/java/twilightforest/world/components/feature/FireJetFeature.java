@@ -1,24 +1,24 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.BlockStateConfiguration;
 import twilightforest.util.features.FeatureUtil;
 
-public class FireJetFeature extends Feature<BlockStateConfiguration> {
+public class FireJetFeature extends ConfiguredFeatureBase<BlockStateConfiguration> {
 
 	public FireJetFeature(Codec<BlockStateConfiguration> configIn) {
 		super(configIn);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<BlockStateConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<BlockStateConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
@@ -46,7 +46,7 @@ public class FireJetFeature extends Feature<BlockStateConfiguration> {
 				}
 
 				// jet
-				world.setBlock(dPos.below(), config.state, 0);
+				world.setBlock(dPos.below(), config.state(), 0);
 
 				// create reservoir with stone walls
 				for (int rx = -2; rx <= 2; rx++) {

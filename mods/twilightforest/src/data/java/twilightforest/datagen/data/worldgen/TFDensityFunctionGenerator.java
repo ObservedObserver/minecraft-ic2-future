@@ -5,8 +5,8 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunctions;
 import net.minecraft.world.level.levelgen.Noises;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import twilightforest.TFRegistries;
@@ -41,7 +41,7 @@ public class TFDensityFunctionGenerator {
             64,
             1,
             DensityFunctions.constant(8),
-            DensityFunctions.constant(-1.25)
+            DensityFunctions.constant(-1.25F)
         );
 
         // Debug: For a flat substitute of TerrainDensityRouter
@@ -51,9 +51,9 @@ public class TFDensityFunctionGenerator {
     }
 
     private static DensityFunction makeAmbientNoise2D(BootstrapContext<DensityFunction> context) {
-        HolderGetter<NormalNoise.NoiseParameters> noiseLookup = context.lookup(Registries.NOISE);
-        Holder.Reference<NormalNoise.NoiseParameters> surfaceParams = noiseLookup.getOrThrow(Noises.SURFACE);
-        Holder.Reference<NormalNoise.NoiseParameters> ridgeParams = noiseLookup.getOrThrow(Noises.RIDGE);
+        HolderGetter<NormalNoise> noiseLookup = context.lookup(Registries.NOISE);
+        Holder.Reference<NormalNoise> surfaceParams = noiseLookup.getOrThrow(Noises.SURFACE);
+        Holder.Reference<NormalNoise> ridgeParams = noiseLookup.getOrThrow(Noises.RIDGE);
 
         DensityFunction noiseInterpolator = mulAddHalf(DensityFunctions.noise(surfaceParams, 1, 0));
         DensityFunction wideNoise = mulAddHalf(DensityFunctions.noise(ridgeParams, 1, 0));
@@ -65,7 +65,7 @@ public class TFDensityFunctionGenerator {
             thinNoise
         );
 
-        return DensityFunctions.flatCache(jitteredNoise);
+        return new twilightforest.world.components.chunkgenerators.QuartSampleFunction(jitteredNoise);
     }
 
     private static DensityFunction makeStreamDensityRaw(BootstrapContext<DensityFunction> context, Holder.Reference<BiomeDensitySource> biomeGrid) {
@@ -86,9 +86,9 @@ public class TFDensityFunctionGenerator {
         // mulAddHalf(x) = x * 0.5 + 0.5
         // Useful for squeezing function range [-1,1] into [0,1]
         return DensityFunctions.add(
-            DensityFunctions.constant(0.5),
+            DensityFunctions.constant(0.5F),
             DensityFunctions.mul(
-                DensityFunctions.constant(0.5),
+                DensityFunctions.constant(0.5F),
                 input
             )
         );
@@ -99,7 +99,7 @@ public class TFDensityFunctionGenerator {
             DensityFunctions.constant(1 / 6f),
             DensityFunctions.add(
                 rawBiomeDensity,
-                DensityFunctions.yClampedGradient(-31, 256, 31, -256)
+                DensityFunctions.gradient(net.minecraft.core.Direction.Axis.Y, net.minecraft.world.level.levelgen.densityfunction.TilingMode.CLAMP_TO_EDGE, -31, 256, 31, -256)
             )
         );
 
@@ -111,12 +111,12 @@ public class TFDensityFunctionGenerator {
                     DensityFunctions.max(
                         DensityFunctions.zero(),
                         ambientTerrainNoise
-                    )
+                    ), 8, 8
                 )
             )
         );
 
-        context.register(FORESTED_TERRAIN, finalDensity.clamp(-0.1, 0.5));
+        context.register(FORESTED_TERRAIN, finalDensity.clamp(-0.1F, 0.5F));
     }
 
     // Heavy WIP
@@ -124,10 +124,10 @@ public class TFDensityFunctionGenerator {
         // FIXME Rapid terrain changes around Highlands are causing islands to stretch into walls when transitioning from the Stream biome
 
         DensityFunction skyIslandNoise = DensityFunctions.add(
-            DensityFunctions.constant(-0.5),
+            DensityFunctions.constant(-0.5F),
             DensityFunctions.mul(
                 DensityFunctions.add(
-                    DensityFunctions.constant(-0.5),
+                    DensityFunctions.constant(-0.5F),
                     ambientTerrainNoise
                 ),
                 DensityFunctions.constant(5)
@@ -135,21 +135,21 @@ public class TFDensityFunctionGenerator {
         );
 
         DensityFunction biomeDensity = DensityFunctions.mul(
-            DensityFunctions.constant(-0.25),
+            DensityFunctions.constant(-0.25F),
             DensityFunctions.mul(DensityFunctions.add(
                 rawBiomeDensity,
-                DensityFunctions.yClampedGradient(-31, 256, 31, -256)
+                DensityFunctions.gradient(net.minecraft.core.Direction.Axis.Y, net.minecraft.world.level.levelgen.densityfunction.TilingMode.CLAMP_TO_EDGE, -31, 256, 31, -256)
             ), DensityFunctions.constant(-1)).halfNegative().abs()
         );
 
         DensityFunction finalDensity = DensityFunctions.add(
             new SqrtDensityFunction(
-                DensityFunctions.interpolated(skyIslandNoise).clamp(0, 2)
+                DensityFunctions.interpolated(skyIslandNoise, 8, 8).clamp(0, 2)
             ),
             biomeDensity
         );
 
-        context.register(SKYLIGHT_TERRAIN, finalDensity.clamp(-0.1, 0.5));
+        context.register(SKYLIGHT_TERRAIN, finalDensity.clamp(-0.1F, 0.5F));
     }
 
 }

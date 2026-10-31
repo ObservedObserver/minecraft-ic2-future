@@ -89,7 +89,7 @@ public class RisingZombie extends Monster {
 		}
 
 		if (!this.level().isClientSide() && this.getRisingTicks() >= 130) {
-			this.convertTo(EntityType.ZOMBIE, ConversionParams.single(this, true, true), zombie -> {
+			this.convertTo(net.minecraft.world.entity.EntityTypes.ZOMBIE, ConversionParams.single(this, true, true), zombie -> {
 				zombie.setHealth(this.getHealth());
 				zombie.setYRot(this.yRotO = this.getYRot());
 			});
@@ -131,7 +131,7 @@ public class RisingZombie extends Monster {
 	}
 
 	@Override
-	public void knockback(double strength, double xRatio, double zRatio) {
+	public void knockback(double strength, double xRatio, double zRatio, net.minecraft.world.damagesource.DamageSource source, float incomingDamage, boolean comesFromEffect) {
 
 	}
 

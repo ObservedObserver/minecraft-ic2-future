@@ -1,0 +1,7 @@
+{
+  "type": "twilightforest:fallen_small_log",
+  "config": {
+    "hollow": "twilightforest:hollow_spruce_log_horizontal",
+    "normal": "minecraft:spruce_log"
+  }
+}

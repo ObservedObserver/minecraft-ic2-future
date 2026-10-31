@@ -1,24 +1,24 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.DiskConfiguration;
 
 //[VanillaCopy] of BaseDiskFeature, but we add a check to make sure the block above is air
-public class CheckAbovePatchFeature extends Feature<DiskConfiguration> {
+public class CheckAbovePatchFeature extends ConfiguredFeatureBase<DiskConfiguration> {
 
 	public CheckAbovePatchFeature(Codec<DiskConfiguration> codec) {
 		super(codec);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<DiskConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<DiskConfiguration> ctx) {
 		DiskConfiguration diskconfiguration = ctx.config();
 		BlockPos blockpos = ctx.origin();
 		WorldGenLevel worldgenlevel = ctx.level();

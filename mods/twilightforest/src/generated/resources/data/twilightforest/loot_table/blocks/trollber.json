@@ -2,37 +2,33 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:alternatives",
           "children": [
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "ability": "shears_dig",
-                  "condition": "neoforge:can_item_perform_ability"
-                }
-              ],
+              "condition": {
+                "type": "neoforge:can_item_perform_ability",
+                "ability": "shears_dig"
+              },
               "name": "twilightforest:trollber"
             },
             {
               "type": "minecraft:item",
-              "functions": [
+              "modifier": [
                 {
-                  "add": false,
+                  "type": "minecraft:set_count",
                   "count": {
                     "type": "minecraft:uniform",
-                    "max": 8.0,
-                    "min": 4.0
-                  },
-                  "function": "minecraft:set_count"
+                    "max": 8,
+                    "min": 4
+                  }
                 },
                 {
+                  "type": "minecraft:apply_bonus",
                   "enchantment": "minecraft:fortune",
-                  "formula": "minecraft:ore_drops",
-                  "function": "minecraft:apply_bonus"
+                  "formula": "minecraft:ore_drops"
                 }
               ],
               "name": "twilightforest:torchberries"
@@ -40,7 +36,7 @@
           ]
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "twilightforest:blocks/trollber"

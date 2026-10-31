@@ -7,8 +7,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunctions;
 import org.jetbrains.annotations.Unmodifiable;
 import twilightforest.init.TFBiomes;
 import twilightforest.world.components.chunkgenerators.TerrainColumn;
@@ -53,7 +53,7 @@ public final class BiomeMaker extends BiomeHelper {
 
 		biomeHolder.bindKey(key);
 
-		return makeColumn(DensityFunctions.constant(noiseDepth), DensityFunctions.constant(noiseScale), DensityFunctions.constant(weight), biomeHolder, treeMap -> {
+		return makeColumn(DensityFunctions.constant((float) noiseDepth), DensityFunctions.constant((float) noiseScale), DensityFunctions.constant((float) weight), biomeHolder, treeMap -> {
 			// This will put the transition boundary around Y-8
 			treeMap.put(Math.min(noiseDepth - 1, -1), biomeHolder);
 			treeMap.put(Math.min(noiseDepth - 3, -3), undergroundBiome);
@@ -65,7 +65,7 @@ public final class BiomeMaker extends BiomeHelper {
 
 		biomeHolder.bindKey(key);
 
-		return makeColumn(DensityFunctions.constant(noiseDepth), DensityFunctions.constant(noiseScale), DensityFunctions.constant(weight), biomeHolder, treeMap -> treeMap.put(0, biomeHolder));
+		return makeColumn(DensityFunctions.constant((float) noiseDepth), DensityFunctions.constant((float) noiseScale), DensityFunctions.constant((float) weight), biomeHolder, treeMap -> treeMap.put(0, biomeHolder));
 	}
 
 	private static TerrainColumn makeColumn(DensityFunction noiseDepth, DensityFunction noiseScale, DensityFunction noiseWeight, Holder<Biome> biomeHolder, Consumer<Double2ObjectSortedMap<Holder<Biome>>> layerBuilder) {

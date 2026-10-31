@@ -165,7 +165,7 @@ public class HorizontalHollowLogBlock extends Block implements WaterloggedBlock 
 
 				return InteractionResult.SUCCESS;
 			}
-		} else if (stack.canPerformAction(ItemAbilities.SHOVEL_FLATTEN)) {
+		} else if (twilightforest.util.ToolActionHelper.uses(stack, net.minecraft.world.item.component.BlockTransformers.SHOVEL)) {
 			if (variant == HollowLogVariants.Horizontal.SNOW) {
 				level.setBlock(pos, state.setValue(VARIANT, HollowLogVariants.Horizontal.EMPTY), Block.UPDATE_ALL);
 				playBreakSound(Blocks.SNOW.defaultBlockState(), level, pos, player);

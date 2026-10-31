@@ -41,7 +41,7 @@ dependencies { // Forces intellij to grab sources for the gradle build script
 }
 
 wrapper {
-	gradleVersion = '9.1.0'
+	gradleVersion = '9.2.1'
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -59,22 +59,8 @@ shadowJar {
 	}
 }
 
+// Local port tests deliberately do not load personal credentials.
 def secrets = new Properties()
-def secretsFile = file('secrets.properties')
-if (secretsFile.exists()) {
-	secretsFile.withInputStream {
-		stream -> secrets.load(stream)
-	}
-
-	fileTree("secrets").matching {
-		include "**/*.properties"
-	}.each {
-		File file ->
-			file.withInputStream {
-				stream -> secrets.load(stream)
-			}
-	}
-}
 
 idea {
 	module {
@@ -94,6 +80,8 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
 	options.compilerArgs << "-Xlint:all,-classfile,-processing,-deprecation,-this-escape" << "-Werror"
+	// Keep migration diagnostics complete instead of truncating at 100 errors.
+	options.compilerArgs += ['-Xmaxerrs', '10000', '-Xmaxwarns', '1000']
 	options.encoding = 'UTF-8'
 }
 
@@ -113,7 +101,7 @@ sourceSets {
 			srcDirs = ['src/main/java', 'src/data/java']
 		}
 		resources {
-			srcDirs = ['src/main/resources']
+			srcDirs = ['src/main/resources', 'src/data/resources']
 		}
 	}
 }
@@ -169,15 +157,14 @@ neoForge {
 		client {
 			client()
 			systemProperty 'forge.enabledGameTestNamespaces', mod_id
-			programArguments.addAll(
-				'--username', secrets.getProperty("username") ?: 'Dev',
-				'--accessToken', '0',
-				secrets.getProperty("uuid") ? '--uuid' : '', secrets.getProperty("uuid") ?: ''
-			)
+			gameDirectory = project.file('run-isolated/client')
+			programArguments.addAll('--username', 'TFPortTest', '--accessToken', '0',
+				'--uuid', '00000000-0000-3000-8000-000000000001')
 		}
 
 		server {
 			server()
+			gameDirectory = project.file('run-isolated/server')
 			systemProperty 'forge.enabledGameTestNamespaces', mod_id
 			programArgument '--nogui'
 		}
@@ -188,7 +175,7 @@ neoForge {
 			programArguments.addAll(
 				'--mod', mod_id,
 				'--all',
-				'--output', file('src/generated/resources/').getAbsolutePath(),
+				'--output', file(providers.gradleProperty('portDataOutput').getOrElse('build/generated-port-resources')).getAbsolutePath(),
 				'--existing', file('src/main/resources/').getAbsolutePath()
 			)
 			sourceSet = this.sourceSets.data
@@ -219,24 +206,30 @@ repositories {
 	maven {
 		name 'Jared\'s Maven' // JEI
 		url 'https://maven.blamejared.com/'
+		content { includeGroupByRegex 'mezz\\.jei.*' }
 	}
 	maven {
 		name = "Curios" // Curios
 		url = uri("https://maven.theillusivec4.top/")
+		content { includeGroup 'top.theillusivec4.curios' }
 	}
 	maven {
 		name 'Shedaniel\'s Maven' //REI
 		url "https://maven.shedaniel.me"
+		content { includeGroupByRegex 'me\\.shedaniel.*' }
 	}
 	maven {
 		name = "TerraformersMC" //EMI
 		url = "https://maven.terraformersmc.com/"
+		content { includeGroup 'dev.emi' }
 	}
 	maven { // TOP
 		url "https://maven.k-4u.nl"
+		content { includeGroup 'mcjty.theoneprobe' }
 	}
 	maven { //CS
 		url "https://nexus.resourcefulbees.com/repository/maven-public/"
+		content { includeGroup 'com.telepathicgrunt' }
 	}
 	maven {
 		name 'Curseforge Maven' // Jade
@@ -244,6 +237,11 @@ repositories {
 		content {
 			includeGroup "curse.maven"
 		}
+	}
+	maven {
+		name 'Modrinth'
+		url 'https://api.modrinth.com/maven'
+		content { includeGroup 'maven.modrinth' }
 	}
 }
 
@@ -257,15 +255,15 @@ dependencies {
 	testCompileOnly "${beanification}:test-sources"
 
 	//make sure to only pick one of these when testing (switch others to compileOnly)
-	implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+	compileOnly "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
 //	compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
 //	compileOnly "dev.emi:emi-neoforge:${project.emi_version}+${project.base_minecraft_version}"
 
 	// theillusivec4
-	implementation "top.theillusivec4.curios:curios-neoforge:${project.curios_version}+${project.base_minecraft_version}"
+	compileOnly "top.theillusivec4.curios:curios-neoforge:${project.curios_version}+${project.base_minecraft_version}"
 
 	//curse maven
-	implementation "curse.maven:jade-324717:8651070"
+	compileOnly "maven.modrinth:jade:dVB8U7Td" // Jade 26.3.5, compile-only integration API
 //	implementation "curse.maven:cosmetic-armor-reworked-237307:5961480"
 //	runtimeOnly "curse.maven:jeed-532286:5483315"
 //	runtimeOnly "curse.maven:museum-curator-859070:4629894"
@@ -280,7 +278,7 @@ dependencies {
 
 	//mods we dont have compat with but are nice to have
 //	runtimeOnly "com.telepathicgrunt:CommandStructures-Neoforge:4.4.3+1.21.4"
-	runtimeOnly "curse.maven:world-edit-225608:8037379"
+	// WorldEdit is optional development tooling; do not inject an older game jar.
 
 	testImplementation "net.neoforged:testframework:${project.neoforge_version}"
 	testImplementation "org.junit.jupiter:junit-jupiter:6.0.1"

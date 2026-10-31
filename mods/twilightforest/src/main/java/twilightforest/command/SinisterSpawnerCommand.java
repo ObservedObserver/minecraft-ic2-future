@@ -67,7 +67,7 @@ public class SinisterSpawnerCommand {
 		Holder<LootTable> loot = ResourceOrIdArgument.getLootTable(context, "loot");
 
 		if (context.getSource().getLevel().getBlockEntity(pos) instanceof SinisterSpawnerBlockEntity entity)
-			if (entity.setLootTable(loot.getKey()))
+			if (entity.setLootTable(loot.unwrapKey().orElseThrow()))
 				return 1;
 
 		return 0;

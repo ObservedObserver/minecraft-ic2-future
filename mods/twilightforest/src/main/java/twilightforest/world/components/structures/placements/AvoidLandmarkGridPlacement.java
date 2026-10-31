@@ -15,26 +15,28 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
-import twilightforest.init.TFStructurePlacementTypes;
-import twilightforest.util.landmarks.LegacyLandmarkPlacements;
+import net.minecraft.world.level.levelgen.structure.placement.AbstractSpreadingStructurePlacement;
+import twilightforest.util.landmarks.LandmarkGridMath;
 
 import java.util.Optional;
 
 public class AvoidLandmarkGridPlacement extends RandomSpreadStructurePlacement {
-	public static final MapCodec<AvoidLandmarkGridPlacement> CODEC = RecordCodecBuilder.<AvoidLandmarkGridPlacement>mapCodec(instance -> instance.group(
+	// Widen the codec result to match the native superclass signature while retaining
+	// this registered codec identity and the subclass instance on decode.
+	public static final MapCodec<RandomSpreadStructurePlacement> CODEC = RecordCodecBuilder.<AvoidLandmarkGridPlacement>mapCodec(instance -> instance.group(
 		Vec3i.offsetCodec(16).optionalFieldOf("locate_offset", Vec3i.ZERO).forGetter(AvoidLandmarkGridPlacement::locateOffset),
-		StructurePlacement.FrequencyReductionMethod.CODEC
-			.optionalFieldOf("frequency_reduction_method", StructurePlacement.FrequencyReductionMethod.DEFAULT)
+		AbstractSpreadingStructurePlacement.FrequencyReductionMethod.CODEC
+			.optionalFieldOf("frequency_reduction_method", AbstractSpreadingStructurePlacement.FrequencyReductionMethod.DEFAULT)
 			.forGetter(AvoidLandmarkGridPlacement::frequencyReductionMethod),
 		Codec.floatRange(0.0F, 1.0F).optionalFieldOf("frequency", 1.0F).forGetter(AvoidLandmarkGridPlacement::frequency),
 		ExtraCodecs.NON_NEGATIVE_INT.fieldOf("salt").forGetter(AvoidLandmarkGridPlacement::salt),
-		StructurePlacement.ExclusionZone.CODEC.optionalFieldOf("exclusion_zone").forGetter(AvoidLandmarkGridPlacement::exclusionZone),
+		AbstractSpreadingStructurePlacement.ExclusionZone.CODEC.optionalFieldOf("exclusion_zone").forGetter(AvoidLandmarkGridPlacement::exclusionZone),
 		Codec.intRange(0, 4096).fieldOf("spacing").forGetter(AvoidLandmarkGridPlacement::spacing),
 		Codec.intRange(0, 4096).fieldOf("separation").forGetter(AvoidLandmarkGridPlacement::separation),
 		RandomSpreadType.CODEC.optionalFieldOf("spread_type", RandomSpreadType.LINEAR).forGetter(AvoidLandmarkGridPlacement::spreadType),
 		AvoidAdditionalStructures.CODEC.optionalFieldOf("avoid_additional_structures").forGetter(AvoidLandmarkGridPlacement::otherStructuresToAvoid)
-	).apply(instance, AvoidLandmarkGridPlacement::new)).validate(AvoidLandmarkGridPlacement::validate);
+	).apply(instance, AvoidLandmarkGridPlacement::new)).validate(AvoidLandmarkGridPlacement::validate)
+		.xmap(placement -> placement, AvoidLandmarkGridPlacement.class::cast);
 
 	private final Optional<AvoidAdditionalStructures> avoidOtherStructures;
 
@@ -43,8 +45,7 @@ public class AvoidLandmarkGridPlacement extends RandomSpreadStructurePlacement {
 	}
 
 	public AvoidLandmarkGridPlacement(int spacing, int separation, RandomSpreadType spreadType, int salt, Optional<AvoidAdditionalStructures> avoidOtherStructures) {
-		super(spacing, separation, spreadType, salt);
-		this.avoidOtherStructures = avoidOtherStructures;
+		this(Vec3i.ZERO, FrequencyReductionMethod.DEFAULT, 1.0F, salt, Optional.empty(), spacing, separation, spreadType, avoidOtherStructures);
 	}
 
 	public AvoidLandmarkGridPlacement(Vec3i locateOffset, FrequencyReductionMethod reduction, float frequencyModifier, int salt, Optional<ExclusionZone> exclusionZone, int spacing, int separation, RandomSpreadType spreadType, Optional<AvoidAdditionalStructures> avoidOtherStructures) {
@@ -60,15 +61,16 @@ public class AvoidLandmarkGridPlacement extends RandomSpreadStructurePlacement {
 			return false;
 		}
 
-		// Feature Center
-		BlockPos.MutableBlockPos featurePos = LegacyLandmarkPlacements.getNearestCenterXZ(chunkX, chunkZ).mutable();
+        return isOutsideLandmarkBuffer(chunkpos);
+    }
 
-		// Turn Feature Center into Feature Offset
-		featurePos.set(Math.abs(featurePos.getX() - chunkpos.getWorldPosition().getX()), 0, Math.abs(featurePos.getZ() - chunkpos.getWorldPosition().getZ()));
-		int size = 80;
-
-		return featurePos.getX() >= size || featurePos.getZ() >= size;
-	}
+    public static boolean isOutsideLandmarkBuffer(ChunkPos chunk) {
+        BlockPos center = LandmarkGridMath.getNearestCenterXZ(chunk.x(), chunk.z());
+        // Preserve the original comparison against the chunk minimum, including
+        // its asymmetric +8/+9 center offset around negative coordinates.
+        return Math.abs(center.getX() - chunk.getMinBlockX()) >= 80
+            || Math.abs(center.getZ() - chunk.getMinBlockZ()) >= 80;
+    }
 
 	@Override
 	public boolean applyInteractionsWithOtherStructures(ChunkGeneratorStructureState structureState, int x, int z) {
@@ -82,9 +84,7 @@ public class AvoidLandmarkGridPlacement extends RandomSpreadStructurePlacement {
 	}
 
 	@Override
-	public StructurePlacementType<?> type() {
-		return TFStructurePlacementTypes.AVOID_GRID_LANDMARK_PLACEMENT_TYPE.get();
-	}
+	public MapCodec<RandomSpreadStructurePlacement> codec() { return CODEC; }
 
 	public record AvoidAdditionalStructures(Object2IntArrayMap<Holder<StructureSet>> avoidStructures) {
 		public static final Codec<AvoidAdditionalStructures> CODEC = Codec.unboundedMap(StructureSet.CODEC, Codec.intRange(0, 16)).xmap(map -> new AvoidAdditionalStructures(new Object2IntArrayMap<>(map)), AvoidAdditionalStructures::avoidStructures);

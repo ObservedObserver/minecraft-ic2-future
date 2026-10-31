@@ -133,7 +133,7 @@ public class TFTeleporter {
 	private static BlockPos getPortalPosition(ServerLevel destDim, BlockPos pos) {
 		PoiManager poiManager = destDim.getPoiManager();
 		int radius = 200;
-		return poiManager.getInSquare(type -> type.is(TFPOITypes.TWILIGHT_PORTAL.getKey()), pos, radius, PoiManager.Occupancy.ANY)
+		return poiManager.getInSquare(type -> type.is(TFPOITypes.TWILIGHT_PORTAL.unwrapKey().orElseThrow()), pos, radius, PoiManager.Occupancy.ANY)
 			.map(PoiRecord::getPos)
 			.filter(destDim.getWorldBorder()::isWithinBounds)
 			.sorted(Comparator.<BlockPos>comparingDouble(portalPos -> portalPos.distSqr(pos)).thenComparingInt(Vec3i::getY))

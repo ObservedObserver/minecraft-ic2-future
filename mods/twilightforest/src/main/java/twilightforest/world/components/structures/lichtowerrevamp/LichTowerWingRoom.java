@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.lichtowerrevamp;
 
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -192,7 +193,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 	}
 
 	@Override
-	protected void processJigsaw(TwilightJigsawPiece parent, StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
+	protected void processJigsaw(TwilightJigsawPiece parent, StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
 		switch (connection.target()) {
 			case "twilightforest:lich_tower/bridge" -> {
 				if (this.roomSize < 1) {
@@ -293,7 +294,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 		return hasRoomAbove && !hasRoomBelow ? 0 : hasRoomAbove ? 1 : 2;
 	}
 
-	private boolean putRoof(StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection) {
+	private boolean putRoof(StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection) {
 		FrontAndTop orientationToMatch = getVerticalOrientation(connection, Direction.UP, this);
 		BoundingBox roofExtension = BoundingBoxUtils.extrusionFrom(this.boundingBox.minX(), this.boundingBox.maxY() + 1, this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY() + 1, this.boundingBox.maxZ(), orientationToMatch.top().getOpposite(), 1);
 		boolean doSideAttachment = connection.orientation().front().getAxis().isHorizontal() && pieceAccessor.findCollisionPiece(roofExtension) != null;
@@ -316,7 +317,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 		return FrontAndTop.fromFrontAndTop(vertical, sourceDirection.getOpposite());
 	}
 
-	public static boolean tryRoof(StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, @Nullable Identifier roofLocation, FrontAndTop orientationToMatch, boolean allowClipping, TwilightJigsawPiece parent, int newDepth, StructureTemplateManager structureManager) {
+	public static boolean tryRoof(StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, @Nullable Identifier roofLocation, FrontAndTop orientationToMatch, boolean allowClipping, TwilightJigsawPiece parent, int newDepth, StructureTemplateManager structureManager) {
 		JigsawPlaceContext placeableJunction = JigsawPlaceContext.pickPlaceableJunction(parent.templatePosition(), connection.pos(), orientationToMatch, structureManager, roofLocation, "twilightforest:lich_tower/roof", context.random());
 
 		if (placeableJunction != null) {
@@ -332,7 +333,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 		return false;
 	}
 
-	private boolean tryBeard(StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, @Nullable Identifier beardLocation, FrontAndTop orientationToMatch, boolean allowClipping, boolean generateGround) {
+	private boolean tryBeard(StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, @Nullable Identifier beardLocation, FrontAndTop orientationToMatch, boolean allowClipping, boolean generateGround) {
 		JigsawPlaceContext placeableJunction = JigsawPlaceContext.pickPlaceableJunction(this.templatePosition(), connection.pos(), orientationToMatch, this.structureManager, beardLocation, "twilightforest:lich_tower/beard", context.random());
 
 		if (placeableJunction != null) {
@@ -505,27 +506,27 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 			case "chest" -> this.putChest(pos, level, random, parameters, dataRotation, Blocks.CHEST.defaultBlockState());
 			case "trapped_chest" -> this.putChest(pos, level, random, parameters, dataRotation, Blocks.TRAPPED_CHEST.defaultBlockState());
 			case "candle", "candles" -> this.putCandles(parameters, random, level, pos, Blocks.CANDLE.defaultBlockState());
-			case "white_candle" -> this.putCandles(parameters, random, level, pos, Blocks.WHITE_CANDLE.defaultBlockState());
-			case "orange_candle" -> this.putCandles(parameters, random, level, pos, Blocks.ORANGE_CANDLE.defaultBlockState());
-			case "magenta_candle" -> this.putCandles(parameters, random, level, pos, Blocks.MAGENTA_CANDLE.defaultBlockState());
-			case "light_blue_candle" -> this.putCandles(parameters, random, level, pos, Blocks.LIGHT_BLUE_CANDLE.defaultBlockState());
-			case "yellow_candle" -> this.putCandles(parameters, random, level, pos, Blocks.YELLOW_CANDLE.defaultBlockState());
-			case "lime_candle" -> this.putCandles(parameters, random, level, pos, Blocks.LIME_CANDLE.defaultBlockState());
-			case "pink_candle" -> this.putCandles(parameters, random, level, pos, Blocks.PINK_CANDLE.defaultBlockState());
-			case "gray_candle" -> this.putCandles(parameters, random, level, pos, Blocks.GRAY_CANDLE.defaultBlockState());
-			case "light_gray_candle" -> this.putCandles(parameters, random, level, pos, Blocks.LIGHT_GRAY_CANDLE.defaultBlockState());
-			case "cyan_candle" -> this.putCandles(parameters, random, level, pos, Blocks.CYAN_CANDLE.defaultBlockState());
-			case "purple_candle" -> this.putCandles(parameters, random, level, pos, Blocks.PURPLE_CANDLE.defaultBlockState());
-			case "blue_candle" -> this.putCandles(parameters, random, level, pos, Blocks.BLUE_CANDLE.defaultBlockState());
-			case "brown_candle" -> this.putCandles(parameters, random, level, pos, Blocks.BROWN_CANDLE.defaultBlockState());
-			case "green_candle" -> this.putCandles(parameters, random, level, pos, Blocks.GREEN_CANDLE.defaultBlockState());
-			case "red_candle" -> this.putCandles(parameters, random, level, pos, Blocks.RED_CANDLE.defaultBlockState());
-			case "black_candle" -> this.putCandles(parameters, random, level, pos, Blocks.BLACK_CANDLE.defaultBlockState());
+			case "white_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState());
+			case "orange_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.ORANGE).defaultBlockState());
+			case "magenta_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.MAGENTA).defaultBlockState());
+			case "light_blue_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE).defaultBlockState());
+			case "yellow_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.YELLOW).defaultBlockState());
+			case "lime_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.LIME).defaultBlockState());
+			case "pink_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.PINK).defaultBlockState());
+			case "gray_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.GRAY).defaultBlockState());
+			case "light_gray_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.LIGHT_GRAY).defaultBlockState());
+			case "cyan_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.CYAN).defaultBlockState());
+			case "purple_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.PURPLE).defaultBlockState());
+			case "blue_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.BLUE).defaultBlockState());
+			case "brown_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.BROWN).defaultBlockState());
+			case "green_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.GREEN).defaultBlockState());
+			case "red_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.RED).defaultBlockState());
+			case "black_candle" -> this.putCandles(parameters, random, level, pos, Blocks.DYED_CANDLE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
 			case "water_cauldron" -> this.putWaterCauldron(parameters, random, level, pos);
 			case "zombie_trap" -> this.putZombieTrap(random, level, pos);
 			case "wrought_iron_post" -> {
 				level.setBlock(pos, TFBlocks.WROUGHT_IRON_FENCE.value().defaultBlockState().setValue(WroughtIronFenceBlock.POST, WroughtIronFenceBlock.PostState.POST), Block.UPDATE_CLIENTS);
-				level.getChunk(pos).markPosForPostprocessing(pos);
+				level.getChunk(pos).markPosForPostProcessing(pos);
 			}
 			case "empty_lectern" -> {
 				Rotation stateRotation = this.placeSettings.getRotation().getRotated(dataRotation);
@@ -665,12 +666,12 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 
 	private EntityType<?> defaultRandomMob(RandomSource random) {
 		return switch (random.nextInt(10)) {
-			case 7, 8, 9 -> EntityType.SKELETON;
-			case 6 -> EntityType.SPIDER;
-			case 5 -> EntityType.CAVE_SPIDER;
+			case 7, 8, 9 -> net.minecraft.world.entity.EntityTypes.SKELETON;
+			case 6 -> net.minecraft.world.entity.EntityTypes.SPIDER;
+			case 5 -> net.minecraft.world.entity.EntityTypes.CAVE_SPIDER;
 			case 4 -> TFEntities.HEDGE_SPIDER.value();
 			case 3 -> TFEntities.SWARM_SPIDER.value();
-			default -> EntityType.ZOMBIE;
+			default -> net.minecraft.world.entity.EntityTypes.ZOMBIE;
 		};
 	}
 
@@ -679,7 +680,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 		return switch (label) {
 			case "hedge_spider" -> TFEntities.HEDGE_SPIDER.value();
 			case "swarm_spider" -> TFEntities.SWARM_SPIDER.value();
-			default -> EntityType.byString(label).orElse(EntityType.ZOMBIE);
+			default -> net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(label)).orElse(net.minecraft.world.entity.EntityTypes.ZOMBIE);
 		};
 	}
 
@@ -701,7 +702,7 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 		WroughtIronFenceBlock.PostState postProperty = level.getBlockState(pos.above()).isAir() ? WroughtIronFenceBlock.PostState.CAPPED : WroughtIronFenceBlock.PostState.POST;
 		BlockState fenceBlock = TFBlocks.WROUGHT_IRON_FENCE.value().defaultBlockState().setValue(WroughtIronFenceBlock.POST, postProperty);
 		level.setBlock(pos, fenceBlock, Block.UPDATE_CLIENTS);
-		level.getChunk(pos).markPosForPostprocessing(pos);
+		level.getChunk(pos).markPosForPostProcessing(pos);
 
 		Direction randomDirection = this.getRandomDirectionInsideChunk(level, random, pos);
 
@@ -709,8 +710,8 @@ public final class LichTowerWingRoom extends TwilightJigsawPiece implements Piec
 
 		BlockPos zombiePos = pos.relative(randomDirection, 1);
 
-		var knot = EntityUtil.createEntityIgnoreException(level, EntityType.LEASH_KNOT);
-		var trapEntity = EntityUtil.createEntityIgnoreException(level, EntityType.ZOMBIE);
+		var knot = EntityUtil.createEntityIgnoreException(level, net.minecraft.world.entity.EntityTypes.LEASH_KNOT);
+		var trapEntity = EntityUtil.createEntityIgnoreException(level, net.minecraft.world.entity.EntityTypes.ZOMBIE);
 		if (knot == null || trapEntity == null)
 			return;
 

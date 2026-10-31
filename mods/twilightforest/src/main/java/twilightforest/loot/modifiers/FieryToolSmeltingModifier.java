@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class FieryToolSmeltingModifier extends LootModifier {
 	public static final MapCodec<FieryToolSmeltingModifier> CODEC = RecordCodecBuilder.mapCodec(inst -> LootModifier.codecStart(inst).apply(inst, FieryToolSmeltingModifier::new));
 
-	public FieryToolSmeltingModifier(LootItemCondition[] conditions, int priority) {
+	public FieryToolSmeltingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, int priority) {
 		super(conditions, priority);
 	}
 
@@ -39,7 +39,7 @@ public class FieryToolSmeltingModifier extends LootModifier {
 
 		float xp = (float) list.stream().mapToDouble(Pair::getRight).sum();
 		if (xp > 0.0F && context.hasParameter(LootContextParams.THIS_ENTITY)) {
-			ExperienceOrb.award(context.getLevel(), context.getParameter(LootContextParams.THIS_ENTITY).position(), Math.round(xp));
+			ExperienceOrb.award(context.getLevel(), context.getOptional(LootContextParams.THIS_ENTITY).position(), Math.round(xp));
 		}
 
 		return list.stream().map(Pair::getLeft).collect(Collectors.toCollection(ObjectArrayList::new));

@@ -298,7 +298,7 @@ public abstract class BlockModelBuilders extends WoodBlockBuilders {
 		Identifier basalt = TFModelTemplates.CASKET_SOLID.create(TwilightForestMod.prefix("block/casket_basalt"), new TextureMapping().put(TextureSlot.TOP, new Material(Identifier.withDefaultNamespace("block/basalt_top"))).put(TextureSlot.SIDE, new Material(Identifier.withDefaultNamespace("block/basalt_side"))), this.modelOutput);
 
 		this.casketBlockAndItemModels(TFBlocks.KEEPSAKE_CASKET.get(), _ -> ItemModelUtils.specialModel(TwilightForestMod.prefix("item/keepsake_casket"), new KeepsakeCasketSpecialRenderer.Unbaked()), this.createParticleOnlyBlockModel(TFBlocks.KEEPSAKE_CASKET.get(), Blocks.NETHERITE_BLOCK), obsidian, stone, basalt);
-		this.casketBlockAndItemModels(TFBlocks.SKULL_CHEST.get(), _ -> ItemModelUtils.specialModel(TwilightForestMod.prefix("item/skull_chest"), new SkullChestSpecialRenderer.Unbaked()), this.createParticleOnlyBlockModel(TFBlocks.SKULL_CHEST.get(), Blocks.LIGHT_GRAY_CONCRETE_POWDER), obsidian, stone, basalt);
+		this.casketBlockAndItemModels(TFBlocks.SKULL_CHEST.get(), _ -> ItemModelUtils.specialModel(TwilightForestMod.prefix("item/skull_chest"), new SkullChestSpecialRenderer.Unbaked()), this.createParticleOnlyBlockModel(TFBlocks.SKULL_CHEST.get(), Blocks.CONCRETE_POWDER.pick(net.minecraft.world.item.DyeColor.LIGHT_GRAY)), obsidian, stone, basalt);
 	}
 
 	private <B extends Block> void casketBlockAndItemModels(B block, Function<B, ItemModel.Unbaked> itemModel, MultiVariant particleOnlyBlockModel, Identifier obsidian, Identifier stone, Identifier basalt) {

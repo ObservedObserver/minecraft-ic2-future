@@ -3,7 +3,7 @@ package twilightforest.datagen.data.tags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagAppender;
+import twilightforest.datagen.helpers.ValueTagAppender;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -26,10 +26,11 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
 		super.addTags(provider);
+        twilightforest.datagen.helpers.LegacyVanillaTags.append(net.minecraft.core.registries.Registries.BLOCK, "block", (tag, entry) -> this.tag(tag).add(entry));
 
 		new BlockItemTagGenerator() {
 			@Override
-			protected TagAppender<Block, Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag) {
+			protected ValueTagAppender<Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag) {
 				return BlockTagGenerator.this.tag(blockTag);
 			}
 		}.run();
@@ -82,7 +83,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		this.tag(BlockTags.GUARDED_BY_PIGLINS).addTag(TFBlockTags.TF_CHESTS);
 		this.tag(BlockTags.EDIBLE_FOR_SHEEP).add(TFBlocks.MAYAPPLE.get(), TFBlocks.FIDDLEHEAD.get());
 		this.tag(BlockTags.CAN_GLIDE_THROUGH).add(TFBlocks.ROOT_STRAND.get());
-		this.tag(BlockTags.OVERWORLD_CARVER_REPLACEABLES).add(TFBlocks.TROLLSTEINN.get());
+		this.tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("overworld_carver_replaceables"))).add(TFBlocks.TROLLSTEINN.get());
 		this.tag(BlockTags.INSIDE_STEP_SOUND_BLOCKS).add(TFBlocks.HUGE_LILY_PAD.get(), TFBlocks.FALLEN_LEAVES.get(), TFBlocks.ROOT_STRAND.get());
 		this.tag(BlockTags.DRIPSTONE_REPLACEABLE).add(TFBlocks.TROLLSTEINN.get(), TFBlocks.ROOT_BLOCK.get(), TFBlocks.LIVEROOT_BLOCK.get());
 		this.tag(BlockTags.MOSS_REPLACEABLE).add(TFBlocks.TROLLSTEINN.get(), TFBlocks.ROOT_BLOCK.get(), TFBlocks.LIVEROOT_BLOCK.get());
@@ -117,7 +118,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		this.tag(BlockTags.SUPPORTS_BIG_DRIPLEAF).add(TFBlocks.UBEROUS_SOIL.get());
 		this.tag(BlockTags.OVERRIDES_MUSHROOM_LIGHT_REQUIREMENT).add(TFBlocks.UBEROUS_SOIL.get());
 		this.tag(BlockTags.INVALID_SPAWN_INSIDE).add(TFBlocks.TWILIGHT_PORTAL.get());
-		this.tag(BlockTags.REPLACEABLE).addAll(TFBlocks.BLOCKS.getEntries().stream().map(Holder::value).filter(b -> b.defaultBlockState().canBeReplaced()).toList());
+		this.tag(BlockTags.REPLACEABLE).addAll(TFBlocks.BLOCKS.getEntries().stream().filter(b -> b.value().defaultBlockState().canBeReplaced()).map(b -> b.unwrapKey().orElseThrow()).toList());
 		this.tag(BlockTags.ENCHANTMENT_POWER_PROVIDER).add(TFBlocks.CANOPY_BOOKSHELF.get());
 
 		this.tag(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(TFBlocks.TWILIGHT_PORTAL.get(), TFBlocks.STRONGHOLD_SHIELD.get(),
@@ -457,8 +458,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 			TFBlockTags.ROOT_GROUND
 		);
 
-		this.tag(TFBlockTags.ORE_MAGNET_IGNORE).addTag(BlockTags.COAL_ORES);
-		this.tag(TFBlockTags.MINING_CORE_EXCLUDED).addTag(BlockTags.COAL_ORES);
+		this.tag(TFBlockTags.ORE_MAGNET_IGNORE).addTag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("coal_ores")));
+		this.tag(TFBlockTags.MINING_CORE_EXCLUDED).addTag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("coal_ores")));
 		this.tag(TFBlockTags.ROOT_GROUND).add(TFBlocks.ROOT_BLOCK.get());
 		this.tag(TFBlockTags.ROOT_ORES).add(TFBlocks.LIVEROOT_BLOCK.get());
 		this.tag(TFBlockTags.TF_CHESTS).add(
@@ -474,7 +475,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		// For anything that permits replacement during Worldgen
 		this.tag(TFBlockTags.WORLDGEN_REPLACEABLES).addTags(BlockTags.LUSH_GROUND_REPLACEABLE, BlockTags.REPLACEABLE_BY_TREES);
 		this.tag(TFBlockTags.ROOT_TRACE_SKIP).addTag(BlockTags.LOGS).add(TFBlocks.ROOT_BLOCK.get(), TFBlocks.LIVEROOT_BLOCK.get(), TFBlocks.MANGROVE_ROOT.get(), TFBlocks.TIME_WOOD.get()).addTags(BlockTags.FEATURES_CANNOT_REPLACE);
-		this.tag(TFBlockTags.DRUID_PROJECTILE_REPLACEABLE).addTags(BlockTags.LEAVES, BlockTags.LOGS, BlockTags.PLANKS, BlockTags.OVERWORLD_CARVER_REPLACEABLES, BlockTags.NETHER_CARVER_REPLACEABLES, BlockTags.REPLACEABLE_BY_TREES, BlockTags.LUSH_GROUND_REPLACEABLE, BlockTags.SCULK_REPLACEABLE, Tags.Blocks.ORES);
+		this.tag(TFBlockTags.DRUID_PROJECTILE_REPLACEABLE).addTags(BlockTags.LEAVES, BlockTags.LOGS, BlockTags.PLANKS, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("overworld_carver_replaceables")), TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("nether_carver_replaceables")), BlockTags.REPLACEABLE_BY_TREES, BlockTags.LUSH_GROUND_REPLACEABLE, BlockTags.SCULK_REPLACEABLE, Tags.Blocks.ORES);
 		this.tag(TFBlockTags.HUGE_MUSHGLOOM_PLACEABLE).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(Blocks.MYCELIUM).add(Blocks.PODZOL).add(Blocks.CRIMSON_NYLIUM).add(Blocks.WARPED_NYLIUM);
 		this.tag(TFBlockTags.TIME_CORE_EXCLUDED).add(Blocks.NETHER_PORTAL);
 		this.tag(TFBlockTags.ORE_METER_TARGETABLE)
@@ -496,7 +497,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		this.tag(TFBlockTags.PENGUINS_SPAWNABLE_ON).addTag(BlockTags.ICE);
 		this.tag(TFBlockTags.GIANTS_SPAWNABLE_ON).addTag(TFBlockTags.CLOUDS);
 		this.tag(TFBlockTags.SUPPORTS_STALAGMITES).addTag(TFBlockTags.DEADROCK).add(Blocks.PACKED_ICE);
-		this.tag(TFBlockTags.CARVER_REPLACEABLES).addTag(BlockTags.OVERWORLD_CARVER_REPLACEABLES).add(Blocks.SNOW_BLOCK);
+		this.tag(TFBlockTags.CARVER_REPLACEABLES).addTag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.withDefaultNamespace("overworld_carver_replaceables"))).add(Blocks.SNOW_BLOCK);
 		this.tag(TFBlockTags.MINEABLE_WITH_BLOCK_AND_CHAIN).addTags(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.MINEABLE_WITH_AXE, BlockTags.MINEABLE_WITH_SHOVEL, BlockTags.MINEABLE_WITH_HOE);
 		this.tag(TFBlockTags.BLOCK_AND_CHAIN_NEVER_BREAKS).addTags(TFBlockTags.MAZESTONE, TFBlockTags.CASTLE_BLOCKS, TFBlockTags.DEADROCK, BlockTags.WITHER_IMMUNE)
 			.add(TFBlocks.TIME_LOG_CORE.get(), TFBlocks.TRANSFORMATION_LOG_CORE.get(), TFBlocks.MINING_LOG_CORE.get(), TFBlocks.SORTING_LOG_CORE.get())

@@ -14,15 +14,10 @@ import twilightforest.init.TFBlockEntities;
 
 public class TFSmokerBlock extends BaseEntityBlock {
 
-	public static final MapCodec<TFSmokerBlock> CODEC = simpleCodec(TFSmokerBlock::new);
+
 
 	public TFSmokerBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

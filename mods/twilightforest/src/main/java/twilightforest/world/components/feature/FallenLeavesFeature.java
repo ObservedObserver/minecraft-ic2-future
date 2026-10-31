@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -9,14 +10,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import net.minecraft.world.level.material.Fluids;
 import twilightforest.block.FallenLeavesBlock;
 import twilightforest.init.TFBlocks;
 
-public class FallenLeavesFeature extends Feature<NoneFeatureConfiguration> {
+public class FallenLeavesFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 
 	public FallenLeavesFeature(Codec<NoneFeatureConfiguration> config) {
 		super(config);
@@ -25,7 +25,7 @@ public class FallenLeavesFeature extends Feature<NoneFeatureConfiguration> {
 	private final BlockState state = TFBlocks.FALLEN_LEAVES.get().defaultBlockState();
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> ctx) {
 		WorldGenLevel level = ctx.level();
 		BlockPos position = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, ctx.origin());
 		RandomSource rand = ctx.random();

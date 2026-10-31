@@ -1,11 +1,11 @@
 package twilightforest.client.renderer;
 
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.commands.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -30,7 +30,7 @@ import java.util.OptionalInt;
 public class TFSkyRenderer implements AutoCloseable {
 
 	public static final ContextKey<Boolean> RENDER_DARK_DISC = new ContextKey<>(TwilightForestMod.prefix("render_dark_disc"));
-	private final RenderSystem.AutoStorageIndexBuffer starIndices = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+	private final RenderSystem.AutoStorageIndexBuffer starIndices = RenderSystem.getSequentialBuffer(com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS);
 	private final GpuBuffer starBuffer;
 	private int starIndexCount;
 
@@ -43,35 +43,21 @@ public class TFSkyRenderer implements AutoCloseable {
 	}
 
 	// [VanillaCopy] LevelRenderer.addSkyPass's overworld branch, without sun/moon/sunrise/sunset, using our own stars at full brightness, and lowering void horizon threshold height from getHorizonHeight (63) to 0
-	public boolean renderSky(LevelRenderState level, SkyRenderState sky, Matrix4fc modelmatrix, Runnable setupFog) {
+	public boolean renderSky(LevelRenderState level, SkyRenderState sky, Matrix4fc modelmatrix, GpuBufferSlice skyFog) {
 		LevelRenderer levelRenderer = Minecraft.getInstance().levelRenderer;
 
-		setupFog.run();
+		RenderSystem.setShaderFog(skyFog);
 
-		PoseStack posestack = new PoseStack();
-		//TF: all unused
-//		float f = this.level.getSunAngle(partialTick);
-//		float f1 = this.level.getTimeOfDay(partialTick);
-//		float f2 = 1.0F - this.level.getRainLevel(partialTick);
-//		float f3 = this.level.getStarBrightness(partialTick) * f2;
-//		int i = dimensionspecialeffects.getSunriseOrSunsetColor(f1);
-//		int j = this.level.getMoonPhase();
-		levelRenderer.skyRenderer.renderSkyDisc(sky.skyColor);
-		//TF: snip out sunrise and sunset coloring
-//		if (dimensionspecialeffects.isSunriseOrSunset(f1)) {
-//			levelRenderer.skyRenderer.renderSunriseAndSunset(posestack, multibuffersource$buffersource, f, i);
-//		}
-
-		//TF: replace sun, moon, and star rendering method with our own star renderer
-		//rotation is from SkyRenderer.renderSunMoonAndStars
-		posestack.pushPose();
-		posestack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-		renderStars(posestack);
-		posestack.popPose();
-		//TF: use custom height checks for the void sky as vanilla hardcodes to 63
-		if (Boolean.TRUE.equals(level.getRenderData(RENDER_DARK_DISC))) {
-			levelRenderer.skyRenderer.renderDarkDisc();
-		}
+        var target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+        try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                () -> "Twilight Forest sky", target.getColorTextureView(), Optional.empty(), target.getDepthTextureView(), OptionalDouble.empty())) {
+            RenderSystem.bindDefaultUniforms(pass);
+            levelRenderer.skyRenderer.renderSkyDisc(pass, sky.skyColor);
+            PoseStack pose = new PoseStack();
+            pose.rotate(Axis.YP.rotationDegrees(-90.0F));
+            renderStars(pose, pass);
+            if (Boolean.TRUE.equals(level.getRenderData(RENDER_DARK_DISC))) levelRenderer.skyRenderer.renderDarkDisc(pass);
+        }
 
 		return true;
 	}
@@ -81,26 +67,21 @@ public class TFSkyRenderer implements AutoCloseable {
 	}
 
 	//[VanillaCopy] of SkyRenderer.renderStars, using our own buffer instead. Coloring was also removed as the stars are always fully bright
-	private void renderStars(PoseStack stack) {
+	private void renderStars(PoseStack stack, RenderPass renderPass) {
 		Matrix4fStack matrix = RenderSystem.getModelViewStack();
 		matrix.pushMatrix();
 		matrix.mul(stack.last().pose());
 		RenderPipeline renderPipeline = RenderPipelines.STARS;
-		GpuTextureView colorTexture = Minecraft.getInstance().getMainRenderTarget().getColorTextureView();
-		GpuTextureView depthTexture = Minecraft.getInstance().getMainRenderTarget().getDepthTextureView();
 		GpuBuffer indices = this.starIndices.getBuffer(this.starIndexCount);
 		GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms()
-			.writeTransform(matrix, new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
-		try (RenderPass renderPass = RenderSystem.getDevice()
-				.createCommandEncoder()
-				.createRenderPass(() -> "Stars", colorTexture, OptionalInt.empty(), depthTexture, OptionalDouble.empty())) {
-			renderPass.setPipeline(renderPipeline);
-			RenderSystem.bindDefaultUniforms(renderPass);
-			renderPass.setUniform("DynamicTransforms", dynamicTransforms);
-			renderPass.setVertexBuffer(0, this.starBuffer);
-			renderPass.setIndexBuffer(indices, this.starIndices.type());
-			renderPass.drawIndexed(0, 0, this.starIndexCount, 1);
-		}
+			// The GPU cache retains this value. Do not let popMatrix mutate its cache key.
+			.writeTransform(new Matrix4f(matrix), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
+        renderPass.setPipeline(RenderSystem.getCompiledPipeline(renderPipeline));
+        RenderSystem.bindDefaultUniforms(renderPass);
+        renderPass.setUniform("DynamicTransforms", dynamicTransforms);
+        renderPass.setVertexBuffer(0, this.starBuffer.slice());
+        renderPass.setIndexBuffer(indices, this.starIndices.type());
+        renderPass.drawIndexed(this.starIndexCount, 1, 0, 0, 0);
 
 		matrix.popMatrix();
 	}
@@ -111,7 +92,7 @@ public class TFSkyRenderer implements AutoCloseable {
 		GpuBuffer gpuBuffer;
 
 		try (ByteBufferBuilder byteBufferBuilder = ByteBufferBuilder.exactlySized(DefaultVertexFormat.POSITION.getVertexSize() * 3000 * 4)) {
-			BufferBuilder bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+			BufferBuilder bufferBuilder = new BufferBuilder(byteBufferBuilder, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION);
 
 			// TF - 1500 -> 3000
 			for (int i = 0; i < 3000; ++i) {

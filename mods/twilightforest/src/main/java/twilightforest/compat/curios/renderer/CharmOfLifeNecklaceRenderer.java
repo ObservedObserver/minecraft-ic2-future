@@ -6,8 +6,6 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -39,10 +37,11 @@ public class CharmOfLifeNecklaceRenderer implements ICurioRenderer {
 			stack.pushPose();
 			model.body.translateAndRotate(stack);
 			stack.translate(-0.0D, 0.23D, -0.135D);
-			stack.mulPose(Axis.YP.rotationDegrees(0.0F));
+			stack.rotate(Axis.YP.rotationDegrees(0.0F));
 			stack.scale(-0.4F, -0.4F, 0.4F);
-			ItemInHandRenderer renderer = new ItemInHandRenderer(Minecraft.getInstance(), Minecraft.getInstance().getEntityRenderDispatcher(), Minecraft.getInstance().getItemModelResolver());
-			renderer.renderItem(slotContext.entity(), item, ItemDisplayContext.FIXED, stack, buffer, light);
+			net.minecraft.client.renderer.item.ItemStackRenderState itemState = new net.minecraft.client.renderer.item.ItemStackRenderState();
+			Minecraft.getInstance().getItemModelResolver().updateForLiving(itemState, item, ItemDisplayContext.FIXED, slotContext.entity());
+			itemState.submit(stack, buffer, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
 			stack.popPose();
 		}
 		ICurioRenderer.setupHumanoidAnimations(this.model, state);

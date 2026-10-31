@@ -40,13 +40,7 @@
       "type": "minecraft:block_predicate_filter",
       "predicate": {
         "type": "minecraft:would_survive",
-        "state": {
-          "Name": "twilightforest:mangrove_sapling",
-          "Properties": {
-            "stage": "0",
-            "waterlogged": "false"
-          }
-        }
+        "state": "twilightforest:mangrove_sapling"
       }
     },
     {

@@ -47,6 +47,6 @@ public class NagaModel<T extends EntityRenderState> extends EntityModel<T> imple
 	public void renderTrophy(PoseStack stack, SubmitNodeCollector collector, int light, int overlay, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress, ItemDisplayContext context) {
 		stack.scale(0.5F, 0.5F, 0.5F);
 		stack.translate(0.0F, -0.25F, 0.0F);
-		collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(NagaRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+		twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(NagaRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 	}
 }

@@ -71,7 +71,7 @@ public class HedgeBlock extends Block {
 	}
 
 	@Override
-	public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack stack) {
+	public void playerDestroy(net.minecraft.server.level.ServerLevel level, net.minecraft.server.level.ServerPlayer player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack stack) {
 		super.playerDestroy(level, player, pos, state, te, stack);
 		if (level instanceof ServerLevel sl) {
 			player.hurtServer(sl, level.damageSources().cactus(), DAMAGE);
@@ -85,7 +85,7 @@ public class HedgeBlock extends Block {
 
 		for (Player player : nearbyPlayers) {
 			// are they swinging?
-			if (player.swinging) {
+			if (player.isSwinging()) {
 				BlockHitResult ray = EntityUtil.rayTrace(player);
 				// are they pointing at this block?
 				if (ray.getType() == HitResult.Type.BLOCK && pos.equals(ray.getBlockPos())) {

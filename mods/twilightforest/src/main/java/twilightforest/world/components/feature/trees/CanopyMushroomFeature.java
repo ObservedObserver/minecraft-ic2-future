@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.trees;
 
+import twilightforest.world.components.feature.runtime.MushroomFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,13 +11,12 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.AbstractHugeMushroomFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.HugeMushroomFeatureConfiguration;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.features.FeatureLogic;
 import twilightforest.util.iterators.VoxelBresenhamIterator;
 
-public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature {
+public abstract class CanopyMushroomFeature extends MushroomFeatureBase {
 
 	public CanopyMushroomFeature(Codec<HugeMushroomFeatureConfiguration> featureConfigurationCodec) {
 		super(featureConfigurationCodec);

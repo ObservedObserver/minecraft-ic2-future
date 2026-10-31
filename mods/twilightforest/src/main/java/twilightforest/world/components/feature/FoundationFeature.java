@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -14,22 +15,21 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.storage.loot.LootTable;
 import twilightforest.util.features.FeatureLogic;
 import twilightforest.util.features.FeatureUtil;
 import twilightforest.world.components.feature.config.RuinedFoundationConfig;
 
-public class FoundationFeature extends Feature<RuinedFoundationConfig> {
+public class FoundationFeature extends ConfiguredFeatureBase<RuinedFoundationConfig> {
 
 	public FoundationFeature(Codec<RuinedFoundationConfig> configIn) {
 		super(configIn);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<RuinedFoundationConfig> ctx) {
+	public boolean place(FeaturePlacementContext<RuinedFoundationConfig> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
@@ -149,6 +149,6 @@ public class FoundationFeature extends Feature<RuinedFoundationConfig> {
 
 		world.setBlock(placeAt, state, Block.UPDATE_ALL);
 
-		world.getChunk(placeAt).markPosForPostprocessing(placeAt);
+		world.getChunk(placeAt).markPosForPostProcessing(placeAt);
 	}
 }

@@ -1,6 +1,6 @@
 package twilightforest.item;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -24,7 +24,7 @@ import twilightforest.network.ParticlePacket;
 import java.util.function.Consumer;
 
 public class GlassSwordItem extends Item {
-	protected static final BlockParticleOption GLASS_PARTICLE = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.WHITE_STAINED_GLASS.defaultBlockState());
+	protected static final BlockParticleOption GLASS_PARTICLE = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState());
 
 	public GlassSwordItem(Properties properties) {
 		super(properties);
@@ -46,7 +46,7 @@ public class GlassSwordItem extends Item {
 
 		this.hurtAndBreak(stack, attacker, (user) -> {
 			user.level().playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), TFSounds.GLASS_SWORD_BREAK.get(), attacker.getSoundSource(), 1F, 0.5F);
-			user.onEquippedItemBroken(this, EquipmentSlot.MAINHAND);
+			user.onEquippedItemBroken(stack, EquipmentSlot.MAINHAND);
 		});
 	}
 

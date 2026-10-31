@@ -1,6 +1,7 @@
 package twilightforest.datagen.data.worldgen;
 
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +19,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunctions;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import net.minecraft.world.timeline.Timeline;
 import net.neoforged.neoforge.common.world.NeoForgeEnvironmentAttributes;
 import twilightforest.TFRegistries;
@@ -52,7 +55,7 @@ public class TFDimensionGenerator {
                 -32, // Minimum Y Level
                 32 + 256, // Height + Min Y = Max Y
                 32 + 256, // Logical Height
-                BlockTags.INFINIBURN_OVERWORLD, //infiburn tag
+                context.lookup(Registries.BLOCK).getOrThrow(BlockTags.INFINIBURN_OVERWORLD), //infiburn tag
                 0.01F, //ambient light
                 new DimensionType.MonsterSettings(UniformInt.of(0, 7), 7), //monster settings
                 DimensionType.Skybox.OVERWORLD, //skybox
@@ -61,7 +64,7 @@ public class TFDimensionGenerator {
                         .set(EnvironmentAttributes.BACKGROUND_MUSIC, new BackgroundMusic(new Music(TFSounds.MUSIC, 1200, 12000, true)))
                         .set(EnvironmentAttributes.AMBIENT_SOUNDS, AmbientSounds.LEGACY_CAVE_SETTINGS)
                         .set(EnvironmentAttributes.CAN_PILLAGER_PATROL_SPAWN, false)
-                        .set(EnvironmentAttributes.BED_RULE, new BedRule(BedRule.Rule.NEVER, BedRule.Rule.ALWAYS, false, Optional.empty()))
+                        .set(EnvironmentAttributes.BED_RULE, new BedRule(BedRule.Rule.NEVER, BedRule.Rule.ALWAYS, false, false, Optional.empty()))
                         .set(EnvironmentAttributes.PIGLINS_ZOMBIFY, false)
                         .set(EnvironmentAttributes.CAN_START_RAID, false)
                         .set(EnvironmentAttributes.CREAKING_ACTIVE, true)
@@ -69,10 +72,10 @@ public class TFDimensionGenerator {
                         .set(EnvironmentAttributes.STAR_BRIGHTNESS, 1.0F)
                         .set(EnvironmentAttributes.SKY_LIGHT_LEVEL, 9.0F)
 						.set(EnvironmentAttributes.SKY_LIGHT_FACTOR, 0.35F)
-                        .set(EnvironmentAttributes.SKY_LIGHT_COLOR, ARGB.colorFromFloat(1.0F, 0.65F, 0.65F, 1.0F))
-						.set(EnvironmentAttributes.AMBIENT_LIGHT_COLOR, -16119286)
+                        .set(EnvironmentAttributes.SKY_LIGHT_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(ARGB.colorFromFloat(1.0F, 0.65F, 0.65F, 1.0F)))
+						.set(EnvironmentAttributes.AMBIENT_LIGHT_COLOR, net.minecraft.util.ARGB.vector3fFromRGB24(-16119286))
 						.set(EnvironmentAttributes.CLOUD_HEIGHT, 128.0F)
-						.set(EnvironmentAttributes.CLOUD_COLOR, ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 0.55F))
+						.set(EnvironmentAttributes.CLOUD_COLOR, net.minecraft.util.ARGB.vector4fFromARGB32(ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 0.55F)))
 						.set(EnvironmentAttributes.CLOUD_FOG_END_DISTANCE, 768.0F)
                         .set(NeoForgeEnvironmentAttributes.CUSTOM_SKYBOX, TwilightForestRenderInfo.SKY_RENDERER)
                         .set(NeoForgeEnvironmentAttributes.CUSTOM_WEATHER_EFFECTS, TwilightForestRenderInfo.WEATHER_RENDERER)
@@ -86,41 +89,23 @@ public class TFDimensionGenerator {
         HolderGetter<DensityFunction> densityFunctions = context.lookup(Registries.DENSITY_FUNCTION);
         DensityFunction finalDensity = new DensityFunctions.HolderHolder(densityFunctions.getOrThrow(skylight ? TFDensityFunctionGenerator.SKYLIGHT_TERRAIN : TFDensityFunctionGenerator.FORESTED_TERRAIN));
 
-        NoiseSettings tfNoise = NoiseSettings.create(
-            -32, //TODO Deliberate over this. For now it'll be -32
-            256,
-            2,
-            2
-        );
+        NoiseSettings tfNoise = NoiseSettings.create(-32, 256);
 
         return new NoiseGeneratorSettings(
             tfNoise,
             Blocks.STONE.defaultBlockState(),
             skylight ? Blocks.AIR.defaultBlockState() : Blocks.WATER.defaultBlockState(),
             new NoiseRouter(
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    finalDensity,
-                    finalDensity,
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero(),
-                    DensityFunctions.zero()
+                DensityFunctions.zero(), DensityFunctions.zero(), DensityFunctions.zero(),
+                DensityFunctions.zero(), DensityFunctions.zero(), DensityFunctions.zero(), finalDensity, DensityFunctions.add(finalDensity, DensityFunctions.beardifier())
             ),
-            TFSurfaceRules.tfSurface(),
+            Holder.direct(TFSurfaceRules.tfSurface(context.lookup(Registries.BIOME))),
             List.of(),
             TFDimension.SEALEVEL,
             false,
+            Optional.empty(),
             false,
-            false,
-            false
+            NoiseGeneratorSettings.DebugFunctions.EMPTY
         );
     }
 

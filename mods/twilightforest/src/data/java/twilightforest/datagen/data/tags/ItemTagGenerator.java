@@ -2,7 +2,7 @@ package twilightforest.datagen.data.tags;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagAppender;
+import twilightforest.datagen.helpers.ValueTagAppender;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.tags.ItemTags;
@@ -32,8 +32,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 
 		new BlockItemTagGenerator() {
 			@Override
-			protected TagAppender<Block, Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag) {
-				return new VanillaItemTagsProvider.BlockToItemConverter(ItemTagGenerator.this.tag(itemTag));
+			protected ValueTagAppender<Block> tag(TagKey<Block> blockTag, TagKey<Item> itemTag) {
+				return new ValueTagAppender<>(net.minecraft.data.tags.TagAppender.forBuilder(ItemTagGenerator.this.getOrCreateRawBuilder(itemTag)), block -> net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(block.asItem())));
 			}
 		}.run();
 

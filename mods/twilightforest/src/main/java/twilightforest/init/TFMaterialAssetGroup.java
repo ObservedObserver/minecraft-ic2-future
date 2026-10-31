@@ -1,26 +1,15 @@
 package twilightforest.init;
 
-import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.equipment.EquipmentAsset;
-import net.minecraft.world.item.equipment.trim.MaterialAssetGroup;
+import net.minecraft.resources.Identifier;
 
-import java.util.Map;
-
-public class TFMaterialAssetGroup {
-
-	public static final MaterialAssetGroup IRONWOOD = create("twilightforest_ironwood");
-	public static final MaterialAssetGroup STEELEAF = create("twilightforest_steeleaf");
-	public static final MaterialAssetGroup KNIGHTMETAL = create("twilightforest_knightmetal");
-	public static final MaterialAssetGroup FIERY = create("twilightforest_fiery");
-	public static final MaterialAssetGroup NAGA_SCALE = create("twilightforest_naga_scale");
-	public static final MaterialAssetGroup CARMINITE = create("twilightforest_carminite");
-
-	public static MaterialAssetGroup create(String base) {
-		return create(base, Map.of());
-	}
-
-	public static MaterialAssetGroup create(String base, Map<ResourceKey<EquipmentAsset>, String> overrides) {
-		return new MaterialAssetGroup(new MaterialAssetGroup.AssetInfo(base), Map.copyOf(Maps.transformValues(overrides, MaterialAssetGroup.AssetInfo::new)));
-	}
+/** Native 26.3 palette identifiers for the existing TF trim colors. */
+public final class TFMaterialAssetGroup {
+    private TFMaterialAssetGroup() { }
+    public static final Identifier IRONWOOD = palette("ironwood");
+    public static final Identifier STEELEAF = palette("steeleaf");
+    public static final Identifier KNIGHTMETAL = palette("knightmetal");
+    public static final Identifier FIERY = palette("fiery");
+    public static final Identifier NAGA_SCALE = palette("naga_scale");
+    public static final Identifier CARMINITE = palette("carminite");
+    private static Identifier palette(String name) { return Identifier.fromNamespaceAndPath("twilightforest", "trim/" + name); }
 }

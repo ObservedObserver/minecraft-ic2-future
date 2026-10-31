@@ -3,7 +3,10 @@ package twilightforest.client;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.renderpearl.api.commands.RenderPass;
+import net.minecraft.client.renderer.oit.OitStage;
+import twilightforest.client.renderer.WeatherGeometry;
+import twilightforest.client.renderer.WeatherGeometryRenderer;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.state.level.SkyRenderState;
 import net.minecraft.client.renderer.state.level.WeatherRenderState;
@@ -55,20 +58,39 @@ public class TwilightForestRenderInfo implements CustomSkyboxRenderer, CustomWea
 //	}
 
 	@Override
-	public boolean renderSky(LevelRenderState levelRenderState, SkyRenderState skyRenderState, Matrix4fc modelViewMatrix, Runnable setupFog) {
+	public boolean renderSky(LevelRenderState levelRenderState, SkyRenderState skyRenderState, Matrix4fc modelViewMatrix, com.mojang.renderpearl.api.buffers.GpuBufferSlice skyFog) {
 		if (this.skyRenderer == null) {
 			this.skyRenderer = new TFSkyRenderer();
 		}
-		return skyRenderer.renderSky(levelRenderState, skyRenderState, modelViewMatrix, setupFog);
+		return skyRenderer.renderSky(levelRenderState, skyRenderState, modelViewMatrix, skyFog);
+	}
+
+	private final WeatherGeometryRenderer weatherRenderer = new WeatherGeometryRenderer();
+
+	@Override
+	public void prepare(LevelRenderState level, WeatherRenderState weather, Vec3 camera) {
+		WeatherGeometry geometry = level.getRenderData(TFWeatherRenderer.PROGRESSION_WEATHER);
+		this.weatherRenderer.prepare(geometry == null ? WeatherGeometry.EMPTY : geometry);
 	}
 
 	@Override
-	public boolean renderSnowAndRain(LevelRenderState levelRenderState, WeatherRenderState weatherRenderState, MultiBufferSource bufferSource, Vec3 camPos) {
-		return TFWeatherRenderer.renderSnowAndRain(Minecraft.getInstance().level, Minecraft.getInstance().levelRenderer.getTicks(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false), camPos, bufferSource);
+	public boolean renderSnowAndRain(LevelRenderState level, WeatherRenderState weather, Vec3 camera, RenderPass pass) {
+		this.weatherRenderer.render(pass, null);
+		return false; // Keep ordinary rain/snow alongside progression effects.
 	}
 
 	@Override
-	public boolean tickRain(ClientLevel level, int ticks, Camera camera) {
+	public boolean renderSnowAndRainOit(LevelRenderState level, WeatherRenderState weather, Vec3 camera, OitStage stage, RenderPass pass) {
+		this.weatherRenderer.render(pass, stage);
+		return false;
+	}
+
+	public void closeWeather() {
+		this.weatherRenderer.close();
+	}
+
+	@Override
+	public boolean tickRain(ClientLevel level, long ticks, Camera camera) {
 		return TFWeatherRenderer.tickRain(level, ticks, camera.blockPosition());
 	}
 }

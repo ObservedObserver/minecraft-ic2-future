@@ -14,15 +14,10 @@ import twilightforest.init.TFBlockEntities;
 
 public class AntibuilderBlock extends BaseEntityBlock {
 
-	public static final MapCodec<AntibuilderBlock> CODEC = simpleCodec(AntibuilderBlock::new);
+
 
 	public AntibuilderBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

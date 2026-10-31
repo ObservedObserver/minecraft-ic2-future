@@ -36,18 +36,7 @@ public class BighornWoolLayer extends RenderLayer<SheepRenderState, SheepModel> 
 		EntityModel<SheepRenderState> model = state.isBaby ? babyModel : adultModel;
 		if (state.isInvisible) {
 			if (state.appearsGlowing()) {
-				submitNodeCollector.submitModel(
-					model,
-					state,
-					poseStack,
-					RenderTypes.outline(SHEEP_WOOL_LOCATION),
-					lightCoords,
-					LivingEntityRenderer.getOverlayCoords(state, 0.0F),
-					-16777216,
-					null,
-					state.outlineColor,
-					null
-				);
+				twilightforest.client.renderer.ModelSubmission.submit(submitNodeCollector, model, state, poseStack, RenderTypes.outline(SHEEP_WOOL_LOCATION), lightCoords, LivingEntityRenderer.getOverlayCoords(state, 0.0F), -16777216, null, state.outlineColor, null);
 			}
 		} else {
 			coloredCutoutModelCopyLayerRender(model, SHEEP_WOOL_LOCATION, poseStack, submitNodeCollector, lightCoords, state, state.getWoolColor(), state.isBaby ? 1 : 0);

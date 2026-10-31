@@ -19,6 +19,7 @@ public class DataGenerators {
 
 	@PostConstruct
 	private void register(IEventBus bus) {
+        bus.addListener(net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent.class, twilightforest.datagen.data.RegistryDataGenerator::gather);
 		bus.addListener(GatherDataEvent.Client.class, event -> {
 			this.dataGenerator.generate(event);
 			this.assetsGenerator.generate(event);

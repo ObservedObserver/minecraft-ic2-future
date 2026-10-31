@@ -21,9 +21,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:white_wool"
-                }
+                "output_state": "minecraft:white_wool"
               }
             ]
           },
@@ -41,9 +39,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:light_gray_wool"
-                }
+                "output_state": "minecraft:light_gray_wool"
               }
             ]
           },
@@ -61,9 +57,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:gray_wool"
-                }
+                "output_state": "minecraft:gray_wool"
               }
             ]
           },
@@ -81,9 +75,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:brown_wool"
-                }
+                "output_state": "minecraft:brown_wool"
               }
             ]
           },
@@ -101,9 +93,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:green_wool"
-                }
+                "output_state": "minecraft:green_wool"
               }
             ]
           },
@@ -121,9 +111,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:blue_wool"
-                }
+                "output_state": "minecraft:blue_wool"
               }
             ]
           },
@@ -141,9 +129,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:red_wool"
-                }
+                "output_state": "minecraft:red_wool"
               }
             ]
           },
@@ -161,9 +147,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:lime_wool"
-                }
+                "output_state": "minecraft:lime_wool"
               }
             ]
           },
@@ -183,14 +167,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:red_bed",
-                  "Properties": {
-                    "facing": "north",
-                    "occupied": "false",
-                    "part": "foot"
-                  }
-                }
+                "output_state": "minecraft:red_bed"
               }
             ]
           },
@@ -208,14 +185,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:light_blue_bed",
-                  "Properties": {
-                    "facing": "north",
-                    "occupied": "false",
-                    "part": "foot"
-                  }
-                }
+                "output_state": "minecraft:light_blue_bed"
               }
             ]
           },
@@ -233,14 +203,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:lime_bed",
-                  "Properties": {
-                    "facing": "north",
-                    "occupied": "false",
-                    "part": "foot"
-                  }
-                }
+                "output_state": "minecraft:lime_bed"
               }
             ]
           },
@@ -258,14 +221,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:orange_bed",
-                  "Properties": {
-                    "facing": "north",
-                    "occupied": "false",
-                    "part": "foot"
-                  }
-                }
+                "output_state": "minecraft:orange_bed"
               }
             ]
           },
@@ -283,14 +239,7 @@
                 "location_predicate": {
                   "predicate_type": "minecraft:always_true"
                 },
-                "output_state": {
-                  "Name": "minecraft:light_gray_bed",
-                  "Properties": {
-                    "facing": "north",
-                    "occupied": "false",
-                    "part": "foot"
-                  }
-                }
+                "output_state": "minecraft:light_gray_bed"
               }
             ]
           },

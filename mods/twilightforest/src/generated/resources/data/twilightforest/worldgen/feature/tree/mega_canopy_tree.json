@@ -1,0 +1,34 @@
+{
+  "type": "twilightforest:mega_canopy",
+  "config": {
+    "add_first_five_chance": 2,
+    "add_second_five_chance": 3,
+    "branch_provider": {
+      "id": "twilightforest:canopy_wood",
+      "properties": {
+        "axis": "y"
+      }
+    },
+    "check_water": false,
+    "decorators": [],
+    "has_leaves": false,
+    "leaves_provider": {
+      "id": "twilightforest:canopy_leaves",
+      "properties": {
+        "distance": "7",
+        "persistent": "false",
+        "waterlogged": "false"
+      }
+    },
+    "minimum_size": 30,
+    "roots_provider": {
+      "id": "twilightforest:root"
+    },
+    "trunk_provider": {
+      "id": "twilightforest:canopy_log",
+      "properties": {
+        "axis": "y"
+      }
+    }
+  }
+}

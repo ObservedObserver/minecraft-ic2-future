@@ -1,7 +1,7 @@
 package twilightforest.client.overlay.display;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.MapRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -24,7 +24,7 @@ public class MapDisplay implements ItemDisplay {
 	private final MapRenderState mapRenderState = new MapRenderState();
 
 	@Override
-	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public void render(ItemStack item, GuiGraphicsExtractor graphics, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		MapId mapid = item.get(DataComponents.MAP_ID);
 		if (mapid == null)
 			return;
@@ -56,7 +56,7 @@ public class MapDisplay implements ItemDisplay {
 	}
 
 	@Override
-	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Gui gui, Player player, int widestWidgetWidth) {
+	public Bounds getWidgetSize(ItemStack item, Minecraft minecraft, Hud gui, Player player, int widestWidgetWidth) {
 		return new Bounds(Math.max(widestWidgetWidth / 2 - 50, 0), 0, 100, 102);
 	}
 }

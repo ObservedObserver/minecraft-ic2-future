@@ -3,7 +3,7 @@ package twilightforest.world.components.biomesources;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.core.registries.codec.RegistryFileCodec;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -39,8 +39,8 @@ public class TFBiomeProvider extends BiomeSource {
 	}
 
 	@Override
-	public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
-		return this.biomeTerrainDataHolder.value().getNoiseBiome(biomeX, biomeY, biomeZ);
+	public net.minecraft.world.level.biome.BiomeResolver createResolver(Climate.Sampler sampler) {
+		return this.biomeTerrainDataHolder.value()::getNoiseBiome;
 	}
 
 	public Holder<Biome> getMainBiome(int biomeX, int biomeZ) {

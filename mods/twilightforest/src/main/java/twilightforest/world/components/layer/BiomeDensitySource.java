@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import org.jetbrains.annotations.NotNull;
 import twilightforest.init.custom.BiomeLayerStack;
 import twilightforest.world.components.chunkgenerators.TerrainColumn;
@@ -104,7 +104,20 @@ public class BiomeDensitySource {
 	private static final int BLEND_RADIUS_INT = Mth.floor(BLEND_RADIUS + 1.0);
 	private static final int BLOCK_XYZ_OFFSET = QuartPos.SIZE / 2;
 
-	public DensityData sampleTerrain(int blockX, int blockZ, DensityFunction.FunctionContext context) {
+    public int domainAxes() {
+        return DensityFunction.AXIS_X | DensityFunction.AXIS_Z | biomeList.values().stream().mapToInt(TerrainColumn::domainAxes).reduce(0, (a, b) -> a | b);
+    }
+    public BiomeDensitySource rewriteChildren(net.minecraft.world.level.levelgen.densityfunction.DfRewriteRule rule) {
+        var rewritten = biomeList.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().rewriteChildren(rule)));
+        return new BiomeDensitySource(rewritten, genBiomeConfig);
+    }
+    public Compiled compile(DensityFunction.CompileContext context) { return new Compiled(context); }
+    public final class Compiled {
+        private final Map<TerrainColumn, TerrainColumn.Compiled> columns = new java.util.IdentityHashMap<>();
+        private Compiled(DensityFunction.CompileContext context) {
+            for (TerrainColumn column : biomeList.values()) columns.put(column, column.compile(context));
+        }
+	public DensityData sampleTerrain(int blockX, int blockY, int blockZ, net.minecraft.world.level.levelgen.densityfunction.SamplerContext context) {
 		double totalMappedDepth = 0.0;
 		double totalContribution = 0.0;
 		double totalScale = 0.0;
@@ -130,13 +143,13 @@ public class BiomeDensitySource {
 			double distSq = dX * dX + dZ * dZ;
 
 			if (distSq < BLEND_RADIUS * BLEND_RADIUS) {
-				Optional<TerrainColumn> terrainColumn = this.getTerrainColumn(cx + xQuartStart, cz + zQuartStart);
+				Optional<TerrainColumn> terrainColumn = BiomeDensitySource.this.getTerrainColumn(cx + xQuartStart, cz + zQuartStart);
 				if (terrainColumn.isPresent()) {
-					double falloff = BLEND_RADIUS * BLEND_RADIUS * terrainColumn.get().weight(context);
-					double scaleFalloff = BLEND_RADIUS * BLEND_RADIUS * terrainColumn.get().weight(context);
+					double falloff = BLEND_RADIUS * BLEND_RADIUS * columns.get(terrainColumn.get()).weight().sampleValue(context, blockX, blockY, blockZ);
+					double scaleFalloff = BLEND_RADIUS * BLEND_RADIUS * columns.get(terrainColumn.get()).weight().sampleValue(context, blockX, blockY, blockZ);
 
-					double neighborDepth = terrainColumn.get().depth(context);
-					double neighborScale = terrainColumn.get().scale(context);
+					double neighborDepth = columns.get(terrainColumn.get()).depth().sampleValue(context, blockX, blockY, blockZ);
+					double neighborScale = columns.get(terrainColumn.get()).scale().sampleValue(context, blockX, blockY, blockZ);
 
 					falloff *= Math.exp((distSq * 2f + neighborDepth) * -0.4f);
 					totalMappedDepth += neighborDepth * falloff;
@@ -157,4 +170,6 @@ public class BiomeDensitySource {
 
 		return new DensityData(totalMappedDepth / totalContribution, totalScale / totalScaleContribution);
 	}
+
+    }
 }

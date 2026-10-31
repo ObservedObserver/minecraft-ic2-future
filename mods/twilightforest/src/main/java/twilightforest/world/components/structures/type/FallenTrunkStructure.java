@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.type;
 
+import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -32,7 +33,7 @@ public class FallenTrunkStructure extends Structure implements CustomDensitySour
 		Structure.settingsCodec(instance),
 		IntProviders.codec(16, 32).fieldOf("length").forGetter(s -> s.length),
 		IntProviders.codec(20, 32).fieldOf("big_trunk_length").forGetter(s -> s.bigTrunkLength),
-		BlockStateProvider.CODEC.fieldOf("log").forGetter(s -> s.log),
+		twilightforest.world.components.feature.runtime.ConfigurationCodecs.BLOCK_STATE_PROVIDER.fieldOf("log").forGetter(s -> s.log),
 		ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("chest_loot_table").forGetter(s -> s.chestLootTable)
 	).apply(instance, FallenTrunkStructure::new));
 	public static final List<Integer> radiuses = List.of(1, 2, 4);
@@ -90,8 +91,7 @@ public class FallenTrunkStructure extends Structure implements CustomDensitySour
 	}
 
 	private boolean isValidNoiseBiome(GenerationContext context, int x, int worldY, int z) {
-		Holder<Biome> noiseBiome = context.chunkGenerator().getBiomeSource()
-			.getNoiseBiome(x >> 2, worldY >> 2, z >> 2, context.randomState().sampler());
+		Holder<Biome> noiseBiome = context.biomeResolver().getNoiseBiome(x >> 2, worldY >> 2, z >> 2);
 		return this.getModifiedStructureSettings().biomes().contains(noiseBiome);
 	}
 
@@ -100,7 +100,7 @@ public class FallenTrunkStructure extends Structure implements CustomDensitySour
 			x, worldY, z,
 			this.length.maxInclusive(), 1,
 			biomeHolder -> !context.validBiome().test(biomeHolder),
-			random, false, context.randomState().sampler());
+			random, false, context.randomState());
 		return invalidBiome != null;
 	}
 

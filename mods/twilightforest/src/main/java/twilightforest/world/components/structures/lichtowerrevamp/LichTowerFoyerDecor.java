@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.lichtowerrevamp;
 
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -60,7 +61,7 @@ public class LichTowerFoyerDecor extends TwilightJigsawPiece implements PieceBea
 	}
 
 	@Override
-	protected void processJigsaw(TwilightJigsawPiece parent, StructurePieceAccessor pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
+	protected void processJigsaw(TwilightJigsawPiece parent, StructurePiecesBuilder pieceAccessor, Structure.GenerationContext context, JigsawRecord connection, int jigsawIndex) {
 	}
 
 	@Override
@@ -119,7 +120,7 @@ public class LichTowerFoyerDecor extends TwilightJigsawPiece implements PieceBea
 
 		BlockPos behind = placePos.relative(this.getSourceJigsaw().orientation().front().getOpposite());
 		if (chunkBounds.isInside(placePos)) {
-			level.getChunk(behind).markPosForPostprocessing(behind);
+			level.getChunk(behind).markPosForPostProcessing(behind);
 		}
 	}
 }

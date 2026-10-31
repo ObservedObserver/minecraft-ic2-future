@@ -13,15 +13,10 @@ import twilightforest.util.WorldUtil;
 
 public class MineLogCoreBlock extends SpecialMagicLogBlock {
 
-	private static final MapCodec<SpecialMagicLogBlock> CODEC = simpleCodec(MineLogCoreBlock::new);
+
 
 	public MineLogCoreBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	protected MapCodec<? extends DirectionalBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

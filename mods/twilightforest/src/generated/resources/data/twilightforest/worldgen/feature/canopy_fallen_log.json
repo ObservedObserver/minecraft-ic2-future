@@ -1,0 +1,7 @@
+{
+  "type": "twilightforest:fallen_small_log",
+  "config": {
+    "hollow": "twilightforest:hollow_canopy_log_horizontal",
+    "normal": "twilightforest:canopy_log"
+  }
+}

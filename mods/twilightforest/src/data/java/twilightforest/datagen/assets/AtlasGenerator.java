@@ -10,7 +10,6 @@ import net.minecraft.data.AtlasIds;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.equipment.trim.MaterialAssetGroup;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.minecraft.world.item.equipment.trim.TrimPatterns;
 import net.neoforged.neoforge.client.data.SpriteSourceProvider;
@@ -44,9 +43,9 @@ public class AtlasGenerator extends SpriteSourceProvider {
 			}
 		});
 
-		Identifier trimPalette = Identifier.withDefaultNamespace("trims/color_palettes/trim_palette");
+		Identifier trimPalette = Identifier.withDefaultNamespace("trim_base");
 		Map<String, Identifier> trimPermutations = trimPermutations();
-		atlas(AtlasIds.ARMOR_TRIMS).addSource(new PalettedPermutations(armorTrimTextures(), trimPalette, trimPermutations));
+        // Worn armor trims use the native PalettedTextureManager, rather than a removed atlas.
 		atlas(AtlasIds.ITEMS).addSource(new PalettedPermutations(
 			List.of(
 				ItemModelGenerators.TRIM_PREFIX_HELMET,
@@ -70,40 +69,8 @@ public class AtlasGenerator extends SpriteSourceProvider {
 		);
 	}
 
-	private Map.Entry<String, Identifier> trimPermutation(MaterialAssetGroup group, String palette) {
-		return Map.entry(group.base().suffix(), TwilightForestMod.prefix("trims/color_palettes/" + palette));
+	private Map.Entry<String, Identifier> trimPermutation(Identifier paletteId, String palette) {
+		return Map.entry(paletteId.getPath().replaceFirst("^trim/", ""), paletteId);
 	}
 
-	private List<Identifier> armorTrimTextures() {
-		List<ResourceKey<TrimPattern>> patterns = List.of(
-			TrimPatterns.SENTRY,
-			TrimPatterns.DUNE,
-			TrimPatterns.COAST,
-			TrimPatterns.WILD,
-			TrimPatterns.WARD,
-			TrimPatterns.EYE,
-			TrimPatterns.VEX,
-			TrimPatterns.TIDE,
-			TrimPatterns.SNOUT,
-			TrimPatterns.RIB,
-			TrimPatterns.SPIRE,
-			TrimPatterns.WAYFINDER,
-			TrimPatterns.SHAPER,
-			TrimPatterns.SILENCE,
-			TrimPatterns.RAISER,
-			TrimPatterns.HOST,
-			TrimPatterns.FLOW,
-			TrimPatterns.BOLT
-		);
-		List<EquipmentClientInfo.LayerType> layers = List.of(EquipmentClientInfo.LayerType.HUMANOID, EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS);
-
-		List<Identifier> textures = new ArrayList<>();
-		for (ResourceKey<TrimPattern> pattern : patterns) {
-			Identifier assetId = TrimPatterns.defaultAssetId(pattern);
-			for (EquipmentClientInfo.LayerType layer : layers) {
-				textures.add(assetId.withPath(path -> layer.trimAssetPrefix() + "/" + path));
-			}
-		}
-		return textures;
-	}
 }

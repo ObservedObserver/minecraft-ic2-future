@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.templates;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.google.common.math.StatsAccumulator;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -16,9 +17,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -26,19 +26,19 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.Nullable;
 import twilightforest.util.features.FeatureLogic;
 
-public abstract class TemplateFeature<T extends FeatureConfiguration> extends Feature<T> {
+public abstract class TemplateFeature<T extends FeatureConfiguration> extends ConfiguredFeatureBase<T> {
 	public TemplateFeature(Codec<T> config) {
 		super(config);
 	}
 
 	@Override // Loosely based on WorldGenFossils
-	public final boolean place(FeaturePlaceContext<T> ctx) {
+	public final boolean place(FeaturePlacementContext<T> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource random = world.getRandom();
 		T config = ctx.config();
 
-		StructureTemplateManager templateManager = world.getLevel().getServer().getStructureManager();
+		StructureTemplateManager templateManager = world.getLevel().getServer().getStructureTemplateManager();
 		StructureTemplate template = this.getTemplate(templateManager, random);
 
 		if (template == null)

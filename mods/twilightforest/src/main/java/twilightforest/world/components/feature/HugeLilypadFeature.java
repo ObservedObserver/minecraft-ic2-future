@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,9 +10,8 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import twilightforest.init.TFBlocks;
 
 import static twilightforest.block.HugeLilyPadBlock.FACING;
@@ -23,14 +23,14 @@ import static twilightforest.enums.HugeLilypadPiece.*;
  *
  * @author Ben
  */
-public class HugeLilypadFeature extends Feature<NoneFeatureConfiguration> {
+public class HugeLilypadFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 
 	public HugeLilypadFeature(Codec<NoneFeatureConfiguration> config) {
 		super(config);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource random = ctx.random();

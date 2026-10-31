@@ -1,0 +1,34 @@
+{
+  "type": "twilightforest:tree_of_time",
+  "config": {
+    "add_first_five_chance": 1,
+    "add_second_five_chance": 1,
+    "branch_provider": {
+      "id": "twilightforest:time_wood",
+      "properties": {
+        "axis": "y"
+      }
+    },
+    "check_water": false,
+    "decorators": [],
+    "has_leaves": false,
+    "leaves_provider": {
+      "id": "twilightforest:time_leaves",
+      "properties": {
+        "distance": "7",
+        "persistent": "false",
+        "waterlogged": "false"
+      }
+    },
+    "minimum_size": 0,
+    "roots_provider": {
+      "id": "twilightforest:root"
+    },
+    "trunk_provider": {
+      "id": "twilightforest:time_log",
+      "properties": {
+        "axis": "y"
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/twilight_oak"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/twilight_oak"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/canopy"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/canopy"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/mangrove"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/mangrove"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/dark"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/dark"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/time"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/time"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/transformation"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/transformation"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/mining"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/mining"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/sorting"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:entity/signs/hanging/sorting"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 package twilightforest.world.components.feature.templates;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.google.common.math.StatsAccumulator;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -17,9 +18,8 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
+import twilightforest.world.components.feature.runtime.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import net.neoforged.neoforge.event.EventHooks;
@@ -35,7 +35,7 @@ import twilightforest.util.features.FeatureLogic;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraveyardFeature extends Feature<NoneFeatureConfiguration> {
+public class GraveyardFeature extends ConfiguredFeatureBase<NoneFeatureConfiguration> {
 	private static final Identifier GRAVEYARD = TwilightForestMod.prefix("feature/graveyard/graveyard");
 	private static final Identifier TRAP = TwilightForestMod.prefix("feature/graveyard/grave_trap");
 
@@ -83,14 +83,14 @@ public class GraveyardFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+	public boolean place(FeaturePlacementContext<NoneFeatureConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();
 
 		int flags = 16 | 2 | 1;
 
-		StructureTemplateManager templatemanager = world.getLevel().getServer().getStructureManager();
+		StructureTemplateManager templatemanager = world.getLevel().getServer().getStructureTemplateManager();
 		StructureTemplate base = templatemanager.getOrCreate(GRAVEYARD);
 		if (base == null)
 			return false;
@@ -221,7 +221,7 @@ public class GraveyardFeature extends Feature<NoneFeatureConfiguration> {
 		}
 	}
 
-	public static class WebTemplateProcessor extends StructureProcessor {
+	public static class WebTemplateProcessor implements StructureProcessor {
 		public static final WebTemplateProcessor INSTANCE = new WebTemplateProcessor();
 		public static final MapCodec<WebTemplateProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
@@ -229,7 +229,7 @@ public class GraveyardFeature extends Feature<NoneFeatureConfiguration> {
 		}
 
 		@Override
-		protected StructureProcessorType<?> getType() {
+		public MapCodec<? extends StructureProcessor> codec() {
 			return TFStructureProcessors.WEB.get();
 		}
 

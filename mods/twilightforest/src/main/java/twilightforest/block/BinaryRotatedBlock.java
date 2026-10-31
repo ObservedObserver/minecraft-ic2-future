@@ -17,16 +17,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  * - Drull
  */
 public class BinaryRotatedBlock extends Block {
-	public static final MapCodec<BinaryRotatedBlock> CODEC = simpleCodec(BinaryRotatedBlock::new);
+
 	public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
 
 	public BinaryRotatedBlock(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	public MapCodec<BinaryRotatedBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

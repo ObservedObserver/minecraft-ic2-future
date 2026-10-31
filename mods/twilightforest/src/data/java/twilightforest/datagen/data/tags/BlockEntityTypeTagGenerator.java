@@ -3,7 +3,7 @@ package twilightforest.datagen.data.tags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlockEntities;
@@ -12,7 +12,7 @@ import twilightforest.tags.TFBlockEntityTypeTags;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class BlockEntityTypeTagGenerator extends KeyTagProvider<BlockEntityType<?>> {
+public class BlockEntityTypeTagGenerator extends TagsProvider<BlockEntityType<?>> {
 
 	public BlockEntityTypeTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
 		super(output, Registries.BLOCK_ENTITY_TYPE, provider, TwilightForestMod.ID);
@@ -21,30 +21,30 @@ public class BlockEntityTypeTagGenerator extends KeyTagProvider<BlockEntityType<
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
 		this.tag(TFBlockEntityTypeTags.RELOCATION_NOT_SUPPORTED).addAll(List.of(
-			TFBlockEntities.ANTIBUILDER.getKey(),
-			TFBlockEntities.BEANSTALK_GROWER.getKey(),
-			TFBlockEntities.NAGA_SPAWNER.getKey(),
-			TFBlockEntities.LICH_SPAWNER.getKey(),
-			TFBlockEntities.MINOSHROOM_SPAWNER.getKey(),
-			TFBlockEntities.HYDRA_SPAWNER.getKey(),
-			TFBlockEntities.KNIGHT_PHANTOM_SPAWNER.getKey(),
-			TFBlockEntities.UR_GHAST_SPAWNER.getKey(),
-			TFBlockEntities.ALPHA_YETI_SPAWNER.getKey(),
-			TFBlockEntities.SNOW_QUEEN_SPAWNER.getKey(),
-			TFBlockEntities.FINAL_BOSS_SPAWNER.getKey()));
+			TFBlockEntities.ANTIBUILDER.unwrapKey().orElseThrow(),
+			TFBlockEntities.BEANSTALK_GROWER.unwrapKey().orElseThrow(),
+			TFBlockEntities.NAGA_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.LICH_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.MINOSHROOM_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.HYDRA_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.KNIGHT_PHANTOM_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.UR_GHAST_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.ALPHA_YETI_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.SNOW_QUEEN_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.FINAL_BOSS_SPAWNER.unwrapKey().orElseThrow()));
 
 		this.tag(TFBlockEntityTypeTags.IMMOVABLE).addAll(List.of(
-			TFBlockEntities.ANTIBUILDER.getKey(),
-			TFBlockEntities.BEANSTALK_GROWER.getKey(),
-			TFBlockEntities.NAGA_SPAWNER.getKey(),
-			TFBlockEntities.LICH_SPAWNER.getKey(),
-			TFBlockEntities.MINOSHROOM_SPAWNER.getKey(),
-			TFBlockEntities.HYDRA_SPAWNER.getKey(),
-			TFBlockEntities.KNIGHT_PHANTOM_SPAWNER.getKey(),
-			TFBlockEntities.UR_GHAST_SPAWNER.getKey(),
-			TFBlockEntities.ALPHA_YETI_SPAWNER.getKey(),
-			TFBlockEntities.SNOW_QUEEN_SPAWNER.getKey(),
-			TFBlockEntities.FINAL_BOSS_SPAWNER.getKey()));
+			TFBlockEntities.ANTIBUILDER.unwrapKey().orElseThrow(),
+			TFBlockEntities.BEANSTALK_GROWER.unwrapKey().orElseThrow(),
+			TFBlockEntities.NAGA_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.LICH_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.MINOSHROOM_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.HYDRA_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.KNIGHT_PHANTOM_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.UR_GHAST_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.ALPHA_YETI_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.SNOW_QUEEN_SPAWNER.unwrapKey().orElseThrow(),
+			TFBlockEntities.FINAL_BOSS_SPAWNER.unwrapKey().orElseThrow()));
 	}
 
 	@Override

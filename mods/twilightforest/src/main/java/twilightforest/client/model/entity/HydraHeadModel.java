@@ -101,6 +101,6 @@ public class HydraHeadModel extends EntityModel<HydraHeadRenderState> implements
 			stack.translate(0.0F, 0.0F, 0.75f);
 		}
 		stack.translate(0.0F, -1.0F, itemForm ? -1.0F : 0.0F);
-		collector.submitModelPart(this.head, stack, RenderTypes.entityCutout(HydraRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
+		twilightforest.client.renderer.ModelSubmission.submitPart(collector, this.head, stack, RenderTypes.entityCutout(HydraRenderer.TEXTURE), light, overlay, null, -1, breakProgress);
 	}
 }

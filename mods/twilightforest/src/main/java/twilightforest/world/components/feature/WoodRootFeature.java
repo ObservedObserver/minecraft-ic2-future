@@ -1,13 +1,13 @@
 package twilightforest.world.components.feature;
 
+import twilightforest.world.components.feature.runtime.ConfiguredFeatureBase;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import twilightforest.world.components.feature.runtime.FeaturePlacementContext;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import twilightforest.util.features.FeatureLogic;
 import twilightforest.util.features.FeaturePlacers;
@@ -15,13 +15,13 @@ import twilightforest.util.RootPlacer;
 import twilightforest.util.iterators.VoxelBresenhamIterator;
 import twilightforest.world.components.feature.config.RootConfig;
 
-public class WoodRootFeature extends Feature<RootConfig> {
+public class WoodRootFeature extends ConfiguredFeatureBase<RootConfig> {
 	public WoodRootFeature(Codec<RootConfig> configIn) {
 		super(configIn);
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<RootConfig> ctx) {
+	public boolean place(FeaturePlacementContext<RootConfig> ctx) {
 		WorldGenLevel world = ctx.level();
 		BlockPos pos = ctx.origin();
 		RandomSource rand = ctx.random();

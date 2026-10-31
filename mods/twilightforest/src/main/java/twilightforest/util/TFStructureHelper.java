@@ -1,5 +1,6 @@
 package twilightforest.util;
 
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -8,7 +9,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 /**
  * Created by Joseph on 7/16/2017.
@@ -55,7 +55,7 @@ public class TFStructureHelper {
 		};
 	}
 
-	public static ResourceKey<ConfiguredFeature<?, ?>> randomTree(int i) {
+	public static ResourceKey<Feature> randomTree(int i) {
 		return switch (i) {
 			case 1 -> TreeFeatures.SPRUCE;
 			case 2 -> TreeFeatures.BIRCH;

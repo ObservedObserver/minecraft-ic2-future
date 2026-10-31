@@ -48,11 +48,11 @@ public class DisplayUtil {
 		listtag.add(StringTag.valueOf(this.tag));
 		entityNBT.put("Tags", listtag);
 
-		entityNBT.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.BLOCK_DISPLAY).toString());
+		entityNBT.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(net.minecraft.world.entity.EntityTypes.BLOCK_DISPLAY).toString());
 
 		ProblemReporter.Collector entitySpawnReporter = new ProblemReporter.Collector();
 		ValueInput valueInput = TagValueInput.create(entitySpawnReporter, level.registryAccess(), entityNBT);
-		Optional<Entity> spawned = EntityType.create(valueInput, level, EntitySpawnReason.LOAD);
+		Optional<Entity> spawned = EntityType.create(valueInput, level, new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false));
 
 		if (spawned.isEmpty()) return false;
 		Entity entity = spawned.get();
@@ -92,11 +92,11 @@ public class DisplayUtil {
 		listtag.add(StringTag.valueOf(this.tag));
 		entityNBT.put("Tags", listtag);
 
-		entityNBT.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.TEXT_DISPLAY).toString());
+		entityNBT.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(net.minecraft.world.entity.EntityTypes.TEXT_DISPLAY).toString());
 
 		ProblemReporter.Collector entitySpawnReporter = new ProblemReporter.Collector();
 		ValueInput valueInput = TagValueInput.create(entitySpawnReporter, level.registryAccess(), entityNBT);
-		Optional<Entity> spawned = EntityType.create(valueInput, level, EntitySpawnReason.LOAD);
+		Optional<Entity> spawned = EntityType.create(valueInput, level, new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false));
 
 		if (spawned.isEmpty()) return;
 		Entity entity = spawned.get();

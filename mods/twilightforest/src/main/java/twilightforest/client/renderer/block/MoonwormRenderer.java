@@ -34,11 +34,11 @@ public class MoonwormRenderer implements BlockEntityRenderer<MoonwormBlockEntity
 	public static void submitMoonworm(MoonwormModel model, MoonwormRenderState state, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, int outlineColor, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
 		stack.pushPose();
 		stack.translate(0.5F, 0.5F, 0.5F);
-		stack.mulPose(state.facing.getRotation());
-		stack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-		stack.mulPose(Axis.YP.rotationDegrees(180.0F + state.rotation));
-		stack.mulPose(Axis.YN.rotationDegrees(state.yaw));
-		collector.submitModel(model, state, stack, model.renderType(TEXTURE), light, overlay, outlineColor, breakProgress);
+		stack.rotate(state.facing.getRotation());
+		stack.rotate(Axis.ZP.rotationDegrees(180.0F));
+		stack.rotate(Axis.YP.rotationDegrees(180.0F + state.rotation));
+		stack.rotate(Axis.YN.rotationDegrees(state.yaw));
+		twilightforest.client.renderer.ModelSubmission.submit(collector, model, state, stack, model.renderType(TEXTURE), light, overlay, outlineColor, breakProgress);
 		stack.popPose();
 	}
 

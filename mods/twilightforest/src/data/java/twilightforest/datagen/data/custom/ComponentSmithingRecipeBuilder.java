@@ -3,8 +3,8 @@ package twilightforest.datagen.data.custom;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.advancements.triggers.RecipeUnlockedTrigger;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -55,7 +55,7 @@ public class ComponentSmithingRecipeBuilder {
 	public void save(RecipeOutput output, ResourceKey<Recipe<?>> id) {
 		this.ensureValid(id);
 		Advancement.Builder advancement$builder = output.advancement()
-			.addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+			.addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(net.minecraft.core.HolderSet.direct(output.lookup(net.minecraft.core.registries.Registries.RECIPE).getOrThrow(id))))
 			.rewards(AdvancementRewards.Builder.recipe(id))
 			.requirements(AdvancementRequirements.Strategy.OR);
 		this.criteria.forEach(advancement$builder::addCriterion);
