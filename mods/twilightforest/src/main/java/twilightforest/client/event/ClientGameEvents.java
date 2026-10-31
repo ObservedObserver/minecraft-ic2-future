@@ -1,0 +1,327 @@
+package twilightforest.client.event;
+
+import com.ibm.icu.text.RuleBasedNumberFormat;
+import com.mojang.blaze3d.vertex.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.SplashRenderer;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import tamaized.beanification.PostConstruct;
+import twilightforest.TwilightForestMod;
+import tamaized.beanification.Autowired;
+import twilightforest.block.GiantBlock;
+import twilightforest.block.MiniatureStructureBlock;
+import twilightforest.block.entity.GrowingBeanstalkBlockEntity;
+import twilightforest.client.*;
+import twilightforest.client.renderer.AuroraRenderer;
+import twilightforest.client.renderer.TFSkyRenderer;
+import twilightforest.client.renderer.TFWeatherRenderer;
+import twilightforest.client.renderer.entity.MagicPaintingRenderer;
+import twilightforest.config.TFConfig;
+import twilightforest.item.mapdata.MapDataManager;
+import twilightforest.tags.TFItemTags;
+import twilightforest.entity.boss.bar.ClientTFBossBar;
+import twilightforest.events.HostileMountEvents;
+import twilightforest.init.*;
+import twilightforest.item.*;
+import twilightforest.util.HolderMatcher;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+@tamaized.beanification.Component(dist = Dist.CLIENT)
+public class ClientGameEvents {
+	private final VoxelShape GIANT_BLOCK = Shapes.box(0.0D, 0.0D, 0.0D, 4.0D, 4.0D, 4.0D);
+	private final MutableComponent WIP_TEXT = Component.translatable("misc.twilightforest.wip").withStyle(ChatFormatting.RED);
+	private final MutableComponent EMPERORS_CLOTH_TOOLTIP = Component.translatable("item.twilightforest.emperors_cloth.desc").withStyle(ChatFormatting.GRAY);
+
+	public static int time = 0;
+	private float shakeIntensity = 0.0F;
+
+	private int aurora = 0;
+	private int lastAurora = 0;
+	private final AuroraRenderer auroraRenderer = new AuroraRenderer();
+
+	@Autowired(dist = Dist.CLIENT)
+	private HolderMatcher holderMatcher;
+
+	@PostConstruct
+	@SuppressWarnings("DuplicatedCode")
+	private void setup() {
+		NeoForge.EVENT_BUS.addListener(this::addCustomTooltips);
+		NeoForge.EVENT_BUS.addListener(this::clientTick);
+		NeoForge.EVENT_BUS.addListener(this::customizeSplashes);
+		NeoForge.EVENT_BUS.addListener(this::clearEntityRenderUtilMap);
+		NeoForge.EVENT_BUS.addListener(this::endAuroraFrame);
+		NeoForge.EVENT_BUS.addListener(this::killVignette);
+		NeoForge.EVENT_BUS.addListener(this::removeHostileMountHealth);
+		NeoForge.EVENT_BUS.addListener(this::renderAurora);
+		NeoForge.EVENT_BUS.addListener(this::renderCustomBossbars);
+		NeoForge.EVENT_BUS.addListener(this::renderGiantBlockOutlines);
+		NeoForge.EVENT_BUS.addListener(this::shakeCamera);
+		NeoForge.EVENT_BUS.addListener(this::translateBookAuthor);
+		NeoForge.EVENT_BUS.addListener(this::updateBowFOV);
+
+		NeoForge.EVENT_BUS.addListener(CloudEvents::renderPrecipitation);
+		NeoForge.EVENT_BUS.addListener(CloudEvents::tickWeatherEffects);
+
+		NeoForge.EVENT_BUS.addListener(FogHandler::colorFog);
+
+		NeoForge.EVENT_BUS.addListener(LockedBiomeToastHandler::tickLockedToastLogic);
+
+		NeoForge.EVENT_BUS.addListener(TFSkyRenderer::extractLevelRender);
+		NeoForge.EVENT_BUS.addListener(TFWeatherRenderer::extractUrGhastRain);
+
+		NeoForge.EVENT_BUS.addListener(MapDataManager::clearCache);
+	}
+
+	private void customizeSplashes(ScreenEvent.Init.Post event) {
+		if (event.getScreen() instanceof TitleScreen title) {
+			SplashRenderer renderer = title.splash;
+			if (renderer != null) {
+				LocalDate date = LocalDate.now();
+				if (date.getMonth() == Month.AUGUST && date.getDayOfMonth() == 19) {
+					RuleBasedNumberFormat formatter = new RuleBasedNumberFormat(Locale.US, RuleBasedNumberFormat.ORDINAL);
+					renderer.splash = Component.literal(String.format("Happy %s birthday to the Twilight Forest!", formatter.format(date.getYear() - 2011)));
+				}
+			}
+		}
+	}
+
+	private void clearEntityRenderUtilMap(ScreenEvent.Closing event) {
+		EntityCache.clearCache();
+	}
+
+	/**
+	 * Stop the game from rendering the mount health for unfriendly creatures
+	 */
+	private void removeHostileMountHealth(RenderGuiLayerEvent.Pre event) {
+		if (VanillaGuiLayers.VEHICLE_HEALTH == event.getName()) {
+			if (HostileMountEvents.isRidingUnfriendly(Objects.requireNonNull(Minecraft.getInstance().player))) {
+				event.setCanceled(true);
+			}
+		}
+	}
+
+	private void renderAurora(RenderLevelStageEvent.AfterWeather event) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null)
+			return;
+
+		if (aurora > 0 || lastAurora > 0) {
+			BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
+			final float scale = 2048F * (mc.options.getEffectiveRenderDistance() * 16F / 32F);
+			Vec3 pos = event.getLevelRenderState().cameraRenderState.pos;
+			float y = (float) (256F - pos.y());
+			buffer.addVertex(-scale, y, scale).setColor(1F, 1F, 1F, 1F);
+			buffer.addVertex(-scale, y, -scale).setColor(1F, 1F, 1F, 1F);
+			buffer.addVertex(scale, y, -scale).setColor(1F, 1F, 1F, 1F);
+			buffer.addVertex(scale, y, scale).setColor(1F, 1F, 1F, 1F);
+
+			float alpha = Mth.lerp(mc.getDeltaTracker().getGameTimeDeltaTicks(), lastAurora, aurora) / 60F * 0.5F;
+			auroraRenderer.draw(
+				buffer.buildOrThrow(),
+				alpha,
+				Mth.abs((int) mc.level.getBiomeManager().biomeZoomSeed),
+				(float) pos.x(),
+				(float) pos.y(),
+				(float) pos.z()
+			);
+		}
+	}
+
+	private void endAuroraFrame(RenderFrameEvent.Post event) {
+		auroraRenderer.endFrame();
+	}
+
+	private void killVignette(RenderFrameEvent.Pre event) {
+		Minecraft minecraft = Minecraft.getInstance();
+		// only fire if we're in the twilight forest
+		if (minecraft.level != null && TFDimension.DIMENSION_KEY.equals(minecraft.level.dimension())) {
+			minecraft.gui.vignetteBrightness = 0.0F;
+		}
+
+		if (minecraft.player != null && HostileMountEvents.isRidingUnfriendly(minecraft.player)) {
+			minecraft.gui.setOverlayMessage(Component.empty(), false);
+		}
+	}
+
+	private void clientTick(ClientTickEvent.Post event) {
+		Minecraft mc = Minecraft.getInstance();
+
+		if (!mc.isPaused()) {
+			time++;
+
+			lastAurora = aurora;
+			if (mc.level != null && mc.getCameraEntity() != null && !TFConfig.getValidAuroraBiomes(mc.level.registryAccess()).isEmpty()) {
+				RegistryAccess access = mc.level.registryAccess();
+				Holder<Biome> biome = mc.level.getBiome(mc.getCameraEntity().blockPosition());
+				if (TFConfig.getValidAuroraBiomes(access).stream().anyMatch(c -> holderMatcher.match(c, biome)))
+					aurora++;
+				else
+					aurora--;
+				aurora = Mth.clamp(aurora, 0, 60);
+			} else {
+				aurora = 0;
+			}
+
+			BugModelAnimationHelper.animate();
+
+			if (mc.level != null) {
+				if (mc.level.getSkyFlashTime() > 0) {
+					MagicPaintingRenderer.lastLightning = mc.level.getGameTime();
+				}
+
+				if (TFConfig.firstPersonEffects && mc.player != null) {
+					HashSet<ChunkPos> chunksInRange = new HashSet<>();
+					for (int x = -16; x <= 16; x += 16) {
+						for (int z = -16; z <= 16; z += 16) {
+							chunksInRange.add(new ChunkPos((int) (mc.player.getX() + x) >> 4, (int) (mc.player.getZ() + z) >> 4));
+						}
+					}
+					for (ChunkPos pos : chunksInRange) {
+						if (mc.level.getChunk(pos.x(), pos.z(), ChunkStatus.FULL, false) != null) {
+							List<BlockEntity> beanstalksInChunk = mc.level.getChunk(pos.x(), pos.z()).getBlockEntities().values().stream()
+								.filter(blockEntity -> blockEntity instanceof GrowingBeanstalkBlockEntity beanstalkBlock && beanstalkBlock.isBeanstalkRumbling())
+								.toList();
+							if (!beanstalksInChunk.isEmpty()) {
+								BlockEntity beanstalk = beanstalksInChunk.getFirst();
+								Player player = mc.player;
+								shakeIntensity = (float) (1.0F - mc.player.distanceToSqr(Vec3.atCenterOf(beanstalk.getBlockPos())) / Math.pow(16, 2));
+								if (shakeIntensity > 0) {
+									player.snapTo(player.getX(), player.getY(), player.getZ(),
+										player.getYRot() + (player.getRandom().nextFloat() - 0.5F) * shakeIntensity,
+										player.getXRot() + (player.getRandom().nextFloat() * 2.5F - 1.25F) * shakeIntensity);
+									shakeIntensity = 0.0F;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void shakeCamera(ViewportEvent.ComputeCameraAngles event) {
+		if (TFConfig.firstPersonEffects && !Minecraft.getInstance().isPaused() && shakeIntensity > 0 && Minecraft.getInstance().player != null) {
+			event.setYaw((float) Mth.lerp(event.getPartialTick(), event.getYaw(), event.getYaw() + (Minecraft.getInstance().player.getRandom().nextFloat() * 2F - 1F) * shakeIntensity));
+			event.setPitch((float) Mth.lerp(event.getPartialTick(), event.getPitch(), event.getPitch() + (Minecraft.getInstance().player.getRandom().nextFloat() * 2F - 1F) * shakeIntensity));
+			event.setRoll((float) Mth.lerp(event.getPartialTick(), event.getRoll(), event.getRoll() + (Minecraft.getInstance().player.getRandom().nextFloat() * 2F - 1F) * shakeIntensity));
+			shakeIntensity = 0F;
+		}
+	}
+
+	private void addCustomTooltips(ItemTooltipEvent event) {
+		ItemStack item = event.getItemStack();
+
+		if (item.has(TFDataComponents.EMPERORS_CLOTH)) {
+			event.getToolTip().add(1, EMPERORS_CLOTH_TOOLTIP);
+		}
+
+		if (item.is(TFItemTags.WIP)) {
+			event.getToolTip().add(WIP_TEXT);
+		}
+	}
+
+	/**
+	 * Zooms in the FOV while using a bow, just like vanilla does in the AbstractClientPlayer's getFieldOfViewModifier() method (1.18.2)
+	 */
+	private void updateBowFOV(ComputeFovModifierEvent event) {
+		Player player = event.getPlayer();
+		if (player.isUsingItem()) {
+			Item useItem = player.getUseItem().getItem();
+			if (useItem instanceof TripleBowItem || useItem instanceof EnderBowItem || useItem instanceof IceBowItem || useItem instanceof SeekerBowItem) {
+				float f = player.getTicksUsingItem() / 20.0F;
+				f = f > 1.0F ? 1.0F : f * f;
+				event.setNewFovModifier((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, (event.getFovModifier() * (1.0F - f * 0.15F))));
+			}
+		}
+	}
+
+	private boolean areCuriosEquipped(LivingEntity entity) {
+		if (ModList.get().isLoaded("curios")) {
+//			return CuriosCompat.isCurioEquippedAndVisible(entity, stack -> stack.getItem() instanceof TrophyItem);
+		}
+		return false;
+	}
+
+	private void translateBookAuthor(ItemTooltipEvent event) {
+		ItemStack stack = event.getItemStack();
+		if (stack.getItem() instanceof WrittenBookItem && stack.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
+			if (stack.has(TFDataComponents.TRANSLATABLE_BOOK)) {
+				List<Component> components = event.getToolTip();
+				for (int i = 0; i < components.size(); i++) {
+					Component component = components.get(i);
+					if (component.toString().contains("book.byAuthor")) {
+						components.set(i, (Component.translatable("book.byAuthor", Component.translatable(TwilightForestMod.ID + ".book.author"))).withStyle(component.getStyle()));
+					}
+				}
+			}
+		}
+	}
+
+	private void renderGiantBlockOutlines(ExtractBlockOutlineRenderStateEvent event) {
+		BlockPos pos = event.getBlockPos();
+		BlockState state = event.getCamera().entity().level().getBlockState(pos);
+
+		if (state.getBlock() instanceof MiniatureStructureBlock) {
+			event.setCanceled(true);
+			return;
+		}
+
+		event.addCustomRenderer((renderState, buffer, poseStack, translucentPass, levelRenderState) -> {
+			LocalPlayer player = Minecraft.getInstance().player;
+			if (player != null && (player.getMainHandItem().getItem() instanceof GiantPickItem || (player.getMainHandItem().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof GiantBlock))) {
+				if (!state.isAir() && player.level().getWorldBorder().isWithinBounds(pos)) {
+					BlockPos offsetPos = new BlockPos(pos.getX() & ~0b11, pos.getY() & ~0b11, pos.getZ() & ~0b11);
+					VertexConsumer consumer = buffer.getBuffer(RenderTypes.lines());
+					Vec3 xyz = Vec3.atLowerCornerOf(offsetPos).subtract(event.getCamera().position());
+					int outlineColor = renderState.highContrast() ? 0xff_57_ff_e1 : 0x66_00_00_00;
+					ShapeRenderer.renderShape(poseStack, consumer, GIANT_BLOCK, xyz.x(), xyz.y(), xyz.z(), outlineColor, Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState.appropriateLineWidth);
+				}
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private void renderCustomBossbars(CustomizeGuiOverlayEvent.BossEventProgress event) {
+		if (event.getBossEvent() instanceof ClientTFBossBar bossEvent) {
+			event.setCanceled(true);
+			bossEvent.renderBossBar(event.getGuiGraphics(), event.getX(), event.getY());
+		}
+	}
+}

@@ -1,0 +1,14 @@
+{
+  "ic2": {
+    "original_checkout": "/Users/observedobserver/Documents/Codex/2026-10-24/task-2/ic2r-official",
+    "upstream_url": "https://github.com/neo-industrial-mc/IC2R.git",
+    "upstream_commit": "417fddb1fd23b926accc02b380cd658121f5c9e1",
+    "upstream_commit_date_and_message": "2026-08-10T20:53:00+08:00 fix(wrench): match personal safe mining speed"
+  },
+  "twilightforest": {
+    "original_checkout": "/Users/observedobserver/Documents/Codex/2026-10-24/task/twilightforest-neoforge26.3",
+    "upstream_url": "https://github.com/TeamTwilight/twilightforest.git",
+    "upstream_commit": "9911cf7c4223ee7909e97659d0621a87683c8272",
+    "upstream_commit_date_and_message": "2026-10-23T21:15:18-04:00 Relaxed check for wasted items in SimpleRepairRecipe so that one item worth of repair value is allowed to be partially wasted."
+  }
+}
