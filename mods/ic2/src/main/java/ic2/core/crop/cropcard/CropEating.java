@@ -36,7 +36,8 @@ public class CropEating extends Ic2CropCard {
 
   private static boolean hasMetalArmor(LivingEntity entity) {
     if (entity instanceof Player player) {
-      for (ItemStack stack : player.getInventory().armor) {
+      for (var slot : ic2.core.slot.ArmorSlot.getAll()) {
+        ItemStack stack = player.getItemBySlot(slot);
         if (stack != null && ItemWrapper.isMetalArmor(stack, player)) {
           return true;
         }
@@ -97,7 +98,7 @@ public class CropEating extends Ic2CropCard {
       double xcentered = coords.getX() + 0.5;
       double ycentered = coords.getY() + 0.5;
       double zcentered = coords.getZ() + 0.5;
-      if (crop.getCustomData().getBoolean("eaten")) {
+      if (crop.getCustomData().getBooleanOr("eaten", false)) {
         StackUtil.dropAsEntity(crop.getWorldObj(), coords, new ItemStack(Items.ROTTEN_FLESH));
         crop.getCustomData().putBoolean("eaten", false);
       }
@@ -127,7 +128,7 @@ public class CropEating extends Ic2CropCard {
                 Ic2DamageSource.create(crop.getWorldObj(), "crop_eating"),
                 (crop.getCurrentAge() + 1) * 2.0F);
             if (!hasMetalArmor(entity)) {
-              entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 64, 50));
+              entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 64, 50));
               entity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 64, 0));
               entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 64, 0));
             }

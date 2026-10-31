@@ -11,11 +11,11 @@ import ic2.core.gui.GuiElement;
 import ic2.core.gui.RecipeButton;
 import ic2.core.gui.TankFluidSlot;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiElectrolyzer extends Ic2Gui<ContainerElectrolyzer> {
-  private static final ResourceLocation background =
+  private static final Identifier background =
       IC2.getIdentifier("textures/gui/guielectrolyzer.png");
 
   public GuiElectrolyzer(
@@ -49,7 +49,7 @@ public class GuiElectrolyzer extends Ic2Gui<ContainerElectrolyzer> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 

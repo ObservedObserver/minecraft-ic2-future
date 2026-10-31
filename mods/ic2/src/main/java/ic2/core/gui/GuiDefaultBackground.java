@@ -2,9 +2,9 @@ package ic2.core.gui;
 
 import ic2.core.ContainerBase;
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -25,7 +25,7 @@ public abstract class GuiDefaultBackground<T extends ContainerBase<? extends Con
 
   @Override
   protected void drawBackgroundAndTitle(
-      GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+      GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
     GuiElement.bindCommonTexture();
     int width = this.imageWidth;
     int height = this.imageHeight;
@@ -65,7 +65,7 @@ public abstract class GuiDefaultBackground<T extends ContainerBase<? extends Con
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return null;
   }
 }

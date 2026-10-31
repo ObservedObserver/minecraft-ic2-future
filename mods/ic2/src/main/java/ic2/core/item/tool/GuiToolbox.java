@@ -3,26 +3,33 @@ package ic2.core.item.tool;
 import ic2.core.Ic2Gui;
 import ic2.core.gui.TextLabel;
 import ic2.core.ref.Ic2Items;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiToolbox extends Ic2Gui<ContainerToolbox> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guitoolbox.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guitoolbox.png");
 
   public GuiToolbox(ContainerToolbox container, Inventory playerInventory, Component title) {
     super(container, playerInventory, title);
     this.addElement(
-        TextLabel.create(this, 65, 11, Ic2Items.TOOL_BOX.getDescription().getString(), 0, false));
+        TextLabel.create(
+            this,
+            65,
+            11,
+            Component.translatable(Ic2Items.TOOL_BOX.getDescriptionId()).getString(),
+            0,
+            false));
   }
 
   @Override
   protected void drawBackgroundAndTitle(
-      GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+      GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
     this.bindTexture();
     guiGraphics.blit(
+        net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
         this.getTextureLocation(),
         this.leftPos,
         this.topPos,
@@ -35,7 +42,7 @@ public class GuiToolbox extends Ic2Gui<ContainerToolbox> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

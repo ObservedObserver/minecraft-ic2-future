@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/tin_ingot_from_deepslate"
+        "recipes": [
+          "ic2:smelting/tin_ingot_from_deepslate"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

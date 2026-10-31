@@ -7,12 +7,12 @@ import ic2.core.gui.Image;
 import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiWindKineticGenerator extends Ic2Gui<ContainerWindKineticGenerator> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiwindkineticgenerator.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiwindkineticgenerator.png");
 
   public GuiWindKineticGenerator(
       ContainerWindKineticGenerator container, Inventory playerInventory, Component title) {
@@ -84,7 +84,7 @@ public class GuiWindKineticGenerator extends Ic2Gui<ContainerWindKineticGenerato
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

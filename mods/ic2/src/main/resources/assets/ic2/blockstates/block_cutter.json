@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/processing/advanced/block_cutter_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/block_cutter"
     }
   }
 }

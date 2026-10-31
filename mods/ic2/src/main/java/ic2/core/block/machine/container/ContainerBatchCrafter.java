@@ -36,7 +36,7 @@ public class ContainerBatchCrafter extends ContainerElectricMachine<TileEntityBa
                 1,
                 index -> {
                   if (ContainerBatchCrafter.this.base.hasLevel()
-                      && !ContainerBatchCrafter.this.base.getLevel().isClientSide) {
+                      && !ContainerBatchCrafter.this.base.getLevel().isClientSide()) {
                     ContainerBatchCrafter.this.base.matrixChange(index);
                   }
                 }));

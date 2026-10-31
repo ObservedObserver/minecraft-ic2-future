@@ -25,52 +25,54 @@ public final class Ic2RecipeSerializers {
       register("gradual", new GradualRecipe.Serializer());
   public static final RecipeSerializer<JetpackAttachmentRecipe> JETPACK_ATTACHMENT =
       register("jetpack_attachment", new JetpackAttachmentRecipe.Serializer());
-  public static final WeightedMachineRecipeSerializer MACERATOR =
+  public static final RecipeSerializer<?> MACERATOR =
       register("macerator", new WeightedMachineRecipeSerializer(Ic2RecipeTypes.MACERATOR, null));
-  public static final BasicMachineRecipeSerializer EXTRACTOR =
+  public static final RecipeSerializer<?> EXTRACTOR =
       register("extractor", new BasicMachineRecipeSerializer(Ic2RecipeTypes.EXTRACTOR, null));
-  public static final BasicMachineRecipeSerializer COMPRESSOR =
+  public static final RecipeSerializer<?> COMPRESSOR =
       register("compressor", new BasicMachineRecipeSerializer(Ic2RecipeTypes.COMPRESSOR, null));
-  public static final BasicMachineRecipeSerializer CENTRIFUGE =
+  public static final RecipeSerializer<?> CENTRIFUGE =
       register(
           "centrifuge",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.CENTRIFUGE, intMeta("minHeat")));
-  public static final BasicMachineRecipeSerializer BLOCK_CUTTER =
+  public static final RecipeSerializer<?> BLOCK_CUTTER =
       register(
           "block_cutter",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.BLOCK_CUTTER, intMeta("hardness")));
-  public static final BasicMachineRecipeSerializer BLAST_FURNACE =
+  public static final RecipeSerializer<?> BLAST_FURNACE =
       register(
           "blast_furnace",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.BLAST_FURNACE, twoIntsMeta()));
-  public static final BasicMachineRecipeSerializer METAL_FORMER_EXTRUDING =
+  public static final RecipeSerializer<?> METAL_FORMER_EXTRUDING =
       register(
           "metal_former_extruding",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.METAL_FORMER_EXTRUDING, null));
-  public static final BasicMachineRecipeSerializer METAL_FORMER_CUTTING =
+  public static final RecipeSerializer<?> METAL_FORMER_CUTTING =
       register(
           "metal_former_cutting",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.METAL_FORMER_CUTTING, null));
-  public static final BasicMachineRecipeSerializer METAL_FORMER_ROLLING =
+  public static final RecipeSerializer<?> METAL_FORMER_ROLLING =
       register(
           "metal_former_rolling",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.METAL_FORMER_ROLLING, null));
-  public static final BasicMachineRecipeSerializer ORE_WASHER =
+  public static final RecipeSerializer<?> ORE_WASHER =
       register(
           "ore_washer",
           new BasicMachineRecipeSerializer(Ic2RecipeTypes.ORE_WASHER, intMeta("amount")));
-  public static final IntegerOutputRecipeSerializer MATTER_FABRICATOR =
+  public static final RecipeSerializer<?> MATTER_FABRICATOR =
       register(
           "matter_fabricator",
           new IntegerOutputRecipeSerializer(Ic2RecipeTypes.MATTER_FABRICATOR, null));
-  public static final CannerBottleRecipeSerializer CANNER_BOTTLE =
+  public static final RecipeSerializer<?> CANNER_BOTTLE =
       register("canner_bottle", new CannerBottleRecipeSerializer());
-  public static final CannerEnrichRecipeSerializer CANNER_ENRICH =
+  public static final RecipeSerializer<?> CANNER_ENRICH =
       register("canner_enrich", new CannerEnrichRecipeSerializer());
 
   public static void init() {}
 
-  private static <T extends RecipeSerializer<?>> T register(String name, T serializer) {
+  private static <T extends net.minecraft.world.item.crafting.Recipe<?>>
+      RecipeSerializer<T> register(String name, ic2.compat.RecipeSerializerAdapter<T> adapter) {
+    RecipeSerializer<T> serializer = adapter.serializer();
     IC2.envProxy.registerRecipeSerializer(IC2.getIdentifier(name), serializer);
     return serializer;
   }

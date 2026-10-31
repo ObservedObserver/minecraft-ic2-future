@@ -34,12 +34,14 @@ class RecipeUtil {
     List<List<LeanItemStack>> ret = new ArrayList<>(x.size());
 
     for (Ingredient ingredient : x) {
-      ItemStack[] stacks = ingredient.getItems();
+      ItemStack[] stacks =
+          ingredient.items().map(holder -> new ItemStack(holder)).toArray(ItemStack[]::new);
       List<LeanItemStack> res = new ArrayList<>(stacks.length);
 
       for (ItemStack stack : stacks) {
         res.add(new LeanItemStack(stack));
       }
+      ret.add(res);
     }
 
     return ret;

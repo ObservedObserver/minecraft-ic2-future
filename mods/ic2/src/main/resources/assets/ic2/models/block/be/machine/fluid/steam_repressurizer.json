@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/fluid/steam_repressurizer"
+  "parent": "ic2:block/machine/fluid/steam_repressurizer"
 }

@@ -1,3 +1,3 @@
 {
-  "loader": "ic2:wall"
+  "parent": "ic2:block/cf/wall_light_gray"
 }

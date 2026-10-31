@@ -23,8 +23,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -33,7 +32,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class GuiParser {
-  public static GuiParser.GuiNode parse(ResourceLocation id, Class<?> baseClass) {
+  public static GuiParser.GuiNode parse(Identifier id, Class<?> baseClass) {
     String fileLoc = String.format("/assets/%s/guidef/%s.xml", id.getNamespace(), id.getPath());
     InputStream is = null;
 
@@ -123,7 +122,7 @@ public class GuiParser {
 
     @Override
     protected boolean isKeyDown() {
-      return Screen.hasAltDown();
+      return net.minecraft.client.Minecraft.getInstance().hasAltDown();
     }
   }
 
@@ -220,7 +219,7 @@ public class GuiParser {
 
     @Override
     protected boolean isKeyDown() {
-      return Screen.hasControlDown();
+      return net.minecraft.client.Minecraft.getInstance().hasControlDown();
     }
   }
 
@@ -399,7 +398,7 @@ public class GuiParser {
     public final int v1;
     public final int u2;
     public final int v2;
-    public final ResourceLocation src;
+    public final Identifier src;
 
     ImageNode(GuiParser.ParentNode parent, Attributes attributes) throws SAXException {
       super(parent);
@@ -433,7 +432,7 @@ public class GuiParser {
         file = file + ".png";
       }
 
-      this.src = ResourceLocation.fromNamespaceAndPath(domain, file);
+      this.src = Identifier.fromNamespaceAndPath(domain, file);
     }
 
     @Override
@@ -740,7 +739,7 @@ public class GuiParser {
 
     @Override
     protected boolean isKeyDown() {
-      return Screen.hasShiftDown();
+      return net.minecraft.client.Minecraft.getInstance().hasShiftDown();
     }
   }
 

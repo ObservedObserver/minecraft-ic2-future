@@ -14,13 +14,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -28,14 +28,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class FoamBlock extends Block {
-  public static final com.mojang.serialization.MapCodec<FoamBlock> CODEC =
-      simpleCodec(FoamBlock::new);
-
-  @Override
-  protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.Block>
-      codec() {
-    return CODEC;
-  }
 
   public static final EnumProperty<FoamBlock.FoamType> typeProperty =
       EnumProperty.create("type", FoamBlock.FoamType.class);
@@ -48,7 +40,7 @@ public class FoamBlock extends Block {
   public static float getHardenChance(
       Level world, BlockPos pos, BlockState state, FoamBlock.FoamType type) {
     int light = world.getMaxLocalRawBrightness(pos);
-    if (state.getLightBlock(world, pos) == 0) {
+    if (state.getLightDampening() == 0) {
       for (Direction side : Util.ALL_DIRS) {
         light = Math.max(light, world.getMaxLocalRawBrightness(pos.relative(side)));
       }
@@ -68,7 +60,7 @@ public class FoamBlock extends Block {
   }
 
   public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-    int tickSpeed = world.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+    int tickSpeed = world.getGameRules().get(GameRules.RANDOM_TICK_SPEED);
     if (tickSpeed <= 0) {
       throw new IllegalStateException(
           "Foam was randomly ticked when world " + world + " is not ticking?");
@@ -82,7 +74,7 @@ public class FoamBlock extends Block {
   }
 
   @Override
-  public net.minecraft.world.ItemInteractionResult useItemOn(
+  public net.minecraft.world.InteractionResult useItemOn(
       net.minecraft.world.item.ItemStack usedStack,
       @NotNull BlockState state,
       @NotNull Level world,
@@ -92,9 +84,9 @@ public class FoamBlock extends Block {
       BlockHitResult hit) {
     if (StackUtil.consume(player, hand, StackUtil.sameItem(Blocks.SAND), 1)) {
       world.setBlockAndUpdate(pos, state.getValue(typeProperty).getResult());
-      return net.minecraft.world.ItemInteractionResult.SUCCESS;
+      return net.minecraft.world.InteractionResult.SUCCESS;
     } else {
-      return net.minecraft.world.ItemInteractionResult.FAIL;
+      return net.minecraft.world.InteractionResult.FAIL;
     }
   }
 

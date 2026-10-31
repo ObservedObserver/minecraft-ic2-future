@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/misc/sorting_machine"
+  "parent": "ic2:block/machine/misc/sorting_machine"
 }

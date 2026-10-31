@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/rubber_pressure_plate"
+        "recipes": [
+          "ic2:shaped/rubber_pressure_plate"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

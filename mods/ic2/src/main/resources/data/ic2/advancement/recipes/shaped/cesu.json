@@ -29,7 +29,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/bronze"
+            "items": "#c:plates/bronze"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/cesu"
+        "recipes": [
+          "ic2:shaped/cesu"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/coal"
+            "items": "#c:dusts/coal"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/coal_ball"
+        "recipes": [
+          "ic2:shaped/coal_ball"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

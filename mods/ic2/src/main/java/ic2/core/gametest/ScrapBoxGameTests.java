@@ -1,21 +1,17 @@
 package ic2.core.gametest;
 
 import ic2.api.recipe.Recipes;
+import ic2.compat.GameTest;
 import ic2.core.ref.Ic2Items;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public final class ScrapBoxGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -29,11 +25,10 @@ public final class ScrapBoxGameTests {
     ItemStack scrapBoxes = new ItemStack(Ic2Items.SCRAP_BOX, 2);
     player.setItemInHand(InteractionHand.MAIN_HAND, scrapBoxes);
 
-    InteractionResultHolder<ItemStack> result =
+    InteractionResult result =
         scrapBoxes.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
 
-    helper.assertTrue(
-        result.getResult().consumesAction(), "right-clicking a scrap box should succeed");
+    helper.assertTrue(result.consumesAction(), "right-clicking a scrap box should succeed");
     helper.assertValueEqual(scrapBoxes.getCount(), 1, "remaining scrap box count");
 
     List<ItemEntity> drops =

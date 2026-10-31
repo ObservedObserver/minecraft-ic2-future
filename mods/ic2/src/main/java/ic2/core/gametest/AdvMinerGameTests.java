@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.machine.tileentity.TileEntityAdvMiner;
 import ic2.core.item.ElectricItemManager;
@@ -8,7 +9,6 @@ import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -20,11 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class AdvMinerGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -126,8 +122,10 @@ public class AdvMinerGameTests {
 
     CompoundTag stackTag =
         (CompoundTag)
-            makeFilterUpgrade(helper, true, Items.RAW_GOLD)
-                .save(helper.getLevel().registryAccess());
+            ic2.compat.NbtCompat.saveItem(
+                makeFilterUpgrade(helper, true, Items.RAW_GOLD),
+                helper.getLevel().registryAccess(),
+                new CompoundTag());
     stackTag.putString("id", "ic2:mining_filter_card");
     stackTag.putByte("Index", (byte) 0);
 
@@ -136,7 +134,7 @@ public class AdvMinerGameTests {
     contents.add(stackTag);
     CompoundTag cardSlotTag = new CompoundTag();
     cardSlotTag.put("Contents", contents);
-    CompoundTag invSlotsTag = saved.getCompound("InvSlots");
+    CompoundTag invSlotsTag = saved.getCompoundOrEmpty("InvSlots");
     invSlotsTag.put("card", cardSlotTag);
     saved.put("InvSlots", invSlotsTag);
 
@@ -148,7 +146,9 @@ public class AdvMinerGameTests {
         "legacy card slot stack must migrate into the upgrade slots as a mining filter upgrade");
     CompoundTag nbt = StackUtil.getTag(migrated);
     helper.assertTrue(
-        nbt != null && nbt.getBoolean("blacklist") && nbt.getList("Items", 10).size() == 1,
+        nbt != null
+            && nbt.getBooleanOr("blacklist", false)
+            && ic2.compat.NbtCompat.getList(nbt, "Items", 10).size() == 1,
         "migrated filter upgrade must keep its blacklist configuration");
 
     BlockPos orePos = helper.absolutePos(ORE_POS);
@@ -187,14 +187,16 @@ public class AdvMinerGameTests {
       GameTestHelper helper, boolean blacklist, Item... items) {
     ItemStack upgrade = new ItemStack(Ic2Items.MINING_FILTER_UPGRADE);
     CompoundTag nbt = StackUtil.getOrCreateNbtData(upgrade);
-    nbt.putBoolean("blacklist", blacklist);
+    StackUtil.setTagValue(upgrade, nbt, "blacklist", net.minecraft.nbt.ByteTag.valueOf(blacklist));
     ListTag list = new ListTag();
 
     for (Item item : items) {
-      list.add(new ItemStack(item).save(helper.getLevel().registryAccess()));
+      list.add(
+          ic2.compat.NbtCompat.saveItem(
+              new ItemStack(item), helper.getLevel().registryAccess(), new CompoundTag()));
     }
 
-    nbt.put("Items", list);
+    StackUtil.setTagValue(upgrade, nbt, "Items", list);
     return upgrade;
   }
 
@@ -213,7 +215,8 @@ public class AdvMinerGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

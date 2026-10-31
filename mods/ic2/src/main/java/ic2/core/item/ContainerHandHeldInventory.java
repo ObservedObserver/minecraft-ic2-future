@@ -4,10 +4,10 @@ import ic2.core.ContainerBase;
 import ic2.core.item.tool.HandHeldInventory;
 import ic2.core.util.StackUtil;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ public class ContainerHandHeldInventory<T extends HandHeldInventory> extends Con
   }
 
   @Override
-  public void clicked(int slot, int button, @NotNull ClickType type, @NotNull Player player) {
+  public void clicked(int slot, int button, @NotNull ContainerInput type, @NotNull Player player) {
     ItemStack stack = null;
     boolean closeGUI = false;
     switch (type) {
@@ -57,21 +57,21 @@ public class ContainerHandHeldInventory<T extends HandHeldInventory> extends Con
         }
 
         if (newSlot >= 0 && player instanceof ServerPlayer) {
-          ((ServerPlayer) player).connection.send(new ClientboundSetCarriedItemPacket(newSlot));
+          ((ServerPlayer) player).connection.send(new ClientboundSetHeldSlotPacket(newSlot));
         }
         break;
       default:
-        throw new RuntimeException("Unexpected ClickType: " + type);
+        throw new RuntimeException("Unexpected ContainerInput: " + type);
     }
 
-    if (closeGUI && !player.getCommandSenderWorld().isClientSide) {
+    if (closeGUI && !player.level().isClientSide()) {
       this.base.saveAsThrown(stack);
     }
 
     super.clicked(slot, button, type, player);
-    if (closeGUI && !player.getCommandSenderWorld().isClientSide) {
+    if (closeGUI && !player.level().isClientSide()) {
       player.closeContainer();
-    } else if (type == ClickType.CLONE) {
+    } else if (type == ContainerInput.CLONE) {
       ItemStack held = this.getCarried();
       if (this.base.isThisContainer(held)) {
         CompoundTag nbt = StackUtil.getTag(held);

@@ -1,6 +1,7 @@
 package ic2.core.item.tool;
 
 import ic2.api.item.IBoxable;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.ref.Ic2Items;
 import ic2.core.ref.Ic2SoundEvents;
@@ -12,16 +13,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ConcretePowderBlock;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.StainedGlassBlock;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.WallBannerBlock;
@@ -53,25 +52,37 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
   }
 
   public static boolean canColor(Block block, DyeColor color) {
-    ResourceLocation identifier = BuiltInRegistries.BLOCK.getKey(block);
+    Identifier identifier = BuiltInRegistries.BLOCK.getKey(block);
     return !identifier.getPath().contains(color.getName());
   }
 
   public static BlockState getColorBlockState(
       DyeColor color, VanillaColorBlockId vanillaColorBlock) {
-    ResourceLocation identifier =
-        ResourceLocation.withDefaultNamespace(color.getName() + "_" + vanillaColorBlock.id);
-    return BuiltInRegistries.BLOCK.get(identifier).defaultBlockState();
+    Identifier identifier =
+        Identifier.withDefaultNamespace(color.getName() + "_" + vanillaColorBlock.id);
+    return BuiltInRegistries.BLOCK.getValue(identifier).defaultBlockState();
   }
 
   public static BlockState getBlockStateWithProperties(
       DyeColor color, VanillaColorBlockId vanillaColorBlock, BlockState state) {
-    ResourceLocation identifier =
-        ResourceLocation.withDefaultNamespace(color.getName() + "_" + vanillaColorBlock.id);
-    return BuiltInRegistries.BLOCK.get(identifier).withPropertiesOf(state);
+    Identifier identifier =
+        Identifier.withDefaultNamespace(color.getName() + "_" + vanillaColorBlock.id);
+    return BuiltInRegistries.BLOCK.getValue(identifier).withPropertiesOf(state);
   }
 
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
@@ -100,9 +111,9 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
     Block block = state.getBlock();
     if (this.colorBlock(world, pos, block, state, this.color)) {
       boolean isDamaged = this.damagePainter(stack, player, hand, this.color);
-      if (world.isClientSide) {
+      if (world.isClientSide()) {
         player.playSound(Ic2SoundEvents.ITEM_PAINTER_USE, 1.0F, 1.0F);
-        if (isDamaged) player.playSound(SoundEvents.ITEM_BREAK, 1.0F, 1.0F);
+        if (isDamaged) player.playSound(SoundEvents.ITEM_BREAK.value(), 1.0F, 1.0F);
       }
 
       return InteractionResult.SUCCESS;
@@ -115,7 +126,7 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
       Level world, BlockPos pos, Block block, BlockState state, Ic2Color color) {
     DyeColor newColor = color.dyeColor;
 
-    for (Property<?> value : state.getValues().keySet()) {
+    for (Property<?> value : state.getProperties()) {
       Property<DyeColor> property = (Property<DyeColor>) value;
       if (property.getValueClass() == DyeColor.class) {
         DyeColor oldColor = state.getValue(property);
@@ -132,7 +143,7 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
       return false;
     }
 
-    List<TagKey<Block>> tagListx = block.defaultBlockState().getTags().toList();
+    List<TagKey<Block>> tagListx = block.builtInRegistryHolder().tags().toList();
     if (tagListx.contains(BlockTags.WOOL)) {
       world.setBlockAndUpdate(pos, getColorBlockState(color.dyeColor, VanillaColorBlockId.WOOL));
       return true;
@@ -219,16 +230,16 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
           return false;
         }
 
-        CompoundTag shulkerNbt = shulkerBlockEntity.saveWithId(world.registryAccess());
+        CompoundTag shulkerNbt = shulkerBlockEntity.saveWithFullMetadata(world.registryAccess());
         BlockState newShulkerBoxState =
-            ShulkerBoxBlock.getBlockByColor(color.dyeColor).withPropertiesOf(state);
+            Blocks.DYED_SHULKER_BOX.pick(color.dyeColor).withPropertiesOf(state);
         world.setBlockAndUpdate(pos, newShulkerBoxState);
         BlockEntity newShulkerBlockEntity =
             BlockEntity.loadStatic(pos, newShulkerBoxState, shulkerNbt, world.registryAccess());
         world.setBlockEntity(newShulkerBlockEntity);
         return true;
       } else {
-        ResourceLocation identifier = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier identifier = BuiltInRegistries.BLOCK.getKey(block);
         if (identifier.getNamespace().equals("minecraft")
             && identifier.getPath().contains("concrete")) {
           world.setBlockAndUpdate(
@@ -254,22 +265,22 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
     }
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      Level world, @NotNull Player player, InteractionHand hand) {
+  public @NotNull InteractionResult use(Level world, @NotNull Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
-    if (!world.isClientSide && IC2.keyboard.isModeSwitchKeyDown(player)) {
+    if (!world.isClientSide() && IC2.keyboard.isModeSwitchKeyDown(player)) {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      boolean newValue = !nbtData.getBoolean("autoRefill");
-      nbtData.putBoolean("autoRefill", newValue);
+      boolean newValue = !nbtData.getBooleanOr("autoRefill", false);
+      StackUtil.setTagValue(
+          stack, nbtData, "autoRefill", net.minecraft.nbt.ByteTag.valueOf(newValue));
       if (newValue) {
         IC2.sideProxy.messagePlayer(player, "Painter automatic refill mode enabled");
       } else {
         IC2.sideProxy.messagePlayer(player, "Painter automatic refill mode disabled");
       }
 
-      return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+      return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
     } else {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
   }
 
@@ -279,7 +290,7 @@ public class ItemToolPainter extends ItemToolCrafting implements IBoxable {
     // capture these up front: breaking the stack in hurtAndBreak empties it, dropping its item and
     // NBT
     Item paintedItem = stack.getItem();
-    boolean autoRefill = StackUtil.getOrCreateNbtData(stack).getBoolean("autoRefill");
+    boolean autoRefill = StackUtil.getOrCreateNbtData(stack).getBooleanOr("autoRefill", false);
     // 1.21: ItemStack#hurt(int, RandomSource, ServerPlayer) is gone; damage via hurtAndBreak.
     stack.hurtAndBreak(
         1,

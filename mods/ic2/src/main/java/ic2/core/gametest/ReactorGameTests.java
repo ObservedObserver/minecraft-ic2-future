@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.Ic2DamageSource;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.machine.tileentity.TileEntityLiquidHeatExchanger;
@@ -21,19 +22,13 @@ import ic2.core.ref.Ic2Fluids;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ReactorGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final String EMPTY_LARGE = "gametest/empty7x7x7";
@@ -1203,7 +1198,9 @@ public class ReactorGameTests {
     reactor.setHeat(7500);
     // simulate a freshly started server where no lazy init path has populated the statics yet
     Ic2DamageSource.radiation = null;
-    Pig pig = helper.spawnWithNoFreeWill(EntityType.PIG, VESSEL_CENTER.above());
+    Pig pig =
+        helper.spawnWithNoFreeWill(
+            net.minecraft.world.entity.EntityTypes.PIG, VESSEL_CENTER.above());
 
     helper.assertTrue(
         ItemArmorHazmat.hazmatAbsorbs(Ic2DamageSource.radiation(helper.getLevel())),
@@ -1387,7 +1384,8 @@ public class ReactorGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

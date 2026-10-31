@@ -11,13 +11,13 @@ import ic2.core.gui.dynamic.TextProvider;
 import ic2.core.util.Util;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 public class GuiPatternStorage extends Ic2Gui<ContainerPatternStorage> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guipatternstorage.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guipatternstorage.png");
 
   public GuiPatternStorage(
       ContainerPatternStorage container, Inventory playerInventory, Component title) {
@@ -100,7 +100,7 @@ public class GuiPatternStorage extends Ic2Gui<ContainerPatternStorage> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

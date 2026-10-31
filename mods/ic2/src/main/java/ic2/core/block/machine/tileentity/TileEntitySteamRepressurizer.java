@@ -53,7 +53,7 @@ public class TileEntitySteamRepressurizer extends TileEntityInventory implements
   private static Fluid getSteam() {
     Fluid ret = detectedSteamFluid;
     if (ret == null) {
-      HolderSet.Named<Fluid> tag = BuiltInRegistries.FLUID.getTag(Ic2FluidTags.STEAM).orElse(null);
+      HolderSet.Named<Fluid> tag = BuiltInRegistries.FLUID.get(Ic2FluidTags.STEAM).orElse(null);
       if (tag != null) {
         for (Holder<Fluid> entry : tag) {
           detectedSteamFluid = ret = entry.value();
@@ -69,7 +69,7 @@ public class TileEntitySteamRepressurizer extends TileEntityInventory implements
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.currentHeat = nbt.getInt("heat");
+    this.currentHeat = nbt.getIntOr("heat", 0);
   }
 
   @Override

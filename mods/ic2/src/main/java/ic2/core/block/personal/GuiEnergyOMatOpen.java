@@ -2,14 +2,14 @@ package ic2.core.block.personal;
 
 import ic2.core.Ic2Gui;
 import ic2.core.gui.VanillaButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiEnergyOMatOpen extends Ic2Gui<ContainerEnergyOMatOpen> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guienergyomatopen.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guienergyomatopen.png");
 
   public GuiEnergyOMatOpen(
       ContainerEnergyOMatOpen container, Inventory playerInventory, Component title) {
@@ -33,7 +33,7 @@ public class GuiEnergyOMatOpen extends Ic2Gui<ContainerEnergyOMatOpen> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(
         guiGraphics,
@@ -51,7 +51,7 @@ public class GuiEnergyOMatOpen extends Ic2Gui<ContainerEnergyOMatOpen> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

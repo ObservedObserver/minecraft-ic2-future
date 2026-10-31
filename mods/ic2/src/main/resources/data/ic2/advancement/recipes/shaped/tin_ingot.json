@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/tin_ingot"
+        "recipes": [
+          "ic2:shaped/tin_ingot"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

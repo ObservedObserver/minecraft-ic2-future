@@ -31,7 +31,7 @@ public class TileEntityElectricFurnace
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.xp = nbt.getDouble("xp");
+    this.xp = nbt.getDoubleOr("xp", 0.0);
   }
 
   @Override
@@ -49,13 +49,13 @@ public class TileEntityElectricFurnace
       MachineRecipeResult<ItemStack, ItemStack, ItemStack> result,
       Collection<ItemStack> processResult) {
     super.operateOnce(result, processResult);
-    this.xp = this.xp + result.recipe().getMetaData().getFloat("experience");
+    this.xp = this.xp + result.recipe().getMetaData().getFloatOr("experience", 0.0F);
   }
 
   @Override
   public void onNetworkEvent(Player player, int event) {
     if (event == 0) {
-      assert !this.getLevel().isClientSide;
+      assert !this.getLevel().isClientSide();
       this.xp = TileEntityIronFurnace.spawnXP(player, this.xp);
     }
   }

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/silver"
+            "items": "#c:dusts/silver"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/glass_fibre_cable"
+        "recipes": [
+          "ic2:shaped/glass_fibre_cable"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,12 +1,5 @@
 package ic2.core;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import ic2.api.upgrade.IUpgradableBlock;
 import ic2.api.upgrade.IUpgradeItem;
 import ic2.api.upgrade.UpgradableProperty;
@@ -24,22 +17,18 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.joml.Matrix4f;
 
 public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     extends AbstractContainerScreen<T> {
@@ -50,7 +39,10 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       EnumSet.noneOf(GuiElement.ImplementedMethod.class);
   private final Queue<Ic2Gui.Tooltip> queuedTooltips = new ArrayDeque<>();
   private boolean fixKeyEvents = false;
-  private GuiGraphics guiGraphics;
+  private GuiGraphicsExtractor guiGraphics;
+  private static Identifier boundTexture;
+  private net.minecraft.client.input.MouseButtonEvent originalMouseEvent;
+  private boolean originalDoubleClick;
 
   public Ic2Gui(T container, Inventory playerInventory, Component title) {
     this(container, playerInventory, title, 176, 166);
@@ -61,9 +53,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   }
 
   public Ic2Gui(T container, Inventory playerInventory, Component title, int xSize, int ySize) {
-    super(container, playerInventory, title);
-    this.imageHeight = ySize;
-    this.imageWidth = xSize;
+    super(container, playerInventory, title, xSize, ySize);
   }
 
   private static List<ItemStack> getCompatibleUpgrades(IUpgradableBlock block) {
@@ -80,8 +70,8 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     return ret;
   }
 
-  public static void bindTexture(ResourceLocation id) {
-    RenderSystem.setShaderTexture(0, id);
+  public static void bindTexture(Identifier id) {
+    boundTexture = id;
   }
 
   public final T getContainer() {
@@ -113,10 +103,10 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     }
   }
 
-  public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+  public void extractRenderState(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
     this.guiGraphics = guiGraphics;
-    super.render(guiGraphics, mouseX, mouseY, partialTicks);
-    this.renderTooltip(guiGraphics, mouseX, mouseY);
+    super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
   }
 
   public void containerTick() {
@@ -130,12 +120,15 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     }
   }
 
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    this.guiGraphics = guiGraphics;
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     mouseX -= this.leftPos;
     mouseY -= this.topPos;
     this.drawBackgroundAndTitle(guiGraphics, delta, mouseX, mouseY);
     if (this.menu.base instanceof IUpgradableBlock) {
-      bindTexture(ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/infobutton.png"));
+      bindTexture(Identifier.fromNamespaceAndPath("ic2", "textures/gui/infobutton.png"));
       this.drawTexturedRect(guiGraphics.pose(), 3.0, 3.0, 10.0, 10.0, 0.0, 0.0);
     }
 
@@ -149,9 +142,10 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   }
 
   protected void drawBackgroundAndTitle(
-      GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+      GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
     this.bindTexture();
     guiGraphics.blit(
+        net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
         this.getTextureLocation(),
         this.leftPos,
         this.topPos,
@@ -164,12 +158,18 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     this.drawXCenteredString(guiGraphics, this.imageWidth / 2, 6, this.title, 4210752, false);
   }
 
-  protected final void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-    this.drawForegroundLayer(guiGraphics, mouseX - this.leftPos, mouseY - this.topPos);
-    this.flushTooltips(guiGraphics);
+  protected final void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+    guiGraphics.pose().pushMatrix();
+    guiGraphics.pose().translate(-this.leftPos, -this.topPos);
+    try {
+      this.drawForegroundLayer(guiGraphics, mouseX - this.leftPos, mouseY - this.topPos);
+      this.flushTooltips(guiGraphics);
+    } finally {
+      guiGraphics.pose().popMatrix();
+    }
   }
 
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     if (this.menu.base instanceof IUpgradableBlock) {
       this.handleUpgradeTooltip(mouseX, mouseY);
     }
@@ -198,20 +198,92 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta, double scrollY) {
     if (this.elementMethods.contains(GuiElement.ImplementedMethod.onMouseScroll)) {
       ScrollDirection direction;
-      if (scrollDelta != 0.0) {
-        direction = scrollDelta < 0.0 ? ScrollDirection.down : ScrollDirection.up;
+      if (scrollY != 0.0) {
+        direction = scrollY < 0.0 ? ScrollDirection.down : ScrollDirection.up;
       } else {
         direction = ScrollDirection.stopped;
       }
 
       for (GuiElement<?> element : this.elements) {
-        if (element.isEnabled() && element.contains((int) mouseX, (int) mouseY)) {
-          element.onMouseScroll((int) mouseX, (int) mouseY, direction);
+        if (element.isEnabled()
+            && element.contains((int) mouseX - this.leftPos, (int) mouseY - this.topPos)) {
+          element.onMouseScroll((int) mouseX - this.leftPos, (int) mouseY - this.topPos, direction);
         }
       }
     }
 
-    return super.mouseScrolled(mouseX, mouseY, 0, scrollDelta);
+    return super.mouseScrolled(mouseX, mouseY, scrollDelta, scrollY);
+  }
+
+  private net.minecraft.client.input.MouseButtonEvent mouseEvent(double x, double y, int button) {
+    if (this.originalMouseEvent != null) return this.originalMouseEvent;
+    int sdlButton = button == 0 ? 1 : button == 1 ? 3 : button == 2 ? 2 : button + 1;
+    return new net.minecraft.client.input.MouseButtonEvent(
+        x, y, new net.minecraft.client.input.MouseButtonInfo(sdlButton, 0));
+  }
+
+  private static int legacyButton(int button) {
+    return button == 1 ? 0 : button == 3 ? 1 : button == 2 ? 2 : button - 1;
+  }
+
+  @Override
+  public boolean mouseClicked(
+      net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+    var previous = this.originalMouseEvent;
+    boolean previousDoubleClick = this.originalDoubleClick;
+    this.originalMouseEvent = event;
+    this.originalDoubleClick = doubleClick;
+    try {
+      return this.mouseClicked(event.x(), event.y(), legacyButton(event.button()));
+    } finally {
+      this.originalMouseEvent = previous;
+      this.originalDoubleClick = previousDoubleClick;
+    }
+  }
+
+  @Override
+  public boolean mouseDragged(
+      net.minecraft.client.input.MouseButtonEvent event, double dx, double dy) {
+    var previous = this.originalMouseEvent;
+    boolean previousDoubleClick = this.originalDoubleClick;
+    this.originalMouseEvent = event;
+    try {
+      return this.mouseDragged(event.x(), event.y(), legacyButton(event.button()), dx, dy);
+    } finally {
+      this.originalMouseEvent = previous;
+      this.originalDoubleClick = previousDoubleClick;
+    }
+  }
+
+  @Override
+  public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent event) {
+    var previous = this.originalMouseEvent;
+    boolean previousDoubleClick = this.originalDoubleClick;
+    this.originalMouseEvent = event;
+    try {
+      return this.mouseReleased(event.x(), event.y(), legacyButton(event.button()));
+    } finally {
+      this.originalMouseEvent = previous;
+      this.originalDoubleClick = previousDoubleClick;
+    }
+  }
+
+  @Override
+  public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+    if (this.elementMethods.contains(GuiElement.ImplementedMethod.onKeyTyped)) {
+      for (GuiElement<?> element : this.elements) {
+        if (element.isEnabled() && element.onKeyTyped('\0', event.key())) return true;
+      }
+    }
+    return super.keyPressed(event);
+  }
+
+  @Override
+  public boolean charTyped(net.minecraft.client.input.CharacterEvent event) {
+    boolean handled = false;
+    for (char character : event.codepointAsString().toCharArray())
+      handled |= charTyped(character, 0);
+    return handled;
   }
 
   public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
@@ -242,7 +314,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       }
     }
 
-    return super.mouseClicked(mouseX, mouseY, mouseButton);
+    return super.mouseClicked(mouseEvent(mouseX, mouseY, mouseButton), this.originalDoubleClick);
   }
 
   public boolean mouseDragged(
@@ -274,7 +346,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       }
     }
 
-    return super.mouseDragged(mouseX, mouseY, clickedMouseButton, deltaX, deltaY);
+    return super.mouseDragged(mouseEvent(mouseX, mouseY, clickedMouseButton), deltaX, deltaY);
   }
 
   public boolean mouseReleased(double mouseX, double mouseY, int state) {
@@ -305,7 +377,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       }
     }
 
-    return super.mouseReleased(mouseX, mouseY, state);
+    return super.mouseReleased(mouseEvent(mouseX, mouseY, state));
   }
 
   public boolean charTyped(char typedChar, int keyCode) {
@@ -323,7 +395,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       }
     }
 
-    return super.charTyped(typedChar, keyCode);
+    return super.charTyped(new net.minecraft.client.input.CharacterEvent(typedChar));
   }
 
   public void removed() {
@@ -337,7 +409,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   }
 
   public void drawTexturedRect(
-      PoseStack matrices,
+      org.joml.Matrix3x2fStack matrices,
       double x,
       double y,
       double width,
@@ -348,7 +420,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   }
 
   public void drawTexturedRect(
-      PoseStack matrices,
+      org.joml.Matrix3x2fStack matrices,
       double x,
       double y,
       double width,
@@ -370,7 +442,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
   }
 
   public void drawTexturedRect(
-      PoseStack matrices,
+      org.joml.Matrix3x2fStack matrices,
       double x,
       double y,
       double width,
@@ -390,20 +462,20 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       uE = tmp;
     }
 
-    Matrix4f matrix = matrices.last().pose();
-    int z = 0;
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    BufferBuilder buffer =
-        Tesselator.getInstance().begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-    buffer.addVertex(matrix, (float) x, (float) y, z).setUv((float) uS, (float) vS);
-    buffer.addVertex(matrix, (float) x, (float) yE, z).setUv((float) uS, (float) vE);
-    buffer.addVertex(matrix, (float) xE, (float) yE, z).setUv((float) uE, (float) vE);
-    buffer.addVertex(matrix, (float) xE, (float) y, z).setUv((float) uE, (float) vS);
-    BufferUploader.drawWithShader(buffer.buildOrThrow());
+    this.guiGraphics.blit(
+        boundTexture,
+        (int) x,
+        (int) y,
+        (int) xE,
+        (int) yE,
+        (float) uS,
+        (float) uE,
+        (float) vS,
+        (float) vE);
   }
 
   public void drawSprite(
-      PoseStack matrices,
+      org.joml.Matrix3x2fStack matrices,
       double x,
       double y,
       double width,
@@ -415,157 +487,97 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       boolean fixBottom) {
     if (sprite == null) {
       sprite =
-          ((TextureAtlas) this.minecraft.getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS))
+          ((TextureAtlas)
+                  this.minecraft.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS))
               .getSprite(MissingTextureAtlasSprite.getLocation());
     }
-
     x += this.leftPos;
     y += this.topPos;
-    scale *= 16.0;
-    double spriteUS = sprite.getU0();
-    double spriteVS = sprite.getV0();
-    double spriteWidth = sprite.getU1() - spriteUS;
-    double spriteHeight = sprite.getV1() - spriteVS;
-    int a = color >>> 24 & 0xFF;
-    int r = color >>> 16 & 0xFF;
-    int g = color >>> 8 & 0xFF;
-    int b = color & 0xFF;
-    Matrix4f matrix = matrices.last().pose();
-    int z = 0;
-    RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-    BufferBuilder buffer =
-        Tesselator.getInstance().begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-    double xS = x;
-
-    while (xS < x + width) {
-      double maxWidth;
-      double uS;
-      if (xS == x && fixRight && (maxWidth = width % scale) > 0.0) {
-        uS = spriteUS + spriteWidth * (1.0 - maxWidth / scale);
-      } else {
-        maxWidth = scale;
-        uS = spriteUS;
+    double tileSize = scale * 16.0;
+    if (tileSize <= 0 || width <= 0 || height <= 0) return;
+    this.guiGraphics.enableScissor(
+        (int) x, (int) y, (int) Math.ceil(x + width), (int) Math.ceil(y + height));
+    double startX = fixRight ? x + width - Math.ceil(width / tileSize) * tileSize : x;
+    double startY = fixBottom ? y + height - Math.ceil(height / tileSize) * tileSize : y;
+    for (double tileX = startX; tileX < x + width; tileX += tileSize) {
+      for (double tileY = startY; tileY < y + height; tileY += tileSize) {
+        this.guiGraphics.blitSprite(
+            net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+            sprite,
+            (int) tileX,
+            (int) tileY,
+            (int) Math.ceil(tileSize),
+            (int) Math.ceil(tileSize),
+            color);
       }
-
-      double xE = Math.min(xS + maxWidth, x + width);
-      double uE = uS + (xE - xS) / scale * spriteWidth;
-      double yS = y;
-
-      while (yS < y + height) {
-        double maxHeight;
-        double vS;
-        if (yS == y && fixBottom && (maxHeight = height % scale) > 0.0) {
-          vS = spriteVS + spriteHeight * (1.0 - maxHeight / scale);
-        } else {
-          maxHeight = scale;
-          vS = spriteVS;
-        }
-
-        double yE = Math.min(yS + maxHeight, y + height);
-        double vE = vS + (yE - yS) / scale * spriteHeight;
-        buffer
-            .addVertex(matrix, (float) xS, (float) yS, z)
-            .setUv((float) uS, (float) vS)
-            .setColor(r, g, b, a);
-        buffer
-            .addVertex(matrix, (float) xS, (float) yE, z)
-            .setUv((float) uS, (float) vE)
-            .setColor(r, g, b, a);
-        buffer
-            .addVertex(matrix, (float) xE, (float) yE, z)
-            .setUv((float) uE, (float) vE)
-            .setColor(r, g, b, a);
-        buffer
-            .addVertex(matrix, (float) xE, (float) yS, z)
-            .setUv((float) uE, (float) vS)
-            .setColor(r, g, b, a);
-        yS += maxHeight;
-      }
-
-      xS += maxWidth;
     }
-
-    BufferUploader.drawWithShader(buffer.buildOrThrow());
+    this.guiGraphics.disableScissor();
   }
 
   public void drawItem(int x, int y, ItemStack stack) {
     if (this.guiGraphics != null) {
-      this.guiGraphics.renderItem(stack, this.leftPos + x, this.topPos + y);
+      this.guiGraphics.item(stack, this.leftPos + x, this.topPos + y);
     }
   }
 
   public void drawItemStack(int x, int y, ItemStack stack) {
     this.drawItem(x, y, stack);
     if (this.guiGraphics != null) {
-      this.guiGraphics.renderItemDecorations(
-          this.font, stack, this.leftPos + x, this.topPos + y, null);
+      this.guiGraphics.itemDecorations(this.font, stack, this.leftPos + x, this.topPos + y, null);
     }
   }
 
-  public void drawColoredRect(PoseStack matrices, int x, int y, int width, int height, int color) {
+  public void drawColoredRect(
+      org.joml.Matrix3x2fStack matrices, int x, int y, int width, int height, int color) {
     x += this.leftPos;
     y += this.topPos;
-    int alpha = color >>> 24;
-    boolean blend = alpha != 255 && alpha != 0;
-    Matrix4f matrix = matrices.last().pose();
-    int xE = x + width;
-    int yE = y + height;
-    int z = 0;
-    if (blend) {
-      RenderSystem.enableBlend();
-    }
-
-    RenderSystem.setShader(GameRenderer::getPositionColorShader);
-    BufferBuilder buffer =
-        Tesselator.getInstance().begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-    buffer.addVertex(matrix, x, y, z).setColor(color);
-    buffer.addVertex(matrix, x, yE, z).setColor(color);
-    buffer.addVertex(matrix, xE, yE, z).setColor(color);
-    buffer.addVertex(matrix, xE, y, z).setColor(color);
-    BufferUploader.drawWithShader(buffer.buildOrThrow());
-    if (blend) {
-      RenderSystem.disableBlend();
-    }
+    this.guiGraphics.fill(x, y, x + width, y + height, color);
   }
 
-  public int drawString(GuiGraphics guiGraphics, int x, int y, String text, int color) {
-    return guiGraphics.drawString(this.font, text, x, y, color, false);
+  public int drawString(GuiGraphicsExtractor guiGraphics, int x, int y, String text, int color) {
+    return ic2.compat.GuiCompat.drawString(
+            guiGraphics, this.font, text, this.leftPos + x, this.topPos + y, color, false)
+        - this.leftPos;
   }
 
   public int drawString(
-      GuiGraphics guiGraphics, int x, int y, String text, int color, boolean ignored) {
-    return guiGraphics.drawString(this.font, text, this.leftPos + x, this.topPos + y, color, false)
+      GuiGraphicsExtractor guiGraphics, int x, int y, String text, int color, boolean ignored) {
+    return ic2.compat.GuiCompat.drawString(
+            guiGraphics, this.font, text, this.leftPos + x, this.topPos + y, color, false)
         - this.leftPos;
   }
 
   public void drawTrimmedString(
-      GuiGraphics guiGraphics, int x, int y, String text, int maxWidth, int color) {
-    MultiLineLabel.create(this.font, Component.literal(text), maxWidth)
-        .renderLeftAlignedNoShadow(guiGraphics, x, y, 10, color);
+      GuiGraphicsExtractor guiGraphics, int x, int y, String text, int maxWidth, int color) {
+    int lineY = this.topPos + y;
+    for (var line : this.font.split(Component.literal(text), maxWidth)) {
+      guiGraphics.text(this.font, line, this.leftPos + x, lineY, color, false);
+      lineY += 10;
+    }
   }
 
   public void drawXCenteredString(
-      GuiGraphics guiGraphics, int x, int y, String text, int color, boolean shadow) {
+      GuiGraphicsExtractor guiGraphics, int x, int y, String text, int color, boolean shadow) {
     this.drawCenteredString(guiGraphics, x, y, text, color, shadow, true, false);
   }
 
   public void drawXCenteredString(
-      GuiGraphics guiGraphics, int x, int y, Component text, int color, boolean shadow) {
+      GuiGraphicsExtractor guiGraphics, int x, int y, Component text, int color, boolean shadow) {
     this.drawCenteredString(guiGraphics, x, y, text, color, shadow, true, false);
   }
 
   public void drawXYCenteredString(
-      GuiGraphics guiGraphics, int x, int y, String text, int color, boolean shadow) {
+      GuiGraphicsExtractor guiGraphics, int x, int y, String text, int color, boolean shadow) {
     this.drawCenteredString(guiGraphics, x, y, text, color, shadow, true, true);
   }
 
   public void drawXYCenteredString(
-      GuiGraphics guiGraphics, int x, int y, Component text, int color, boolean shadow) {
+      GuiGraphicsExtractor guiGraphics, int x, int y, Component text, int color, boolean shadow) {
     this.drawCenteredString(guiGraphics, x, y, text, color, shadow, true, true);
   }
 
   public void drawCenteredString(
-      GuiGraphics guiGraphics,
+      GuiGraphicsExtractor guiGraphics,
       int x,
       int y,
       String text,
@@ -581,11 +593,12 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       y -= 4;
     }
 
-    guiGraphics.drawString(this.font, text, this.leftPos + x, this.topPos + y, color, shadow);
+    ic2.compat.GuiCompat.drawString(
+        guiGraphics, this.font, text, this.leftPos + x, this.topPos + y, color, shadow);
   }
 
   public void drawCenteredString(
-      GuiGraphics guiGraphics,
+      GuiGraphicsExtractor guiGraphics,
       int x,
       int y,
       Component text,
@@ -601,7 +614,8 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
       y -= 4;
     }
 
-    guiGraphics.drawString(this.font, text, this.leftPos + x, this.topPos + y, color, shadow);
+    ic2.compat.GuiCompat.drawString(
+        guiGraphics, this.font, text, this.leftPos + x, this.topPos + y, color, shadow);
   }
 
   public int getStringWidth(String text) {
@@ -627,12 +641,12 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     this.queuedTooltips.add(new Ic2Gui.Tooltip(text, x, y));
   }
 
-  public void drawTooltip(GuiGraphics guiGraphics, int x, int y, ItemStack stack) {
+  public void drawTooltip(GuiGraphicsExtractor guiGraphics, int x, int y, ItemStack stack) {
     assert !StackUtil.isEmpty(stack);
-    guiGraphics.renderTooltip(this.font, stack, x, y);
+    guiGraphics.setTooltipForNextFrame(this.font, stack, this.leftPos + x, this.topPos + y);
   }
 
-  protected void flushTooltips(GuiGraphics guiGraphics) {
+  protected void flushTooltips(GuiGraphicsExtractor guiGraphics) {
     // 如果 vanilla 接下来会渲染 slot 物品 tooltip，跳过 IC2 的 tooltip，避免与物品 tooltip 重叠
     if (this.hoveredSlot != null
         && this.hoveredSlot.hasItem()
@@ -642,8 +656,12 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     }
 
     for (Ic2Gui.Tooltip tooltip : this.queuedTooltips) {
-      guiGraphics.renderTooltip(
-          this.font, tooltip.text, java.util.Optional.empty(), tooltip.x, tooltip.y);
+      guiGraphics.setTooltipForNextFrame(
+          this.font,
+          tooltip.text,
+          java.util.Optional.empty(),
+          this.leftPos + tooltip.x,
+          this.topPos + tooltip.y);
     }
 
     this.queuedTooltips.clear();
@@ -670,7 +688,7 @@ public abstract class Ic2Gui<T extends ContainerBase<? extends Container>>
     }
   }
 
-  protected abstract ResourceLocation getTextureLocation();
+  protected abstract Identifier getTextureLocation();
 
   private record Tooltip(List<Component> text, int x, int y) {}
 }

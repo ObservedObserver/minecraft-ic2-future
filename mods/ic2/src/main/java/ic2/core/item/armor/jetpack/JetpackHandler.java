@@ -75,7 +75,7 @@ public class JetpackHandler implements IBackupElectricItemManager {
     return !StackUtil.isEmpty(stack)
         && StackUtil.getEquipmentSlotForItem(stack) == EquipmentSlot.CHEST
         && stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)
-        && StackUtil.getTag(stack).getBoolean("hasIC2Jetpack");
+        && StackUtil.getTag(stack).getBooleanOr("hasIC2Jetpack", false);
   }
 
   public static boolean hasJetpack(ItemStack stack) {
@@ -107,11 +107,11 @@ public class JetpackHandler implements IBackupElectricItemManager {
 
     double charge =
         stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)
-            ? StackUtil.getTag(stack).getDouble("charge")
+            ? StackUtil.getTag(stack).getDoubleOr("charge", 0.0)
             : 0.0;
     amount = Math.min(amount, this.getMaxCharge(stack) - charge);
     if (!simulate) {
-      StackUtil.getOrCreateNbtData(stack).putDouble("charge", charge + amount);
+      StackUtil.setTagValue(stack, "charge", net.minecraft.nbt.DoubleTag.valueOf(charge + amount));
     }
 
     return amount;
@@ -133,7 +133,7 @@ public class JetpackHandler implements IBackupElectricItemManager {
       }
 
       CompoundTag nbt = StackUtil.getTag(stack);
-      double charge = nbt.getDouble("charge");
+      double charge = nbt.getDoubleOr("charge", 0.0);
       amount = Math.min(amount, charge);
       if (!simulate) {
         charge -= amount;

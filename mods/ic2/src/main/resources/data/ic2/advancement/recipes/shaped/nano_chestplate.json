@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/nano_chestplate"
+        "recipes": [
+          "ic2:shaped/nano_chestplate"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

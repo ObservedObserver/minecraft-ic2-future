@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemArmorNightVisionGoggles extends ItemArmorUtility
-    implements IElectricItem, IItemHudInfo {
+    implements IElectricItem, IItemHudInfo, ic2.compat.LegacyInventoryTicker {
   public ItemArmorNightVisionGoggles(Properties settings) {
     super(Ic2ArmorMaterials.NIGHT_VISION_GOGGLES.holder(), settings, EquipmentSlot.HEAD);
   }
@@ -55,25 +55,46 @@ public class ItemArmorNightVisionGoggles extends ItemArmorUtility
     return info;
   }
 
+  @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+  }
+
   public void inventoryTick(
       @NotNull ItemStack stack,
       @NotNull Level world,
       @NotNull Entity entity,
       int slot,
       boolean selected) {
-    super.inventoryTick(stack, world, entity, slot, selected);
+    if (world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+      super.inventoryTick(
+          stack,
+          serverLevel,
+          entity,
+          selected ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : null);
+    }
     if (entity instanceof Player player) {
       if (player.getItemBySlot(this.getEquipmentSlot()) == stack) {
         CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-        boolean active = nbtData.getBoolean("active");
-        byte toggleTimer = nbtData.getByte("toggle_timer");
+        boolean active = nbtData.getBooleanOr("active", false);
+        byte toggleTimer = nbtData.getByteOr("toggle_timer", (byte) 0);
         if (IC2.keyboard.isAltKeyDown(player)
             && IC2.keyboard.isModeSwitchKeyDown(player)
             && toggleTimer == 0) {
           toggleTimer = 10;
           active = !active;
           if (IC2.sideProxy.isSimulating()) {
-            nbtData.putBoolean("active", active);
+            StackUtil.setTagValue(
+                stack, nbtData, "active", net.minecraft.nbt.ByteTag.valueOf(active));
             if (active) {
               IC2.sideProxy.messagePlayer(player, "ic2.night_vision.mode.enabled");
             } else {
@@ -85,6 +106,19 @@ public class ItemArmorNightVisionGoggles extends ItemArmorUtility
         ItemArmorNanoSuit.getNightVisionOrNot(stack, player, nbtData, toggleTimer, active);
       }
     }
+  }
+
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
   }
 
   public void appendHoverText(

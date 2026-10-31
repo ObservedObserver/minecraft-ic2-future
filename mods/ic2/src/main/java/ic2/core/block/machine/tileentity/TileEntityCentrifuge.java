@@ -39,7 +39,7 @@ public class TileEntityCentrifuge
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.heat = nbt.getShort("heat");
+    this.heat = nbt.getShortOr("heat", (short) 0);
   }
 
   @Override
@@ -64,7 +64,7 @@ public class TileEntityCentrifuge
               ? extends IRecipeInput, ? extends Collection<ItemStack>, ? extends ItemStack>
           output = super.getRecipeResult();
       if (output != null && !this.redstone.hasRedstoneInput()) {
-        heatRequested = min(output.recipe().getMetaData().getShort("minHeat"));
+        heatRequested = min(output.recipe().getMetaData().getShortOr("minHeat", (short) 0));
         this.workheat = heatRequested;
         if (this.heat > heatRequested) {
           this.heat = heatRequested;
@@ -96,7 +96,7 @@ public class TileEntityCentrifuge
         return null;
       }
 
-      if (ret.recipe().getMetaData().getInt("minHeat") > this.heat) {
+      if (ret.recipe().getMetaData().getIntOr("minHeat", 0) > this.heat) {
         return null;
       }
     }

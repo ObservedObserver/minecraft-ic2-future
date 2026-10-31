@@ -1,6 +1,7 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.IC2;
 import ic2.core.Ic2Potion;
 import ic2.core.item.ElectricItemManager;
@@ -9,7 +10,6 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.Keyboard;
 import ic2.core.util.StackUtil;
 import java.util.EnumSet;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -19,11 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class QuantumSuitGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -37,7 +33,7 @@ public class QuantumSuitGameTests {
     player.setItemSlot(EquipmentSlot.HEAD, helmet);
     player.setAirSupply(0);
 
-    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, 0, false);
+    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, EquipmentSlot.HEAD);
 
     helper.assertValueEqual(player.getAirSupply(), 200, "air supply after tick");
     Ic2GameTestAssertions.assertNear(
@@ -59,7 +55,7 @@ public class QuantumSuitGameTests {
     helper.assertTrue(
         player.hasEffect(MobEffects.POISON), "player should be poisoned before the tick");
 
-    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, 0, false);
+    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, EquipmentSlot.HEAD);
 
     helper.assertFalse(player.hasEffect(MobEffects.POISON), "poison should be cured");
     Ic2GameTestAssertions.assertNear(
@@ -82,7 +78,7 @@ public class QuantumSuitGameTests {
         player.hasEffect(Ic2Potion.radiationHolder()),
         "player should be irradiated before the tick");
 
-    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, 0, false);
+    helmet.getItem().inventoryTick(helmet, helper.getLevel(), player, EquipmentSlot.HEAD);
 
     helper.assertFalse(player.hasEffect(Ic2Potion.radiationHolder()), "radiation should be cured");
     // radiation amplifiers encode damage scaling, so the cost is base 10000 EU + amplifier * 100
@@ -104,7 +100,7 @@ public class QuantumSuitGameTests {
     player.setItemSlot(EquipmentSlot.CHEST, chest);
     player.setRemainingFireTicks(100);
 
-    chest.getItem().inventoryTick(chest, helper.getLevel(), player, 0, false);
+    chest.getItem().inventoryTick(chest, helper.getLevel(), player, EquipmentSlot.CHEST);
 
     helper.assertTrue(player.getRemainingFireTicks() <= 0, "fire should be extinguished");
 
@@ -148,10 +144,10 @@ public class QuantumSuitGameTests {
     player.setOnGround(true);
     player.setSprinting(true);
     player.setDeltaMovement(Vec3.ZERO);
-    StackUtil.getOrCreateNbtData(leggings).putBoolean("speed_enabled", false);
+    StackUtil.setTagValue(leggings, "speed_enabled", net.minecraft.nbt.ByteTag.valueOf(false));
     IC2.keyboard.processKeyUpdate(player, Keyboard.Key.toInt(EnumSet.of(Keyboard.Key.forward)));
 
-    leggings.getItem().inventoryTick(leggings, helper.getLevel(), player, 0, false);
+    leggings.getItem().inventoryTick(leggings, helper.getLevel(), player, EquipmentSlot.LEGS);
     IC2.keyboard.removePlayerReferences(player);
 
     Ic2GameTestAssertions.assertNear(
@@ -171,12 +167,12 @@ public class QuantumSuitGameTests {
     IC2.keyboard.processKeyUpdate(player, Keyboard.Key.toInt(EnumSet.of(Keyboard.Key.alt)));
 
     for (int tick = 0; tick < 20; tick++) {
-      leggings.getItem().inventoryTick(leggings, helper.getLevel(), player, 0, false);
+      leggings.getItem().inventoryTick(leggings, helper.getLevel(), player, EquipmentSlot.LEGS);
     }
     IC2.keyboard.removePlayerReferences(player);
 
     helper.assertFalse(
-        StackUtil.getOrCreateNbtData(leggings).getBoolean("speed_enabled"),
+        StackUtil.getOrCreateNbtData(leggings).getBooleanOr("speed_enabled", false),
         "holding the toggle keys must not turn speed boost back on");
     helper.succeed();
   }

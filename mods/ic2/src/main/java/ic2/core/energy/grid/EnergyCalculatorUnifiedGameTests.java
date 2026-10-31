@@ -1,14 +1,10 @@
 package ic2.core.energy.grid;
 
+import ic2.compat.GameTest;
 import ic2.core.ref.Ic2Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public final class EnergyCalculatorUnifiedGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final BlockPos SOURCE_POS = new BlockPos(1, 2, 1);

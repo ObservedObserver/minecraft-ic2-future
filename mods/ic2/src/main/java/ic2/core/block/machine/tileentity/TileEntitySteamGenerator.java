@@ -74,10 +74,10 @@ public class TileEntitySteamGenerator extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.inputMB = nbt.getInt("inputmb");
-    this.pressure = nbt.getInt("pressurevalve");
-    this.systemHeat = nbt.getFloat("systemheat");
-    this.calcification = nbt.getInt("calcification");
+    this.inputMB = nbt.getIntOr("inputmb", 0);
+    this.pressure = nbt.getIntOr("pressurevalve", 0);
+    this.systemHeat = nbt.getFloatOr("systemheat", 0.0F);
+    this.calcification = nbt.getIntOr("calcification", 0);
   }
 
   @Override
@@ -92,10 +92,11 @@ public class TileEntitySteamGenerator extends TileEntityInventory
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getTag(stack);
       if (nbt != null) {
-        this.calcification = Math.min(Math.max(nbt.getInt("calcification"), 0), maxCalcification);
+        this.calcification =
+            Math.min(Math.max(nbt.getIntOr("calcification", 0), 0), maxCalcification);
       }
     }
   }
@@ -106,7 +107,8 @@ public class TileEntitySteamGenerator extends TileEntityInventory
     if (drop != null
         && (wrench || this.teBlock.getDefaultDrop() == Ic2TileEntityBlock.DefaultDrop.Self)
         && this.calcification > 0) {
-      StackUtil.getOrCreateNbtData(drop).putInt("calcification", this.calcification);
+      StackUtil.setTagValue(
+          drop, "calcification", net.minecraft.nbt.IntTag.valueOf(this.calcification));
     }
 
     return drop;
@@ -116,9 +118,9 @@ public class TileEntitySteamGenerator extends TileEntityInventory
   public void appendItemTooltip(ItemStack stack, List<Component> tooltip, TooltipFlag advanced) {
     super.appendItemTooltip(stack, tooltip, advanced);
     CompoundTag nbt = StackUtil.getTag(stack);
-    if (nbt != null && nbt.getInt("calcification") > 0) {
+    if (nbt != null && nbt.getIntOr("calcification", 0) > 0) {
       float percent =
-          Math.round(nbt.getInt("calcification") / 100000.0F * 100.0F * 100.0F) / 100.0F;
+          Math.round(nbt.getIntOr("calcification", 0) / 100000.0F * 100.0F * 100.0F) / 100.0F;
       Ic2Tooltip.add(
           tooltip, Component.translatable("ic2.steam_generator.gui.calcification", percent));
     }

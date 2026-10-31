@@ -45,7 +45,7 @@ public abstract class TileEntityConversionGenerator extends TileEntityInventory
   @Override
   protected void onUnloaded() {
     super.onUnloaded();
-    if (this.registeredToEnet && !this.level.isClientSide) {
+    if (this.registeredToEnet && !this.level.isClientSide()) {
       EnergyNet.instance.removeTile(this);
       this.registeredToEnet = false;
     }
@@ -54,7 +54,7 @@ public abstract class TileEntityConversionGenerator extends TileEntityInventory
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.registeredToEnet && !this.level.isClientSide) {
+    if (!this.registeredToEnet && !this.level.isClientSide()) {
       EnergyNet.instance.addBlockEntityTile(this);
       this.registeredToEnet = true;
     }
@@ -67,7 +67,7 @@ public abstract class TileEntityConversionGenerator extends TileEntityInventory
   }
 
   protected void refreshEnergyNet() {
-    if (this.registeredToEnet && !this.level.isClientSide) {
+    if (this.registeredToEnet && !this.level.isClientSide()) {
       EnergyNet.instance.removeTile(this);
       EnergyNet.instance.addBlockEntityTile(this);
     }

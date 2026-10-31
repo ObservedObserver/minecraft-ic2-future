@@ -3,13 +3,13 @@ package ic2.core.block.personal;
 import ic2.core.IC2;
 import ic2.core.Ic2Gui;
 import ic2.core.gui.VanillaButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiTradeOMatOpen extends Ic2Gui<ContainerTradeOMatOpen> {
-  private static final ResourceLocation background =
+  private static final Identifier background =
       IC2.getIdentifier("textures/gui/guitradeomatopen.png");
 
   public GuiTradeOMatOpen(
@@ -22,7 +22,7 @@ public class GuiTradeOMatOpen extends Ic2Gui<ContainerTradeOMatOpen> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(
         guiGraphics,
@@ -66,7 +66,7 @@ public class GuiTradeOMatOpen extends Ic2Gui<ContainerTradeOMatOpen> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

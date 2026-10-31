@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/bronze"
+            "items": "#c:plates/bronze"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/iron"
+            "items": "#c:plates/iron"
           }
         ]
       },
@@ -25,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/tin"
+            "items": "#c:plates/tin"
           }
         ]
       },
@@ -33,7 +33,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/mixed_metal_ingot"
+        "recipes": [
+          "ic2:shaped/mixed_metal_ingot"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

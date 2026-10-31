@@ -1,35 +1,26 @@
 package ic2.core.model;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ModelUtil {
-  public static ModelResourceLocation getModelLocation(ResourceLocation loc, BlockState state) {
-    return new ModelResourceLocation(loc, getVariant(state));
-  }
+public final class ModelUtil {
+  private ModelUtil() {}
 
   public static String getVariant(BlockState state) {
-    return BlockModelShaper.statePropertiesToString(state.getValues());
+    return ic2.core.block.state.BlockStateUtil.getVariantString(state);
   }
 
-  public static BakedModel getMissingModel() {
-    return getModelManager().getMissingModel();
+  public static BlockStateModel getMissingModel() {
+    return manager().getBlockStateModelSet().missingModel();
   }
 
-  public static BakedModel getModel(ModelResourceLocation loc) {
-    return getModelManager().getModel(loc);
+  public static BlockStateModel getBlockModel(BlockState state) {
+    return manager().getBlockStateModelSet().get(state);
   }
 
-  public static BakedModel getBlockModel(BlockState state) {
-    return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(state);
-  }
-
-  private static ModelManager getModelManager() {
-    return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager();
+  private static ModelManager manager() {
+    return Minecraft.getInstance().getModelManager();
   }
 }

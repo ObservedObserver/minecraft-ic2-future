@@ -10,21 +10,21 @@
           "name": "ic2:reinforced_glass"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:match_tool",
-          "predicate": {
-            "enchantments": [
+      "condition": {
+        "predicate": {
+          "predicates": {
+            "minecraft:enchantments": [
               {
-                "enchantment": "minecraft:silk_touch",
                 "levels": {
                   "min": 1
-                }
+                },
+                "enchantments": "minecraft:silk_touch"
               }
             ]
           }
-        }
-      ]
+        },
+        "type": "minecraft:match_tool"
+      }
     }
   ]
 }

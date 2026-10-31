@@ -9,7 +9,11 @@ public class ItemArmorEnergypack extends ItemArmorElectric {
     super(
         Ic2ArmorMaterials.ENERGY_PACK.holder(),
         EquipmentSlot.CHEST,
-        new Properties(),
+        new Properties()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.ITEM,
+                    ic2.core.IC2.getIdentifier("energy_pack"))),
         2000000.0,
         1000.0,
         3);

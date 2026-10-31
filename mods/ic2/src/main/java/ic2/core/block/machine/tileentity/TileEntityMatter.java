@@ -123,8 +123,8 @@ public class TileEntityMatter extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.scrap = nbt.getInt("scrap");
-    this.lastEnergy = nbt.getDouble("lastEnergy");
+    this.scrap = nbt.getIntOr("scrap", 0);
+    this.lastEnergy = nbt.getDoubleOr("lastEnergy", 0.0);
   }
 
   @Override
@@ -137,7 +137,7 @@ public class TileEntityMatter extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.setUpgradestat();
     }
   }

@@ -2,6 +2,7 @@ package ic2.core;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -23,17 +24,15 @@ public class Ic2Potion extends MobEffect {
     return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(radiation);
   }
 
-  public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+  @Override
+  public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
     if (this == radiation) {
-      if (Ic2DamageSource.radiation == null) {
-        Ic2DamageSource.init(entity.level().registryAccess());
-      }
-      entity.hurt(Ic2DamageSource.radiation, (float) amplifier / 100 + 0.5F);
+      entity.hurtServer(level, Ic2DamageSource.radiation(level), (float) amplifier / 100 + 0.5F);
     }
-
     return true;
   }
 
+  @Override
   public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
     if (this == radiation) {
       int rate = 25 >> amplifier;

@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/re_battery"
+        "recipes": [
+          "ic2:shaped/re_battery"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

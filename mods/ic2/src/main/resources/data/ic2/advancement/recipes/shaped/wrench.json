@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/bronze"
+            "items": "#c:ingots/bronze"
           }
         ]
       },
@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/wrench"
+        "recipes": [
+          "ic2:shaped/wrench"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

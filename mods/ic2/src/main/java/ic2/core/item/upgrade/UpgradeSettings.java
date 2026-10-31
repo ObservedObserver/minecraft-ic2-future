@@ -11,16 +11,16 @@ public class UpgradeSettings {
   public final ComparisonSettings extra;
 
   public UpgradeSettings(CompoundTag nbt) {
-    this.active = nbt.getBoolean("active");
+    this.active = nbt.getBooleanOr("active", false);
     if (!this.active) {
       this.comparison = ComparisonType.IGNORED;
       this.mainBox = this.extraBox = "";
       this.main = this.extra = ComparisonSettings.DEFAULT;
     } else {
-      if (!nbt.contains("type", 1)) {
+      if (!ic2.compat.NbtCompat.contains(nbt, "type", 1)) {
         this.comparison = ComparisonType.DIRECT;
       } else {
-        this.comparison = ComparisonType.getFromNBT(nbt.getByte("type"));
+        this.comparison = ComparisonType.getFromNBT(nbt.getByteOr("type", (byte) 0));
       }
 
       switch (this.comparison) {
@@ -29,16 +29,16 @@ public class UpgradeSettings {
           this.main = this.extra = ComparisonSettings.DEFAULT;
           break;
         case COMPARISON:
-          this.mainBox = nbt.getString("normal");
+          this.mainBox = nbt.getStringOr("normal", "");
           this.extraBox = "";
-          this.main = ComparisonSettings.getFromNBT(nbt.getByte("normalComp"));
+          this.main = ComparisonSettings.getFromNBT(nbt.getByteOr("normalComp", (byte) 0));
           this.extra = ComparisonSettings.DEFAULT;
           break;
         case RANGE:
-          this.mainBox = nbt.getString("normal");
-          this.extraBox = nbt.getString("extra");
-          this.main = ComparisonSettings.getFromNBT(nbt.getByte("normalComp"));
-          this.extra = ComparisonSettings.getFromNBT(nbt.getByte("extraComp"));
+          this.mainBox = nbt.getStringOr("normal", "");
+          this.extraBox = nbt.getStringOr("extra", "");
+          this.main = ComparisonSettings.getFromNBT(nbt.getByteOr("normalComp", (byte) 0));
+          this.extra = ComparisonSettings.getFromNBT(nbt.getByteOr("extraComp", (byte) 0));
           break;
         default:
           throw new IllegalStateException("Unexpected comparison type " + this.comparison);

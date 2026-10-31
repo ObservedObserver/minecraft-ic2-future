@@ -24,7 +24,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -36,7 +35,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class LaserBulletEntity extends ThrowableProjectile {
@@ -58,7 +56,9 @@ public class LaserBulletEntity extends ThrowableProjectile {
   }
 
   public LaserBulletEntity(Level world, LivingEntity owner) {
-    super(Ic2Entities.LASER_BULLET, owner, world);
+    super(Ic2Entities.LASER_BULLET, world);
+    this.setOwner(owner);
+    this.setPos(owner.getX(), owner.getEyeY() - 0.1, owner.getZ());
   }
 
   public LaserBulletEntity(
@@ -71,7 +71,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
       boolean isExplosiveMode) {
     this(world, owner);
     this.owner = owner;
-    this.absMoveTo(start.x, start.y, start.z);
+    this.absSnapTo(start.x, start.y, start.z);
     this.range = range;
     this.power = power;
     this.blockBreaks = blockBreaks;
@@ -153,7 +153,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
   }
 
   private void explode() {
-    Level world = this.getCommandSenderWorld();
+    Level world = this.level();
     LaserEvent.LaserExplodesEvent event =
         NeoForge.EVENT_BUS.post(
             new LaserEvent.LaserExplodesEvent(
@@ -211,7 +211,8 @@ public class LaserBulletEntity extends ThrowableProjectile {
 
     if (damage > 0) {
       entity.igniteForSeconds(damage * (this.isSmeltMode ? 2 : 1));
-      return entity.hurt(this.level().damageSources().mobProjectile(this, this.owner), damage);
+      return entity.hurtOrSimulate(
+          this.level().damageSources().mobProjectile(this, this.owner), damage);
     } else {
       return true;
     }
@@ -222,7 +223,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
   }
 
   private boolean hitBlock(BlockPos pos, Direction side) {
-    Level world = this.getCommandSenderWorld();
+    Level world = this.level();
     LaserEvent.LaserHitsBlockEvent event =
         NeoForge.EVENT_BUS.post(
             new LaserEvent.LaserHitsBlockEvent(
@@ -252,14 +253,19 @@ public class LaserBulletEntity extends ThrowableProjectile {
     }
 
     if (playerOwner.blockActionRestricted(
-        world, pos, Objects.requireNonNull(playerOwner.getServer()).getDefaultGameType())) {
+        world,
+        pos,
+        Objects.requireNonNull(ic2.compat.WorldCompat.server(playerOwner.level()))
+            .getDefaultGameType())) {
       return false;
     }
 
     BlockState state = world.getBlockState(pos);
     Block block = state.getBlock();
     if (NeoForge.EVENT_BUS
-        .post(new BlockEvent.BreakEvent(world, pos, state, playerOwner))
+        .post(
+            new net.neoforged.neoforge.event.level.block.BreakBlockEvent(
+                world, pos, state, playerOwner))
         .isCanceled()) {
       this.remove(RemovalReason.DISCARDED);
       return true;
@@ -273,7 +279,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
       return false;
     }
 
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return true;
     }
 
@@ -291,14 +297,14 @@ public class LaserBulletEntity extends ThrowableProjectile {
     List<ItemStack> replacements = new ArrayList<>();
     if (block == Blocks.TNT) {
       block.wasExploded(
-          world,
+          (net.minecraft.server.level.ServerLevel) world,
           pos,
-          new Explosion(
-              world,
+          new net.minecraft.world.level.ServerExplosion(
+              (net.minecraft.server.level.ServerLevel) world,
               this,
-              pos.getX() + 0.5,
-              pos.getY() + 0.5,
-              pos.getZ() + 0.5,
+              null,
+              null,
+              net.minecraft.world.phys.Vec3.atCenterOf(pos),
               1.0F,
               false,
               BlockInteraction.DESTROY));
@@ -329,7 +335,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
         this.power = 0.0F;
       }
 
-      if (world.random.nextInt(10) == 0 && state.isFlammable(world, pos, Direction.UP)) {
+      if (world.getRandom().nextInt(10) == 0 && state.isFlammable(world, pos, Direction.UP)) {
         world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
       }
     }
@@ -341,7 +347,7 @@ public class LaserBulletEntity extends ThrowableProjectile {
   private void dropBlockWithChance(
       Level world, BlockPos pos, BlockState state, Block block, float dropChance) {
     for (ItemStack drop : StackUtil.getDrops(world, pos, state, block, 0)) {
-      if (world.random.nextFloat() <= dropChance) {
+      if (world.getRandom().nextFloat() <= dropChance) {
         StackUtil.dropAsEntity(world, pos, drop);
       }
     }
@@ -357,15 +363,16 @@ public class LaserBulletEntity extends ThrowableProjectile {
     SmeltingRecipe recipe =
         IC2.sideProxy
             .getRecipeManager()
-            .getRecipeFor(
+            .getRecipesFor(
                 RecipeType.SMELTING,
                 new net.minecraft.world.item.crafting.SingleRecipeInput(inputItemStack),
-                this.getCommandSenderWorld())
+                this.level())
+            .findFirst()
             .map(net.minecraft.world.item.crafting.RecipeHolder::value)
             .orElse(null);
     if (recipe != null) {
       ItemStack replacementStack =
-          recipe.getResultItem(this.getCommandSenderWorld().registryAccess());
+          recipe.assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(inputItemStack));
       if (!StackUtil.isEmpty(replacementStack)) {
         replacementList.add(replacementStack);
       }

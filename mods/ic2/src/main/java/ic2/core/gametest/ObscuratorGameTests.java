@@ -1,6 +1,7 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.item.tool.ItemObscurator;
 import ic2.core.ref.Ic2Blocks;
@@ -8,7 +9,6 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,11 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ObscuratorGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -38,10 +34,13 @@ public class ObscuratorGameTests {
   private static ItemStack makeScannedObscurator(double charge) {
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.OBSCURATOR, charge);
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    nbt.putString("refBlock", "minecraft:stone");
-    nbt.putString("refVariant", "normal");
-    nbt.putByte("refSide", (byte) Direction.NORTH.ordinal());
-    nbt.putIntArray("refColorMuls", new int[] {-1});
+    StackUtil.setTagValue(
+        stack, nbt, "refBlock", net.minecraft.nbt.StringTag.valueOf("minecraft:stone"));
+    StackUtil.setTagValue(stack, nbt, "refVariant", net.minecraft.nbt.StringTag.valueOf("normal"));
+    StackUtil.setTagValue(
+        stack, nbt, "refSide", net.minecraft.nbt.ByteTag.valueOf((byte) Direction.NORTH.ordinal()));
+    StackUtil.setTagValue(
+        stack, nbt, "refColorMuls", new net.minecraft.nbt.IntArrayTag(new int[] {-1}));
     return stack;
   }
 
@@ -113,7 +112,12 @@ public class ObscuratorGameTests {
     player.setGameMode(GameType.SURVIVAL);
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.OBSCURATOR, Double.POSITIVE_INFINITY);
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    nbt.putString("refBlock", "minecraft:stone"); // incomplete: no side / color multipliers
+    StackUtil.setTagValue(
+        stack,
+        nbt,
+        "refBlock",
+        net.minecraft.nbt.StringTag.valueOf(
+            "minecraft:stone")); // incomplete: no side / color multipliers
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
     InteractionResult result =
@@ -122,7 +126,9 @@ public class ObscuratorGameTests {
                 stack, Ic2GameTestUtil.useOn(helper, player, WALL_POS, Direction.NORTH));
 
     helper.assertValueEqual(result, InteractionResult.PASS, "obscurator use result");
-    helper.assertFalse(nbt.contains("refBlock"), "stale reference data should be cleared");
+    helper.assertFalse(
+        StackUtil.getOrCreateNbtData(stack).contains("refBlock"),
+        "stale reference data should be cleared");
     helper.assertBlockPresent(Ic2Blocks.WHITE_WALL, WALL_POS);
     helper.succeed();
   }

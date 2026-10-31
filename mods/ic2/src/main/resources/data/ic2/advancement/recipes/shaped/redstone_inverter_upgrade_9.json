@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/redstone_inverter_upgrade_9"
+        "recipes": [
+          "ic2:shaped/redstone_inverter_upgrade_9"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

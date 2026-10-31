@@ -36,7 +36,7 @@ public class TileEntityMetalFormer
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.setMode(nbt.getInt("mode"));
+    this.setMode(nbt.getIntOr("mode", 0));
   }
 
   @Override

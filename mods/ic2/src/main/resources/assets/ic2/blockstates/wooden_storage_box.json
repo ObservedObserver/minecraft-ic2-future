@@ -1,7 +1,8 @@
 {
   "variants": {
     "": {
-      "model": "ic2:block/wooden_storage_box"
+      "type": "ic2:be",
+      "id": "ic2:block/be/wooden_storage_box"
     }
   }
 }

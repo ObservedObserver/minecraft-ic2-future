@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -51,27 +48,29 @@ public final class FmlMod {
     EnvFluidHandlerForge.fluidRegistry.register(modEventBus);
     EnvFluidHandlerForge.fluidTypeRegistry.register(modEventBus);
     Ic2LootModifier.lootModifiersRegistry.register(modEventBus);
-    if (FMLEnvironment.dist.isClient()) {
+    if (FMLEnvironment.getDist().isClient()) {
       modEventBus.register(new ClientModEventHandlerForge());
       this.modContainer.registerConfig(ModConfig.Type.CLIENT, IC2ClientConfig.SPEC);
     }
     Ic2Fluids.init();
-    this.modContainer.registerConfig(ModConfig.Type.COMMON, IC2Config.SPEC);
+    this.modContainer.registerConfig(ModConfig.Type.LOCAL, IC2Config.SPEC);
     modEventBus.addListener(Ic2Capabilities::register);
     modEventBus.addListener(Ic2Network::register);
+    modEventBus.addListener(ic2.core.gametest.Ic2GameTests::registerFunctions);
+    modEventBus.addListener(ic2.core.gametest.Ic2GameTests::registerTests);
   }
 
   @SubscribeEvent
   public void load(FMLCommonSetupEvent event) {
     NeoForge.EVENT_BUS.register(new EventHandlerForge());
     NeoForge.EVENT_BUS.register(new Ic2Ae2Plugin.ForgeEventHandler());
-    if (FMLEnvironment.dist.isClient()) {
+    if (FMLEnvironment.getDist().isClient()) {
       NeoForge.EVENT_BUS.register(new ClientEventHandlerForge());
     }
     if (!loadState.compareAndSet(1, 2)) {
       throw new IllegalStateException();
     }
-    EventHandler.onInit();
+    ic2.core.init.MainConfig.ignoreInvalidRecipes = IC2Config.recipes.ignoreInvalidRecipes.get();
   }
 
   @SubscribeEvent
@@ -79,13 +78,28 @@ public final class FmlMod {
     if (!loadState.compareAndSet(2, 3)) {
       throw new IllegalStateException();
     }
-    if (this.toRunAfterRegistryInit != null) {
-      for (Runnable runnable : this.toRunAfterRegistryInit) {
-        runnable.run();
-      }
-      this.toRunAfterRegistryInit = null;
-    }
-    EventHandler.onInitLate();
+    // Stack-dependent setup runs after native default components are bound to holders.
+  }
+
+  @SubscribeEvent
+  public void modifyFuelComponents(
+      net.neoforged.neoforge.event.ModifyDefaultComponentsEvent event) {
+    EnvProxyForge.burnTimeRecord.forEach(
+        (item, ticks) ->
+            event.modify(
+                item,
+                (components, context, key) ->
+                    components.set(
+                        net.minecraft.core.component.DataComponents.COOKING_FUEL,
+                        ic2.compat.FuelCompat.constant(ticks))));
+  }
+
+  @SubscribeEvent
+  public void registerTickets(RegisterEvent event) {
+    event.register(
+        Registries.TICKET_TYPE,
+        ic2.core.IC2.getIdentifier("chunk_loader"),
+        () -> ic2.core.ChunkLoaderLogic.TICKET_TYPE);
   }
 
   @SubscribeEvent
@@ -142,28 +156,23 @@ public final class FmlMod {
     }
   }
 
+  private boolean defaultComponentsBound;
+
+  void initializeDefaultComponentDependents() {
+    this.defaultComponentsBound = true;
+    if (this.toRunAfterRegistryInit != null) {
+      for (Runnable runnable : this.toRunAfterRegistryInit) {
+        runnable.run();
+      }
+      this.toRunAfterRegistryInit = null;
+    }
+  }
+
   void runAfterRegistryInit(Runnable runnable) {
-    if (loadState.get() > 1) {
+    if (this.defaultComponentsBound) {
       runnable.run();
     } else {
       this.toRunAfterRegistryInit.add(runnable);
     }
-  }
-
-  @SubscribeEvent
-  public void registerFeatures(RegisterEvent event) {
-    if (event.getRegistryKey() == Registries.CONFIGURED_FEATURE) {
-      for (EnvProxyForge.ConfiguredFeatureRegistration<?, ?> reg :
-          EnvProxyForge.configuredFeatureRegistrations) {
-        ConfiguredFeature<?, ?> cf = createConfiguredFeature(reg);
-        event.register(Registries.CONFIGURED_FEATURE, reg.id(), () -> cf);
-      }
-    }
-  }
-
-  private static <FC extends FeatureConfiguration, F extends Feature<FC>>
-      ConfiguredFeature<FC, ?> createConfiguredFeature(
-          EnvProxyForge.ConfiguredFeatureRegistration<FC, F> reg) {
-    return new ConfiguredFeature<>(reg.feature(), reg.config());
   }
 }

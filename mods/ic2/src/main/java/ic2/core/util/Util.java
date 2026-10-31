@@ -14,7 +14,7 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -248,12 +248,12 @@ public final class Util {
       throw new NullPointerException("null name");
     } else {
       // TODO
-      return getBlock(ResourceLocation.parse(name));
+      return getBlock(Identifier.parse(name));
     }
   }
 
-  public static Block getBlock(ResourceLocation loc) {
-    Block ret = BuiltInRegistries.BLOCK.get(loc);
+  public static Block getBlock(Identifier loc) {
+    Block ret = BuiltInRegistries.BLOCK.getValue(loc);
     if (ret != Blocks.AIR) {
       return ret;
     } else {
@@ -278,7 +278,7 @@ public final class Util {
     return new Vector3(entity.getX(), entity.getEyeY(), entity.getZ());
   }
 
-  public static ResourceLocation getName(Block block) {
+  public static Identifier getName(Block block) {
     return BuiltInRegistries.BLOCK.getKey(block);
   }
 
@@ -287,32 +287,32 @@ public final class Util {
       throw new NullPointerException("null name");
     } else {
       // Error occurred once, name has a namespace.
-      return getItem(ResourceLocation.parse(name));
+      return getItem(Identifier.parse(name));
     }
   }
 
-  public static Item getItem(ResourceLocation loc) {
-    return BuiltInRegistries.ITEM.get(loc);
+  public static Item getItem(Identifier loc) {
+    return BuiltInRegistries.ITEM.getValue(loc);
   }
 
   public static Vector3 getLook(Entity entity) {
     return new Vector3(entity.getLookAngle());
   }
 
-  public static ResourceLocation getName(Item item) {
+  public static Identifier getName(Item item) {
     return BuiltInRegistries.ITEM.getKey(item);
   }
 
-  public static Fluid getFluid(ResourceLocation loc) {
-    return BuiltInRegistries.FLUID.get(loc);
+  public static Fluid getFluid(Identifier loc) {
+    return BuiltInRegistries.FLUID.getValue(loc);
   }
 
-  public static ResourceLocation getName(Fluid fluid) {
+  public static Identifier getName(Fluid fluid) {
     return BuiltInRegistries.FLUID.getKey(fluid);
   }
 
-  public static ResourceLocation getDimId(Level world) {
-    return world.dimension().location();
+  public static Identifier getDimId(Level world) {
+    return world.dimension().identifier();
   }
 
   public static String toString(BlockEntity te) {
@@ -363,7 +363,7 @@ public final class Util {
   }
 
   public static String formatPosition(BlockGetter world, int x, int y, int z) {
-    ResourceLocation dimId;
+    Identifier dimId;
     if (world instanceof Level) {
       dimId = getDimId((Level) world);
     } else {
@@ -375,7 +375,7 @@ public final class Util {
         : String.format("dim %s (@%x): %d/%d/%d", dimId, System.identityHashCode(world), x, y, z);
   }
 
-  public static String formatPosition(ResourceLocation dimId, int x, int y, int z) {
+  public static String formatPosition(Identifier dimId, int x, int y, int z) {
     return "dim " + dimId + ": " + x + "/" + y + "/" + z;
   }
 
@@ -513,7 +513,7 @@ public final class Util {
   }
 
   public static boolean harvestBlock(Level world, BlockPos pos) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return false;
     }
 
@@ -526,8 +526,14 @@ public final class Util {
       return false;
     }
 
-    block.destroy(world, pos, state);
-    block.playerDestroy(world, player, pos, state, be, new ItemStack(Items.DIAMOND_PICKAXE));
+    block.destroy((net.minecraft.server.level.ServerLevel) world, pos, state);
+    block.playerDestroy(
+        (net.minecraft.server.level.ServerLevel) world,
+        (net.minecraft.server.level.ServerPlayer) player,
+        pos,
+        state,
+        be,
+        new ItemStack(Items.DIAMOND_PICKAXE));
     return true;
   }
 

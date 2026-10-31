@@ -43,7 +43,7 @@ public abstract class TileEntityStorageBox extends TileEntityInventory implement
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
       this.inventory.readFromNbt(nbt, this.getLevel().registryAccess());
     }
@@ -54,7 +54,11 @@ public abstract class TileEntityStorageBox extends TileEntityInventory implement
     CompoundTag nbt = StackUtil.getOrCreateNbtData(drop);
     if (!this.inventory.isEmpty()) {
       this.inventory.writeToNbt(nbt, this.getLevel().registryAccess());
+    } else {
+      nbt.remove("Contents");
     }
+    // CustomData exposes a copy: persist the inventory snapshot back to the dropped item.
+    StackUtil.setTag(drop, nbt);
 
     return drop;
   }

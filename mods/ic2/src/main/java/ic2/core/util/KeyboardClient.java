@@ -12,17 +12,32 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class KeyboardClient extends Keyboard {
-  public static final KeyMapping altKey = new KeyMapping("ic2.keyboard.alt_key", 342, "ic2.name");
+  public static final KeyMapping.Category CATEGORY =
+      new KeyMapping.Category(IC2.getIdentifier("controls"));
+  public static final KeyMapping altKey =
+      new KeyMapping(
+          "ic2.keyboard.alt_key", com.mojang.blaze3d.platform.InputConstants.KEY_LALT, CATEGORY);
   public static final KeyMapping boostKey =
-      new KeyMapping("ic2.keyboard.boost_key", 341, "ic2.name");
+      new KeyMapping(
+          "ic2.keyboard.boost_key",
+          com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL,
+          CATEGORY);
   public static final KeyMapping modeSwitchKey =
-      new KeyMapping("ic2.keyboard.mode_switch_key", 77, "ic2.name");
+      new KeyMapping(
+          "ic2.keyboard.mode_switch_key",
+          com.mojang.blaze3d.platform.InputConstants.KEY_M,
+          CATEGORY);
   public static final KeyMapping sideInventoryKey =
-      new KeyMapping("ic2.keyboard.side_inventory_key", 67, "ic2.name");
+      new KeyMapping(
+          "ic2.keyboard.side_inventory_key",
+          com.mojang.blaze3d.platform.InputConstants.KEY_C,
+          CATEGORY);
   public static final KeyMapping expandInfo =
-      new KeyMapping("ic2.keyboard.hub_expand_key", 88, "ic2.name");
+      new KeyMapping(
+          "ic2.keyboard.hub_expand_key",
+          com.mojang.blaze3d.platform.InputConstants.KEY_X,
+          CATEGORY);
   private static boolean registeredKeys = false;
-  private final Minecraft mc = Minecraft.getInstance();
   private int lastKeyState = 0;
 
   public KeyboardClient() {
@@ -38,8 +53,14 @@ public class KeyboardClient extends Keyboard {
 
   @Override
   public void sendKeyUpdate() {
+    // NeoForge constructs the client proxy before Minecraft's singleton is assigned.
+    // Resolve it at tick time so an early null is never retained for the whole session.
+    Minecraft mc = Minecraft.getInstance();
+    if (mc == null || mc.gui == null || mc.options == null) {
+      return;
+    }
     Set<Keyboard.Key> keys = EnumSet.noneOf(Keyboard.Key.class);
-    Screen currentScreen = SideProxyClient.mc.screen;
+    Screen currentScreen = mc.gui.screen();
     if (currentScreen == null) {
       if (this.altKey.isDown()) {
         keys.add(Keyboard.Key.alt);
@@ -49,7 +70,7 @@ public class KeyboardClient extends Keyboard {
         keys.add(Keyboard.Key.boost);
       }
 
-      if (this.mc.options.keyUp.isDown()) {
+      if (mc.options.keyUp.isDown()) {
         keys.add(Keyboard.Key.forward);
       }
 
@@ -57,7 +78,7 @@ public class KeyboardClient extends Keyboard {
         keys.add(Keyboard.Key.modeSwitch);
       }
 
-      if (this.mc.options.keyJump.isDown()) {
+      if (mc.options.keyJump.isDown()) {
         keys.add(Keyboard.Key.jump);
       }
 

@@ -47,14 +47,14 @@ public class TileEntityCreativeGenerator extends Ic2TileEntity implements IMulti
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       EnergyNet.instance.addBlockEntityTile(this);
     }
   }
 
   @Override
   protected void onUnloaded() {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       EnergyNet.instance.removeTile(this);
     }
 

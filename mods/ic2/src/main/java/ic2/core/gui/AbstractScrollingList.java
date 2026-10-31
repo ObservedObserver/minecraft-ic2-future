@@ -2,11 +2,10 @@ package ic2.core.gui;
 
 import com.mojang.blaze3d.platform.Window;
 import ic2.core.Ic2Gui;
-import ic2.core.proxy.SideProxyClient;
 import ic2.core.util.Util;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.lwjgl.opengl.GL11;
 
 public abstract class AbstractScrollingList<
@@ -62,7 +61,7 @@ public abstract class AbstractScrollingList<
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     this.gui.drawColoredRect(
         guiGraphics.pose(), this.x, this.y, this.width, this.height, -16777216);
@@ -91,7 +90,7 @@ public abstract class AbstractScrollingList<
   }
 
   @Override
-  public void drawForeground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawForeground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForeground(guiGraphics, mouseX, mouseY);
     int left = this.gui.getX();
     int top = this.gui.getY();
@@ -137,7 +136,7 @@ public abstract class AbstractScrollingList<
     int bottom = GUIheight + this.y + this.height - 1;
     int viewWidth = this.width - 7 - 1;
     int viewHeight = this.height - 2;
-    Window window = SideProxyClient.mc.getWindow();
+    Window window = net.minecraft.client.Minecraft.getInstance().getWindow();
     int scale = (int) window.getGuiScale();
     GL11.glEnable(3089);
     GL11.glScissor(
@@ -244,6 +243,7 @@ public abstract class AbstractScrollingList<
   }
 
   public interface IListItem {
-    void draw(GuiGraphics var1, int var2, int var3, int var4, int var5, int var6, int var7);
+    void draw(
+        GuiGraphicsExtractor var1, int var2, int var3, int var4, int var5, int var6, int var7);
   }
 }

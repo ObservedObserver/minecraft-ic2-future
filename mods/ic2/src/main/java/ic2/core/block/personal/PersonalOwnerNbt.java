@@ -24,8 +24,8 @@ public final class PersonalOwnerNbt {
     }
 
     CompoundTag ownerNbt = new CompoundTag();
-    ownerNbt.putUUID("id", owner.getId());
-    ownerNbt.putString("name", owner.getName());
+    ownerNbt.store("id", UUIDUtil.CODEC, owner.id());
+    ownerNbt.putString("name", owner.name());
     nbt.put(OWNER_KEY, ownerNbt);
   }
 
@@ -35,12 +35,17 @@ public final class PersonalOwnerNbt {
     }
 
     String name =
-        tag.contains("name", Tag.TAG_STRING) ? tag.getString("name") : tag.getString("Name");
+        ic2.compat.NbtCompat.contains(tag, "name", Tag.TAG_STRING)
+            ? tag.getStringOr("name", "")
+            : tag.getStringOr("Name", "");
     UUID id = null;
-    if (tag.hasUUID("id")) {
-      id = tag.getUUID("id");
+    if (tag.read("id", UUIDUtil.CODEC).isPresent()) {
+      id = tag.read("id", UUIDUtil.CODEC).orElseThrow();
     } else {
-      String rawId = tag.contains("id", Tag.TAG_STRING) ? tag.getString("id") : tag.getString("Id");
+      String rawId =
+          ic2.compat.NbtCompat.contains(tag, "id", Tag.TAG_STRING)
+              ? tag.getStringOr("id", "")
+              : tag.getStringOr("Id", "");
       if (!rawId.isEmpty()) {
         try {
           id = UUID.fromString(rawId);

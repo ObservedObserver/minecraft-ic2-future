@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.heatgenerator.tileentity.TileEntityElectricHeatGenerator;
 import ic2.core.block.machine.tileentity.TileEntityBlastFurnace;
@@ -26,18 +27,13 @@ import ic2.core.ref.Ic2Items;
 import java.lang.reflect.Field;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ProcessingMachineGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -127,6 +123,26 @@ public class ProcessingMachineGameTests {
   // preheat the machine directly so the recipe is valid from the first tick.
   @GameTest(template = EMPTY, timeoutTicks = 700)
   public static void centrifugeProcessesCobblestoneWhenHot(GameTestHelper helper) {
+    var uranium =
+        helper
+            .getLevel()
+            .getServer()
+            .getRecipeManager()
+            .byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE,
+                    ic2.core.IC2.getIdentifier("centrifuge/uranium_to_uranium_238")))
+            .orElseThrow();
+    var recipe = (ic2.core.recipe.v2.RecipeHolder<?, ?>) uranium.value();
+    var outputs = (java.util.Collection<?>) recipe.recipe().getOutput();
+    helper.assertTrue(
+        outputs.stream()
+            .anyMatch(
+                output ->
+                    output instanceof ItemStack stack
+                        && stack.is(Ic2Items.URANIUM_238)
+                        && stack.getCount() == 112),
+        "centrifuge aggregate output must retain all 112 uranium-238 items");
     helper.setBlock(MACHINE_POS, Ic2Blocks.CENTRIFUGE);
     TileEntityCentrifuge te = getMachine(helper, TileEntityCentrifuge.class);
     te.dischargeSlot.put(
@@ -332,8 +348,7 @@ public class ProcessingMachineGameTests {
 
     te.canInputSlot.put(0, new ItemStack(Ic2Items.TIN_CAN));
     helper.assertTrue(
-        te.inputSlot.process() == null,
-        "solid canner must not process with only one of five cans");
+        te.inputSlot.process() == null, "solid canner must not process with only one of five cans");
 
     te.canInputSlot.put(0, new ItemStack(Ic2Items.TIN_CAN, 5));
     helper.assertTrue(
@@ -557,7 +572,8 @@ public class ProcessingMachineGameTests {
             .defaultBlockState()
             .setValue(Ic2TileEntityBlock.anyFacingProperty, Direction.WEST));
     TileEntityFermenter te = getMachine(helper, TileEntityFermenter.class);
-    BlockEntity heaterBe = helper.getBlockEntity(heaterPos);
+    BlockEntity heaterBe =
+        helper.getBlockEntity(heaterPos, net.minecraft.world.level.block.entity.BlockEntity.class);
     TileEntityElectricHeatGenerator heater = (TileEntityElectricHeatGenerator) heaterBe;
     heater.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
@@ -594,7 +610,9 @@ public class ProcessingMachineGameTests {
             .setValue(Ic2TileEntityBlock.anyFacingProperty, Direction.WEST));
     TileEntityFermenter te = getMachine(helper, TileEntityFermenter.class);
     TileEntityElectricHeatGenerator heater =
-        (TileEntityElectricHeatGenerator) helper.getBlockEntity(heaterPos);
+        (TileEntityElectricHeatGenerator)
+            helper.getBlockEntity(
+                heaterPos, net.minecraft.world.level.block.entity.BlockEntity.class);
     heater.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
     for (int i = 0; i < heater.coilSlot.size(); i++) {
@@ -634,7 +652,8 @@ public class ProcessingMachineGameTests {
   }
 
   private static Ic2FluidTank getTankBlockTank(GameTestHelper helper, BlockPos pos) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!(be instanceof TileEntityTank tank)) {
       throw new IllegalStateException("expected a fluid tank at " + pos + ", found " + be);
     }
@@ -678,7 +697,9 @@ public class ProcessingMachineGameTests {
   }
 
   private static <T extends BlockEntity> T getMachine(GameTestHelper helper, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(MACHINE_POS);
+    BlockEntity be =
+        helper.getBlockEntity(
+            MACHINE_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + MACHINE_POS + ", found " + be);

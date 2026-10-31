@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/copper_ingot_from_crushed_copper"
+        "recipes": [
+          "ic2:smelting/copper_ingot_from_crushed_copper"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

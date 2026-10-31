@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "gold_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:crushed_gold"
-  },
+  "ingredient": "ic2:crushed_gold",
   "result": {
     "id": "minecraft:gold_ingot"
   },

@@ -27,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class TileEntityCropmatron extends TileEntityElectricMachine
@@ -137,13 +137,13 @@ public class TileEntityCropmatron extends TileEntityElectricMachine
     BlockState state = world.getBlockState(pos);
     int hydration;
     if (state.getBlock() == Blocks.FARMLAND
-        && (hydration = (Integer) state.getValue(FarmBlock.MOISTURE)) < 7) {
+        && (hydration = (Integer) state.getValue(FarmlandBlock.MOISTURE)) < 7) {
       int drainAmount = Math.min(this.waterTank.getFluidAmount(), 7 - hydration);
       assert drainAmount > 0;
       assert drainAmount <= 7;
       this.waterTank.drainMbUnchecked(drainAmount, false);
       world.setBlock(
-          pos, (BlockState) state.setValue(FarmBlock.MOISTURE, hydration + drainAmount), 2);
+          pos, (BlockState) state.setValue(FarmlandBlock.MOISTURE, hydration + drainAmount), 2);
       return true;
     } else {
       return false;

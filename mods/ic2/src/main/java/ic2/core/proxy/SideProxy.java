@@ -5,13 +5,13 @@ import ic2.core.sound.SoundManager;
 import ic2.core.util.Keyboard;
 import java.io.File;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -43,11 +43,11 @@ public interface SideProxy {
 
   Player getPlayerInstance();
 
-  Level getWorld(MinecraftServer var1, ResourceLocation var2);
+  Level getWorld(MinecraftServer var1, Identifier var2);
 
   Level getPlayerWorld();
 
-  RecipeManager getRecipeManager();
+  RecipeMap getRecipeManager();
 
   File getMinecraftDir();
 

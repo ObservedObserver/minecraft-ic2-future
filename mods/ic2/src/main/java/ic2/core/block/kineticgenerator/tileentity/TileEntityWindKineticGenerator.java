@@ -23,7 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,8 +37,8 @@ public class TileEntityWindKineticGenerator extends TileEntityAbstractKineticGen
     implements IRotorProvider, IHasGui {
   public static final float outputModifier =
       10.0F * (float) IC2Config.balance.energy.kineticGenerator.wind.get().floatValue();
-  private static final ResourceLocation woodenRotorTexture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/item/rotor/wood_rotor_model.png");
+  private static final Identifier woodenRotorTexture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/item/rotor/wood_rotor_model.png");
   public final InvSlotConsumableClass rotorSlot;
   private double windStrength;
   private int obstructedCrossSection;
@@ -64,7 +64,7 @@ public class TileEntityWindKineticGenerator extends TileEntityAbstractKineticGen
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.rotationSpeed = nbt.getFloat("rotationSpeed");
+    this.rotationSpeed = nbt.getFloatOr("rotationSpeed", 0.0F);
   }
 
   @Override
@@ -78,7 +78,7 @@ public class TileEntityWindKineticGenerator extends TileEntityAbstractKineticGen
     super.onLoaded();
     // Re-sync animation fields so clients that load the TE after a world re-entry
     // (or chunk re-watch) receive the current speed even if it does not change again.
-    if (this.getLevel() != null && !this.getLevel().isClientSide) {
+    if (this.getLevel() != null && !this.getLevel().isClientSide()) {
       IC2.network.get(true).updateTileEntityField(this, "rotationSpeed");
       IC2.network.get(true).updateTileEntityField(this, "rotorSlot");
     }
@@ -321,7 +321,7 @@ public class TileEntityWindKineticGenerator extends TileEntityAbstractKineticGen
   }
 
   @Override
-  public ResourceLocation getRotorRenderTexture() {
+  public Identifier getRotorRenderTexture() {
     ItemStack stack = this.rotorSlot.get();
     return !StackUtil.isEmpty(stack) && stack.getItem() instanceof IKineticRotor
         ? ((IKineticRotor) stack.getItem()).getRotorRenderTexture(stack)

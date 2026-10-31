@@ -11,15 +11,28 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 /** Exposes IC2 shaped-recipe dimensions and layout to JEI's vanilla crafting category. */
 final class AdvRecipeCategoryExtension implements ICraftingCategoryExtension<AdvRecipe> {
   @Override
+  public java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> getIngredients(
+      RecipeHolder<AdvRecipe> holder) {
+    return holder.value().getOptionalIngredients().stream()
+        .map(
+            ingredient ->
+                ingredient
+                    .<net.minecraft.world.item.crafting.display.SlotDisplay>map(
+                        net.minecraft.world.item.crafting.Ingredient::display)
+                    .orElse(net.minecraft.world.item.crafting.display.SlotDisplay.Empty.INSTANCE))
+        .toList();
+  }
+
+  @Override
   public void setRecipe(
       RecipeHolder<AdvRecipe> holder,
       IRecipeLayoutBuilder builder,
       ICraftingGridHelper craftingGridHelper,
       IFocusGroup focuses) {
     AdvRecipe recipe = holder.value();
-    craftingGridHelper.createAndSetOutputs(builder, List.of(recipe.output));
-    craftingGridHelper.createAndSetIngredients(
-        builder, recipe.getIngredients(), recipe.getIc2RecipeWidth(), recipe.getIc2RecipeHeight());
+    craftingGridHelper.createAndSetOutputs(builder, List.of(recipe.output.create()));
+    craftingGridHelper.createAndSetIngredientsFromDisplays(
+        builder, getIngredients(holder), recipe.getIc2RecipeWidth(), recipe.getIc2RecipeHeight());
   }
 
   @Override

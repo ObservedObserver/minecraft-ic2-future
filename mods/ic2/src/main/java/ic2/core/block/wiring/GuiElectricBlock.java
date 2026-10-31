@@ -4,16 +4,16 @@ import ic2.core.Ic2Gui;
 import ic2.core.gui.EnergyGauge;
 import ic2.core.gui.VanillaButton;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class GuiElectricBlock extends Ic2Gui<ContainerElectricBlock> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guielectricblock.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guielectricblock.png");
 
   public GuiElectricBlock(
       ContainerElectricBlock container, Inventory playerInventory, Component title) {
@@ -26,7 +26,7 @@ public class GuiElectricBlock extends Ic2Gui<ContainerElectricBlock> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     int rightTextHeight = 24;
     int color = 4207152;
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
@@ -59,7 +59,7 @@ public class GuiElectricBlock extends Ic2Gui<ContainerElectricBlock> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

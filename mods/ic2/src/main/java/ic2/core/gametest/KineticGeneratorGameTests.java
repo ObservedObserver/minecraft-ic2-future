@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.IC2;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.heatgenerator.tileentity.TileEntitySolidHeatGenerator;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -31,11 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class KineticGeneratorGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -218,7 +214,7 @@ public class KineticGeneratorGameTests {
   @GameTest(template = EMPTY, timeoutTicks = 300, batch = "ic2Tide")
   public static void waterKineticGeneratorFollowsOceanTide(GameTestHelper helper) {
     ServerLevel level = helper.getLevel();
-    level.setDayTime(3000L);
+    ic2.compat.WorldCompat.setDayTime(level, 3000L);
     BlockPos gen = helper.absolutePos(new BlockPos(1, 1, 1)).atY(170);
     level.setBlockAndUpdate(
         gen,
@@ -235,7 +231,7 @@ public class KineticGeneratorGameTests {
     helper.succeedWhen(
         () -> {
           // keep the tide at its peak in case another batch shifted the clock
-          level.setDayTime(3000L);
+          ic2.compat.WorldCompat.setDayTime(level, 3000L);
           helper.assertTrue(
               water.getActive(), "ocean water mill should spin with a clear 7x7 water plane");
           helper.assertTrue(
@@ -409,7 +405,8 @@ public class KineticGeneratorGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

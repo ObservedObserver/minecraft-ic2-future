@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/jungle_log_from_rubber_log"
+        "recipes": [
+          "ic2:smelting/jungle_log_from_rubber_log"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

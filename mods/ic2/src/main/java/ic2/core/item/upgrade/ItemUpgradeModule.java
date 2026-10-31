@@ -8,6 +8,7 @@ import ic2.api.upgrade.IFullUpgrade;
 import ic2.api.upgrade.IUpgradableBlock;
 import ic2.api.upgrade.UpgradableProperty;
 import ic2.api.upgrade.UpgradeRegistry;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.IHasGui;
 import ic2.core.gui.dynamic.DynamicHandHeldContainer;
@@ -27,7 +28,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -85,21 +85,22 @@ public class ItemUpgradeModule extends Item
         }
         this.filters = this.getFilterStacks(tag);
         this.nbt =
-            NbtSettings.getFromNBT(HandHeldAdvancedUpgrade.getTag(tag, "nbt").getByte("type"));
+            NbtSettings.getFromNBT(
+                HandHeldAdvancedUpgrade.getTag(tag, "nbt").getByteOr("type", (byte) 0));
         this.energy = new UpgradeSettings(HandHeldAdvancedUpgrade.getTag(tag, "energy"));
         this.hasInitialised = true;
       }
 
       private Set<ItemStack> getFilterStacks(CompoundTag nbt) {
         Set<ItemStack> ret = new HashSet<>();
-        ListTag contentList = nbt.getList("Items", 10);
+        ListTag contentList = ic2.compat.NbtCompat.getList(nbt, "Items", 10);
 
         for (int tag = 0; tag < contentList.size(); tag++) {
-          CompoundTag slotNbt = contentList.getCompound(tag);
-          int slot = slotNbt.getByte("Slot");
+          CompoundTag slotNbt = contentList.getCompoundOrEmpty(tag);
+          int slot = slotNbt.getByteOr("Slot", (byte) 0);
           if (slot >= 0 && slot < 9) {
             ItemStack filter =
-                ItemStack.parseOptional(net.minecraft.core.RegistryAccess.EMPTY, slotNbt);
+                ic2.compat.NbtCompat.readItem(net.minecraft.core.RegistryAccess.EMPTY, slotNbt);
             if (!StackUtil.isEmpty(filter)) {
               ret.add(filter);
             }
@@ -200,7 +201,7 @@ public class ItemUpgradeModule extends Item
       return null;
     }
 
-    int rawDir = nbt.getByte("dir");
+    int rawDir = nbt.getByteOr("dir", (byte) 0);
     // Older builds created an empty tag while reading an unset direction, and encoded "any side"
     // as dir=0. Remove those non-values so already affected upgrades can stack again too.
     if (nbt.isEmpty() || rawDir == 0 && nbt.contains("dir")) {
@@ -218,12 +219,30 @@ public class ItemUpgradeModule extends Item
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
       @NotNull List<Component> tooltip,
       @NotNull TooltipFlag advanced) {
-    super.appendHoverText(stack, world, tooltip, advanced);
+    super.appendHoverText(
+        stack,
+        world,
+        net.minecraft.world.item.component.TooltipDisplay.DEFAULT,
+        tooltip::add,
+        advanced);
     switch (this.type) {
       case overclocker:
         Ic2Tooltip.add(
@@ -292,8 +311,9 @@ public class ItemUpgradeModule extends Item
         {
           CompoundTag nbt = StackUtil.getTag(stack);
           if (nbt != null) {
-            boolean isBlacklist = !nbt.contains("blacklist") || nbt.getBoolean("blacklist");
-            ListTag items = nbt.getList("Items", 10);
+            boolean isBlacklist =
+                !nbt.contains("blacklist") || nbt.getBooleanOr("blacklist", false);
+            ListTag items = ic2.compat.NbtCompat.getList(nbt, "Items", 10);
             Ic2Tooltip.add(
                 tooltip,
                 Component.translatable(
@@ -313,11 +333,11 @@ public class ItemUpgradeModule extends Item
     if (this.type.directional) {
       int dir = 1 + context.getClickedFace().ordinal();
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      if (nbtData.getByte("dir") == dir) {
-        nbtData.remove("dir");
+      if (nbtData.getByteOr("dir", (byte) 0) == dir) {
+        StackUtil.removeTagValue(stack, nbtData, "dir");
         StackUtil.setTag(stack, nbtData);
       } else {
-        nbtData.putByte("dir", (byte) dir);
+        StackUtil.setTagValue(stack, nbtData, "dir", net.minecraft.nbt.ByteTag.valueOf((byte) dir));
       }
 
       if (context.getLevel().isClientSide()) {
@@ -347,18 +367,18 @@ public class ItemUpgradeModule extends Item
     }
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, Player player, @NotNull InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     return switch (this.type) {
       case advanced_ejector, advanced_pulling, mining_filter -> {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
           this.getInventory(player, hand, stack).openManagedItem(player, hand, null);
         }
 
-        yield new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+        yield InteractionResults.withStack(InteractionResult.SUCCESS, stack);
       }
-      default -> new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      default -> InteractionResults.withStack(InteractionResult.PASS, stack);
     };
   }
 
@@ -366,7 +386,7 @@ public class ItemUpgradeModule extends Item
     switch (this.type) {
       case advanced_ejector:
       case advanced_pulling:
-        if (!player.getCommandSenderWorld().isClientSide
+        if (!player.level().isClientSide()
             && !StackUtil.isEmpty(stack)
             && player.containerMenu instanceof DynamicHandHeldContainer) {
           HandHeldInventory base = ((DynamicHandHeldContainer<?>) player.containerMenu).base;
@@ -377,7 +397,7 @@ public class ItemUpgradeModule extends Item
         }
         break;
       case mining_filter:
-        if (!player.getCommandSenderWorld().isClientSide
+        if (!player.level().isClientSide()
             && !StackUtil.isEmpty(stack)
             && player.containerMenu instanceof DynamicHandHeldContainer) {
           HandHeldInventory base = ((DynamicHandHeldContainer<?>) player.containerMenu).base;

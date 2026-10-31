@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/detector_cable"
+        "recipes": [
+          "ic2:shaped/detector_cable"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

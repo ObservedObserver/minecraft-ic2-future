@@ -105,7 +105,7 @@ public class Energy extends TileEntityComponent {
 
   @Override
   public void readFromNbt(CompoundTag nbt) {
-    this.storage = nbt.getDouble("storage");
+    this.storage = nbt.getDoubleOr("storage", 0.0);
   }
 
   @Override
@@ -118,7 +118,7 @@ public class Energy extends TileEntityComponent {
   @Override
   public void onLoaded() {
     assert this.delegate == null;
-    if (!this.parent.getLevel().isClientSide) {
+    if (!this.parent.getLevel().isClientSide()) {
       if (this.sinkDirections.isEmpty() && this.sourceDirections.isEmpty()) {
         if (debugLoad) {
           IC2.log.debug(
@@ -200,7 +200,7 @@ public class Energy extends TileEntityComponent {
 
   @Override
   public boolean enableWorldTick() {
-    return !this.parent.getLevel().isClientSide && this.managedSlots != null;
+    return !this.parent.getLevel().isClientSide() && this.managedSlots != null;
   }
 
   @Override
@@ -349,7 +349,7 @@ public class Energy extends TileEntityComponent {
               Util.formatPosition(this.parent));
         }
 
-        assert !this.parent.getLevel().isClientSide;
+        assert !this.parent.getLevel().isClientSide();
         EnergyNet.instance.removeTile(this.delegate);
       }
 
@@ -372,7 +372,7 @@ public class Energy extends TileEntityComponent {
               sourceDirections);
         }
 
-        assert !this.parent.getLevel().isClientSide;
+        assert !this.parent.getLevel().isClientSide();
         EnergyNet.instance.addLocatableTile(this.delegate);
       } else if (debugLoad) {
         IC2.log.debug(

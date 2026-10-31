@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/metal_former"
+        "recipes": [
+          "ic2:shaped/metal_former"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

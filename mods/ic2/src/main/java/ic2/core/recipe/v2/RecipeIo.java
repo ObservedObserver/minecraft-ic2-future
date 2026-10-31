@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,8 +33,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class RecipeIo {
   public static IRecipeInput parseInput(JsonElement json) {
+    return parseInput(json, registryJsonOps());
+  }
+
+  public static IRecipeInput parseInput(
+      JsonElement json, com.mojang.serialization.DynamicOps<JsonElement> context) {
     if (json.isJsonArray()) {
-      return parseMultiple(json.getAsJsonArray(), 1);
+      return parseMultiple(json.getAsJsonArray(), 1, context);
     }
 
     int count = 1;
@@ -50,10 +55,7 @@ public class RecipeIo {
       }
 
       if (object.has("data")) {
-        Item item = GsonHelper.getAsItem(object, "item").value();
-        ItemStack stack = new ItemStack(item, count);
-        StackUtil.setTag(stack, asNbt(object.get("data"), "data"));
-        return new RecipeInputItemStack(stack);
+        return new RecipeInputItemStack(parseOutputTemplate(object));
       }
 
       if (object.has("any")) {
@@ -63,19 +65,41 @@ public class RecipeIo {
               "\"any\" IC2 ingredient entry must be an array, was " + GsonHelper.getType(entry));
         }
 
-        return parseMultiple(entry.getAsJsonArray(), count);
+        return parseMultiple(entry.getAsJsonArray(), count, context);
       }
     }
 
+    JsonElement nativeIngredient = json;
+    if (json.isJsonObject()) {
+      JsonObject object = json.getAsJsonObject();
+      if (object.has("item"))
+        nativeIngredient = new com.google.gson.JsonPrimitive(object.get("item").getAsString());
+      else if (object.has("tag"))
+        nativeIngredient = new com.google.gson.JsonPrimitive("#" + object.get("tag").getAsString());
+    }
     return new RecipeInputIngredient(
-        Ingredient.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(), count);
+        Ingredient.CODEC.parse(context, nativeIngredient).getOrThrow(), count);
   }
 
-  private static RecipeInputMultiple parseMultiple(JsonArray array, int count) {
+  public static com.mojang.serialization.DynamicOps<JsonElement> registryJsonOps(
+      com.mojang.serialization.DynamicOps<?> context) {
+    return context instanceof net.minecraft.resources.RegistryOps<?> registries
+        ? registries.withParent(JsonOps.INSTANCE)
+        : registryJsonOps();
+  }
+
+  public static com.mojang.serialization.DynamicOps<JsonElement> registryJsonOps() {
+    return net.minecraft.resources.RegistryOps.create(
+        JsonOps.INSTANCE,
+        net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+  }
+
+  private static RecipeInputMultiple parseMultiple(
+      JsonArray array, int count, com.mojang.serialization.DynamicOps<JsonElement> context) {
     IRecipeInput[] inputs = new IRecipeInput[array.size()];
 
     for (int i = 0; i < array.size(); i++) {
-      inputs[i] = parseInput(array.get(i));
+      inputs[i] = parseInput(array.get(i), context);
     }
 
     return new RecipeInputMultiple(count, inputs);
@@ -125,13 +149,47 @@ public class RecipeIo {
     }
   }
 
-  public static ItemStack parseOutput(JsonObject json) {
+  /** Validate referenced items, fluids, counts and NBT without constructing a bound stack. */
+  public static void validateTemplates(JsonElement json) {
+    if (json.isJsonArray()) {
+      for (JsonElement entry : json.getAsJsonArray()) validateTemplates(entry);
+    } else if (json.isJsonObject()) {
+      JsonObject object = json.getAsJsonObject();
+      if (object.has("item") && object.get("item").isJsonPrimitive()) parseOutputTemplate(object);
+      if (object.has("fluid")
+          && object.get("fluid").isJsonPrimitive()
+          && object.getAsJsonPrimitive("fluid").isString()) {
+        Fluid fluid = asFluid(object.get("fluid"));
+        if (object.has("amount"))
+          new net.neoforged.neoforge.fluids.FluidStackTemplate(
+              fluid, GsonHelper.getAsInt(object, "amount"));
+      }
+      if (object.has("weight") && GsonHelper.getAsInt(object, "weight") <= 0)
+        throw new JsonSyntaxException("Recipe output weight must be positive");
+      for (var entry : object.entrySet()) {
+        if (!entry.getKey().equals("data")) validateTemplates(entry.getValue());
+      }
+    }
+  }
+
+  public static net.minecraft.world.item.ItemStackTemplate parseOutputTemplate(JsonObject json) {
     Item item = GsonHelper.getAsItem(json, "item").value();
     int count = GsonHelper.getAsInt(json, "count", 1);
-    CompoundTag nbt = getNbt(json);
-    ItemStack stack = new ItemStack(item, count);
-    StackUtil.setTag(stack, nbt);
-    return stack;
+    if (count <= 0) throw new JsonSyntaxException("Recipe stack count must be positive");
+    CompoundTag tag = getNbt(json);
+    var patch = net.minecraft.core.component.DataComponentPatch.builder();
+    if (tag != null && !tag.isEmpty())
+      patch.set(
+          net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+          net.minecraft.world.item.component.CustomData.of(tag));
+    return new net.minecraft.world.item.ItemStackTemplate(item, count, patch.build());
+  }
+
+  public static ItemStack parseOutput(JsonObject json) {
+    var template = parseOutputTemplate(json);
+    // Machine recipes describe aggregate output amounts, which may exceed one slot's limit.
+    // InvSlotOutput distributes these amounts over its slots; Template.create would reject them.
+    return new ItemStack(template.item(), template.count(), template.components());
   }
 
   public static void parseWeightedOutput(JsonObject json, RecipeOutputWeighted randomOutput) {
@@ -183,7 +241,7 @@ public class RecipeIo {
       buf.writeVarInt(ingredient.getAmount());
     } else if (input instanceof RecipeInputItemStack stack) {
       buf.writeByte(2);
-      ItemStack.STREAM_CODEC.encode(buf, stack.input);
+      net.minecraft.world.item.ItemStackTemplate.STREAM_CODEC.encode(buf, stack.input);
     } else {
       if (!(input instanceof RecipeInputMultiple mult)) {
         throw new IllegalArgumentException(
@@ -208,7 +266,9 @@ public class RecipeIo {
               BuiltInRegistries.FLUID.byId(buf.readVarInt()), buf.readVarInt());
       case 1 ->
           new RecipeInputIngredient(Ingredient.CONTENTS_STREAM_CODEC.decode(buf), buf.readVarInt());
-      case 2 -> new RecipeInputItemStack(ItemStack.STREAM_CODEC.decode(buf));
+      case 2 ->
+          new RecipeInputItemStack(
+              net.minecraft.world.item.ItemStackTemplate.STREAM_CODEC.decode(buf));
       case 3 -> {
         IRecipeInput[] inputs = new IRecipeInput[buf.readVarInt()];
 
@@ -285,7 +345,7 @@ public class RecipeIo {
       String string = element.getAsString();
       return BuiltInRegistries.FLUID
           // TODO
-          .getOptional(ResourceLocation.parse(string))
+          .getOptional(Identifier.parse(string))
           .orElseThrow(
               () ->
                   new JsonSyntaxException(

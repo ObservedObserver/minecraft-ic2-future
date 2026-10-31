@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/forge_hammer"
+        "recipes": [
+          "ic2:shaped/forge_hammer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

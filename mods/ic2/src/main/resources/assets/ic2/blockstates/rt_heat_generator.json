@@ -1,50 +1,52 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=up,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=up,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=down,active=false": {
-      "model": "ic2:block/generator/heat/rt_heat_generator",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     },
     "facing=down,active=true": {
-      "model": "ic2:block/generator/heat/rt_heat_generator_active",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/heat/rt_heat_generator"
     }
   }
 }

@@ -3,7 +3,7 @@ package ic2.core.gui;
 import com.google.common.base.Function;
 import ic2.core.Ic2Gui;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class RecipeButton extends Button<RecipeButton> {
@@ -30,5 +30,5 @@ public class RecipeButton extends Button<RecipeButton> {
 
   @GuiElement.SkippedMethod
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {}
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {}
 }

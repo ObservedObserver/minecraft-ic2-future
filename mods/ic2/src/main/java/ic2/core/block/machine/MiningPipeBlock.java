@@ -10,14 +10,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MiningPipeBlock extends Block {
-  public static final com.mojang.serialization.MapCodec<MiningPipeBlock> CODEC =
-      simpleCodec(MiningPipeBlock::new);
-
-  @Override
-  protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.Block>
-      codec() {
-    return CODEC;
-  }
 
   private static final VoxelShape SHAPE = Shapes.box(0.375, 0.0, 0.375, 0.625, 1.0, 0.625);
 

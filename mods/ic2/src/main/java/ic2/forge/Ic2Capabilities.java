@@ -4,8 +4,6 @@ import ic2.api.item.INanoSaberState;
 import ic2.core.IC2;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.tileentity.Ic2TileEntity;
-import ic2.core.fluid.FluidBeBridge;
-import ic2.core.fluid.Ic2FluidBlock;
 import ic2.core.fluid.Ic2FluidItem;
 import ic2.core.item.tool.AbstractItemNanoSaber;
 import java.util.ArrayList;
@@ -20,10 +18,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
 
 public final class Ic2Capabilities {
   public static final ItemCapability<INanoSaberState, Void> NANO_SABER_STATE =
@@ -34,9 +33,8 @@ public final class Ic2Capabilities {
   public static void register(RegisterCapabilitiesEvent event) {
     for (BlockEntityType<?> type : ic2.core.ref.Ic2BlockEntities.allTypes()) {
       event.registerBlockEntity(
-          Capabilities.FluidHandler.BLOCK, type, (be, side) -> fluidHandler(be, side));
-      event.registerBlockEntity(
-          Capabilities.ItemHandler.BLOCK, type, (be, side) -> itemHandler(be, side));
+          Capabilities.Fluid.BLOCK, type, (be, side) -> fluidHandler(be, side));
+      event.registerBlockEntity(Capabilities.Item.BLOCK, type, (be, side) -> itemHandler(be, side));
     }
 
     List<Item> fluidItems = new ArrayList<>();
@@ -52,8 +50,8 @@ public final class Ic2Capabilities {
 
     if (!fluidItems.isEmpty()) {
       event.registerItem(
-          Capabilities.FluidHandler.ITEM,
-          (stack, ctx) -> new ItemFluidCapImpl(stack),
+          Capabilities.Fluid.ITEM,
+          (stack, ctx) -> new ItemFluidResourceHandler(ctx),
           fluidItems.toArray(new Item[0]));
     }
     if (!nanoSabers.isEmpty()) {
@@ -64,31 +62,21 @@ public final class Ic2Capabilities {
     }
   }
 
-  private static IFluidHandler fluidHandler(BlockEntity be, Direction side) {
-    if (!(be instanceof Ic2TileEntity)) {
-      return null;
-    }
-
-    if (be instanceof FluidBeBridge bridge) {
-      Ic2FluidBlock fb = bridge.getFluidBlock();
-      return fb != null && fb.isFluidBlock(null, null, null, be)
-          ? new BlockFluidCapImpl(fb, be).getHandler(side)
-          : null;
-    }
-
-    Fluids fluids = ((Ic2TileEntity) be).getComponent(Fluids.class);
-    return fluids != null ? new BlockFluidCapImpl(fluids, be).getHandler(side) : null;
+  private static ResourceHandler<FluidResource> fluidHandler(BlockEntity be, Direction side) {
+    if (!(be instanceof Ic2TileEntity tile)) return null;
+    Fluids fluids = tile.getComponent(Fluids.class);
+    return fluids != null ? new BlockFluidCapImpl(fluids, be, side) : null;
   }
 
-  private static IItemHandler itemHandler(BlockEntity be, Direction side) {
+  private static ResourceHandler<ItemResource> itemHandler(BlockEntity be, Direction side) {
     if (!(be instanceof Ic2TileEntity)) {
       return null;
     }
 
     if (be instanceof WorldlyContainer wc) {
-      return side != null ? new SidedInvWrapper(wc, side) : null;
+      return side != null ? new WorldlyContainerWrapper(wc, side) : null;
     } else if (be instanceof Container container) {
-      return new InvWrapper(container);
+      return VanillaContainerWrapper.of(container);
     }
 
     return null;

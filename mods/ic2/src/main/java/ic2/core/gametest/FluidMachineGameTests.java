@@ -1,6 +1,8 @@
 package ic2.core.gametest;
 
 import ic2.api.network.INetworkClientTileEntityEventListener;
+import ic2.compat.GameTest;
+import ic2.compat.IFluidHandlerItem;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.generator.tileentity.TileEntitySolarGenerator;
@@ -21,7 +23,6 @@ import ic2.core.ref.Ic2Fluids;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -31,17 +32,8 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidActionResult;
-import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.apache.commons.lang3.mutable.MutableObject;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class FluidMachineGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -53,7 +45,7 @@ public class FluidMachineGameTests {
   @GameTest(template = EMPTY)
   public static void stackedCellsCanBeSafelyInspectedByFluidHandlers(GameTestHelper helper) {
     ItemStack stackedCells = new ItemStack(Ic2Items.WATER_CELL, 2);
-    IFluidHandlerItem handler = stackedCells.getCapability(Capabilities.FluidHandler.ITEM);
+    IFluidHandlerItem handler = ic2.compat.TransferFluidView.forStack(stackedCells);
 
     helper.assertTrue(handler != null, "water cell should expose an item fluid handler");
     helper.assertTrue(
@@ -66,25 +58,38 @@ public class FluidMachineGameTests {
   // enabled. The second call must consume the fluid from the backpack tank.
   @GameTest(template = EMPTY)
   public static void fluidUtilFillCellConsumesSourceTank(GameTestHelper helper) {
-    FluidTank sourceTank = new FluidTank(8000);
-    sourceTank.fill(
-        new net.neoforged.neoforge.fluids.FluidStack(
-            net.minecraft.world.level.material.Fluids.WATER, 1000),
-        IFluidHandler.FluidAction.EXECUTE);
+    var sourceTank = new net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler(1, 8000);
+    var water =
+        net.neoforged.neoforge.transfer.fluid.FluidResource.of(
+            net.minecraft.world.level.material.Fluids.WATER);
+    sourceTank.set(0, water, 1000);
     ItemStack emptyCell = new ItemStack(Ic2Items.EMPTY_CELL);
-
-    FluidActionResult simulated =
-        FluidUtil.tryFillContainer(emptyCell, sourceTank, sourceTank.getCapacity(), null, false);
-    helper.assertTrue(simulated.isSuccess(), "cell fill simulation should succeed");
-    helper.assertValueEqual(sourceTank.getFluidAmount(), 1000, "tank content after simulation");
-
-    FluidActionResult executed =
-        FluidUtil.tryFillContainer(emptyCell, sourceTank, sourceTank.getCapacity(), null, true);
-    helper.assertTrue(executed.isSuccess(), "executed cell fill should succeed");
+    var access =
+        net.neoforged.neoforge.transfer.access.ItemAccess.forHandlerIndexStrict(
+            net.neoforged.neoforge.transfer.item.VanillaContainerWrapper.ofUncached(
+                new net.minecraft.world.SimpleContainer(emptyCell)),
+            0);
+    var destination = access.getCapability(Capabilities.Fluid.ITEM);
+    helper.assertTrue(destination != null, "empty cell must expose transactional fluid storage");
+    try (var transaction = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+      int moved =
+          net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(
+              sourceTank, destination, resource -> true, 1000, transaction);
+      helper.assertValueEqual(moved, 1000, "cell fill simulation should succeed");
+    }
+    helper.assertValueEqual(sourceTank.getAmountAsInt(0), 1000, "tank content after simulation");
     helper.assertTrue(
-        executed.getResult().getItem() == Ic2Items.WATER_CELL,
-        "executed fill should produce a water cell, got " + executed.getResult());
-    helper.assertValueEqual(sourceTank.getFluidAmount(), 0, "tank content after executed fill");
+        access.getResource().is(Ic2Items.EMPTY_CELL), "simulation must restore empty cell");
+    try (var transaction = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+      int moved =
+          net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(
+              sourceTank, destination, resource -> true, 1000, transaction);
+      helper.assertValueEqual(moved, 1000, "executed cell fill should succeed");
+      transaction.commit();
+    }
+    helper.assertTrue(
+        access.getResource().is(Ic2Items.WATER_CELL), "executed fill should produce a water cell");
+    helper.assertValueEqual(sourceTank.getAmountAsInt(0), 0, "tank content after executed fill");
     helper.succeed();
   }
 
@@ -205,8 +210,8 @@ public class FluidMachineGameTests {
     TileEntitySolarDistiller te = getTe(helper, MACHINE_POS, TileEntitySolarDistiller.class);
 
     ServerLevel level = helper.getLevel();
-    level.setDayTime(6000L);
-    level.setWeatherParameters(100000, 0, false, false);
+    ic2.compat.WorldCompat.setDayTime(level, 6000L);
+    ic2.compat.WorldCompat.setWeather(level, 100000, 0, false, false);
     float skyLight =
         TileEntitySolarGenerator.getSkyLight(level, helper.absolutePos(MACHINE_POS).above());
     helper.assertTrue(
@@ -263,6 +268,56 @@ public class FluidMachineGameTests {
               20000,
               "tank after partial drain");
           helper.assertValueEqual(tank.getFluidAmount(), 20000, "tank content after partial drain");
+          var nativeTank =
+              helper
+                  .getLevel()
+                  .getCapability(
+                      Capabilities.Fluid.BLOCK, helper.absolutePos(MACHINE_POS), Direction.UP);
+          var secondView =
+              helper
+                  .getLevel()
+                  .getCapability(
+                      Capabilities.Fluid.BLOCK, helper.absolutePos(MACHINE_POS), Direction.UP);
+          var water =
+              net.neoforged.neoforge.transfer.fluid.FluidResource.of(
+                  net.minecraft.world.level.material.Fluids.WATER);
+          helper.assertTrue(
+              nativeTank != null && secondView != null, "tank must expose native transfer storage");
+          try (var transaction =
+              net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            helper.assertValueEqual(
+                nativeTank.insert(water, 9000, transaction), 4000, "native fill capacity boundary");
+            try (var nested =
+                net.neoforged.neoforge.transfer.transaction.Transaction.open(transaction)) {
+              helper.assertValueEqual(
+                  secondView.extract(water, 7000, nested), 7000, "nested cross-view drain");
+              nested.commit();
+            }
+          }
+          helper.assertValueEqual(
+              tank.getFluidAmount(),
+              20000,
+              "root abort must restore nested operations from both views");
+          try (var transaction =
+              net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            helper.assertValueEqual(
+                nativeTank.extract(water, 25000, transaction), 20000, "native drain boundary");
+            transaction.commit();
+          }
+          helper.assertValueEqual(tank.getFluidAmount(), 0, "committed drain must persist");
+          net.minecraft.nbt.CompoundTag saved =
+              ((Ic2TileEntity)
+                      helper.getBlockEntity(
+                          MACHINE_POS, net.minecraft.world.level.block.entity.BlockEntity.class))
+                  .saveWithoutMetadata(helper.getLevel().registryAccess());
+          var restored =
+              new TileEntityTank(
+                  helper.absolutePos(MACHINE_POS), helper.getBlockState(MACHINE_POS));
+          restored.loadWithComponents(saved, helper.getLevel().registryAccess());
+          helper.assertValueEqual(
+              restored.getComponent(Fluids.class).getAllTanks().iterator().next().getFluidAmount(),
+              0,
+              "committed native drain after save/reload");
           helper.succeed();
         });
   }
@@ -584,7 +639,8 @@ public class FluidMachineGameTests {
   }
 
   private static Ic2FluidTank firstTank(GameTestHelper helper, BlockPos pos) {
-    return ((Ic2TileEntity) helper.getBlockEntity(pos))
+    return ((Ic2TileEntity)
+            helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class))
         .getComponent(Fluids.class)
         .getAllTanks()
         .iterator()
@@ -596,7 +652,10 @@ public class FluidMachineGameTests {
   // asserts the fluid left the tank and the chunk was marked unsaved again. On a lone passive tile
   // nothing else dirties the chunk, so the flag flip is entirely down to the transfer's setChanged.
   private static void assertGuiDrainMarksTileChanged(GameTestHelper helper, BlockPos relativePos) {
-    Ic2TileEntity te = (Ic2TileEntity) helper.getBlockEntity(relativePos);
+    Ic2TileEntity te =
+        (Ic2TileEntity)
+            helper.getBlockEntity(
+                relativePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     Ic2FluidTank tank = te.getComponent(Fluids.class).getAllTanks().iterator().next();
     int before = tank.getFluidAmount();
     helper.assertTrue(
@@ -607,7 +666,7 @@ public class FluidMachineGameTests {
 
     ServerLevel level = helper.getLevel();
     BlockPos abs = helper.absolutePos(relativePos);
-    level.getChunkAt(abs).setUnsaved(false);
+    level.getChunkAt(abs).tryMarkSaved();
     ((INetworkClientTileEntityEventListener) te).onNetworkEvent(player, 0);
 
     helper.assertValueEqual(
@@ -636,7 +695,7 @@ public class FluidMachineGameTests {
 
   private static int countItems(Player player, Item item) {
     int count = 0;
-    for (ItemStack stack : player.getInventory().items) {
+    for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
       if (stack.getItem() == item) {
         count += stack.getCount();
       }
@@ -646,7 +705,7 @@ public class FluidMachineGameTests {
   }
 
   private static ItemStack firstItem(Player player, Item item) {
-    for (ItemStack stack : player.getInventory().items) {
+    for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
       if (stack.getItem() == item) {
         return stack;
       }
@@ -656,7 +715,8 @@ public class FluidMachineGameTests {
   }
 
   private static Ic2FluidTank getTankBlockTank(GameTestHelper helper, BlockPos pos) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!(be instanceof TileEntityTank tank)) {
       throw new IllegalStateException("expected a fluid tank at " + pos + ", found " + be);
     }
@@ -666,7 +726,8 @@ public class FluidMachineGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

@@ -1,7 +1,8 @@
 {
   "variants": {
     "": {
-      "model": "ic2:block/machine/fluid/solar_distiller"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/solar_distiller"
     }
   }
 }

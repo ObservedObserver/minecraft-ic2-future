@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:resin"
-  },
+  "ingredient": "ic2:resin",
   "result": {
     "id": "ic2:rubber"
   },

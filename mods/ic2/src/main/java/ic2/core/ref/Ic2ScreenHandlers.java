@@ -236,12 +236,12 @@ public final class Ic2ScreenHandlers {
         hand = Util.HANDS[handOrdinal];
         currentItem = player.getMainHandItem();
       } else {
-        if (currentItemPosition != player.getInventory().selected) {
+        if (currentItemPosition != player.getInventory().getSelectedSlot()) {
           return null;
         }
 
         hand = InteractionHand.MAIN_HAND;
-        currentItem = player.getInventory().getSelected();
+        currentItem = player.getInventory().getSelectedItem();
       }
 
       if (!(currentItem.getItem() instanceof IHandHeldInventory item)) {
@@ -266,7 +266,7 @@ public final class Ic2ScreenHandlers {
     assert item instanceof IHandHeldInventory;
     int slot;
     if (hand == InteractionHand.MAIN_HAND) {
-      slot = player.getInventory().selected;
+      slot = player.getInventory().getSelectedSlot();
     } else {
       slot = -hand.ordinal();
     }

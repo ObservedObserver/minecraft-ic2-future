@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/mfe_chargepad"
+        "recipes": [
+          "ic2:shaped/mfe_chargepad"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

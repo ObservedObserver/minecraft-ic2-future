@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -27,11 +27,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 public final class Ic2Ae2Plugin {
 
@@ -41,8 +42,8 @@ public final class Ic2Ae2Plugin {
    */
   public static final double EU_TO_AE_RATIO = EnergyBridgeMath.DEFAULT_FE_PER_EU;
 
-  public static final ResourceLocation ENERGY_ACCEPTOR_ID =
-      ResourceLocation.fromNamespaceAndPath("ae2", "energy_acceptor");
+  public static final Identifier ENERGY_ACCEPTOR_ID =
+      Identifier.fromNamespaceAndPath("ae2", "energy_acceptor");
 
   private static final Map<Level, Map<BlockPos, Ae2EnergySink>> sinks = new HashMap<>();
 
@@ -79,7 +80,7 @@ public final class Ic2Ae2Plugin {
     } catch (Exception e) {
       ae2GridApiAvailable = false;
       IC2.log.debug(
-          LogCategory.EnergyNet, "AE2 grid API not available, falling back to IEnergyStorage.");
+          LogCategory.EnergyNet, "AE2 grid API not available, falling back to EnergyHandler.");
     }
   }
 
@@ -91,7 +92,7 @@ public final class Ic2Ae2Plugin {
   }
 
   private static void registerSink(Level world, BlockPos pos) {
-    if (world.isClientSide || !Info.isIc2Available()) return;
+    if (world.isClientSide() || !Info.isIc2Available()) return;
     Map<BlockPos, Ae2EnergySink> worldSinks = sinks.computeIfAbsent(world, k -> new HashMap<>());
     if (worldSinks.containsKey(pos)) return;
     Ae2EnergySink sink = new Ae2EnergySink(world, pos);
@@ -101,11 +102,11 @@ public final class Ic2Ae2Plugin {
         LogCategory.EnergyNet,
         "Registered AE2 energy_acceptor sink at %s in %s",
         pos,
-        world.dimension().location());
+        world.dimension().identifier());
   }
 
   private static void unregisterSink(Level world, BlockPos pos) {
-    if (world.isClientSide || !Info.isIc2Available()) return;
+    if (world.isClientSide() || !Info.isIc2Available()) return;
     Map<BlockPos, Ae2EnergySink> worldSinks = sinks.get(world);
     if (worldSinks == null) return;
     Ae2EnergySink sink = worldSinks.remove(pos);
@@ -115,7 +116,7 @@ public final class Ic2Ae2Plugin {
           LogCategory.EnergyNet,
           "Unregistered AE2 energy_acceptor sink at %s in %s",
           pos,
-          world.dimension().location());
+          world.dimension().identifier());
     }
   }
 
@@ -129,7 +130,7 @@ public final class Ic2Ae2Plugin {
     IC2.log.debug(
         LogCategory.EnergyNet,
         "Unregistered all AE2 energy_acceptor sinks in %s",
-        world.dimension().location());
+        world.dimension().identifier());
   }
 
   private static void processPendingChunks(ServerLevel world) {
@@ -138,8 +139,8 @@ public final class Ic2Ae2Plugin {
     int processed = 0;
     while (processed < POSITIONS_PER_TICK && !queue.isEmpty()) {
       ChunkPos cp = queue.poll();
-      int chunkX = cp.x;
-      int chunkZ = cp.z;
+      int chunkX = cp.x();
+      int chunkZ = cp.z();
       BlockPos checkPos = new BlockPos(chunkX << 4, 0, chunkZ << 4);
       if (!world.isLoaded(checkPos)) continue;
       LevelChunk chunk = world.getChunk(chunkX, chunkZ);
@@ -158,7 +159,7 @@ public final class Ic2Ae2Plugin {
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
       if (event.getEntity() == null) return;
       Level world = event.getEntity().level();
-      if (world.isClientSide) return;
+      if (world.isClientSide()) return;
       BlockPos pos = event.getPos();
       if (isEnergyAcceptor(world, pos)) {
         registerSink(world, pos);
@@ -166,9 +167,9 @@ public final class Ic2Ae2Plugin {
     }
 
     @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent event) {
+    public void onBlockBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
       Level world = (Level) event.getLevel();
-      if (world.isClientSide) return;
+      if (world.isClientSide()) return;
       BlockPos pos = event.getPos();
       if (isEnergyAcceptor(world, pos)) {
         unregisterSink(world, pos);
@@ -179,7 +180,7 @@ public final class Ic2Ae2Plugin {
     public void onChunkLoad(ChunkEvent.Load event) {
       if (!(event.getChunk() instanceof LevelChunk chunk)) return;
       Level world = chunk.getLevel();
-      if (world.isClientSide) return;
+      if (world.isClientSide()) return;
       pendingChunks.computeIfAbsent(world, k -> new ArrayDeque<>()).add(chunk.getPos());
     }
 
@@ -187,11 +188,11 @@ public final class Ic2Ae2Plugin {
     public void onChunkUnload(ChunkEvent.Unload event) {
       if (!(event.getChunk() instanceof LevelChunk chunk)) return;
       Level world = chunk.getLevel();
-      if (world.isClientSide) return;
+      if (world.isClientSide()) return;
       Map<BlockPos, Ae2EnergySink> worldSinks = sinks.get(world);
       if (worldSinks != null) {
-        int chunkX = chunk.getPos().x;
-        int chunkZ = chunk.getPos().z;
+        int chunkX = chunk.getPos().x();
+        int chunkZ = chunk.getPos().z();
         Iterator<Map.Entry<BlockPos, Ae2EnergySink>> it = worldSinks.entrySet().iterator();
         while (it.hasNext()) {
           Map.Entry<BlockPos, Ae2EnergySink> entry = it.next();
@@ -213,7 +214,7 @@ public final class Ic2Ae2Plugin {
 
     @SubscribeEvent
     public void onWorldUnload(LevelEvent.Unload event) {
-      if (event.getLevel() instanceof Level world && !world.isClientSide) {
+      if (event.getLevel() instanceof Level world && !world.isClientSide()) {
         unregisterAllInWorld(world);
       }
     }
@@ -221,15 +222,23 @@ public final class Ic2Ae2Plugin {
 
   private record Ae2EnergySink(Level world, BlockPos pos) implements ILocatable, IEnergySink {
 
-    @Nullable private static IEnergyStorage getFeStorage(BlockEntity be) {
+    private static int transferFe(EnergyHandler storage, int amount, boolean simulate) {
+      try (Transaction transaction = Transaction.open(Transaction.getCurrentOpenedTransaction())) {
+        int accepted = storage.insert(amount, transaction);
+        if (!simulate) transaction.commit();
+        return accepted;
+      }
+    }
+
+    @Nullable private static EnergyHandler getFeStorage(BlockEntity be) {
       Level level = be.getLevel();
       if (level == null) return null;
       BlockPos bePos = be.getBlockPos();
-      IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, bePos, null);
-      if (storage != null && storage.canReceive()) return storage;
+      EnergyHandler storage = level.getCapability(Capabilities.Energy.BLOCK, bePos, null);
+      if (storage != null && transferFe(storage, Integer.MAX_VALUE, true) > 0) return storage;
       for (Direction dir : Direction.values()) {
-        storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, bePos, dir);
-        if (storage != null && storage.canReceive()) return storage;
+        storage = level.getCapability(Capabilities.Energy.BLOCK, bePos, dir);
+        if (storage != null && transferFe(storage, Integer.MAX_VALUE, true) > 0) return storage;
       }
       return null;
     }
@@ -283,12 +292,12 @@ public final class Ic2Ae2Plugin {
     private double injectFePower(double euAmount) {
       BlockEntity be = world.getBlockEntity(pos);
       if (be == null) return euAmount;
-      IEnergyStorage storage = getFeStorage(be);
+      EnergyHandler storage = getFeStorage(be);
       if (storage == null) return euAmount;
       int feToSend =
           EnergyBridgeMath.clampToIntEnergy(EnergyBridgeMath.euToFeCeil(euAmount, EU_TO_AE_RATIO));
       if (feToSend <= 0) return euAmount;
-      int feAccepted = storage.receiveEnergy(feToSend, false);
+      int feAccepted = transferFe(storage, feToSend, false);
       return EnergyBridgeMath.residualEuAfterFeTransfer(euAmount, feAccepted, EU_TO_AE_RATIO);
     }
 
@@ -308,9 +317,9 @@ public final class Ic2Ae2Plugin {
     private double getFeDemand() {
       BlockEntity be = world.getBlockEntity(pos);
       if (be == null) return 0.0;
-      IEnergyStorage storage = getFeStorage(be);
+      EnergyHandler storage = getFeStorage(be);
       if (storage == null) return 0.0;
-      int feFree = storage.getMaxEnergyStored() - storage.getEnergyStored();
+      int feFree = transferFe(storage, Integer.MAX_VALUE, true);
       return EnergyBridgeMath.feToEu(feFree, EU_TO_AE_RATIO);
     }
 

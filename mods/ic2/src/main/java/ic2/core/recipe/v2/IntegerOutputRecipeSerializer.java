@@ -15,12 +15,11 @@ import java.util.stream.Stream;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 
 public class IntegerOutputRecipeSerializer
-    implements RecipeSerializer<RecipeHolder<IRecipeInput, Integer>> {
+    extends ic2.compat.RecipeSerializerAdapter<RecipeHolder<IRecipeInput, Integer>> {
   private final RecipeType<?> recipeType;
   @Nullable private final Function<JsonObject, CompoundTag> metaProcessor;
   private final MapCodec<RecipeHolder<IRecipeInput, Integer>> codec =
@@ -43,7 +42,12 @@ public class IntegerOutputRecipeSerializer
                       json.add(
                           key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                     });
-            return DataResult.success(fromJson(json));
+            RecipeIo.validateTemplates(json);
+            return DataResult.success(
+                RecipeHolder.defer(
+                    () -> fromJson(json),
+                    IntegerOutputRecipeSerializer.this.serializer(),
+                    IntegerOutputRecipeSerializer.this.recipeType));
           } catch (RuntimeException e) {
             return DataResult.error(
                 () -> "Failed to parse IC2 integer output recipe: " + e.getMessage());
@@ -73,7 +77,7 @@ public class IntegerOutputRecipeSerializer
     int output = json.get("result").getAsInt();
     CompoundTag meta = this.metaProcessor != null ? this.metaProcessor.apply(json) : null;
     return new RecipeHolder<>(
-        new MachineRecipe<>(input, output, meta), null, this, this.recipeType);
+        new MachineRecipe<>(input, output, meta), null, this.serializer(), this.recipeType);
   }
 
   private RecipeHolder<IRecipeInput, Integer> fromNetwork(RegistryFriendlyByteBuf buf) {
@@ -85,7 +89,7 @@ public class IntegerOutputRecipeSerializer
           new MachineRecipe<>(
               RecipeIo.readInput(buf), RecipeIo.readIntegerOutput(buf), buf.readNbt()),
           null,
-          this,
+          this.serializer(),
           this.recipeType);
     }
   }

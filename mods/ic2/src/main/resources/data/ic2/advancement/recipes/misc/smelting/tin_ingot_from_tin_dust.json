@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/tin_ingot_from_tin_dust"
+        "recipes": [
+          "ic2:smelting/tin_ingot_from_tin_dust"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

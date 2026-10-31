@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/generator/reactor/reactor_chamber"
+  "parent": "ic2:block/generator/reactor/reactor_chamber"
 }

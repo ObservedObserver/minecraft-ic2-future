@@ -53,7 +53,7 @@ public abstract class TileEntityAbstractRCI extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.updateEnergyFacings();
     }
 

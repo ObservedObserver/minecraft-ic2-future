@@ -63,7 +63,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/scanner"
+        "recipes": [
+          "ic2:shaped/scanner"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

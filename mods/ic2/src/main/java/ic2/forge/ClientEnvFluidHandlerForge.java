@@ -1,22 +1,31 @@
 package ic2.forge;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 
 public class ClientEnvFluidHandlerForge extends EnvFluidHandlerForge {
-  @Override
-  public ResourceLocation getStillSpriteId(Fluid fluid) {
-    return IClientFluidTypeExtensions.of(fluid).getStillTexture();
+  private static FluidModel model(Fluid fluid) {
+    return Minecraft.getInstance()
+        .getModelManager()
+        .getFluidStateModelSet()
+        .get(fluid.defaultFluidState());
   }
 
   @Override
-  public ResourceLocation getFlowingSpriteId(Fluid fluid) {
-    return IClientFluidTypeExtensions.of(fluid).getFlowingTexture();
+  public Identifier getStillSpriteId(Fluid fluid) {
+    return model(fluid).stillMaterial().sprite().contents().name();
+  }
+
+  @Override
+  public Identifier getFlowingSpriteId(Fluid fluid) {
+    return model(fluid).flowingMaterial().sprite().contents().name();
   }
 
   @Override
   public int getColor(Fluid fluid) {
-    return IClientFluidTypeExtensions.of(fluid).getTintColor();
+    var tint = model(fluid).fluidTintSource();
+    return tint == null ? -1 : tint.color(fluid.defaultFluidState());
   }
 }

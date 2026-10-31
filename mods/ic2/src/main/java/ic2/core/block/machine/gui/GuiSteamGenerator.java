@@ -12,12 +12,12 @@ import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiSteamGenerator extends Ic2Gui<ContainerSteamGenerator> {
-  private static final ResourceLocation BACKGROUND =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guisteamgenerator.png");
+  private static final Identifier BACKGROUND =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guisteamgenerator.png");
 
   public GuiSteamGenerator(
       ContainerSteamGenerator container, Inventory playerInventory, Component title) {
@@ -158,7 +158,7 @@ public class GuiSteamGenerator extends Ic2Gui<ContainerSteamGenerator> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
+  public Identifier getTextureLocation() {
     return BACKGROUND;
   }
 

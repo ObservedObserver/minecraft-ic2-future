@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shapeless/weed_ex_bucket"
+        "recipes": [
+          "ic2:shapeless/weed_ex_bucket"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

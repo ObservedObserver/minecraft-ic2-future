@@ -11,7 +11,7 @@ import ic2.core.util.PriorityExecutor;
 import ic2.core.util.SideGateway;
 import ic2.forge.EnvProxyForge;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -88,7 +88,7 @@ public class IC2 {
             new ItemGroupIconSupplier(Ic2ItemGroupType.MATERIALS),
             Ic2ItemGroupType.MATERIALS);
     threadPool = new PriorityExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 2));
-    random = RandomSource.createNewThreadLocalInstance();
+    random = RandomSource.create();
     initialized = false;
     suddenlyHoes = false;
     seasonal = false;
@@ -103,17 +103,20 @@ public class IC2 {
   }
 
   public static int getWorldMinHeight(Level world) {
-    return world.getMinBuildHeight();
+    return world.getMinY();
   }
 
-  public static ResourceLocation getIdentifier(String name) {
-    return ResourceLocation.fromNamespaceAndPath("ic2", name);
+  public static Identifier getIdentifier(String name) {
+    return Identifier.fromNamespaceAndPath("ic2", name);
   }
 
   public static void grantAdvancement(Player player, String path) {
     if (player instanceof ServerPlayer sp) {
       AdvancementHolder adv =
-          sp.server.getAdvancements().get(ResourceLocation.fromNamespaceAndPath("ic2", path));
+          sp.level()
+              .getServer()
+              .getAdvancements()
+              .get(Identifier.fromNamespaceAndPath("ic2", path));
       if (adv != null) {
         sp.getAdvancements().award(adv, "impossible");
       }

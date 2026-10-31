@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/coal"
+            "items": "#c:dusts/coal"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/tin"
+            "items": "#c:dusts/tin"
           }
         ]
       },
@@ -25,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/copper"
+            "items": "#c:plates/copper"
           }
         ]
       },
@@ -33,7 +33,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/neutron_reflector"
+        "recipes": [
+          "ic2:shaped/neutron_reflector"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

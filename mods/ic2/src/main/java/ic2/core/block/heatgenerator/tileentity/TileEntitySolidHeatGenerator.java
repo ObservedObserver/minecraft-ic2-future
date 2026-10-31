@@ -92,7 +92,7 @@ public class TileEntitySolidHeatGenerator extends TileEntityHeatSourceInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.fuel = nbt.getInt("fuel");
+    this.fuel = nbt.getIntOr("fuel", 0);
   }
 
   @Override

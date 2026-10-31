@@ -17,10 +17,10 @@ import java.util.stream.Stream;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class CannerEnrichRecipeSerializer
-    implements RecipeSerializer<RecipeHolder<ICannerEnrichRecipeManager.Input, Ic2FluidStack>> {
+    extends ic2.compat.RecipeSerializerAdapter<
+        RecipeHolder<ICannerEnrichRecipeManager.Input, Ic2FluidStack>> {
   private final MapCodec<RecipeHolder<ICannerEnrichRecipeManager.Input, Ic2FluidStack>> codec =
       new MapCodec<>() {
         @Override
@@ -42,7 +42,12 @@ public class CannerEnrichRecipeSerializer
                       json.add(
                           key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                     });
-            return DataResult.success(fromJson(json));
+            RecipeIo.validateTemplates(json);
+            return DataResult.success(
+                RecipeHolder.defer(
+                    () -> fromJson(json),
+                    CannerEnrichRecipeSerializer.this.serializer(),
+                    Ic2RecipeTypes.CANNER_ENRICH));
           } catch (RuntimeException e) {
             return DataResult.error(
                 () -> "Failed to parse IC2 canner enrich recipe: " + e.getMessage());
@@ -70,7 +75,7 @@ public class CannerEnrichRecipeSerializer
     return new RecipeHolder<>(
         new MachineRecipe<>(new ICannerEnrichRecipeManager.Input(input, additive), result),
         null,
-        this,
+        this.serializer(),
         Ic2RecipeTypes.CANNER_ENRICH);
   }
 
@@ -82,7 +87,7 @@ public class CannerEnrichRecipeSerializer
     return new RecipeHolder<>(
         new MachineRecipe<>(new ICannerEnrichRecipeManager.Input(input, additive), result),
         null,
-        this,
+        this.serializer(),
         Ic2RecipeTypes.CANNER_ENRICH);
   }
 

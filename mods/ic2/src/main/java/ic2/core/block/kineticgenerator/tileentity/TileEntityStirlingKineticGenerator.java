@@ -83,11 +83,11 @@ public class TileEntityStirlingKineticGenerator extends TileEntityAbstractKineti
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.inputTank.fromNbt(nbt.getCompound("inputTank"));
-    this.outputTank.fromNbt(nbt.getCompound("outputTank"));
-    this.heatBuffer = nbt.getInt("heatbuffer");
-    this.kuBuffer = nbt.getInt("kubuffer");
-    this.liquidHeatStored = nbt.getInt("liquidHeatStored");
+    this.inputTank.fromNbt(nbt.getCompoundOrEmpty("inputTank"));
+    this.outputTank.fromNbt(nbt.getCompoundOrEmpty("outputTank"));
+    this.heatBuffer = nbt.getIntOr("heatbuffer", 0);
+    this.kuBuffer = nbt.getIntOr("kubuffer", 0);
+    this.liquidHeatStored = nbt.getIntOr("liquidHeatStored", 0);
   }
 
   @Override

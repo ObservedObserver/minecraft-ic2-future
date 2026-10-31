@@ -4,7 +4,7 @@ import ic2.core.block.invslot.InvSlot;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 
@@ -69,7 +69,7 @@ public abstract class SimpleCraftingInventory implements CraftingContainer {
     }
   }
 
-  public void fillStackedContents(StackedContents finder) {
+  public void fillStackedContents(StackedItemContents finder) {
     for (int i = 0; i < this.size; i++) {
       ItemStack stack = this.get(i);
       if (!StackUtil.isEmpty(stack)) {

@@ -6,12 +6,12 @@ import ic2.core.gui.GuiFullInv;
 import ic2.core.gui.Image;
 import ic2.core.gui.SlotGrid;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiSolarGenerator extends GuiFullInv<ContainerSolarGenerator> {
-  private static final ResourceLocation solarOverlayTexture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/overlay/solar_sun.png");
+  private static final Identifier solarOverlayTexture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/overlay/solar_sun.png");
 
   public GuiSolarGenerator(
       ContainerSolarGenerator container, Inventory playerInventory, Component title) {

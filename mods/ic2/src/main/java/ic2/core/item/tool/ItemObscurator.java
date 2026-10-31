@@ -15,11 +15,9 @@ import ic2.core.util.Util;
 import ic2.core.util.Vector3;
 import java.util.Arrays;
 import java.util.List;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +29,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class ItemObscurator extends BaseElectricItem
     implements PriorityUsableItem, IPlayerItemDataListener {
@@ -45,7 +42,7 @@ public class ItemObscurator extends BaseElectricItem
   }
 
   public static BlockState getState(CompoundTag nbt) {
-    String blockName = nbt.getString("refBlock");
+    String blockName = nbt.getStringOr("refBlock", "");
     if (blockName.isEmpty()) {
       return null;
     }
@@ -60,7 +57,7 @@ public class ItemObscurator extends BaseElectricItem
   }
 
   public static String getVariant(CompoundTag nbt) {
-    return nbt.getString("refVariant");
+    return nbt.getStringOr("refVariant", "");
   }
 
   private static void setState(CompoundTag nbt, Block block, String variant) {
@@ -69,7 +66,7 @@ public class ItemObscurator extends BaseElectricItem
   }
 
   public static Direction getSide(CompoundTag nbt) {
-    int ordinal = nbt.getByte("refSide");
+    int ordinal = nbt.getByteOr("refSide", (byte) 0);
     return ordinal >= 0 && ordinal < Util.ALL_DIRS.length ? Util.ALL_DIRS[ordinal] : null;
   }
 
@@ -78,7 +75,7 @@ public class ItemObscurator extends BaseElectricItem
   }
 
   public static int[] getColorMultipliers(CompoundTag nbt) {
-    int[] ret = nbt.getIntArray("refColorMuls");
+    int[] ret = nbt.getIntArray("refColorMuls").orElseGet(() -> new int[0]);
     return ret.length == 0 ? null : internColorMultipliers(ret);
   }
 
@@ -98,17 +95,17 @@ public class ItemObscurator extends BaseElectricItem
   }
 
   public static ItemObscurator.ObscuredRenderInfo getRenderInfo(BlockState state, Direction side) {
-    if (ItemBlockRenderTypes.getChunkRenderType(state) == RenderType.translucent()) {
+    if (ModelUtil.getBlockModel(state).hasMaterialFlag(BakedQuad.FLAG_TRANSLUCENT)) {
       return null;
     }
 
-    BakedModel model = ModelUtil.getBlockModel(state);
+    BlockStateModel model = ModelUtil.getBlockModel(state);
     if (model == null) {
       return null;
     }
 
     RandomSource rand = RandomSource.create(42L);
-    List<BakedQuad> faceQuads = model.getQuads(state, side, rand, ModelData.EMPTY, null);
+    List<BakedQuad> faceQuads = ic2.compat.client.QuadCompat.quads(model, state, side);
     if (faceQuads.isEmpty()) {
       return null;
     }
@@ -258,7 +255,7 @@ public class ItemObscurator extends BaseElectricItem
     }
 
     if (!player.isCrouching()
-        && !world.isClientSide
+        && !world.isClientSide()
         && ElectricItem.manager.canUse(stack, 5000.0)) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
       BlockState refState;
@@ -298,10 +295,11 @@ public class ItemObscurator extends BaseElectricItem
         }
       } else {
         clear(nbt);
+        StackUtil.setTag(stack, nbt);
         return InteractionResult.PASS;
       }
     } else if (player.isCrouching()
-        && world.isClientSide
+        && world.isClientSide()
         && ElectricItem.manager.canUse(stack, 20000.0)) {
       return this.scanBlock(stack, player, world, pos, side)
           ? InteractionResult.SUCCESS
@@ -313,7 +311,7 @@ public class ItemObscurator extends BaseElectricItem
 
   private boolean scanBlock(
       ItemStack stack, Player player, Level world, BlockPos pos, Direction side) {
-    assert world.isClientSide;
+    assert world.isClientSide();
     BlockState state = world.getBlockState(pos);
     if (state.isAir()) {
       return false;
@@ -329,7 +327,7 @@ public class ItemObscurator extends BaseElectricItem
 
     for (int i = 0; i < renderInfo.tints.length; i++) {
       colorMultipliers[i] =
-          SideProxyClient.mc.getBlockColors().getColor(state, world, pos, renderInfo.tints[i]);
+          ic2.compat.client.LegacyRenderHooks.blockColor(state, world, pos, renderInfo.tints[i]);
     }
 
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
@@ -344,7 +342,7 @@ public class ItemObscurator extends BaseElectricItem
         .get(false)
         .sendPlayerItemData(
             player,
-            player.getInventory().selected,
+            player.getInventory().getSelectedSlot(),
             state.getBlock(),
             variant,
             side.ordinal(),
@@ -372,12 +370,13 @@ public class ItemObscurator extends BaseElectricItem
       return;
     }
 
-    ItemStack stack = player.getInventory().items.get(slot);
+    ItemStack stack = player.getInventory().getNonEquipmentItems().get(slot);
     if (ElectricItem.manager.use(stack, 20000.0, player)) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
       setState(nbt, block, variant);
       setSide(nbt, sideOrdinal);
       setColorMultipliers(nbt, colorMultipliers);
+      StackUtil.setTag(stack, nbt);
     }
   }
 

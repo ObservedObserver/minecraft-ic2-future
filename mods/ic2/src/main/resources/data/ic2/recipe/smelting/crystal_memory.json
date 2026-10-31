@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:raw_crystal_memory"
-  },
+  "ingredient": "ic2:raw_crystal_memory",
   "result": {
     "id": "ic2:crystal_memory"
   },

@@ -218,35 +218,43 @@ public final class StackUtil {
     return ret;
   }
 
-  // 1.21 no longer stores arbitrary NBT on ItemStack; IC2's legacy tag maps onto the CUSTOM_DATA
-  // component.
-  // Pre-1.21 callers mutate the returned tag in place and expect the write to stick, so both
-  // accessors
-  // must hand out the component's live tag (getUnsafe) — CustomData.of/copyTag would detach it.
+  /** Returns a detached snapshot. Write changes with setTagValue, removeTagValue or setTag. */
   public static CompoundTag getTag(ItemStack stack) {
-    net.minecraft.world.item.component.CustomData data =
-        stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-    return data == null ? null : data.getUnsafe();
+    var data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+    return data == null ? null : data.copyTag();
   }
 
   public static CompoundTag getOrCreateNbtData(ItemStack stack) {
-    net.minecraft.world.item.component.CustomData data =
-        stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-    if (data == null) {
-      stack.set(
-          net.minecraft.core.component.DataComponents.CUSTOM_DATA,
-          net.minecraft.world.item.component.CustomData.of(new CompoundTag()));
-      data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-    }
-
-    return data.getUnsafe();
+    CompoundTag tag = getTag(stack);
+    return tag == null ? new CompoundTag() : tag;
   }
 
-  // 1.21 made Mob.getEquipmentSlotForItem an instance method; use the item's Equipable to resolve
-  // the slot statically.
+  public static void setTagValue(ItemStack stack, String key, net.minecraft.nbt.Tag value) {
+    net.minecraft.world.item.component.CustomData.update(
+        net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+        stack,
+        tag -> tag.put(key, value.copy()));
+  }
+
+  public static void setTagValue(
+      ItemStack stack, CompoundTag local, String key, net.minecraft.nbt.Tag value) {
+    local.put(key, value);
+    setTagValue(stack, key, value);
+  }
+
+  public static void removeTagValue(ItemStack stack, String key) {
+    net.minecraft.world.item.component.CustomData.update(
+        net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(key));
+  }
+
+  public static void removeTagValue(ItemStack stack, CompoundTag local, String key) {
+    local.remove(key);
+    removeTagValue(stack, key);
+  }
+
   public static EquipmentSlot getEquipmentSlotForItem(ItemStack stack) {
-    net.minecraft.world.item.Equipable equipable = net.minecraft.world.item.Equipable.get(stack);
-    return equipable != null ? equipable.getEquipmentSlot() : EquipmentSlot.MAINHAND;
+    var equippable = stack.get(net.minecraft.core.component.DataComponents.EQUIPPABLE);
+    return equippable != null ? equippable.slot() : EquipmentSlot.MAINHAND;
   }
 
   public static void setTag(ItemStack stack, CompoundTag tag) {
@@ -282,8 +290,8 @@ public final class StackUtil {
       return true;
     }
 
-    Set<String> keysA = a != null ? a.getAllKeys() : Collections.emptySet();
-    Set<String> keysB = b != null ? b.getAllKeys() : Collections.emptySet();
+    Set<String> keysA = a != null ? a.keySet() : Collections.emptySet();
+    Set<String> keysB = b != null ? b.keySet() : Collections.emptySet();
     Set<String> toCheck = new HashSet<>(Math.max(keysA.size(), keysB.size()));
 
     for (String key : keysA) {
@@ -453,7 +461,7 @@ public final class StackUtil {
   public static ItemStack consumeFromPlayerInventoryAndGet(
       Player player, Predicate<ItemStack> request, int amount, boolean excludeSelectedSlot) {
     Inventory inventory = player.getInventory();
-    NonNullList<ItemStack> contents = inventory.items;
+    NonNullList<ItemStack> contents = inventory.getNonEquipmentItems();
     int amountNeeded = amount;
 
     for (int i = 0; i < contents.size(); i++) {
@@ -463,7 +471,7 @@ public final class StackUtil {
           return copyWithSize(stack, amount);
         }
 
-        if (!excludeSelectedSlot || i != inventory.selected) {
+        if (!excludeSelectedSlot || i != inventory.getSelectedSlot()) {
           int cAmount = Math.min(getSize(stack), amountNeeded);
           amountNeeded -= cAmount;
           if (amountNeeded > 0) {
@@ -492,7 +500,7 @@ public final class StackUtil {
 
   public static boolean consumeFromPlayerInventory(
       Player player, Predicate<ItemStack> request, int amount, boolean simulate) {
-    NonNullList<ItemStack> contents = player.getInventory().items;
+    NonNullList<ItemStack> contents = player.getInventory().getNonEquipmentItems();
     int pass = 0;
 
     label47:
@@ -609,13 +617,13 @@ public final class StackUtil {
 
     Inventory inv = player.getInventory();
     if (hand == InteractionHand.MAIN_HAND) {
-      inv.items.set(inv.selected, stack);
+      inv.setSelectedItem(stack);
     } else {
       if (hand != InteractionHand.OFF_HAND) {
         throw new IllegalArgumentException("invalid hand: " + hand);
       }
 
-      inv.offhand.set(0, stack);
+      player.setItemInHand(InteractionHand.OFF_HAND, stack);
     }
   }
 
@@ -637,8 +645,8 @@ public final class StackUtil {
     int sizeLeft = getSize(stack);
     int maxStackSize = Math.min(player.getInventory().getMaxStackSize(), stack.getMaxStackSize());
 
-    for (int i = 0; i < player.getInventory().items.size() && sizeLeft > 0; i++) {
-      ItemStack invStack = (ItemStack) player.getInventory().items.get(i);
+    for (int i = 0; i < player.getInventory().getNonEquipmentItems().size() && sizeLeft > 0; i++) {
+      ItemStack invStack = (ItemStack) player.getInventory().getNonEquipmentItems().get(i);
       if (isEmpty(invStack)) {
         sizeLeft -= maxStackSize;
       } else if (checkItemEqualityStrict(stack, invStack) && getSize(invStack) < maxStackSize) {
@@ -737,7 +745,7 @@ public final class StackUtil {
   }
 
   public static ItemStack getPickStack(Level world, BlockPos pos, BlockState state, Player player) {
-    ItemStack ret = state.getBlock().getCloneItemStack(world, pos, state);
+    ItemStack ret = state.getCloneItemStack(world, pos, false);
     return isEmpty(ret) ? emptyStack : ret;
   }
 

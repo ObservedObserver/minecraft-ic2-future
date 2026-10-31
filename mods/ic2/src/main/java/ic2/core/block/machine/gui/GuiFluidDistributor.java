@@ -4,9 +4,9 @@ import ic2.core.IC2;
 import ic2.core.Ic2Gui;
 import ic2.core.block.machine.container.ContainerFluidDistributor;
 import ic2.core.gui.TankGauge;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiFluidDistributor extends Ic2Gui<ContainerFluidDistributor> {
@@ -17,7 +17,7 @@ public class GuiFluidDistributor extends Ic2Gui<ContainerFluidDistributor> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(
         guiGraphics,
@@ -48,7 +48,7 @@ public class GuiFluidDistributor extends Ic2Gui<ContainerFluidDistributor> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guifluiddistributor.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guifluiddistributor.png");
   }
 }

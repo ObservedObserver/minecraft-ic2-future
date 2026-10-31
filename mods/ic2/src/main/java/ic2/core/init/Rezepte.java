@@ -40,7 +40,7 @@ public class Rezepte {
             recipeManager -> {
               MatterAmplifierRecipeManager manager = new MatterAmplifierRecipeManager();
 
-              for (var holder : recipeManager.getAllRecipesFor(Ic2RecipeTypes.MATTER_FABRICATOR)) {
+              for (var holder : recipeManager.byType(Ic2RecipeTypes.MATTER_FABRICATOR)) {
                 manager.addRecipe(
                     holder.value().recipe().getInput(),
                     holder.value().recipe().getOutput(),
@@ -55,7 +55,7 @@ public class Rezepte {
             recipeManager -> {
               CannerBottleRecipeManager manager = new CannerBottleRecipeManager();
 
-              for (var holder : recipeManager.getAllRecipesFor(Ic2RecipeTypes.CANNER_BOTTLE)) {
+              for (var holder : recipeManager.byType(Ic2RecipeTypes.CANNER_BOTTLE)) {
                 manager.addRecipe(
                     holder.value().recipe().getInput(),
                     holder.value().recipe().getOutput(),
@@ -70,7 +70,7 @@ public class Rezepte {
             recipeManager -> {
               CannerEnrichRecipeManager manager = new CannerEnrichRecipeManager();
 
-              for (var holder : recipeManager.getAllRecipesFor(Ic2RecipeTypes.CANNER_ENRICH)) {
+              for (var holder : recipeManager.byType(Ic2RecipeTypes.CANNER_ENRICH)) {
                 manager.addRecipe(
                     holder.value().recipe().getInput(),
                     holder.value().recipe().getOutput(),
@@ -92,7 +92,7 @@ public class Rezepte {
         recipeManager -> {
           BasicMachineRecipeManager manager = new BasicMachineRecipeManager();
 
-          for (var holder : recipeManager.getAllRecipesFor(recipeType)) {
+          for (var holder : recipeManager.byType(recipeType)) {
             manager.addRecipe(holder.value().recipe(), false);
           }
 

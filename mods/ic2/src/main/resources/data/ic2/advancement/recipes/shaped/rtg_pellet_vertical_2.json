@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/plutonium"
+            "items": "#c:ingots/plutonium"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/rtg_pellet_vertical_2"
+        "recipes": [
+          "ic2:shaped/rtg_pellet_vertical_2"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

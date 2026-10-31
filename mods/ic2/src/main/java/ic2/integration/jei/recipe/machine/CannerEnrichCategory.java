@@ -11,15 +11,14 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CannerEnrichCategory implements IRecipeCategory<CannerEnrichRecipeWrapper> {
-  private static final ResourceLocation GUI_TEXTURE =
-      IC2.getIdentifier("textures/gui/guicanner.png");
+  private static final Identifier GUI_TEXTURE = IC2.getIdentifier("textures/gui/guicanner.png");
   private final RecipeType<CannerEnrichRecipeWrapper> recipeType;
 
   public CannerEnrichCategory(
@@ -76,9 +75,19 @@ public class CannerEnrichCategory implements IRecipeCategory<CannerEnrichRecipeW
   public void draw(
       @NotNull CannerEnrichRecipeWrapper recipe,
       @NotNull IRecipeSlotsView recipeSlotsView,
-      @NotNull GuiGraphics guiGraphics,
+      @NotNull GuiGraphicsExtractor guiGraphics,
       double mouseX,
       double mouseY) {
-    guiGraphics.blit(GUI_TEXTURE, 74, 13, 233, 0, 23, 14);
+    guiGraphics.blit(
+        net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+        GUI_TEXTURE,
+        74,
+        13,
+        233,
+        0,
+        23,
+        14,
+        256,
+        256);
   }
 }

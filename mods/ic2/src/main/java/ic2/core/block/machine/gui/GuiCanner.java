@@ -11,13 +11,13 @@ import ic2.core.gui.INumericValueHandler;
 import ic2.core.gui.RecipeButton;
 import ic2.core.gui.TankGauge;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiCanner extends Ic2Gui<ContainerCanner> {
-  public static final ResourceLocation texture = IC2.getIdentifier("textures/gui/guicanner.png");
+  public static final Identifier texture = IC2.getIdentifier("textures/gui/guicanner.png");
 
   public GuiCanner(ContainerCanner container, Inventory playerInventory, Component title) {
     super(container, playerInventory, title, 184);
@@ -71,8 +71,9 @@ public class GuiCanner extends Ic2Gui<ContainerCanner> {
   }
 
   @Override
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
-    super.renderBg(guiGraphics, delta, mouseX, mouseY);
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     this.bindTexture();
     switch (this.menu.base.getMode()) {
       case BottleSolid:
@@ -96,7 +97,7 @@ public class GuiCanner extends Ic2Gui<ContainerCanner> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return texture;
   }
 }

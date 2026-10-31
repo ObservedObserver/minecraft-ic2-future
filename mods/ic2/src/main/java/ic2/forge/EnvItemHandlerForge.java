@@ -20,12 +20,12 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class EnvItemHandlerForge implements EnvItemHandler {
-  @Nullable private static Container getStorage(
+  @Nullable
+  private static Container getStorage(
       BlockEntity target,
       Direction side,
       GameProfile profile,
@@ -56,7 +56,8 @@ final class EnvItemHandlerForge implements EnvItemHandler {
     }
   }
 
-  @Nullable private static EnvItemHandlerForge.HandlerForge getStorage(
+  @Nullable
+  private static EnvItemHandlerForge.HandlerForge getStorage(
       BlockEntity source, Direction dir, @Nullable Set<Container> personalInventories) {
     BlockEntity target = source.getLevel().getBlockEntity(source.getBlockPos().relative(dir));
     GameProfile profile =
@@ -94,18 +95,20 @@ final class EnvItemHandlerForge implements EnvItemHandler {
 
   private int insertItemTo(
       EnvItemHandlerForge.HandlerForge storage, ItemStack stack, boolean simulate) {
+    ItemStack remaining = stack.copy();
     for (int i = 0; i < storage.getSlots(); i++) {
       ItemStack itemStack = storage.getStackInSlot(i);
-      if (storage.canInsertItem(i, stack)
+      if (storage.canInsertItem(i, remaining)
           && (itemStack.isEmpty()
-              || ItemStack.isSameItemSameComponents(itemStack, stack)
+              || ItemStack.isSameItemSameComponents(itemStack, remaining)
                   && itemStack.getCount() < itemStack.getMaxStackSize())) {
-        ItemStack remainStack = storage.insertItem(i, stack, simulate);
-        return stack.getCount() - remainStack.getCount();
+        remaining = storage.insertItem(i, remaining, simulate);
+        if (remaining.isEmpty()) {
+          break;
+        }
       }
     }
-
-    return 0;
+    return stack.getCount() - remaining.getCount();
   }
 
   @Override
@@ -150,7 +153,8 @@ final class EnvItemHandlerForge implements EnvItemHandler {
     return totalDeposited;
   }
 
-  @Nullable @Override
+  @Nullable
+  @Override
   public EnvItemHandler.AdjacentInventory getAdjacentInventory(BlockEntity source, Direction side) {
     return getStorage(source, side, null);
   }
@@ -220,57 +224,69 @@ final class EnvItemHandlerForge implements EnvItemHandler {
     }
   }
 
-  private static class HandlerForge extends ItemStackHandler
-      implements EnvItemHandler.AdjacentInventory {
+  private static class HandlerForge implements EnvItemHandler.AdjacentInventory {
     final Direction side;
     Container inventory;
 
     private HandlerForge(Container inventory, Direction side) {
-      super(inventory.getContainerSize());
       this.side = side;
       this.inventory = inventory;
-
-      for (int i = 0; i < inventory.getContainerSize(); i++) {
-        this.stacks.set(i, inventory.getItem(i));
-      }
     }
 
     static EnvItemHandlerForge.HandlerForge ofNullable(Container inventory, Direction side) {
       return inventory == null ? null : new EnvItemHandlerForge.HandlerForge(inventory, side);
     }
 
-    @Override
+    public int getSlots() {
+      return this.inventory.getContainerSize();
+    }
+
+    public ItemStack getStackInSlot(int slot) {
+      return this.inventory.getItem(slot);
+    }
+
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-      super.setStackInSlot(slot, stack);
       this.inventory.setItem(slot, stack);
+      this.inventory.setChanged();
     }
 
     public int size() {
       return this.inventory.getContainerSize();
     }
 
-    @NotNull @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-      ItemStack remainStack = super.insertItem(slot, stack, simulate);
-      if (!simulate) {
-        for (int i = 0; i < this.inventory.getContainerSize(); i++) {
-          this.inventory.setItem(i, this.getStackInSlot(i));
-        }
+      if (stack.isEmpty()
+          || !this.inventory.canPlaceItem(slot, stack)
+          || !canInsertItem(slot, stack)) {
+        return stack;
       }
-
-      return remainStack;
+      ItemStack current = getStackInSlot(slot);
+      if (!current.isEmpty() && !ItemStack.isSameItemSameComponents(current, stack)) {
+        return stack;
+      }
+      int capacity = Math.min(stack.getMaxStackSize(), this.inventory.getMaxStackSize());
+      int accepted = Math.min(stack.getCount(), Math.max(0, capacity - current.getCount()));
+      if (accepted == 0) {
+        return stack;
+      }
+      if (!simulate) {
+        ItemStack replacement = stack.copyWithCount(current.getCount() + accepted);
+        setStackInSlot(slot, replacement);
+      }
+      return stack.copyWithCount(stack.getCount() - accepted);
     }
 
-    @NotNull @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-      ItemStack extractedStack = super.extractItem(slot, amount, simulate);
-      if (!simulate) {
-        for (int i = 0; i < this.inventory.getContainerSize(); i++) {
-          this.inventory.setItem(i, this.getStackInSlot(i));
-        }
+      ItemStack current = getStackInSlot(slot);
+      if (amount <= 0 || current.isEmpty() || !canExtractItem(slot, current)) {
+        return ItemStack.EMPTY;
       }
-
-      return extractedStack;
+      int extracted = Math.min(amount, current.getCount());
+      ItemStack result = current.copyWithCount(extracted);
+      if (!simulate) {
+        setStackInSlot(slot, current.copyWithCount(current.getCount() - extracted));
+      }
+      return result;
     }
 
     public boolean canInsertItem(int slot, @NotNull ItemStack stack) {

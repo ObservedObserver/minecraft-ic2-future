@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/lapis"
+            "items": "#c:dusts/lapis"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/lapotron_crystal"
+        "recipes": [
+          "ic2:shaped/lapotron_crystal"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

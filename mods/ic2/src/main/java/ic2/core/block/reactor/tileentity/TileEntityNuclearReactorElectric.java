@@ -183,7 +183,7 @@ public class TileEntityNuclearReactorElectric extends TileEntityInventory
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide && !this.isFluidCooled()) {
+    if (!this.getLevel().isClientSide() && !this.isFluidCooled()) {
       this.refreshChambers();
       EnergyNet.instance.addBlockEntityTile(this);
       this.addedToEnergyNet = true;
@@ -220,8 +220,8 @@ public class TileEntityNuclearReactorElectric extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.heat = nbt.getInt("heat");
-    this.output = nbt.getShort("output");
+    this.heat = nbt.getIntOr("heat", 0);
+    this.output = nbt.getShortOr("output", (short) 0);
   }
 
   @Override

@@ -42,7 +42,7 @@ public class RetextureEvent extends LevelEvent implements ICancellableEvent {
     if (world == null) {
       throw new NullPointerException("null world");
     }
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       throw new IllegalStateException("remote world");
     }
     if (pos == null) {

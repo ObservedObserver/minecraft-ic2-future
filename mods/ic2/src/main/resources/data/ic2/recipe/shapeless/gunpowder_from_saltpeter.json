@@ -1,0 +1,18 @@
+{
+  "type": "ic2:shapeless",
+  "ingredients": [
+    {
+      "tag": "c:dusts/saltpeter"
+    },
+    {
+      "tag": "c:dusts/coal"
+    },
+    {
+      "tag": "c:dusts/sulfur"
+    }
+  ],
+  "result": {
+    "item": "minecraft:gunpowder",
+    "count": 3
+  }
+}

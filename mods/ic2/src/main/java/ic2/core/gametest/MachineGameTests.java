@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.machine.tileentity.TileEntityElectricFurnace;
 import ic2.core.block.machine.tileentity.TileEntityInduction;
 import ic2.core.block.machine.tileentity.TileEntityMacerator;
@@ -7,18 +8,13 @@ import ic2.core.item.ElectricItemManager;
 import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class MachineGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -173,12 +169,52 @@ public class MachineGameTests {
   }
 
   private static <T extends BlockEntity> T getMachine(GameTestHelper helper, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(MACHINE_POS);
+    BlockEntity be =
+        helper.getBlockEntity(
+            MACHINE_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + MACHINE_POS + ", found " + be);
     }
 
     return type.cast(be);
+  }
+
+  @GameTest(template = "gametest/empty7x7x7", timeoutTicks = 400)
+  public static void charcoalGrindsOneForOneAtCoalRateAndEnergy(GameTestHelper helper) {
+    BlockPos coalPos = new BlockPos(2, 1, 2);
+    BlockPos charcoalPos = new BlockPos(4, 1, 2);
+    helper.setBlock(coalPos, Ic2Blocks.MACERATOR);
+    helper.setBlock(charcoalPos, Ic2Blocks.MACERATOR);
+    var coal = helper.getBlockEntity(coalPos, TileEntityMacerator.class);
+    var charcoal = helper.getBlockEntity(charcoalPos, TileEntityMacerator.class);
+    // Enough stored power for exactly one normal operation, with no battery or upgrades.
+    coal.getComponent(ic2.core.block.comp.Energy.class).addEnergy(600);
+    charcoal.getComponent(ic2.core.block.comp.Energy.class).addEnergy(600);
+    coal.inputSlot.put(0, new ItemStack(Items.COAL, 2));
+    charcoal.inputSlot.put(0, new ItemStack(Items.CHARCOAL, 2));
+
+    helper.onEachTick(
+        () -> {
+          helper.assertValueEqual(charcoal.getEnergy(), coal.getEnergy(),
+              "charcoal and coal must consume the same EU on every tick");
+          helper.assertValueEqual(charcoal.getGuiValue("progress"), coal.getGuiValue("progress"),
+              "charcoal and coal must process at the same rate");
+        });
+    helper.runAtTickTime(
+        350,
+        () -> {
+          for (var machine : new TileEntityMacerator[] {coal, charcoal}) {
+            ItemStack output = machine.outputSlot.get(0);
+            helper.assertTrue(output.is(Ic2Items.COAL_DUST), "actual machine must output coal dust");
+            helper.assertValueEqual(output.getCount(), 1, "one input yields exactly one coal dust");
+            helper.assertValueEqual(machine.inputSlot.get(0).getCount(), 1,
+                "only one of two input items is consumed");
+            helper.assertValueEqual(machine.getEnergy(), 0.0, "one operation consumes 600 EU");
+          }
+          helper.assertTrue(charcoal.inputSlot.get(0).is(Items.CHARCOAL),
+              "unprocessed charcoal remains in the input slot");
+          helper.succeed();
+        });
   }
 }

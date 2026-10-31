@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.machine.tileentity.TileEntityExplosive;
 import ic2.core.entity.block.ITntEntity;
 import ic2.core.ref.Ic2Blocks;
@@ -10,9 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +21,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ExplosiveGameTests {
   private static final String EMPTY_LARGE = "gametest/empty7x7x7";
 
@@ -46,8 +41,10 @@ public class ExplosiveGameTests {
 
   @GameTest(template = EMPTY_LARGE, batch = "ic2Explosive")
   public static void blastProtectionReducesHydrogenExplosionDamage(GameTestHelper helper) {
-    LivingEntity unprotected = helper.spawn(EntityType.ZOMBIE, HYDROGEN_POS.above());
-    LivingEntity protectedEntity = helper.spawn(EntityType.ZOMBIE, HYDROGEN_POS.above());
+    LivingEntity unprotected =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.ZOMBIE, HYDROGEN_POS.above());
+    LivingEntity protectedEntity =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.ZOMBIE, HYDROGEN_POS.above());
 
     ItemStack unprotectedChestplate = new ItemStack(Items.IRON_CHESTPLATE);
     ItemStack protectedChestplate = new ItemStack(Items.IRON_CHESTPLATE);
@@ -118,7 +115,10 @@ public class ExplosiveGameTests {
     helper.setBlock(CHAIN_SOURCE_POS, Ic2Blocks.ITNT);
     helper.setBlock(TARGET_POS, Ic2Blocks.ITNT);
 
-    TileEntityExplosive source = (TileEntityExplosive) helper.getBlockEntity(CHAIN_SOURCE_POS);
+    TileEntityExplosive source =
+        (TileEntityExplosive)
+            helper.getBlockEntity(
+                CHAIN_SOURCE_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     source.onRedstoneChange(15);
 
     List<ITntEntity> primed = helper.getEntities(Ic2Entities.ITNT, CHAIN_SOURCE_POS, 2.0);

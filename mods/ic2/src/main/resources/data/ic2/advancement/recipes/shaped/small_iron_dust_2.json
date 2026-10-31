@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/copper"
+            "items": "#c:dusts/copper"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/tin"
+            "items": "#c:dusts/tin"
           }
         ]
       },
@@ -23,7 +23,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/small_iron_dust_2"
+        "recipes": [
+          "ic2:shaped/small_iron_dust_2"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

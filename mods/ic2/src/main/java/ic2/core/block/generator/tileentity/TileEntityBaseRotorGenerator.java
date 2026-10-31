@@ -2,15 +2,15 @@ package ic2.core.block.generator.tileentity;
 
 import ic2.api.tile.IRotorProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class TileEntityBaseRotorGenerator extends TileEntityBaseGenerator
     implements IRotorProvider {
   private static final float rotationSpeed = 0.4F;
-  private static final ResourceLocation rotorTexture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/item/rotor/iron_rotor_model.png");
+  private static final Identifier rotorTexture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/item/rotor/iron_rotor_model.png");
   private final int rotorDiameter;
   private float angle = 0.0F;
   private long lastcheck;
@@ -54,7 +54,7 @@ public abstract class TileEntityBaseRotorGenerator extends TileEntityBaseGenerat
   }
 
   @Override
-  public ResourceLocation getRotorRenderTexture() {
+  public Identifier getRotorRenderTexture() {
     return rotorTexture;
   }
 }

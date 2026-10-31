@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/iridium_neutron_reflector"
+        "recipes": [
+          "ic2:shaped/iridium_neutron_reflector"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

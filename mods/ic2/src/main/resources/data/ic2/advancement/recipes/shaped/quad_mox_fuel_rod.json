@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/copper"
+            "items": "#c:plates/copper"
           }
         ]
       },
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/iron"
+            "items": "#c:plates/iron"
           }
         ]
       },
@@ -35,7 +35,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/quad_mox_fuel_rod"
+        "recipes": [
+          "ic2:shaped/quad_mox_fuel_rod"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

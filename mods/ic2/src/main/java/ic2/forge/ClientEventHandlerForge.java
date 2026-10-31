@@ -1,23 +1,15 @@
 package ic2.forge;
 
-import com.mojang.blaze3d.shaders.FogShape;
 import ic2.core.event.EventHandlerClient;
 import ic2.core.event.TickHandler;
-import ic2.core.proxy.SideProxyClient;
 import ic2.core.sound.DeferredSoundOps;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -25,68 +17,28 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 
 public final class ClientEventHandlerForge {
   @SubscribeEvent
+  public void receiveRecipes(net.neoforged.neoforge.client.event.RecipesReceivedEvent event) {
+    ic2.core.proxy.SideProxyClient.acceptRecipes(event.getRecipeMap());
+  }
+
+  @SubscribeEvent
+  public void clearRecipes(
+      net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+    ic2.core.proxy.SideProxyClient.acceptRecipes(net.minecraft.world.item.crafting.RecipeMap.EMPTY);
+  }
+
+  @SubscribeEvent
   public void onClientTickPre(ClientTickEvent.Pre event) {
     TickHandler.onClientTick();
   }
 
   @SubscribeEvent
   public void onClientTickPost(ClientTickEvent.Post event) {
+    var player = net.minecraft.client.Minecraft.getInstance().player;
+    if (player != null && !net.minecraft.client.Minecraft.getInstance().isPaused()) {
+      ic2.compat.InventoryCompat.tickClient(player);
+    }
     DeferredSoundOps.flush();
-  }
-
-  @SubscribeEvent
-  public void livingEntityPreRender(
-      RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
-    EventHandlerClient.livingEntityPreRender(event.getEntity(), event.getRenderer());
-  }
-
-  @SubscribeEvent
-  public void livingEntityPostRender(
-      RenderLivingEvent.Post<LivingEntity, EntityModel<LivingEntity>> event) {
-    EventHandlerClient.livingEntityPostRender(event.getEntity(), event.getRenderer());
-  }
-
-  @SubscribeEvent
-  public void onSetupFogDensity(ViewportEvent.RenderFog event) {
-    float newDensity = EventHandlerClient.onSetupFogDensity(event.getCamera().getBlockAtCamera());
-    if (newDensity >= 0.0F) {
-      event.setCanceled(true);
-      event.setNearPlaneDistance(-8.0F);
-      event.setFarPlaneDistance(newDensity * 0.5F);
-      event.setFogShape(FogShape.SPHERE);
-    }
-  }
-
-  @SubscribeEvent
-  public void onRenderFogColor(ViewportEvent.ComputeFogColor event) {
-    int color = EventHandlerClient.onRenderFogColor(event.getCamera().getBlockAtCamera());
-    if (color >= 0) {
-      event.setRed((color >>> 16 & 0xFF) / 255.0F);
-      event.setGreen((color >>> 8 & 0xFF) / 255.0F);
-      event.setBlue((color & 0xFF) / 255.0F);
-    }
-  }
-
-  @SubscribeEvent
-  public void onDrawBlockHighlight(RenderHighlightEvent.Block event) {
-    EventHandlerClient.onDrawBlockHighlight(
-        SideProxyClient.mc.player,
-        event.getTarget(),
-        event.getDeltaTracker().getGameTimeDeltaPartialTick(false),
-        event.getPoseStack(),
-        event.getMultiBufferSource());
-  }
-
-  @SubscribeEvent(priority = EventPriority.LOWEST)
-  public void onDrawBlockHighlightLast(RenderHighlightEvent.Block event) {
-    if (EventHandlerClient.onDrawBlockHighlightLast(
-        SideProxyClient.mc.player,
-        event.getTarget(),
-        event.getDeltaTracker().getGameTimeDeltaPartialTick(false),
-        event.getPoseStack(),
-        event.getMultiBufferSource())) {
-      event.setCanceled(true);
-    }
   }
 
   @SubscribeEvent
@@ -123,7 +75,7 @@ public final class ClientEventHandlerForge {
 
   @SubscribeEvent
   public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-    if (event.getEntity().level().isClientSide) {
+    if (event.getEntity().level().isClientSide()) {
       EventHandlerClient.onClientPlayerJoin(event.getEntity());
     }
   }
@@ -131,16 +83,17 @@ public final class ClientEventHandlerForge {
   @SubscribeEvent
   public void onWorldLoad(LevelEvent.Load event) {
     Level world = (Level) event.getLevel();
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       return;
     }
 
     TickHandler.requestSingleWorldTick(
         world,
         loadedWorld -> {
-          if (SideProxyClient.mc.player != null
-              && SideProxyClient.mc.player.level() == loadedWorld) {
-            EventHandlerClient.onClientPlayerJoin(SideProxyClient.mc.player);
+          if (net.minecraft.client.Minecraft.getInstance().player != null
+              && net.minecraft.client.Minecraft.getInstance().player.level() == loadedWorld) {
+            EventHandlerClient.onClientPlayerJoin(
+                net.minecraft.client.Minecraft.getInstance().player);
           }
         });
   }

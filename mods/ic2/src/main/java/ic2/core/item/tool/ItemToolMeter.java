@@ -37,7 +37,7 @@ public class ItemToolMeter extends Item
       return InteractionResult.PASS;
     }
 
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return InteractionResult.PASS;
     }
 
@@ -57,7 +57,7 @@ public class ItemToolMeter extends Item
   }
 
   public boolean onDroppedByPlayer(ItemStack stack, Player player) {
-    if (!player.getCommandSenderWorld().isClientSide
+    if (!player.level().isClientSide()
         && !StackUtil.isEmpty(stack)
         && player.containerMenu instanceof ContainerMeter) {
       HandHeldMeter euReader = ((ContainerMeter) player.containerMenu).base;

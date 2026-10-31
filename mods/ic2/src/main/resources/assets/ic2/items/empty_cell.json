@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "ic2:item/empty_cell",
+    "tints": [
+      {
+        "type": "ic2:legacy_tint",
+        "index": 0
+      },
+      {
+        "type": "ic2:legacy_tint",
+        "index": 1
+      }
+    ]
+  }
+}

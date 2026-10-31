@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/wooden_rotor"
+        "recipes": [
+          "ic2:shaped/wooden_rotor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

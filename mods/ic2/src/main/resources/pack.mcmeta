@@ -1,6 +1,13 @@
 {
   "pack": {
-    "pack_format": 15,
+    "min_format": [
+      97,
+      1
+    ],
+    "max_format": [
+      121,
+      0
+    ],
     "description": "IC2R Resource Pack"
   },
   "language": {

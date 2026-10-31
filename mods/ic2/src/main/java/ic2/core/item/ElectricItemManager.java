@@ -51,14 +51,15 @@ public class ElectricItemManager implements IElectricItemManager {
       }
 
       CompoundTag tNBT = StackUtil.getOrCreateNbtData(stack);
-      double newCharge = tNBT.getDouble("charge");
+      double newCharge = tNBT.getDoubleOr("charge", 0.0);
       amount = Math.min(amount, item.getMaxCharge(stack) - newCharge);
       if (!simulate) {
         newCharge += amount;
         if (newCharge > 0.0) {
-          tNBT.putDouble("charge", newCharge);
+          StackUtil.setTagValue(
+              stack, tNBT, "charge", net.minecraft.nbt.DoubleTag.valueOf(newCharge));
         } else {
-          tNBT.remove("charge");
+          StackUtil.removeTagValue(stack, tNBT, "charge");
         }
 
         StackUtil.setTag(stack, tNBT);
@@ -102,14 +103,15 @@ public class ElectricItemManager implements IElectricItemManager {
     }
 
     CompoundTag tNBT = StackUtil.getOrCreateNbtData(stack);
-    double newCharge = tNBT.getDouble("charge");
+    double newCharge = tNBT.getDoubleOr("charge", 0.0);
     amount = Math.min(amount, newCharge);
     if (!simulate) {
       newCharge -= amount;
       if (newCharge > 0.0) {
-        tNBT.putDouble("charge", newCharge);
+        StackUtil.setTagValue(
+            stack, tNBT, "charge", net.minecraft.nbt.DoubleTag.valueOf(newCharge));
       } else {
-        tNBT.remove("charge");
+        StackUtil.removeTagValue(stack, tNBT, "charge");
       }
 
       StackUtil.setTag(stack, tNBT);
@@ -138,7 +140,7 @@ public class ElectricItemManager implements IElectricItemManager {
     IElectricItem item = (IElectricItem) stack.getItem();
     assert item.getMaxCharge(stack) > 0.0;
     CompoundTag tNBT = StackUtil.getOrCreateNbtData(stack);
-    return tNBT.getDouble("charge");
+    return tNBT.getDoubleOr("charge", 0.0);
   }
 
   @Override

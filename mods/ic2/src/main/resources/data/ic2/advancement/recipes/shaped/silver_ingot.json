@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/silver_ingot"
+        "recipes": [
+          "ic2:shaped/silver_ingot"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

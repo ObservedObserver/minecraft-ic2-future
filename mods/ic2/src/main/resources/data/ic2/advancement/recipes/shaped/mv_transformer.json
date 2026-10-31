@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/mv_transformer"
+        "recipes": [
+          "ic2:shaped/mv_transformer"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

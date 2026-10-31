@@ -24,15 +24,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 public class WorldData {
-  private static ConcurrentMap<ResourceLocation, WorldData> idxClient =
+  private static ConcurrentMap<Identifier, WorldData> idxClient =
       IC2.envProxy.isClientEnv() ? new ConcurrentHashMap<>() : null;
-  private static ConcurrentMap<ResourceLocation, WorldData> idxServer = new ConcurrentHashMap<>();
+  private static ConcurrentMap<Identifier, WorldData> idxServer = new ConcurrentHashMap<>();
   public final EnergyNetLocal energyNet;
   public final Map<BlockEntity, TeUpdateDataServer> tesToUpdate = new IdentityHashMap<>();
   public final TradingMarket tradeMarket;
@@ -51,7 +51,7 @@ public class WorldData {
   boolean continuousUpdatesInUse = false;
 
   private WorldData(Level world) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.energyNet = EnergyNetLocal.create(world);
       this.tradeMarket = new TradingMarket(world);
       this.windSim = new WindSim(world);
@@ -75,7 +75,7 @@ public class WorldData {
       throw new IllegalArgumentException("world is null");
     }
 
-    ConcurrentMap<ResourceLocation, WorldData> index = getIndex(!world.isClientSide);
+    ConcurrentMap<Identifier, WorldData> index = getIndex(!world.isClientSide());
     WorldData ret = index.get(getKey(world));
     if (ret == null && load) {
       ret = new WorldData(world);
@@ -91,14 +91,14 @@ public class WorldData {
   }
 
   public static void onWorldUnload(Level world) {
-    getIndex(!world.isClientSide).remove(getKey(world));
+    getIndex(!world.isClientSide()).remove(getKey(world));
   }
 
-  private static ResourceLocation getKey(Level world) {
+  private static Identifier getKey(Level world) {
     return Util.getDimId(world);
   }
 
-  private static ConcurrentMap<ResourceLocation, WorldData> getIndex(boolean simulating) {
+  private static ConcurrentMap<Identifier, WorldData> getIndex(boolean simulating) {
     return simulating ? idxServer : idxClient;
   }
 }

@@ -20,11 +20,16 @@ public class VanillaSmeltingResolver implements IRecipeResolver {
 
     HolderLookup.Provider registries = IC2.envProxy.getServer().registryAccess();
 
-    for (var wrapper : IC2.sideProxy.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING)) {
+    for (var wrapper : IC2.sideProxy.getRecipeManager().byType(RecipeType.SMELTING)) {
       try {
         SmeltingRecipe recipe = wrapper.value();
-        List<List<LeanItemStack>> inputs = RecipeUtil.convertIngredients(recipe.getIngredients());
-        LeanItemStack output = new LeanItemStack(recipe.getResultItem(registries));
+        List<List<LeanItemStack>> inputs =
+            RecipeUtil.convertIngredients(java.util.List.of(recipe.input()));
+        LeanItemStack output =
+            new LeanItemStack(
+                recipe.assemble(
+                    new net.minecraft.world.item.crafting.SingleRecipeInput(
+                        net.minecraft.world.item.ItemStack.EMPTY)));
         ret.add(new RecipeTransformation(14.0, inputs, output));
       } catch (IllegalArgumentException e) {
         IC2.log.warn(LogCategory.Uu, e, "invalid recipe");

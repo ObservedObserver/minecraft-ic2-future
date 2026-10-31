@@ -1,191 +1,121 @@
 package ic2.core.block;
 
-import ic2.core.IC2;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
-import ic2.core.util.LogCategory;
 import java.util.*;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.Function;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.SimpleModelWrapper;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public abstract class DynamicBeModel<T> implements UnbakedModel, BakedModel {
+public abstract class DynamicBeModel<T> implements DynamicBlockStateModel {
   protected final Ic2TileEntityBlock block;
-  private final ResourceLocation backingModelId;
   private final List<T> cache;
   private final int cacheSize;
   private final StampedLock cacheLock = new StampedLock();
-  protected BakedModel baseModel;
-  private BakedModel activeBaseModel;
+  protected final BlockStateModelPart baseModel;
+  private final BlockStateModelPart activeBaseModel;
 
-  protected DynamicBeModel(ResourceLocation id) {
-    ResourceLocation blockId =
-        ResourceLocation.fromNamespaceAndPath(
+  protected DynamicBeModel(Identifier id, ModelBaker baker) {
+    Identifier blockId =
+        Identifier.fromNamespaceAndPath(
             id.getNamespace(), id.getPath().substring(id.getPath().lastIndexOf('/') + 1));
-    Block block = BuiltInRegistries.BLOCK.get(blockId);
-    if (!(block instanceof Ic2TileEntityBlock)) {
-      throw new IllegalArgumentException("invalid id: " + id);
+    if (!(BuiltInRegistries.BLOCK.getValue(blockId) instanceof Ic2TileEntityBlock machine)) {
+      throw new IllegalArgumentException("Invalid IC2 machine model " + id);
     }
+    this.block = machine;
+    Identifier backing = backing(id);
+    this.baseModel = SimpleModelWrapper.bake(baker, backing, BlockModelRotation.IDENTITY);
+    this.activeBaseModel =
+        machine.canActive()
+            ? SimpleModelWrapper.bake(
+                baker, backing.withSuffix("_active"), BlockModelRotation.IDENTITY)
+            : this.baseModel;
+    this.cacheSize = (machine.facingProperty != null ? 6 : 1) * (machine.canActive() ? 2 : 1);
+    this.cache = new ArrayList<>(Collections.nCopies(cacheSize, null));
+  }
 
-    this.block = (Ic2TileEntityBlock) block;
-    this.backingModelId =
-        ResourceLocation.fromNamespaceAndPath(
-            id.getNamespace(), id.getPath().replace("block/be/", "block/"));
-    this.cacheSize = (this.block.facingProperty != null ? 6 : 1) * (this.block.canActive() ? 2 : 1);
-    this.cache = new ArrayList<>(cacheSize);
-    for (int i = 0; i < cacheSize; i++) this.cache.add(null);
+  public static Identifier backing(Identifier id) {
+    return Identifier.fromNamespaceAndPath(
+        id.getNamespace(), id.getPath().replace("block/be/", "block/"));
   }
 
   protected static BakedQuad rotateQuad(BakedQuad quad, int rot, boolean rotX) {
     rot &= 3;
-    if (rot == 0) {
-      return quad;
+    if (rot == 0) return quad;
+    Vector3fc[] positions = new Vector3fc[4];
+    int[] normals = new int[4];
+    for (int v = 0; v < 4; v++) {
+      Vector3f point = new Vector3f(quad.position(v));
+      Vector3f normal = BakedNormals.unpack(quad.bakedNormals().normal(v), null);
+      for (int i = 0; i < rot; i++) {
+        if (rotX) {
+          point.set(point.x(), point.z(), 1.0F - point.y());
+          normal.set(normal.x(), normal.z(), -normal.y());
+        } else {
+          point.set(1.0F - point.z(), point.y(), point.x());
+          normal.set(-normal.z(), normal.y(), normal.x());
+        }
+      }
+      positions[v] = point;
+      normals[v] = BakedNormals.pack(normal);
     }
-
-    int[] data = quad.getVertices();
-    int[] newData = Arrays.copyOf(data, data.length);
-    int stride = data.length >>> 2;
-    int offsetA;
-    int offsetB;
-    if (rotX) {
-      offsetA = 2;
-      offsetB = 1;
-    } else {
-      offsetA = 0;
-      offsetB = 2;
-    }
-
-    for (int i = 0; i < 4; i++) {
-      int offset = i * stride;
-      float a = Float.intBitsToFloat(data[offset + offsetA]);
-      float b = Float.intBitsToFloat(data[offset + offsetB]);
-      float na;
-      b =
-          switch (rot) {
-            case 1 -> {
-              na = 1.0F - b;
-              yield a;
-            }
-            case 2 -> {
-              na = 1.0F - a;
-              yield 1.0F - b;
-            }
-            case 3 -> {
-              na = b;
-              yield 1.0F - a;
-            }
-            default -> throw new IllegalStateException();
-          };
-
-      newData[offset + offsetA] = Float.floatToRawIntBits(na);
-      newData[offset + offsetB] = Float.floatToRawIntBits(b);
-    }
-
+    var m = quad.materialInfo();
+    var material =
+        new BakedQuad.MaterialInfo(
+            m.sprite(),
+            m.layer(),
+            m.itemRenderType(),
+            m.itemGlintRenderType(),
+            m.itemGlintSpecialRenderType(),
+            m.tintIndex(),
+            m.shadeDirectionOverride() == null
+                ? null
+                : rotateFace(m.shadeDirectionOverride(), rot, rotX),
+            m.lightEmission(),
+            m.ambientOcclusion());
     return new BakedQuad(
-        newData,
-        quad.getTintIndex(),
-        rotateFace(quad.getDirection(), rot, rotX),
-        quad.getSprite(),
-        quad.isShade());
+        positions[0],
+        positions[1],
+        positions[2],
+        positions[3],
+        quad.packedUV0(),
+        quad.packedUV1(),
+        quad.packedUV2(),
+        quad.packedUV3(),
+        rotateFace(quad.direction(), rot, rotX),
+        material,
+        BakedNormals.of(normals[0], normals[1], normals[2], normals[3]),
+        quad.bakedColors());
   }
 
   protected static Direction rotateFace(Direction face, int count, boolean rotX) {
-    count &= 3;
-    if (rotX && face.getAxis() != Axis.X) {
-      for (int i = 0; i < count; i++) {
-        face = face.getClockWise(Axis.X);
-      }
-    } else if (!rotX && face.getAxis() != Axis.Y) {
-      for (int i = 0; i < count; i++) {
-        face = face.getClockWise();
-      }
+    for (int i = 0; i < (count & 3); i++) {
+      if (rotX && face.getAxis() != Axis.X) face = face.getClockWise(Axis.X);
+      else if (!rotX && face.getAxis() != Axis.Y) face = face.getClockWise();
     }
-
     return face;
   }
 
-  public @NotNull Collection<ResourceLocation> getDependencies() {
-    return this.block.canActive()
-        ? Arrays.asList(this.backingModelId, this.getActiveModelId())
-        : Collections.singletonList(this.backingModelId);
+  @Override
+  public Material.Baked particleMaterial() {
+    return baseModel.particleMaterial();
   }
 
-  private ResourceLocation getActiveModelId() {
-    return ResourceLocation.fromNamespaceAndPath(
-        this.backingModelId.getNamespace(), this.backingModelId.getPath().concat("_active"));
-  }
-
-  public void resolveParents(@NotNull Function<ResourceLocation, UnbakedModel> resolver) {
-    for (ResourceLocation id : this.getDependencies()) {
-      if (resolver.apply(id) == null) {
-        IC2.log.warn(LogCategory.Resource, "Missing model %s", id);
-      }
-    }
-  }
-
-  public BakedModel bake(
-      ModelBaker loader,
-      @NotNull Function<Material, TextureAtlasSprite> textureGetter,
-      @NotNull ModelState rotationContainer,
-      @NotNull ResourceLocation modelId) {
-    this.baseModel = loader.bake(this.backingModelId, rotationContainer, textureGetter);
-    if (this.baseModel == null) {
-      throw new IllegalStateException("missing model " + this.backingModelId);
-    }
-
-    if (this.block.canActive()) {
-      this.activeBaseModel = loader.bake(this.getActiveModelId(), rotationContainer, textureGetter);
-      if (this.activeBaseModel == null) {
-        throw new IllegalStateException("missing model " + this.getActiveModelId());
-      }
-    }
-
-    return this;
-  }
-
-  public @NotNull List<BakedQuad> getQuads(
-      @Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource random) {
-    return Collections.emptyList();
-  }
-
-  public boolean useAmbientOcclusion() {
-    return true;
-  }
-
-  public boolean isGui3d() {
-    return true;
-  }
-
-  public boolean usesBlockLight() {
-    return true;
-  }
-
-  public boolean isCustomRenderer() {
-    return false;
-  }
-
-  public @NotNull TextureAtlasSprite getParticleIcon(@NotNull ModelData modelData) {
-    return this.baseModel.getParticleIcon(modelData);
-  }
-
-  public @NotNull ItemOverrides getOverrides() {
-    return ItemOverrides.EMPTY;
+  @Override
+  public int materialFlags() {
+    return baseModel.materialFlags() | activeBaseModel.materialFlags();
   }
 
   protected T getMesh(BlockState state, boolean active) {
@@ -251,5 +181,5 @@ public abstract class DynamicBeModel<T> implements UnbakedModel, BakedModel {
     }
   }
 
-  protected abstract T generateMesh(BakedModel var1, int var2, boolean var3);
+  protected abstract T generateMesh(BlockStateModelPart model, int rot, boolean rotX);
 }

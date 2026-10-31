@@ -2,12 +2,12 @@ package ic2.core.item;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.network.INetworkItemEventListener;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.ref.Ic2SoundEvents;
 import ic2.core.util.StackUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
@@ -23,14 +23,14 @@ public class ItemBattery extends BaseElectricItem implements INetworkItemEventLi
     return true;
   }
 
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
-    if (!world.isClientSide && StackUtil.getSize(stack) == 1) {
+    if (!world.isClientSide() && StackUtil.getSize(stack) == 1) {
       if (ElectricItem.manager.getCharge(stack) > 0.0) {
         boolean transferred = false;
 
         for (int i = 0; i < 9; i++) {
-          ItemStack target = (ItemStack) player.getInventory().items.get(i);
+          ItemStack target = (ItemStack) player.getInventory().getNonEquipmentItems().get(i);
           if (target != null
               && target != stack
               && !(ElectricItem.manager.discharge(
@@ -50,15 +50,15 @@ public class ItemBattery extends BaseElectricItem implements INetworkItemEventLi
           }
         }
 
-        if (transferred && !world.isClientSide) {
+        if (transferred && !world.isClientSide()) {
           player.containerMenu.broadcastChanges();
           IC2.network.get(true).initiateItemEvent(player, stack, 0, true);
         }
       }
 
-      return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+      return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
     } else {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
   }
 

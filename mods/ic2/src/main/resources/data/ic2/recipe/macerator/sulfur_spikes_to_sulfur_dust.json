@@ -1,0 +1,11 @@
+{
+  "type": "ic2:macerator",
+  "ingredient": {
+    "item": "minecraft:sulfur_spike",
+    "count": 4
+  },
+  "result": {
+    "item": "ic2:sulfur_dust",
+    "count": 9
+  }
+}

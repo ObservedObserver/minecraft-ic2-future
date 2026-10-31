@@ -34,18 +34,19 @@ public abstract class HandHeldInventory implements IHasGui {
     this.hand = hand;
     if (IC2.sideProxy.isSimulating()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(containerStack);
-      if (!nbt.contains("uid", 3)) {
-        nbt.putInt("uid", IC2.random.nextInt());
+      if (!ic2.compat.NbtCompat.contains(nbt, "uid", 3)) {
+        StackUtil.setTagValue(
+            containerStack, nbt, "uid", net.minecraft.nbt.IntTag.valueOf(IC2.random.nextInt()));
       }
 
-      ListTag contentList = nbt.getList("Items", 10);
+      ListTag contentList = ic2.compat.NbtCompat.getList(nbt, "Items", 10);
 
       for (int i = 0; i < contentList.size(); i++) {
-        CompoundTag slotNbt = contentList.getCompound(i);
-        int slot = slotNbt.getByte("Slot");
+        CompoundTag slotNbt = contentList.getCompoundOrEmpty(i);
+        int slot = slotNbt.getByteOr("Slot", (byte) 0);
         if (slot >= 0 && slot < this.inventory.length) {
           this.inventory[slot] =
-              ItemStack.parseOptional(this.player.level().registryAccess(), slotNbt);
+              ic2.compat.NbtCompat.readItem(this.player.level().registryAccess(), slotNbt);
         }
       }
     }
@@ -136,11 +137,11 @@ public abstract class HandHeldInventory implements IHasGui {
   @Override
   public void onScreenClosed(Player player) {
     this.save();
-    if (!player.getCommandSenderWorld().isClientSide) {
+    if (!player.level().isClientSide()) {
       if (PLAYERS_IN_GUI.contains(player)) {
         PLAYERS_IN_GUI.remove(player);
       } else if (!this.cleared && !StackUtil.isEmpty(this.containerStack)) {
-        StackUtil.getOrCreateNbtData(this.containerStack).remove("uid");
+        StackUtil.removeTagValue(this.containerStack, "uid");
       }
     }
   }
@@ -152,7 +153,7 @@ public abstract class HandHeldInventory implements IHasGui {
   public boolean isThisContainer(ItemStack stack) {
     if (!StackUtil.isEmpty(stack) && stack.getItem() == this.containerStack.getItem()) {
       CompoundTag nbt = StackUtil.getTag(stack);
-      return nbt != null && nbt.getInt("uid") == this.getUid();
+      return nbt != null && nbt.getIntOr("uid", 0) == this.getUid();
     } else {
       return false;
     }
@@ -160,7 +161,7 @@ public abstract class HandHeldInventory implements IHasGui {
 
   protected int getUid() {
     CompoundTag nbt = StackUtil.getOrCreateNbtData(this.containerStack);
-    return nbt.getInt("uid");
+    return nbt.getIntOr("uid", 0);
   }
 
   protected int getPlayerInventoryIndex() {
@@ -199,11 +200,13 @@ public abstract class HandHeldInventory implements IHasGui {
             nbt.putByte("Slot", (byte) i);
             // 1.21: ItemStack.save no longer writes into the passed tag, it returns the merged
             // result
-            contentList.add(this.inventory[i].save(this.player.level().registryAccess(), nbt));
+            contentList.add(
+                ic2.compat.NbtCompat.saveItem(
+                    this.inventory[i], this.player.level().registryAccess(), nbt));
           }
         }
 
-        StackUtil.getOrCreateNbtData(this.containerStack).put("Items", contentList);
+        StackUtil.setTagValue(this.containerStack, "Items", contentList);
 
         try {
           this.containerStack = StackUtil.copyWithSize(this.containerStack, 1);
@@ -221,11 +224,11 @@ public abstract class HandHeldInventory implements IHasGui {
               this.player.containerMenu == null
                   ? null
                   : this.player.containerMenu.getClass().getName());
-          if (this.player.level().isClientSide) {
+          if (this.player.level().isClientSide()) {
             category.setDetail(
                 "GUI",
                 () -> {
-                  Screen gui = Minecraft.getInstance().screen;
+                  Screen gui = Minecraft.getInstance().gui.screen();
                   return gui == null ? null : gui.getClass().getName();
                 });
           }
@@ -236,9 +239,7 @@ public abstract class HandHeldInventory implements IHasGui {
 
         if (dropItself) {
           StackUtil.dropAsEntity(
-              this.player.getCommandSenderWorld(),
-              this.player.blockPosition(),
-              this.containerStack);
+              this.player.level(), this.player.blockPosition(), this.containerStack);
           this.clearContent();
         } else {
           int idx = this.getPlayerInventoryIndex();
@@ -268,13 +269,15 @@ public abstract class HandHeldInventory implements IHasGui {
         CompoundTag nbt = new CompoundTag();
         nbt.putByte("Slot", (byte) i);
         // 1.21: ItemStack.save no longer writes into the passed tag, it returns the merged result
-        contentList.add(this.inventory[i].save(this.player.level().registryAccess(), nbt));
+        contentList.add(
+            ic2.compat.NbtCompat.saveItem(
+                this.inventory[i], this.player.level().registryAccess(), nbt));
       }
     }
 
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    nbt.put("Items", contentList);
-    nbt.remove("uid");
+    StackUtil.setTagValue(stack, nbt, "Items", contentList);
+    StackUtil.removeTagValue(stack, nbt, "uid");
     this.clearContent();
   }
 

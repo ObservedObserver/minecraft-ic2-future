@@ -1,25 +1,20 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.ArmorItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public final class ArmorGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final double NIGHT_VISION_GOGGLES_MAX_CHARGE = 200000.0;
@@ -43,10 +38,12 @@ public final class ArmorGameTests {
     player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Ic2Items.BRONZE_CHESTPLATE));
     player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Ic2Items.BRONZE_LEGGINGS));
     player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Ic2Items.BRONZE_BOOTS));
-    LivingEntity attacker = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    LivingEntity attacker =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     DamageSource source = helper.getLevel().damageSources().mobAttack(attacker);
 
-    helper.assertTrue(player.hurt(source, 4.0F), "the test player should take damage");
+    helper.assertTrue(
+        player.hurtServer(helper.getLevel(), source, 4.0F), "the test player should take damage");
     assertDamageConsumed(helper, player.getItemBySlot(EquipmentSlot.HEAD), "helmet");
     assertDamageConsumed(helper, player.getItemBySlot(EquipmentSlot.CHEST), "chestplate");
     assertDamageConsumed(helper, player.getItemBySlot(EquipmentSlot.LEGS), "leggings");
@@ -72,10 +69,15 @@ public final class ArmorGameTests {
     Player player = helper.makeMockPlayer(GameType.SURVIVAL);
     ItemStack goggles =
         ElectricItemManager.getCharged(Ic2Items.NIGHT_VISION_GOGGLES, Double.POSITIVE_INFINITY);
-    StackUtil.getOrCreateNbtData(goggles).putBoolean("active", true);
+    StackUtil.setTagValue(goggles, "active", net.minecraft.nbt.ByteTag.valueOf(true));
     player.setItemSlot(EquipmentSlot.HEAD, goggles);
 
-    player.getInventory().tick();
+    // Keep the real equipment tick isolated from other tests' entities at the default origin.
+    player.setPos(
+        net.minecraft.world.phys.Vec3.atCenterOf(
+            helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1))));
+    // Equipment now ticks through LivingEntity.aiStep rather than Inventory.tick.
+    player.aiStep();
 
     Ic2GameTestAssertions.assertNear(
         helper,
@@ -92,10 +94,7 @@ public final class ArmorGameTests {
 
   private static void assertArmorProtection(
       GameTestHelper helper, ArmorItem armor, int expected, String piece) {
-    helper.assertValueEqual(
-        armor.getMaterial().value().getDefense(armor.getType()),
-        expected,
-        piece + " armor protection");
+    helper.assertValueEqual(armor.getDefense(), expected, piece + " armor protection");
   }
 
   private static void assertDamageConsumed(GameTestHelper helper, ItemStack stack, String piece) {

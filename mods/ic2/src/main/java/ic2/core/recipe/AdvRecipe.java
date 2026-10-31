@@ -35,9 +35,10 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -47,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AdvRecipe implements Ic2CraftingRecipe {
   private static final boolean debug = Util.hasAssertions();
-  public final ItemStack output;
+  public final ItemStackTemplate output;
   public final IRecipeInput[] input;
   public final IRecipeInput[] inputMirrored;
   public final int[] masks;
@@ -61,7 +62,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
    * Recipes are no longer id-aware in 1.21 (they are keyed externally through {@code
    * RecipeHolder}), so this is always null now.
    */
-  private final ResourceLocation id;
+  private final Identifier id;
 
   private AdvRecipe(
       int width,
@@ -69,7 +70,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       boolean mirror,
       int mask,
       IRecipeInput[] input,
-      ItemStack result,
+      ItemStackTemplate result,
       boolean isConsuming,
       boolean isHidden) {
     this.id = null;
@@ -145,6 +146,17 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       int height,
       IRecipeInput[] ingredients,
       ItemStack result,
+      boolean consuming,
+      boolean hidden) {
+    return create(
+        width, height, ingredients, ItemStackTemplate.fromNonEmptyStack(result), consuming, hidden);
+  }
+
+  private static AdvRecipe create(
+      int width,
+      int height,
+      IRecipeInput[] ingredients,
+      ItemStackTemplate result,
       boolean isConsuming,
       boolean isHidden) {
     int mask = 0;
@@ -230,16 +242,16 @@ public class AdvRecipe implements Ic2CraftingRecipe {
   }
 
   public ItemStack getResultItem() {
-    return this.output;
+    return this.output.create();
   }
 
   @Override
   public @NotNull ItemStack getResultItem(@NotNull HolderLookup.Provider registries) {
-    return this.output;
+    return this.output.create();
   }
 
   public boolean canShow() {
-    return canShow(this.input, this.output, this.hidden);
+    return canShow(this.input, this.output.create(), this.hidden);
   }
 
   private ItemStack checkItems(CraftingInput inventory, IRecipeInput[] request) {
@@ -261,7 +273,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       i++;
     }
 
-    ItemStack ret = this.output.copy();
+    ItemStack ret = this.output.create();
     ElectricItem.manager.charge(ret, outputCharge, Integer.MAX_VALUE, true, false);
     return ret;
   }
@@ -289,8 +301,8 @@ public class AdvRecipe implements Ic2CraftingRecipe {
   }
 
   @Override
-  public @NotNull NonNullList<Ingredient> getIngredients() {
-    NonNullList<Ingredient> list = NonNullList.create();
+  public @NotNull List<Ingredient> getIngredients() {
+    List<Ingredient> list = new ArrayList<>();
     if (!this.hidden) {
       int mask = this.masks[0];
       int actualIngredient = 0;
@@ -300,7 +312,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
           if ((mask >>> 8 - (x + y * 3) & 1) != 0) {
             list.add(this.input[actualIngredient++].getIngredient());
           } else {
-            list.add(Ingredient.EMPTY);
+            list.add(null);
           }
         }
       }
@@ -314,7 +326,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
     return this.hidden;
   }
 
-  public ResourceLocation getId() {
+  public Identifier getId() {
     return this.id;
   }
 
@@ -330,11 +342,11 @@ public class AdvRecipe implements Ic2CraftingRecipe {
   }
 
   @Override
-  public @NotNull RecipeSerializer<?> getSerializer() {
+  public @NotNull RecipeSerializer<? extends Ic2CraftingRecipe> getSerializer() {
     return Ic2RecipeSerializers.SHAPED;
   }
 
-  public static final class Serializer implements RecipeSerializer<AdvRecipe> {
+  public static final class Serializer extends ic2.compat.RecipeSerializerAdapter<AdvRecipe> {
     /**
      * Decodes the historic IC2 shaped recipe JSON format (pattern/key/result plus the optional
      * consuming/hidden flags) by rebuilding the map as a {@link JsonObject} and reusing the
@@ -360,7 +372,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
                         json.add(
                             key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                       });
-              return DataResult.success(fromJson(json));
+              return DataResult.success(fromJson(json, RecipeIo.registryJsonOps(ops)));
             } catch (RuntimeException e) {
               return DataResult.error(() -> "Failed to parse IC2 shaped recipe: " + e.getMessage());
             }
@@ -377,7 +389,8 @@ public class AdvRecipe implements Ic2CraftingRecipe {
     private static final StreamCodec<RegistryFriendlyByteBuf, AdvRecipe> STREAM_CODEC =
         StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
 
-    private static Map<String, IRecipeInput> readSymbols(JsonObject json) {
+    private static Map<String, IRecipeInput> readSymbols(
+        JsonObject json, DynamicOps<JsonElement> context) {
       HashMap<String, IRecipeInput> map = Maps.newHashMap();
 
       for (Entry<String, JsonElement> entry : json.entrySet()) {
@@ -392,7 +405,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
           throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
         }
 
-        map.put(entry.getKey(), RecipeIo.parseInput(entry.getValue()));
+        map.put(entry.getKey(), RecipeIo.parseInput(entry.getValue(), context));
       }
 
       return map;
@@ -453,13 +466,15 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       }
     }
 
-    private static AdvRecipe fromJson(@NotNull JsonObject json) {
-      Map<String, IRecipeInput> symbols = readSymbols(GsonHelper.getAsJsonObject(json, "key"));
+    private static AdvRecipe fromJson(@NotNull JsonObject json, DynamicOps<JsonElement> context) {
+      Map<String, IRecipeInput> symbols =
+          readSymbols(GsonHelper.getAsJsonObject(json, "key"), context);
       String[] pattern = getPattern(GsonHelper.getAsJsonArray(json, "pattern"));
       int width = pattern[0].length();
       int height = pattern.length;
       IRecipeInput[] ingredients = createPatternMatrix(pattern, symbols, width, height);
-      ItemStack result = RecipeIo.parseOutput(GsonHelper.getAsJsonObject(json, "result"));
+      ItemStackTemplate result =
+          RecipeIo.parseOutputTemplate(GsonHelper.getAsJsonObject(json, "result"));
       boolean consuming = GsonHelper.getAsBoolean(json, "consuming", false);
       boolean hidden = GsonHelper.getAsBoolean(json, "hidden", false);
       return AdvRecipe.create(width, height, ingredients, result, consuming, hidden);
@@ -476,7 +491,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       int height = buf.readVarInt();
       boolean mirror = buf.readBoolean();
       int mask = buf.readInt();
-      ItemStack result = ItemStack.STREAM_CODEC.decode(buf);
+      ItemStackTemplate result = ItemStackTemplate.STREAM_CODEC.decode(buf);
       boolean consuming = buf.readBoolean();
       boolean hidden = buf.readBoolean();
       return new AdvRecipe(width, height, mirror, mask, ingredients, result, consuming, hidden);
@@ -493,7 +508,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
       buf.writeVarInt(recipe.inputHeight);
       buf.writeBoolean(recipe.inputMirrored != null);
       buf.writeInt(recipe.masks[0]);
-      ItemStack.STREAM_CODEC.encode(buf, recipe.output);
+      ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.output);
       buf.writeBoolean(recipe.consuming);
       buf.writeBoolean(recipe.hidden);
     }
@@ -511,7 +526,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
         buf.writeVarInt(ingredient.getAmount());
       } else if (input instanceof RecipeInputItemStack stack) {
         buf.writeByte(2);
-        ItemStack.STREAM_CODEC.encode(buf, stack.input);
+        ItemStackTemplate.STREAM_CODEC.encode(buf, stack.input);
       } else {
         if (!(input instanceof RecipeInputMultiple mult)) {
           throw new IllegalArgumentException(
@@ -537,7 +552,7 @@ public class AdvRecipe implements Ic2CraftingRecipe {
         case 1 ->
             new RecipeInputIngredient(
                 Ingredient.CONTENTS_STREAM_CODEC.decode(buf), buf.readVarInt());
-        case 2 -> new RecipeInputItemStack(ItemStack.STREAM_CODEC.decode(buf));
+        case 2 -> new RecipeInputItemStack(ItemStackTemplate.STREAM_CODEC.decode(buf));
         case 3 -> {
           IRecipeInput[] inputs = new IRecipeInput[buf.readVarInt()];
 

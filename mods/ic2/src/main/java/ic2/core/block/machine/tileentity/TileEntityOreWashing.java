@@ -59,7 +59,7 @@ public class TileEntityOreWashing
       MachineRecipeResult<IRecipeInput, Collection<ItemStack>, ItemStack> output,
       Collection<ItemStack> processResult) {
     super.operateOnce(output, processResult);
-    this.fluidTank.drainMbUnchecked(output.recipe().getMetaData().getInt("amount"), false);
+    this.fluidTank.drainMbUnchecked(output.recipe().getMetaData().getIntOr("amount", 0), false);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class TileEntityOreWashing
         return null;
       }
 
-      if (ret.recipe().getMetaData().getInt("amount") > this.fluidTank.getFluidAmount()) {
+      if (ret.recipe().getMetaData().getIntOr("amount", 0) > this.fluidTank.getFluidAmount()) {
         return null;
       }
     }

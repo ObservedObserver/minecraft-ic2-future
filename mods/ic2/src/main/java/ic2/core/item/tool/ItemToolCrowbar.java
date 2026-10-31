@@ -1,6 +1,8 @@
 package ic2.core.item.tool;
 
 import ic2.api.item.IEnhancedOverlayProvider;
+import ic2.compat.Tier;
+import ic2.compat.TieredItem;
 import ic2.core.IC2;
 import ic2.core.block.transport.cover.ICoverHolder;
 import ic2.core.item.PriorityUsableItem;
@@ -21,8 +23,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -64,7 +64,7 @@ public class ItemToolCrowbar extends TieredItem
       Direction selectedFacing =
           RotationUtil.rotateByHit(side, (float) hitPos.x, (float) hitPos.y, (float) hitPos.z);
       if (target.canRemoveCover(world, pos, selectedFacing)) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
           target.removeCover(world, pos, selectedFacing);
           if (player != null) {
             stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
@@ -75,7 +75,7 @@ public class ItemToolCrowbar extends TieredItem
         }
       }
 
-      return world.isClientSide ? InteractionResult.PASS : InteractionResult.SUCCESS;
+      return world.isClientSide() ? InteractionResult.PASS : InteractionResult.SUCCESS;
     } else {
       return InteractionResult.FAIL;
     }
@@ -90,6 +90,19 @@ public class ItemToolCrowbar extends TieredItem
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext worldIn,

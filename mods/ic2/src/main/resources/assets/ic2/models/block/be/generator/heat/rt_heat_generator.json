@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/generator/heat/rt_heat_generator"
+  "parent": "ic2:block/generator/heat/rt_heat_generator"
 }

@@ -9,15 +9,15 @@
           "name": "ic2:rubber_door"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "ic2:rubber_door",
-          "properties": {
-            "half": "lower"
-          }
-        }
-      ]
+      "condition": {
+        "properties": {
+          "half": "lower"
+        },
+        "type": "minecraft:match_block",
+        "blocks": [
+          "ic2:rubber_door"
+        ]
+      }
     }
   ]
 }

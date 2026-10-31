@@ -11,16 +11,16 @@ import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import java.util.Locale;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiNuclearReactor extends Ic2Gui<ContainerNuclearReactor> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guinuclearreactor.png");
-  private static final ResourceLocation backgroundFluid =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guinuclearreactorfluid.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guinuclearreactor.png");
+  private static final Identifier backgroundFluid =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guinuclearreactorfluid.png");
 
   public GuiNuclearReactor(
       ContainerNuclearReactor container, Inventory playerInventory, Component title) {
@@ -79,8 +79,9 @@ public class GuiNuclearReactor extends Ic2Gui<ContainerNuclearReactor> {
   }
 
   @Override
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
-    super.renderBg(guiGraphics, delta, mouseX, mouseY);
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     int size = this.menu.base.getReactorSize();
     this.bindTexture();
 
@@ -103,7 +104,7 @@ public class GuiNuclearReactor extends Ic2Gui<ContainerNuclearReactor> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return this.menu.base.isFluidCooled() ? backgroundFluid : background;
   }
 }

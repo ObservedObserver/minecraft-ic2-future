@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/extractor"
+        "recipes": [
+          "ic2:shaped/extractor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

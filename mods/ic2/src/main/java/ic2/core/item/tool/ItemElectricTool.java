@@ -4,6 +4,9 @@ import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.item.IItemHudInfo;
 import ic2.api.network.INetworkItemEventListener;
+import ic2.compat.DiggerItem;
+import ic2.compat.Tier;
+import ic2.compat.Tiers;
 import ic2.core.IC2;
 import ic2.core.item.ElectricItemTooltipHandler;
 import ic2.core.ref.Ic2BlockTags;
@@ -23,16 +26,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -40,7 +39,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class ItemElectricTool extends DiggerItem
-    implements IElectricItem, INetworkItemEventListener, IItemHudInfo {
+    implements IElectricItem,
+        INetworkItemEventListener,
+        IItemHudInfo,
+        ic2.compat.LegacyInventoryTicker {
   private final Collection<TagKey<Block>> effectiveBlocks;
   public double operationEnergyCost;
   public int maxCharge;
@@ -125,7 +127,7 @@ public abstract class ItemElectricTool extends DiggerItem
     return super.useOn(context);
   }
 
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ElectricItem.manager.use(StackUtil.get(player, hand), 0.0, player);
     return super.use(world, player, hand);
   }
@@ -152,9 +154,9 @@ public abstract class ItemElectricTool extends DiggerItem
     return false;
   }
 
-  public boolean hurtEnemy(
+  public void hurtEnemy(
       ItemStack itemstack, LivingEntity entityliving, LivingEntity entityliving1) {
-    return true;
+    return;
   }
 
   public int getEnchantmentValue() {
@@ -194,6 +196,19 @@ public abstract class ItemElectricTool extends DiggerItem
     return false;
   }
 
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag context) {
     ElectricItemTooltipHandler.addTooltip(stack, tooltip);
@@ -203,6 +218,20 @@ public abstract class ItemElectricTool extends DiggerItem
     ItemStack ret = new ItemStack(this);
     ElectricItem.manager.charge(ret, charge, Integer.MAX_VALUE, true, false);
     return ret;
+  }
+
+  @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
   }
 
   public void inventoryTick(ItemStack itemstack, Level world, Entity entity, int i, boolean flag) {

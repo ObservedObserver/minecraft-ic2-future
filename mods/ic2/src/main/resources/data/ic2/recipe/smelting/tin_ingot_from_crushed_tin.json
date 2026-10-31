@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "tin_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:crushed_tin"
-  },
+  "ingredient": "ic2:crushed_tin",
   "result": {
     "id": "ic2:tin_ingot"
   },

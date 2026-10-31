@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/bronze_ingot"
+        "recipes": [
+          "ic2:shaped/bronze_ingot"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

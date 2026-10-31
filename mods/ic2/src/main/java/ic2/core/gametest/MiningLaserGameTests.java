@@ -2,6 +2,7 @@ package ic2.core.gametest;
 
 import ic2.api.event.LaserEvent;
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.entity.LaserBulletEntity;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.item.tool.ItemToolMiningLaser;
@@ -11,12 +12,10 @@ import ic2.core.util.Vector3;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -25,12 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class MiningLaserGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -52,7 +46,7 @@ public class MiningLaserGameTests {
       for (int use = 1; use <= 8; use++) {
         laser().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
         helper.assertValueEqual(
-            StackUtil.getOrCreateNbtData(stack).getInt("laser_setting"),
+            StackUtil.getOrCreateNbtData(stack).getIntOr("laser_setting", 0),
             use % 8,
             "mode after " + use + " switches");
       }
@@ -117,7 +111,7 @@ public class MiningLaserGameTests {
   public static void laserWithoutChargeDoesNotFire(GameTestHelper helper) {
     ServerPlayer player = makeShooter(helper, -90.0F);
     ItemStack stack = new ItemStack(Ic2Items.MINING_LASER);
-    StackUtil.getOrCreateNbtData(stack).putInt("laser_setting", 0);
+    StackUtil.setTagValue(stack, "laser_setting", net.minecraft.nbt.IntTag.valueOf(0));
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
     laser().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
@@ -296,7 +290,7 @@ public class MiningLaserGameTests {
   @GameTest(template = EMPTY)
   public static void laserBeamDiesAfterHittingEntity(GameTestHelper helper) {
     ServerPlayer player = makeShooter(helper, 0.0F);
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
 
     laser()
         .shootLaser(
@@ -390,7 +384,9 @@ public class MiningLaserGameTests {
           helper.assertBlockPresent(Blocks.DIRT, new BlockPos(1, 1, 1));
           helper.assertValueEqual(
               countBeams(helper, player), 0, "beams after canceled block break");
-          helper.assertTrue(listener.sawBreak, "listener must see BlockEvent.BreakEvent");
+          helper.assertTrue(
+              listener.sawBreak,
+              "listener must see net.neoforged.neoforge.event.level.block.BreakBlockEvent");
           NeoForge.EVENT_BUS.unregister(listener);
         });
   }
@@ -421,14 +417,14 @@ public class MiningLaserGameTests {
     ServerPlayer player = helper.makeMockServerPlayerInLevel();
     player.setGameMode(GameType.SURVIVAL);
     Vec3 pos = helper.absoluteVec(new Vec3(1.5, 1.0, 0.5));
-    player.moveTo(pos.x, pos.y, pos.z, 0.0F, xRot);
+    player.snapTo(pos.x, pos.y, pos.z, 0.0F, xRot);
     return player;
   }
 
   private static ItemStack prepareLaser(Player player, int mode) {
     ItemStack stack =
         ElectricItemManager.getCharged(Ic2Items.MINING_LASER, Double.POSITIVE_INFINITY);
-    StackUtil.getOrCreateNbtData(stack).putInt("laser_setting", mode);
+    StackUtil.setTagValue(stack, "laser_setting", net.minecraft.nbt.IntTag.valueOf(mode));
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
     return stack;
   }
@@ -491,7 +487,7 @@ public class MiningLaserGameTests {
     }
 
     @SubscribeEvent
-    public void onBreak(BlockEvent.BreakEvent event) {
+    public void onBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
       if (event.getPlayer() == this.owner) {
         this.sawBreak = true;
         event.setCanceled(true);

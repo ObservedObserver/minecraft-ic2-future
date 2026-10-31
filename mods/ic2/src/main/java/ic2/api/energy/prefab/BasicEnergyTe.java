@@ -22,6 +22,26 @@ public class BasicEnergyTe<T extends BasicEnergyTile> extends BlockEntity {
     this.energyBuffer.invalidate();
   }
 
+  @Override
+  protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+    super.loadAdditional(input);
+    CompoundTag tag =
+        input
+            .read(com.mojang.serialization.MapCodec.assumeMapUnsafe(CompoundTag.CODEC))
+            .orElseGet(CompoundTag::new);
+    this.loadAdditional(tag, input.lookup());
+  }
+
+  @Override
+  protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+    super.saveAdditional(output);
+    CompoundTag tag = new CompoundTag();
+    this.saveAdditional(
+        tag,
+        this.level != null ? this.level.registryAccess() : net.minecraft.core.RegistryAccess.EMPTY);
+    output.store(tag);
+  }
+
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     this.energyBuffer.readFromNBT(nbt);

@@ -25,12 +25,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.joml.Vector3f;
 
 public abstract class TileEntityChargePadBlock extends TileEntityElectricBlock {
   private static final List<AABB> aabbs = List.of(new AABB(0.0, 0.0, 0.0, 1.0, 0.9375, 1.0));
   private static final DustParticleOptions effect =
-      new DustParticleOptions(new Vector3f(0.2F, 0.2F, 1.0F), 1.0F);
+      new DustParticleOptions(
+          net.minecraft.util.ARGB.colorFromFloat(
+              1.0F,
+              Math.clamp(0.2F, 0.0F, 1.0F),
+              Math.clamp(0.2F, 0.0F, 1.0F),
+              Math.clamp(1.0F, 0.0F, 1.0F)),
+          1.0F);
   public static byte redstoneModes = 2;
   private int updateTicker;
   private Player player = null;
@@ -65,7 +70,7 @@ public abstract class TileEntityChargePadBlock extends TileEntityElectricBlock {
   @Override
   protected void onEntityCollision(Entity entity) {
     super.onEntityCollision(entity);
-    if (!this.getLevel().isClientSide && entity instanceof Player) {
+    if (!this.getLevel().isClientSide() && entity instanceof Player) {
       this.updatePlayer((Player) entity);
     }
   }
@@ -139,15 +144,15 @@ public abstract class TileEntityChargePadBlock extends TileEntityElectricBlock {
 
     // Forward order matches the original decompile; with a shared energy pool the order
     // decides which slots win when the pad runs dry mid-pass.
-    for (int i = 0; i < player.getInventory().armor.size(); i++) {
-      stack = player.getInventory().armor.get(i);
+    for (var slot : ic2.core.slot.ArmorSlot.getAll()) {
+      stack = player.getItemBySlot(slot);
       if (!stack.isEmpty() && this.chargeItem(stack, chargeFactor)) {
         charged = true;
       }
     }
 
-    for (int i = 0; i < player.getInventory().items.size(); i++) {
-      stack = player.getInventory().items.get(i);
+    for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
+      stack = player.getInventory().getNonEquipmentItems().get(i);
       if (!stack.isEmpty() && this.chargeItem(stack, chargeFactor)) {
         charged = true;
       }

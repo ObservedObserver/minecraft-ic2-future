@@ -53,7 +53,7 @@ public class EnergyNetGlobal implements IEnergyNet {
   }
 
   public static EnergyNetLocal getLocal(Level world) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       throw new IllegalStateException("not applicable clientside");
     }
 

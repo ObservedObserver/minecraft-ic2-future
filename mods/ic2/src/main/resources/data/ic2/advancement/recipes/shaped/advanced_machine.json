@@ -41,7 +41,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/steel"
+            "items": "#c:plates/steel"
           }
         ]
       },
@@ -49,7 +49,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/advanced_machine"
+        "recipes": [
+          "ic2:shaped/advanced_machine"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

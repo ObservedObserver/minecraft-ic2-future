@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/generator/kinetic/water_kinetic_generator_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/water_kinetic_generator"
     }
   }
 }

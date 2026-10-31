@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemCrop extends BlockItem implements IBoxable {
   public ItemCrop(Properties settings) {
-    super(Ic2Blocks.CROP_STICK, settings);
+    super(Ic2Blocks.CROP_STICK, settings.useBlockDescriptionPrefix());
   }
 
   protected boolean canPlace(BlockPlaceContext context, BlockState state) {

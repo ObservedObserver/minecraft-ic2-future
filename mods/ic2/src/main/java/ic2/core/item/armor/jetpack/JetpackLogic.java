@@ -61,7 +61,7 @@ public class JetpackLogic {
       }
     }
 
-    int worldHeight = world.getMaxBuildHeight();
+    int worldHeight = world.getMaxY();
     int maxFlightHeight = (int) (worldHeight / jetpack.getWorldHeightDivisor(stack));
     double y = player.getY();
     if (y > maxFlightHeight - 25) {
@@ -113,8 +113,8 @@ public class JetpackLogic {
   public static void onArmorTick(Level world, Player player, ItemStack stack, IJetpack jetpack) {
     if (stack != null && jetpack.isJetpackActive(stack)) {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      boolean hoverMode = nbtData.getBoolean("hover_mode");
-      byte toggleTimer = nbtData.getByte("toggle_timer");
+      boolean hoverMode = nbtData.getBooleanOr("hover_mode", false);
+      byte toggleTimer = nbtData.getByteOr("toggle_timer", (byte) 0);
       boolean jetpackUsed = false;
 
       if (IC2.keyboard.isJumpKeyDown(player)
@@ -123,7 +123,8 @@ public class JetpackLogic {
         toggleTimer = 10;
         hoverMode = !hoverMode;
         if (!world.isClientSide()) {
-          nbtData.putBoolean("hover_mode", hoverMode);
+          StackUtil.setTagValue(
+              stack, nbtData, "hover_mode", net.minecraft.nbt.ByteTag.valueOf(hoverMode));
           if (hoverMode) {
             IC2.sideProxy.messagePlayer(player, "ic2.hover_mode.enabled");
           } else {
@@ -135,13 +136,15 @@ public class JetpackLogic {
       if (IC2.keyboard.isJumpKeyDown(player) || hoverMode) {
         jetpackUsed = useJetpack(player, hoverMode, jetpack, stack);
         if (player.onGround() && hoverMode && !world.isClientSide()) {
-          nbtData.putBoolean("hover_mode", false);
+          StackUtil.setTagValue(
+              stack, nbtData, "hover_mode", net.minecraft.nbt.ByteTag.valueOf(false));
           IC2.sideProxy.messagePlayer(player, "ic2.hover_mode.disabled");
         }
       }
 
       if (!world.isClientSide() && toggleTimer > 0) {
-        nbtData.putByte("toggle_timer", --toggleTimer);
+        StackUtil.setTagValue(
+            stack, nbtData, "toggle_timer", net.minecraft.nbt.ByteTag.valueOf(--toggleTimer));
       }
 
       updateJetpackSound(player, jetpackUsed, jetpack);

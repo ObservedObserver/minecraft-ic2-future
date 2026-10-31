@@ -1,20 +1,15 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.machine.tileentity.TileEntityTesla;
 import ic2.core.ref.Ic2Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class TeslaCoilGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -30,7 +25,7 @@ public class TeslaCoilGameTests {
     TileEntityTesla te = getTe(helper, COIL_POS, TileEntityTesla.class);
     te.getComponent(Energy.class).addEnergy(8000.0);
 
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(2, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(2, 1, 1));
 
     helper.succeedWhen(
         () -> {
@@ -50,7 +45,7 @@ public class TeslaCoilGameTests {
     TileEntityTesla te = getTe(helper, COIL_POS, TileEntityTesla.class);
     te.getComponent(Energy.class).addEnergy(8000.0);
 
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(2, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(2, 1, 1));
 
     helper.runAtTickTime(
         80,
@@ -77,7 +72,8 @@ public class TeslaCoilGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

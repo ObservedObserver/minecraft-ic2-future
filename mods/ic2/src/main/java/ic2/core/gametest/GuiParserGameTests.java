@@ -1,21 +1,17 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.personal.TileEntityPersonalChest;
 import ic2.core.gui.dynamic.GuiParser;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class GuiParserGameTests {
   private static final String TEMPLATE = "gametest/empty3x3x3";
 
-  private static final ResourceLocation PERSONAL_CHEST =
-      ResourceLocation.fromNamespaceAndPath("ic2", "personal_chest");
+  private static final Identifier PERSONAL_CHEST =
+      Identifier.fromNamespaceAndPath("ic2", "personal_chest");
 
   // GUI definitions resolve through baseClass first so addon guidef XMLs (in the addon's own
   // module) are found; module resource lookups don't cross mod boundaries. The GuiParser.class

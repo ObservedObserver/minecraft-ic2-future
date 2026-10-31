@@ -72,7 +72,7 @@ public class Ic2FenceBlock extends FenceBlock {
 
   public static void onPlayerTick(Player player) {
     Level level = player.level();
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       return;
     }
 
@@ -102,6 +102,23 @@ public class Ic2FenceBlock extends FenceBlock {
         (BlockState) this.defaultBlockState().setValue(WATERLOGGED, fluidState.is(Fluids.WATER)),
         ctx.getLevel(),
         ctx.getClickedPos());
+  }
+
+  @Override
+  public BlockState updateShape(
+      BlockState state,
+      net.minecraft.world.level.LevelReader world,
+      net.minecraft.world.level.ScheduledTickAccess ticks,
+      BlockPos pos,
+      Direction direction,
+      BlockPos neighborPos,
+      BlockState neighborState,
+      net.minecraft.util.RandomSource random) {
+    if (state.getValue(WATERLOGGED)) {
+      ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+    }
+
+    return this.getActualState(state, world, pos);
   }
 
   public BlockState updateShape(
@@ -172,6 +189,17 @@ public class Ic2FenceBlock extends FenceBlock {
     return state.getBlock() instanceof Ic2FenceBlock;
   }
 
+  @Override
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
+    this.entityInside(state, world, pos, entity);
+  }
+
   public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
     if (this.canBoost) {
       this.handleMagnetizerBoost(world, pos, entity);
@@ -179,7 +207,7 @@ public class Ic2FenceBlock extends FenceBlock {
   }
 
   private void handleMagnetizerBoost(Level world, BlockPos pos, Entity rawEntity) {
-    if (world.isClientSide || !(rawEntity instanceof Player player)) {
+    if (world.isClientSide() || !(rawEntity instanceof Player player)) {
       return;
     }
 
@@ -217,10 +245,10 @@ public class Ic2FenceBlock extends FenceBlock {
       velocity = player.getDeltaMovement();
       player.setDeltaMovement(velocity.x, Math.min(velocity.y(), maxSpeed), velocity.z);
       player.setOnGround(false);
-      player.hasImpulse = true;
+      player.syncVelocity = true;
     }
 
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       for (TileEntityMagnetizer magnetizer : this.getMagnetizers(world, pos, false)) {
         IC2.network.get(true).updateTileEntityField(magnetizer, "energy");
       }
@@ -250,7 +278,7 @@ public class Ic2FenceBlock extends FenceBlock {
       BlockGetter world, BlockPos start, boolean checkPower) {
     int maxRange = 20;
     List<TileEntityMagnetizer> ret = new ArrayList<>();
-    BlockPos center = new BlockPos(start);
+    BlockPos center = start.immutable();
     new BlockPos(0, 0, 0);
 
     for (Direction facing : Util.HORIZONTAL_DIRS) {

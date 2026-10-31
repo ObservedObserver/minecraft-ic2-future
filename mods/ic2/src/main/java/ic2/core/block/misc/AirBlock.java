@@ -13,5 +13,11 @@ public class AirBlock extends LiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {}
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {}
 }

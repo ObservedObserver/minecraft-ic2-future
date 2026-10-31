@@ -129,7 +129,7 @@ public class PumpUtil {
       {
         label103:
         {
-          visited.add(new BlockPos(pos));
+          visited.add(pos.immutable());
           pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
           if (!visited.contains(pos)) {
             int newDecay = getFlowDecay(world, pos);

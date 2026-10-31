@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/iron_dust"
+        "recipes": [
+          "ic2:shaped/iron_dust"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

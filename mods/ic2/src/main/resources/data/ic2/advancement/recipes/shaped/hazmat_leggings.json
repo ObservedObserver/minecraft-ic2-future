@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/hazmat_leggings"
+        "recipes": [
+          "ic2:shaped/hazmat_leggings"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

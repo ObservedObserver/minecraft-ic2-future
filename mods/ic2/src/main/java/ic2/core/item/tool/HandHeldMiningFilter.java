@@ -16,14 +16,15 @@ public class HandHeldMiningFilter extends HandHeldInventory {
     super(player, hand, containerStack, 45);
     CompoundTag nbt = StackUtil.getOrCreateNbtData(containerStack);
     if (nbt.contains("blacklist")) {
-      this.blacklist = nbt.getBoolean("blacklist");
+      this.blacklist = nbt.getBooleanOr("blacklist", false);
     }
   }
 
   @Override
   protected void save() {
     CompoundTag nbt = StackUtil.getOrCreateNbtData(this.containerStack);
-    nbt.putBoolean("blacklist", this.blacklist);
+    StackUtil.setTagValue(
+        this.containerStack, nbt, "blacklist", net.minecraft.nbt.ByteTag.valueOf(this.blacklist));
     super.save();
   }
 

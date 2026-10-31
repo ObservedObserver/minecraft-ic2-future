@@ -19,6 +19,19 @@ public class ItemCrystalMemory extends Item {
     super(settings);
   }
 
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
@@ -30,7 +43,7 @@ public class ItemCrystalMemory extends Item {
           tooltip,
           Component.translatable(
               "item.ic2.crystal_memory.tooltip.item",
-              Component.translatable(recorded.getDescriptionId())));
+              Component.translatable(recorded.getItem().getDescriptionId())));
       Ic2Tooltip.add(
           tooltip,
           Component.translatable(
@@ -43,12 +56,17 @@ public class ItemCrystalMemory extends Item {
 
   public ItemStack readItemStack(ItemStack stack) {
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    CompoundTag contentTag = nbt.getCompound("Pattern");
-    return ItemStack.parseOptional(net.minecraft.core.RegistryAccess.EMPTY, contentTag);
+    CompoundTag contentTag = nbt.getCompoundOrEmpty("Pattern");
+    return ic2.compat.NbtCompat.readItem(net.minecraft.core.RegistryAccess.EMPTY, contentTag);
   }
 
   public void writeContentsTag(ItemStack stack, ItemStack recorded) {
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    nbt.put("Pattern", recorded.save(net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag()));
+    StackUtil.setTagValue(
+        stack,
+        nbt,
+        "Pattern",
+        ic2.compat.NbtCompat.saveItem(
+            recorded, net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag()));
   }
 }

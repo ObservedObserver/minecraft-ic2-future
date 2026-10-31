@@ -52,6 +52,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -59,11 +60,9 @@ import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.runtime.IRecipesGui;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -73,7 +72,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,7 +157,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
   }
 
-  public @NotNull ResourceLocation getPluginUid() {
+  public @NotNull Identifier getPluginUid() {
     return IC2.getIdentifier("plugin");
   }
 
@@ -232,7 +230,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     registration.addRecipeCatalyst(new ItemStack(Ic2Blocks.BATCH_CRAFTER), RecipeTypes.CRAFTING);
 
     registration.addRecipeCatalyst(
-        new ItemStack(Ic2Blocks.IRON_FURNACE), RecipeTypes.SMELTING, RecipeTypes.FUELING);
+        new ItemStack(Ic2Blocks.IRON_FURNACE), RecipeTypes.SMELTING, RecipeTypes.SMELTING_FUEL);
     registration.addRecipeCatalyst(new ItemStack(Ic2Blocks.ELECTRIC_FURNACE), RecipeTypes.SMELTING);
     registration.addRecipeCatalyst(
         new ItemStack(Ic2Blocks.INDUCTION_FURNACE), RecipeTypes.SMELTING);
@@ -241,7 +239,7 @@ public class Ic2JeiPlugin implements IModPlugin {
   @Override
   public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
     IRecipesGui recipesGui = jeiRuntime.getRecipesGui();
-    Map<String, RecipeType<?>> aliases = this.createRecipeButtonAliases();
+    Map<String, IRecipeType<?>> aliases = this.createRecipeButtonAliases();
 
     RecipeButton.jeiRecipeListOpener =
         categories ->
@@ -250,9 +248,9 @@ public class Ic2JeiPlugin implements IModPlugin {
                 return;
               }
 
-              Set<RecipeType<?>> types = new LinkedHashSet<>();
+              Set<IRecipeType<?>> types = new LinkedHashSet<>();
               for (String key : categories) {
-                RecipeType<?> type = resolveRecipeButtonKey(key, aliases);
+                IRecipeType<?> type = resolveRecipeButtonKey(key, aliases);
                 if (type != null) {
                   types.add(type);
                 }
@@ -269,8 +267,8 @@ public class Ic2JeiPlugin implements IModPlugin {
     RecipeButton.jeiRecipeListOpener = null;
   }
 
-  private Map<String, RecipeType<?>> createRecipeButtonAliases() {
-    Map<String, RecipeType<?>> aliases = new HashMap<>();
+  private Map<String, IRecipeType<?>> createRecipeButtonAliases() {
+    Map<String, IRecipeType<?>> aliases = new HashMap<>();
 
     aliases.put("macerator", this.MACERATOR);
     aliases.put("compressor", this.COMPRESSOR);
@@ -299,12 +297,12 @@ public class Ic2JeiPlugin implements IModPlugin {
     aliases.put("canner_enrich", this.CANNER_ENRICH);
 
     aliases.put("minecraft.smelting", RecipeTypes.SMELTING);
-    aliases.put("minecraft.fuel", RecipeTypes.FUELING);
+    aliases.put("minecraft.fuel", RecipeTypes.SMELTING_FUEL);
     aliases.put("minecraft:smelting", RecipeTypes.SMELTING);
     aliases.put("minecraft:furnace", RecipeTypes.SMELTING);
-    aliases.put("minecraft:fuel", RecipeTypes.FUELING);
+    aliases.put("minecraft:fuel", RecipeTypes.SMELTING_FUEL);
     aliases.put("smelting", RecipeTypes.SMELTING);
-    aliases.put("fuel", RecipeTypes.FUELING);
+    aliases.put("fuel", RecipeTypes.SMELTING_FUEL);
 
     putUidAliases(aliases, this.MACERATOR);
     putUidAliases(aliases, this.COMPRESSOR);
@@ -324,19 +322,19 @@ public class Ic2JeiPlugin implements IModPlugin {
     return aliases;
   }
 
-  private static void putUidAliases(Map<String, RecipeType<?>> aliases, RecipeType<?> type) {
-    ResourceLocation uid = type.getUid();
+  private static void putUidAliases(Map<String, IRecipeType<?>> aliases, IRecipeType<?> type) {
+    Identifier uid = type.getUid();
     aliases.put(uid.toString(), type);
     aliases.put(uid.getPath(), type);
   }
 
-  @Nullable private static RecipeType<?> resolveRecipeButtonKey(
-      String key, Map<String, RecipeType<?>> aliases) {
+  @Nullable private static IRecipeType<?> resolveRecipeButtonKey(
+      String key, Map<String, IRecipeType<?>> aliases) {
     if (key == null || key.isEmpty()) {
       return null;
     }
 
-    RecipeType<?> direct = aliases.get(key);
+    IRecipeType<?> direct = aliases.get(key);
     if (direct != null) {
       return direct;
     }
@@ -348,7 +346,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
 
     if (normalized.indexOf(':') >= 0) {
-      ResourceLocation id = ResourceLocation.tryParse(normalized);
+      Identifier id = Identifier.tryParse(normalized);
       if (id != null) {
         direct = aliases.get(id.toString());
         if (direct != null) {
@@ -483,7 +481,7 @@ public class Ic2JeiPlugin implements IModPlugin {
   }
 
   public void registerRecipes(@NotNull IRecipeRegistration registration) {
-    RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+    net.minecraft.world.item.crafting.RecipeMap recipeManager = IC2.sideProxy.getRecipeManager();
     BiConsumer<
             RecipeType<IORecipeWrapper>,
             net.minecraft.world.item.crafting.RecipeType<
@@ -491,7 +489,7 @@ public class Ic2JeiPlugin implements IModPlugin {
         registerBasic =
             (id, type) -> {
               List<IORecipeWrapper> recipeList =
-                  recipeManager.getAllRecipesFor(type).stream()
+                  recipeManager.byType(type).stream()
                       .map(r -> new IORecipeWrapper(r.value().recipe()))
                       .toList();
               registration.addRecipes(id, recipeList);
@@ -508,13 +506,13 @@ public class Ic2JeiPlugin implements IModPlugin {
     registerBasic.accept(this.ORE_WASHER, Ic2RecipeTypes.ORE_WASHER);
 
     List<CannerBottleRecipeWrapper> cannerBottleRecipes =
-        recipeManager.getAllRecipesFor(Ic2RecipeTypes.CANNER_BOTTLE).stream()
+        recipeManager.byType(Ic2RecipeTypes.CANNER_BOTTLE).stream()
             .map(r -> new CannerBottleRecipeWrapper(r.value().recipe()))
             .toList();
     registration.addRecipes(this.CANNER_BOTTLE, cannerBottleRecipes);
 
     List<CannerEnrichRecipeWrapper> cannerEnrichRecipes =
-        recipeManager.getAllRecipesFor(Ic2RecipeTypes.CANNER_ENRICH).stream()
+        recipeManager.byType(Ic2RecipeTypes.CANNER_ENRICH).stream()
             .map(r -> new CannerEnrichRecipeWrapper(r.value().recipe()))
             .toList();
     registration.addRecipes(this.CANNER_ENRICH, cannerEnrichRecipes);
@@ -552,7 +550,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
 
     @Override
-    public @NotNull RecipeType<net.minecraft.world.item.crafting.RecipeHolder<CraftingRecipe>>
+    public @NotNull IRecipeType<net.minecraft.world.item.crafting.RecipeHolder<CraftingRecipe>>
         getRecipeType() {
       return RecipeTypes.CRAFTING;
     }
@@ -621,7 +619,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
 
     @Override
-    public @NotNull RecipeType<net.minecraft.world.item.crafting.RecipeHolder<CraftingRecipe>>
+    public @NotNull IRecipeType<net.minecraft.world.item.crafting.RecipeHolder<CraftingRecipe>>
         getRecipeType() {
       return RecipeTypes.CRAFTING;
     }
@@ -719,7 +717,7 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
 
     @Nullable private static ToolCombo detectToolCombo(CraftingRecipe recipe) {
-      NonNullList<Ingredient> ingredients = recipe.getIngredients();
+      List<Ingredient> ingredients = recipe.placementInfo().ingredients();
       if (ingredients.size() != 2) {
         return null;
       }
@@ -748,7 +746,8 @@ public class Ic2JeiPlugin implements IModPlugin {
     }
 
     private static boolean ingredientMatchesTag(Ingredient ingredient, TagKey<Item> tag) {
-      for (ItemStack stack : ingredient.getItems()) {
+      for (ItemStack stack :
+          ingredient.items().map(holder -> new ItemStack(holder)).toArray(ItemStack[]::new)) {
         if (!stack.isEmpty() && stack.is(tag)) {
           return true;
         }

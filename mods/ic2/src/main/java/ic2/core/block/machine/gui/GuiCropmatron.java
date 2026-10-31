@@ -5,7 +5,7 @@ import ic2.core.block.machine.container.ContainerCropmatron;
 import ic2.core.gui.EnergyGauge;
 import ic2.core.gui.TankGauge;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiCropmatron extends Ic2Gui<ContainerCropmatron> {
@@ -17,7 +17,7 @@ public class GuiCropmatron extends Ic2Gui<ContainerCropmatron> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guicropmatron.png");
+  public Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guicropmatron.png");
   }
 }

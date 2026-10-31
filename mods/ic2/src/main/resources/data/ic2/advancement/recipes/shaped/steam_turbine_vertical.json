@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/steam_turbine_vertical"
+        "recipes": [
+          "ic2:shaped/steam_turbine_vertical"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

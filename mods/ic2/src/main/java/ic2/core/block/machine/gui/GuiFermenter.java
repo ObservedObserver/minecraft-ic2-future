@@ -7,12 +7,12 @@ import ic2.core.gui.LinkedGauge;
 import ic2.core.gui.TankGauge;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiFermenter extends Ic2Gui<ContainerFermenter> {
-  private static final ResourceLocation TEXTURE =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guifermenter.png");
+  private static final Identifier TEXTURE =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guifermenter.png");
 
   public GuiFermenter(ContainerFermenter container, Inventory playerInventory, Component title) {
     super(container, playerInventory, title, 184);
@@ -34,7 +34,7 @@ public class GuiFermenter extends Ic2Gui<ContainerFermenter> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return TEXTURE;
   }
 }

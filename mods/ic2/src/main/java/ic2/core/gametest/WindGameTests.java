@@ -2,6 +2,7 @@ package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IKineticRotor;
+import ic2.compat.GameTest;
 import ic2.core.IC2;
 import ic2.core.WindSim;
 import ic2.core.block.kineticgenerator.tileentity.TileEntityWindKineticGenerator;
@@ -10,7 +11,6 @@ import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -23,11 +23,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class WindGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -108,20 +104,20 @@ public class WindGameTests {
   @GameTest(template = EMPTY, timeoutTicks = 600, batch = "ic2WindWeather")
   public static void windSimWeatherBoostsWind(GameTestHelper helper) {
     ServerLevel level = helper.getLevel();
-    level.setWeatherParameters(100000, 0, false, false);
+    ic2.compat.WorldCompat.setWeather(level, 100000, 0, false, false);
     WindSim sim = new WindSim(level);
     double peakY = windPeakY(level);
     double clear = sim.getWindAt(peakY);
     helper.assertFalse(level.isRaining(), "weather should start out clear");
 
-    level.setWeatherParameters(0, 100000, true, false);
+    ic2.compat.WorldCompat.setWeather(level, 0, 100000, true, false);
     helper.runAtTickTime(
         200,
         () -> {
           helper.assertTrue(level.isRaining() && !level.isThundering(), "rain should have set in");
           Ic2GameTestAssertions.assertNear(
               helper, sim.getWindAt(peakY), clear * 1.25, "wind strength in rain");
-          level.setWeatherParameters(0, 100000, true, true);
+          ic2.compat.WorldCompat.setWeather(level, 0, 100000, true, true);
         });
     helper.runAtTickTime(
         500,
@@ -129,7 +125,7 @@ public class WindGameTests {
           helper.assertTrue(level.isThundering(), "thunder should have set in");
           Ic2GameTestAssertions.assertNear(
               helper, sim.getWindAt(peakY), clear * 1.5, "wind strength in a thunderstorm");
-          level.setWeatherParameters(100000, 0, false, false);
+          ic2.compat.WorldCompat.setWeather(level, 100000, 0, false, false);
           helper.succeed();
         });
   }
@@ -143,7 +139,7 @@ public class WindGameTests {
     player.setItemInHand(InteractionHand.MAIN_HAND, meter);
 
     InteractionResult result =
-        meter.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND).getResult();
+        meter.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
     helper.assertValueEqual(result, InteractionResult.SUCCESS, "wind meter use result");
     helper.assertValueEqual(
         ElectricItem.manager.getCharge(meter),
@@ -153,7 +149,7 @@ public class WindGameTests {
     ItemStack empty = new ItemStack(Ic2Items.WIND_METER);
     player.setItemInHand(InteractionHand.MAIN_HAND, empty);
     InteractionResult emptyResult =
-        empty.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND).getResult();
+        empty.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
     helper.assertValueEqual(
         emptyResult, InteractionResult.PASS, "empty wind meter should not measure");
     helper.succeed();
@@ -232,7 +228,7 @@ public class WindGameTests {
       boolean fitsWater) {
     ItemStack stack = new ItemStack(item);
     IKineticRotor rotor = (IKineticRotor) item;
-    String name = stack.getDescriptionId();
+    String name = stack.getItem().getDescriptionId();
     helper.assertValueEqual(rotor.getDiameter(stack), diameter, "diameter of " + name);
     helper.assertValueEqual(rotor.getEfficiency(stack), efficiency, "efficiency of " + name);
     helper.assertValueEqual(
@@ -268,7 +264,8 @@ public class WindGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

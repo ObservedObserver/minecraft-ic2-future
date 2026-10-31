@@ -1,41 +1,60 @@
 package ic2.forge.model;
 
+import ic2.compat.client.QuadCompat;
 import ic2.core.block.wiring.AbstractCableBlock;
 import ic2.core.block.wiring.CableFoam;
 import ic2.core.block.wiring.CableType;
 import ic2.core.block.wiring.DynamicCableModel;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
+import java.util.*;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.client.model.data.ModelProperty;
-import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
-import org.jetbrains.annotations.Nullable;
 
-final class DynamicCableModelForge extends DynamicCableModel<List<BakedQuad>[], List<BakedQuad>[]>
-    implements Ic2Model {
-  private static final ModelProperty<List<BakedQuad>[]> MESH_DATA = new ModelProperty<>();
-  private static final int stride = 8;
+final class DynamicCableModelForge extends DynamicCableModel<List<BakedQuad>[], List<BakedQuad>[]> {
+  DynamicCableModelForge(
+      CableType type, int insulation, CableFoam foam, boolean active, ModelBaker baker) {
+    super(type, insulation, foam, active, baker);
+  }
 
-  DynamicCableModelForge(CableType type, int insulation, CableFoam foam, boolean active) {
-    super(type, insulation, foam, active);
+  @Override
+  public void collectParts(
+      BlockAndTintGetter world,
+      BlockPos pos,
+      BlockState state,
+      RandomSource random,
+      List<BlockStateModelPart> output) {
+    // Connection and dye properties are part of the supplied thread-safe block state.
+    if (state.getBlock() instanceof AbstractCableBlock) {
+      output.add(QuadCompat.part(Arrays.asList(this.getMesh(state)), particleMaterial(), true));
+    } else {
+      output.add(
+          QuadCompat.part(
+              Arrays.asList(generateMesh(DyeColor.BLACK, 0)), particleMaterial(), true));
+    }
+  }
+
+  QuadCollection itemGeometry() {
+    return QuadCompat.collection(Arrays.asList(generateMesh(DyeColor.BLACK, 0)));
+  }
+
+  @Override
+  public int materialFlags() {
+    return itemGeometry().materialFlags();
+  }
+
+  @Override
+  public int materialFlags(BlockAndTintGetter world, BlockPos pos, BlockState state) {
+    return state.getBlock() instanceof AbstractCableBlock
+        ? QuadCompat.collection(Arrays.asList(getMesh(state))).materialFlags()
+        : materialFlags();
   }
 
   private static float map(float value, float start, float end) {
@@ -65,53 +84,6 @@ final class DynamicCableModelForge extends DynamicCableModel<List<BakedQuad>[], 
 
   private static int getIdx(Direction dir) {
     return dir == null ? 6 : dir.ordinal();
-  }
-
-  private static final ResourceLocation MODEL_ID =
-      ResourceLocation.fromNamespaceAndPath("ic2", "cable");
-
-  // UnbakedModel.bake (3-arg) — inherited via DynamicCableModel/UnbakedModel.
-  @Override
-  public BakedModel bake(
-      ModelBaker bakery,
-      Function<Material, TextureAtlasSprite> spriteGetter,
-      ModelState modelTransform) {
-    return super.bake(bakery, spriteGetter, modelTransform, MODEL_ID);
-  }
-
-  // IUnbakedGeometry.bake (5-arg) — inherited via Ic2Model.
-  @Override
-  public BakedModel bake(
-      IGeometryBakingContext owner,
-      ModelBaker bakery,
-      Function<Material, TextureAtlasSprite> spriteGetter,
-      ModelState modelTransform,
-      ItemOverrides overrides) {
-    return super.bake(bakery, spriteGetter, modelTransform, MODEL_ID);
-  }
-
-  public ModelData getModelData(
-      BlockAndTintGetter world, BlockPos pos, BlockState state, ModelData tileData) {
-    if (state.getBlock() instanceof AbstractCableBlock cable
-        && !cable.isFoam()
-        && world instanceof Level level) {
-      state = cable.withConnectionStates(state, level, pos);
-    }
-
-    List<BakedQuad>[] mesh = this.getMesh(state);
-    tileData = tileData.derive().with(MESH_DATA, mesh).build();
-    assert tileData.get(MESH_DATA) == mesh;
-    return tileData;
-  }
-
-  public List<BakedQuad> getQuads(
-      BlockState state,
-      Direction side,
-      RandomSource rand,
-      ModelData extraData,
-      @Nullable RenderType layer) {
-    List<BakedQuad>[] mesh = extraData.get(MESH_DATA);
-    return mesh[getIdx(side)];
   }
 
   protected List<BakedQuad>[] generateMesh(DyeColor color, int connections) {
@@ -264,7 +236,7 @@ final class DynamicCableModelForge extends DynamicCableModel<List<BakedQuad>[], 
         throw new IllegalStateException();
     }
 
-    BakedQuad quad = new BakedQuad(data, -1, face, texture, true);
+    BakedQuad quad = ic2.compat.client.QuadCompat.fromVertices(data, -1, face, texture, true);
     Direction cullFace = Math.abs(depth) < 1.0E-5 ? face : null;
     emitter[getIdx(cullFace)].add(quad);
   }

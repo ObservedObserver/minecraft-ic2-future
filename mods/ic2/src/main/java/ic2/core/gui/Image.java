@@ -1,12 +1,11 @@
 package ic2.core.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 public class Image extends GuiElement<Image> {
-  private final ResourceLocation texture;
+  private final Identifier texture;
   private final int baseWidth;
   private final int baseHeight;
   private final IOverlaySupplier overlay;
@@ -19,7 +18,7 @@ public class Image extends GuiElement<Image> {
       int y,
       int width,
       int height,
-      ResourceLocation texture,
+      Identifier texture,
       int baseWidth,
       int baseHeight,
       IOverlaySupplier overlay,
@@ -48,7 +47,7 @@ public class Image extends GuiElement<Image> {
       int y,
       int width,
       int height,
-      ResourceLocation texture,
+      Identifier texture,
       int baseWidth,
       int baseHeight,
       int uS,
@@ -73,7 +72,7 @@ public class Image extends GuiElement<Image> {
       int y,
       int width,
       int height,
-      ResourceLocation texture,
+      Identifier texture,
       int baseWidth,
       int baseHeight,
       IOverlaySupplier overlay) {
@@ -92,7 +91,7 @@ public class Image extends GuiElement<Image> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawBackground(guiGraphics, mouseX, mouseY);
     GlTexture texture = GlTexture.get(this.texture);
     if (texture != null) {
@@ -120,7 +119,7 @@ public class Image extends GuiElement<Image> {
         vE = vS + this.height;
       }
 
-      RenderSystem.setShaderTexture(0, this.texture);
+      Ic2Gui.bindTexture(this.texture);
       this.gui.drawTexturedRect(
           guiGraphics.pose(),
           this.x,

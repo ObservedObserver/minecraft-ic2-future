@@ -82,7 +82,7 @@ public class TileEntitySolarDistiller extends TileEntityInventory
   protected void onLoaded() {
     super.onLoaded();
     this.tickRate = this.getTickRate();
-    this.updateTicker = this.getLevel().random.nextInt(this.tickRate);
+    this.updateTicker = this.getLevel().getRandom().nextInt(this.tickRate);
   }
 
   @Override

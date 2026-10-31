@@ -46,16 +46,22 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    ListTag filtersTag = nbt.getList("filters", 10);
+    for (ItemStack[] sideFilters : this.filters) {
+      java.util.Arrays.fill(sideFilters, ItemStack.EMPTY);
+    }
+    ListTag filtersTag = ic2.compat.NbtCompat.getList(nbt, "filters", 10);
 
     for (int i = 0; i < filtersTag.size(); i++) {
-      CompoundTag filterTag = filtersTag.getCompound(i);
-      int index = filterTag.getByte("index") & 255;
-      ItemStack stack = ItemStack.parseOptional(registries, filterTag);
+      CompoundTag filterTag = filtersTag.getCompoundOrEmpty(i);
+      int index = filterTag.getByteOr("index", (byte) 0) & 255;
+      if (index >= 42) {
+        continue;
+      }
+      ItemStack stack = ic2.compat.NbtCompat.readItem(registries, filterTag);
       this.filters[index / 7][index % 7] = stack;
     }
 
-    int defaultRouteIdx = nbt.getByte("defaultroute");
+    int defaultRouteIdx = nbt.getByteOr("defaultroute", (byte) 0);
     if (defaultRouteIdx >= 0 && defaultRouteIdx < Util.ALL_DIRS.length) {
       this.defaultRoute = Util.ALL_DIRS[defaultRouteIdx];
     }
@@ -68,11 +74,11 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
 
     for (int i = 0; i < 42; i++) {
       ItemStack stack = this.filters[i / 7][i % 7];
-      if (stack != null) {
+      if (!StackUtil.isEmpty(stack)) {
         CompoundTag contentTag = new CompoundTag();
         contentTag.putByte("index", (byte) i);
         // save() returns the merged tag instead of mutating the prefix
-        filtersTag.add(stack.save(net.minecraft.core.RegistryAccess.EMPTY, contentTag));
+        filtersTag.add(ic2.compat.NbtCompat.saveItem(stack, registries, contentTag));
       }
     }
 
@@ -92,76 +98,45 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
   protected void updateEntityServer() {
     super.updateEntityServer();
 
-    label87:
+    boolean changed = false;
+    slots:
     for (int index = 0; index < this.buffer.size(); index++) {
       if (this.energy.getEnergy() < 20.0) {
-        return;
+        break;
       }
-
       ItemStack stack = this.buffer.get(index);
-      if (!StackUtil.isEmpty(stack)) {
-        for (EnvItemHandler.AdjacentInventory inv : StackUtil.ENV.getAdjacentInventories(this)) {
-          if (inv.getSide() != this.defaultRoute) {
-            for (ItemStack filterStack : this.getFilterSlots(inv.getSide())) {
-              if (!StackUtil.isEmpty(filterStack)) {
-                int filterSize = StackUtil.getSize(filterStack);
-                if (StackUtil.getSize(stack) >= filterSize
-                    && StackUtil.checkItemEquality(filterStack, stack)
-                    && this.energy.canUseEnergy(filterSize * 20)) {
-                  ItemStack transferStack = StackUtil.copyWithSize(stack, filterSize);
-                  int amount = StackUtil.ENV.deposit(inv, transferStack, true);
-                  if (amount == filterSize) {
-                    amount = StackUtil.ENV.deposit(inv, transferStack, false);
-                    stack = StackUtil.decSize(stack, amount);
-                    this.buffer.put(index, stack);
-                    this.energy.useEnergy(amount * 20);
-                    if (StackUtil.isEmpty(stack)) {
-                      continue label87;
-                    }
-                  }
-                  break;
-                }
-              }
+      if (StackUtil.isEmpty(stack)) {
+        continue;
+      }
+      for (EnvItemHandler.AdjacentInventory inv : StackUtil.ENV.getAdjacentInventories(this)) {
+        if (inv.getSide() == this.defaultRoute) {
+          if (!this.matchesFilteredRoute(stack)) {
+            int amount = StackUtil.ENV.deposit(inv, StackUtil.copyWithSize(stack, 1), false);
+            if (amount > 0) {
+              this.buffer.put(index, StackUtil.decSize(stack, amount));
+              this.energy.useEnergy(amount * 20.0);
+              changed = true;
             }
-          } else {
-            boolean inFilter = false;
-            ItemStack[][] amount = this.filters;
-            int var7 = amount.length;
-            int filterStack = 0;
-
-            label68:
-            while (true) {
-              if (filterStack < var7) {
-                ItemStack[] sideFilters = amount[filterStack];
-                ItemStack[] transferStack = sideFilters;
-                int amountx = transferStack.length;
-                int var12 = 0;
-
-                while (true) {
-                  if (var12 >= amountx) {
-                    filterStack++;
-                    continue label68;
-                  }
-
-                  ItemStack filter = transferStack[var12];
-                  if (StackUtil.checkItemEquality(filter, stack)) {
-                    inFilter = true;
-                    break;
-                  }
-
-                  var12++;
-                }
-              }
-
-              if (!inFilter) {
-                int amountx = StackUtil.ENV.deposit(inv, StackUtil.copyWithSize(stack, 1), false);
-                if (amountx > 0) {
-                  stack = StackUtil.decSize(stack, amountx);
+            continue slots;
+          }
+        } else {
+          for (ItemStack filter : this.getFilterSlots(inv.getSide())) {
+            if (matchesFilter(filter, stack)
+                && stack.getCount() >= filter.getCount()
+                && this.energy.canUseEnergy(filter.getCount() * 20.0)) {
+              ItemStack batch = stack.copyWithCount(filter.getCount());
+              // A short simulation must leave both inventories and the energy unchanged.
+              if (StackUtil.ENV.deposit(inv, batch, true) == batch.getCount()) {
+                int amount = StackUtil.ENV.deposit(inv, batch, false);
+                if (amount > 0) {
+                  stack = StackUtil.decSize(stack, amount);
                   this.buffer.put(index, stack);
-                  this.energy.useEnergy(20.0);
-                  StackUtil.isEmpty(stack);
+                  this.energy.useEnergy(amount * 20.0);
+                  changed = true;
+                  if (StackUtil.isEmpty(stack)) {
+                    continue slots;
+                  }
                 }
-                continue label87;
               }
               break;
             }
@@ -169,12 +144,47 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
         }
       }
     }
+    if (changed) {
+      this.setChanged();
+    }
+  }
+
+  private boolean matchesFilteredRoute(ItemStack stack) {
+    for (Direction side : Util.ALL_DIRS) {
+      if (side == this.defaultRoute) {
+        continue;
+      }
+      for (ItemStack filter : this.getFilterSlots(side)) {
+        if (matchesFilter(filter, stack)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean matchesFilter(ItemStack filter, ItemStack stack) {
+    if (StackUtil.isEmpty(filter) || !StackUtil.checkItemEquality(filter, stack)) {
+      return false;
+    }
+    // Keep IC2's existing exceptions for charge/energy in CUSTOM_DATA, but compare the
+    // independent modern components as well: names, potion contents, enchantments, etc.
+    var customData = net.minecraft.core.component.DataComponents.CUSTOM_DATA;
+    if (!filter.has(customData) && !stack.has(customData)) {
+      return ItemStack.isSameItemSameComponents(filter, stack);
+    }
+    ItemStack filterComponents = filter.copy();
+    ItemStack stackComponents = stack.copy();
+    filterComponents.remove(customData);
+    stackComponents.remove(customData);
+    return ItemStack.isSameItemSameComponents(filterComponents, stackComponents);
   }
 
   @Override
   public void onNetworkEvent(Player player, int event) {
-    if (event >= 0 && event <= 5) {
+    if (event >= 0 && event <= 5 && this.defaultRoute != Util.ALL_DIRS[event]) {
       this.defaultRoute = Util.ALL_DIRS[event];
+      this.setChanged();
     }
   }
 

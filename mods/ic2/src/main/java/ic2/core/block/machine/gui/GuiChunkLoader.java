@@ -9,12 +9,12 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -24,9 +24,9 @@ import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.material.MapColor;
 
 public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guichunkloader.png");
-  private final Map<Long, ResourceLocation> chunkTextureIds = new HashMap<>();
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guichunkloader.png");
+  private final Map<Long, Identifier> chunkTextureIds = new HashMap<>();
 
   public GuiChunkLoader(
       ContainerChunkLoader container, Inventory playerInventory, Component title) {
@@ -35,33 +35,42 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-    ChunkPos mainChunk = new ChunkPos(((ContainerChunkLoader) this.menu).base.getBlockPos());
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+    ChunkPos mainChunk = ChunkPos.containing(((ContainerChunkLoader) this.menu).base.getBlockPos());
     LongSet loadedChunks = ((ContainerChunkLoader) this.menu).base.getLoadedChunks();
     Level world = ((ContainerChunkLoader) this.menu).base.getLevel();
     int amountLoadedChunks = 0;
 
     for (int i = -4; i <= 4; i++) {
       for (int j = -4; j <= 4; j++) {
-        ChunkPos currentChunk = new ChunkPos(mainChunk.x + i, mainChunk.z + j);
+        ChunkPos currentChunk = new ChunkPos(mainChunk.x() + i, mainChunk.z() + j);
         int xpos = 89 + 16 * i;
         int ypos = 80 + 16 * j;
 
-        ResourceLocation texLoc = this.getChunkTexture(world, currentChunk);
-        guiGraphics.blit(texLoc, xpos, ypos, 0, 0, 16, 16, 16, 16);
+        Identifier texLoc = this.getChunkTexture(world, currentChunk);
+        // Ic2Gui's foreground callback uses screen coordinates for raw drawing calls.
+        guiGraphics.blit(
+            net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+            texLoc,
+            this.leftPos + xpos,
+            this.topPos + ypos,
+            0.0F,
+            0.0F,
+            16,
+            16,
+            16,
+            16);
 
-        if (loadedChunks.contains(currentChunk.toLong())) {
-          this.drawColoredRect(
-              guiGraphics.pose(), xpos - this.leftPos, ypos - this.topPos, 16, 16, 805371648);
+        if (loadedChunks.contains(currentChunk.pack())) {
+          this.drawColoredRect(guiGraphics.pose(), xpos, ypos, 16, 16, 805371648);
           amountLoadedChunks++;
         } else {
-          this.drawColoredRect(
-              guiGraphics.pose(), xpos - this.leftPos, ypos - this.topPos, 16, 16, 822018048);
+          this.drawColoredRect(guiGraphics.pose(), xpos, ypos, 16, 16, 822018048);
         }
       }
     }
@@ -76,16 +85,16 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
   }
 
-  private ResourceLocation getChunkTexture(Level world, ChunkPos chunkPos) {
-    long key = chunkPos.toLong();
+  private Identifier getChunkTexture(Level world, ChunkPos chunkPos) {
+    long key = chunkPos.pack();
     return this.chunkTextureIds.computeIfAbsent(
         key,
         k -> {
           NativeImage img = this.createChunkImage(world, chunkPos);
-          DynamicTexture tex = new DynamicTexture(img);
-          ResourceLocation loc =
-              ResourceLocation.fromNamespaceAndPath(
-                  "ic2", "chunkloader_" + chunkPos.x + "_" + chunkPos.z);
+          DynamicTexture tex = new DynamicTexture(() -> "IC2 chunk loader map", img);
+          Identifier loc =
+              Identifier.fromNamespaceAndPath(
+                  "ic2", "chunkloader_" + chunkPos.x() + "_" + chunkPos.z());
           Minecraft.getInstance().getTextureManager().register(loc, tex);
           return loc;
         });
@@ -93,24 +102,24 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
 
   private NativeImage createChunkImage(Level world, ChunkPos chunkPos) {
     NativeImage img = new NativeImage(16, 16, false);
-    if (!world.hasChunk(chunkPos.x, chunkPos.z)) {
+    if (!world.hasChunk(chunkPos.x(), chunkPos.z())) {
       for (int cx = 0; cx < 16; cx++) {
         for (int cz = 0; cz < 16; cz++) {
-          img.setPixelRGBA(cx, cz, 0xFF000000);
+          img.setPixelABGR(cx, cz, 0xFF000000);
         }
       }
       return img;
     }
 
-    LevelChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
+    LevelChunk chunk = world.getChunk(chunkPos.x(), chunkPos.z());
     MutableBlockPos worldPos = new MutableBlockPos();
 
     for (int cx = 0; cx < 16; cx++) {
       for (int cz = 0; cz < 16; cz++) {
         worldPos.set(
-            chunkPos.x << 4 | cx,
+            chunkPos.x() << 4 | cx,
             chunk.getHeight(Types.WORLD_SURFACE, cx, cz),
-            chunkPos.z << 4 | cz);
+            chunkPos.z() << 4 | cz);
         BlockState state = chunk.getBlockState(worldPos);
         if (state.isAir()) {
           worldPos.move(Direction.DOWN);
@@ -119,7 +128,7 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
 
         int argb = this.getColor(state, world, worldPos);
         int abgr = (argb & 0xFF00FF00) | ((argb & 0xFF) << 16) | ((argb >> 16) & 0xFF);
-        img.setPixelRGBA(cx, cz, abgr);
+        img.setPixelABGR(cx, cz, abgr);
       }
     }
     return img;
@@ -142,15 +151,16 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
   @Override
   public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
     if (mouseButton == 0) {
-      ChunkPos mainChunk = new ChunkPos(((ContainerChunkLoader) this.menu).base.getBlockPos());
+      ChunkPos mainChunk =
+          ChunkPos.containing(((ContainerChunkLoader) this.menu).base.getBlockPos());
 
       for (int dx = -4; dx <= 4; dx++) {
         for (int dy = -4; dy <= 4; dy++) {
-          if (mouseX - this.leftPos > 89 + 16 * dx
-              && mouseX - this.leftPos <= 89 + 16 * dx + 16
-              && mouseY - this.topPos > 80 + 16 * dy
-              && mouseY - this.topPos <= 80 + 16 * dy + 16) {
-            this.changeChunk(new ChunkPos(mainChunk.x + dx, mainChunk.z + dy));
+          if (mouseX - this.leftPos >= 89 + 16 * dx
+              && mouseX - this.leftPos < 89 + 16 * dx + 16
+              && mouseY - this.topPos >= 80 + 16 * dy
+              && mouseY - this.topPos < 80 + 16 * dy + 16) {
+            this.changeChunk(new ChunkPos(mainChunk.x() + dx, mainChunk.z() + dy));
             return true;
           }
         }
@@ -161,18 +171,18 @@ public class GuiChunkLoader extends Ic2Gui<ContainerChunkLoader> {
   }
 
   private void changeChunk(ChunkPos chunk) {
-    ChunkPos mainChunk = new ChunkPos(((ContainerChunkLoader) this.menu).base.getBlockPos());
+    ChunkPos mainChunk = ChunkPos.containing(((ContainerChunkLoader) this.menu).base.getBlockPos());
     IC2.network
         .get(false)
         .initiateClientTileEntityEvent(
             ((ContainerChunkLoader) this.menu).base,
-            chunk.x - mainChunk.x + 8 & 15 | (chunk.z - mainChunk.z + 8 & 15) << 4);
+            chunk.x() - mainChunk.x() + 8 & 15 | (chunk.z() - mainChunk.z() + 8 & 15) << 4);
   }
 
   @Override
   public void removed() {
     super.removed();
-    for (Map.Entry<Long, ResourceLocation> entry : this.chunkTextureIds.entrySet()) {
+    for (Map.Entry<Long, Identifier> entry : this.chunkTextureIds.entrySet()) {
       Minecraft.getInstance().getTextureManager().release(entry.getValue());
     }
     this.chunkTextureIds.clear();

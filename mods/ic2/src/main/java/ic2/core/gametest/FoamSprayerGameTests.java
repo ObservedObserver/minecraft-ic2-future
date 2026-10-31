@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.fluid.Ic2FluidStack;
 import ic2.core.item.tool.ItemSprayer;
 import ic2.core.ref.Ic2Blocks;
@@ -8,7 +9,6 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -17,11 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ScaffoldingBlock;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class FoamSprayerGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final String TALL = "gametest/empty3x9x3";
@@ -109,7 +105,7 @@ public class FoamSprayerGameTests {
 
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = makeFilledSprayer();
-    StackUtil.getOrCreateNbtData(stack).putInt("mode", 1);
+    StackUtil.setTagValue(stack, "mode", net.minecraft.nbt.IntTag.valueOf(1));
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
     InteractionResult result =
@@ -135,11 +131,11 @@ public class FoamSprayerGameTests {
     try {
       sprayer().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
       helper.assertValueEqual(
-          StackUtil.getOrCreateNbtData(stack).getInt("mode"), 1, "mode after first toggle");
+          StackUtil.getOrCreateNbtData(stack).getIntOr("mode", 0), 1, "mode after first toggle");
 
       sprayer().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
       helper.assertValueEqual(
-          StackUtil.getOrCreateNbtData(stack).getInt("mode"), 0, "mode after second toggle");
+          StackUtil.getOrCreateNbtData(stack).getIntOr("mode", 0), 0, "mode after second toggle");
     } finally {
       Ic2GameTestUtil.releaseModeSwitchKey(player);
     }

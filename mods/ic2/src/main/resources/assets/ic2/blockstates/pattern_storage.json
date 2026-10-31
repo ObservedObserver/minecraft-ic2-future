@@ -1,19 +1,20 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/machine/uu/pattern_storage",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/uu/pattern_storage"
     },
     "facing=north": {
-      "model": "ic2:block/machine/uu/pattern_storage"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/uu/pattern_storage"
     },
     "facing=south": {
-      "model": "ic2:block/machine/uu/pattern_storage",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/uu/pattern_storage"
     },
     "facing=west": {
-      "model": "ic2:block/machine/uu/pattern_storage",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/uu/pattern_storage"
     }
   }
 }

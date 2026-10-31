@@ -128,8 +128,6 @@ import ic2.core.crop.TileEntityCrop;
 import ic2.core.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
@@ -145,19 +143,45 @@ public final class Ic2Blocks {
   public static final Block LEAD_ORE =
       register(
           "lead_ore",
-          new Block(Properties.of().strength(2.0F, 4.0F).requiresCorrectToolForDrops()));
+          new Block(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("lead_ore")))
+                  .strength(2.0F, 4.0F)
+                  .requiresCorrectToolForDrops()));
   public static final Block TIN_ORE =
       register(
-          "tin_ore", new Block(Properties.of().strength(3.0F, 5.0F).requiresCorrectToolForDrops()));
+          "tin_ore",
+          new Block(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tin_ore")))
+                  .strength(3.0F, 5.0F)
+                  .requiresCorrectToolForDrops()));
   public static final Block URANIUM_ORE =
       register(
           "uranium_ore",
-          new Block(Properties.of().strength(4.0F, 6.0F).requiresCorrectToolForDrops()));
+          new Block(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("uranium_ore")))
+                  .strength(4.0F, 6.0F)
+                  .requiresCorrectToolForDrops()));
   public static final Block DEEPSLATE_LEAD_ORE =
       register(
           "deepslate_lead_ore",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("deepslate_lead_ore")))
                   .mapColor(MapColor.DEEPSLATE)
                   .strength(3.0F, 6.0F)
                   .requiresCorrectToolForDrops()
@@ -167,6 +191,10 @@ public final class Ic2Blocks {
           "deepslate_tin_ore",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("deepslate_tin_ore")))
                   .mapColor(MapColor.DEEPSLATE)
                   .strength(4.0F, 7.0F)
                   .requiresCorrectToolForDrops()
@@ -176,6 +204,10 @@ public final class Ic2Blocks {
           "deepslate_uranium_ore",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("deepslate_uranium_ore")))
                   .mapColor(MapColor.DEEPSLATE)
                   .strength(5.0F, 8.0F)
                   .requiresCorrectToolForDrops()
@@ -185,6 +217,10 @@ public final class Ic2Blocks {
           "raw_lead_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("raw_lead_block")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(3.0F, 11.0F)
                   .requiresCorrectToolForDrops()));
@@ -193,6 +229,10 @@ public final class Ic2Blocks {
           "raw_tin_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("raw_tin_block")))
                   .mapColor(MapColor.SNOW)
                   .strength(4.0F, 12.0F)
                   .requiresCorrectToolForDrops()));
@@ -201,6 +241,10 @@ public final class Ic2Blocks {
           "raw_uranium_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("raw_uranium_block")))
                   .mapColor(MapColor.COLOR_GREEN)
                   .strength(5.0F, 13.0F)
                   .requiresCorrectToolForDrops()));
@@ -209,6 +253,10 @@ public final class Ic2Blocks {
           "bronze_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("bronze_block")))
                   .strength(5.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -217,6 +265,10 @@ public final class Ic2Blocks {
           "lead_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("lead_block")))
                   .strength(4.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -225,6 +277,10 @@ public final class Ic2Blocks {
           "steel_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steel_block")))
                   .strength(8.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -233,6 +289,10 @@ public final class Ic2Blocks {
           "tin_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tin_block")))
                   .strength(4.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -241,13 +301,24 @@ public final class Ic2Blocks {
           "uranium_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("uranium_block")))
                   .strength(6.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
   public static final Block REINFORCED_STONE =
       register(
           "reinforced_stone",
-          new Block(Properties.of().strength(80.0F, 180.0F).requiresCorrectToolForDrops()));
+          new Block(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reinforced_stone")))
+                  .strength(80.0F, 180.0F)
+                  .requiresCorrectToolForDrops()));
   public static final Block REFRACTORY_BRICKS =
       register("refractory_bricks", new BlockRefractoryBricks());
   public static final Block MACHINE =
@@ -255,6 +326,10 @@ public final class Ic2Blocks {
           "machine",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("machine")))
                   .strength(5.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -263,18 +338,33 @@ public final class Ic2Blocks {
           "advanced_machine",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("advanced_machine")))
                   .strength(8.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
   public static final Block REACTOR_VESSEL =
       register(
           "reactor_vessel",
-          new Block(Properties.of().strength(40.0F, 90.0F).requiresCorrectToolForDrops()));
+          new Block(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reactor_vessel")))
+                  .strength(40.0F, 90.0F)
+                  .requiresCorrectToolForDrops()));
   public static final Block SILVER_BLOCK =
       register(
           "silver_block",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("silver_block")))
                   .strength(4.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -282,19 +372,29 @@ public final class Ic2Blocks {
       register(
           "rubber_leaves",
           new LeavesBlock(
+              new net.minecraft.world.level.block.sounds.AmbientLeavesBlockSoundPlayer(
+                  java.util.Optional.empty(), 300, java.util.Optional.empty(), 1, 3),
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_leaves")))
                   .strength(0.2F)
                   .randomTicks()
                   .sound(SoundType.GRASS)
                   .noOcclusion()
                   .isValidSpawn(Ic2Blocks::canSpawnOnLeaves)
                   .isSuffocating(Ic2Blocks::never)
-                  .isViewBlocking(Ic2Blocks::never)));
+                  .isViewBlocking((state, world, pos, bounds) -> false)));
   public static final RubberLogBlock RUBBER_LOG =
       register(
           "rubber_log",
           new RubberLogBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_log")))
                   .mapColor(
                       state ->
                           state.getValue(RotatedPillarBlock.AXIS) == Axis.Y
@@ -308,6 +408,10 @@ public final class Ic2Blocks {
           "stripped_rubber_log",
           new RotatedPillarBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("stripped_rubber_log")))
                   .mapColor(
                       state ->
                           state.getValue(RotatedPillarBlock.AXIS) == Axis.Y
@@ -320,6 +424,10 @@ public final class Ic2Blocks {
           "rubber_wood",
           new RubberWoodBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_wood")))
                   .mapColor(MapColor.COLOR_BROWN)
                   .strength(2.0F, 3.0f)
                   .sound(SoundType.WOOD)));
@@ -328,6 +436,10 @@ public final class Ic2Blocks {
           "stripped_rubber_wood",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("stripped_rubber_wood")))
                   .mapColor(MapColor.PODZOL)
                   .strength(2.0F, 3.0f)
                   .sound(SoundType.WOOD)));
@@ -337,17 +449,28 @@ public final class Ic2Blocks {
           new SaplingBlock(
               new TreeGrower(
                   "ic2:rubber",
-                  java.util.Optional.empty(),
-                  java.util.Optional.of(
-                      ResourceKey.create(
-                          Registries.CONFIGURED_FEATURE, IC2.getIdentifier("rubber_tree"))),
-                  java.util.Optional.empty()),
-              Properties.of().noCollission().randomTicks().instabreak().sound(SoundType.GRASS)) {});
+                  net.minecraft.util.random.WeightedList.of(ic2.core.world.Ic2WorldGen.RUBBER_TREE),
+                  net.minecraft.util.random.WeightedList.of(),
+                  net.minecraft.util.random.WeightedList.of(),
+                  ic2.core.world.Ic2WorldGen.RUBBER_TREE),
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_sapling")))
+                  .noCollision()
+                  .randomTicks()
+                  .instabreak()
+                  .sound(SoundType.GRASS)) {});
   public static final Block RUBBER_PLANKS =
       register(
           "rubber_planks",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_planks")))
                   .mapColor(MapColor.PODZOL)
                   .strength(2.0F, 3.0F)
                   .sound(SoundType.WOOD)));
@@ -357,13 +480,24 @@ public final class Ic2Blocks {
           new ButtonBlock(
               BlockSetType.OAK,
               30,
-              Properties.of().noCollission().strength(0.5F).sound(SoundType.WOOD)) {});
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_button")))
+                  .noCollision()
+                  .strength(0.5F)
+                  .sound(SoundType.WOOD)) {});
   public static final Block RUBBER_DOOR =
       register(
           "rubber_door",
           new DoorBlock(
               BlockSetType.OAK,
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_door")))
                   .mapColor(RUBBER_PLANKS.defaultMapColor())
                   .strength(3.0F)
                   .sound(SoundType.WOOD)
@@ -373,6 +507,10 @@ public final class Ic2Blocks {
           "rubber_fence",
           new FenceBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_fence")))
                   .mapColor(RUBBER_PLANKS.defaultMapColor())
                   .strength(2.0F, 3.0F)
                   .sound(SoundType.WOOD)));
@@ -382,6 +520,10 @@ public final class Ic2Blocks {
           new FenceGateBlock(
               WoodType.OAK,
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_fence_gate")))
                   .mapColor(RUBBER_PLANKS.defaultMapColor())
                   .strength(2.0F, 3.0F)
                   .sound(SoundType.WOOD)));
@@ -391,8 +533,12 @@ public final class Ic2Blocks {
           new PressurePlateBlock(
               BlockSetType.OAK,
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_pressure_plate")))
                   .mapColor(RUBBER_PLANKS.defaultMapColor())
-                  .noCollission()
+                  .noCollision()
                   .strength(0.5F)
                   .sound(SoundType.WOOD)) {});
   public static final Block RUBBER_SIGN =
@@ -400,8 +546,12 @@ public final class Ic2Blocks {
           "rubber_sign",
           new Ic2SignBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_sign")))
                   .mapColor(RUBBER_LOG.defaultMapColor())
-                  .noCollission()
+                  .noCollision()
                   .strength(1.0F)
                   .sound(SoundType.WOOD),
               Ic2SignType.RUBBER));
@@ -410,23 +560,38 @@ public final class Ic2Blocks {
           "rubber_wall_sign",
           new Ic2WallSignBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_wall_sign")))
                   .mapColor(RUBBER_LOG.defaultMapColor())
-                  .noCollission()
+                  .noCollision()
                   .strength(1.0F)
                   .sound(SoundType.WOOD)
-                  .lootFrom(() -> RUBBER_SIGN),
+                  .overrideLootTable(RUBBER_SIGN.getLootTable()),
               Ic2SignType.RUBBER));
   public static final Block RUBBER_SLAB =
       register(
           "rubber_slab",
           new SlabBlock(
-              Properties.of().mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_slab")))
+                  .mapColor(MapColor.WOOD)
+                  .strength(2.0F, 3.0F)
+                  .sound(SoundType.WOOD)));
   public static final Block RUBBER_STAIRS =
       register(
           "rubber_stairs",
           new StairBlock(
               RUBBER_PLANKS.defaultBlockState(),
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_stairs")))
                   .mapColor(MapColor.PODZOL)
                   .strength(2.0F, 3.0F)
                   .sound(SoundType.WOOD)) {});
@@ -436,24 +601,65 @@ public final class Ic2Blocks {
           new TrapDoorBlock(
               BlockSetType.OAK,
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_trapdoor")))
                   .mapColor(MapColor.PODZOL)
                   .strength(3.0F)
                   .sound(SoundType.WOOD)
                   .noOcclusion()
                   .isValidSpawn(Ic2Blocks::never)) {});
   public static final Block IRON_FENCE =
-      register("iron_fence", new Ic2FenceBlock(Properties.of().strength(5.0F, 10.0F), true));
+      register(
+          "iron_fence",
+          new Ic2FenceBlock(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_fence")))
+                  .strength(5.0F, 10.0F),
+              true));
   public static final Block RESIN_SHEET =
-      register("resin_sheet", new Ic2SheetBlock(Properties.of().strength(1.6F, 0.5F)));
+      register(
+          "resin_sheet",
+          new Ic2SheetBlock(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("resin_sheet")))
+                  .strength(1.6F, 0.5F)));
   public static final Block RUBBER_SHEET =
-      register("rubber_sheet", new Ic2SheetBlock(Properties.of().strength(0.8F, 2.0F)));
+      register(
+          "rubber_sheet",
+          new Ic2SheetBlock(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rubber_sheet")))
+                  .strength(0.8F, 2.0F)));
   public static final Block WOOL_SHEET =
-      register("wool_sheet", new Ic2SheetBlock(Properties.of().strength(0.8F, 0.8F)));
+      register(
+          "wool_sheet",
+          new Ic2SheetBlock(
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wool_sheet")))
+                  .strength(0.8F, 0.8F)));
   public static final Block REINFORCED_GLASS =
       register(
           "reinforced_glass",
           new Ic2GlassBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reinforced_glass")))
                   .noOcclusion()
                   .strength(5.0F, 180.0F)
                   .sound(SoundType.GLASS)
@@ -463,6 +669,10 @@ public final class Ic2Blocks {
           "foam",
           new FoamBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("foam")))
                   .noOcclusion()
                   .strength(0.01F, 10.0F)
                   .randomTicks()
@@ -472,6 +682,10 @@ public final class Ic2Blocks {
           "mining_pipe",
           new MiningPipeBlock(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mining_pipe")))
                   .strength(6.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -480,6 +694,10 @@ public final class Ic2Blocks {
           "mining_pipe_tip",
           new Block(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mining_pipe_tip")))
                   .strength(6.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)));
@@ -488,12 +706,25 @@ public final class Ic2Blocks {
           "reinforced_door",
           new DoorBlock(
               BlockSetType.IRON,
-              Properties.of().strength(50.0F, 150.0F).noOcclusion().sound(SoundType.METAL)) {});
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reinforced_door")))
+                  .strength(50.0F, 150.0F)
+                  .noOcclusion()
+                  .sound(SoundType.METAL)) {});
   public static final Block ITNT =
       register(
           "itnt",
           Ic2TileEntityBlock.create(
-              Properties.of().strength(0.0F, 0.0F).sound(SoundType.GRASS),
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("itnt")))
+                  .strength(0.0F, 0.0F)
+                  .sound(SoundType.GRASS),
               TileEntityITnt.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -503,7 +734,13 @@ public final class Ic2Blocks {
       register(
           "nuke",
           Ic2TileEntityBlock.create(
-              Properties.of().strength(0.0F, 0.0F).sound(SoundType.GRASS),
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("nuke")))
+                  .strength(0.0F, 0.0F)
+                  .sound(SoundType.GRASS),
               TileEntityNuke.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -514,6 +751,10 @@ public final class Ic2Blocks {
           "generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -528,6 +769,10 @@ public final class Ic2Blocks {
           "geo_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("geo_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -542,6 +787,10 @@ public final class Ic2Blocks {
           "kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -556,6 +805,10 @@ public final class Ic2Blocks {
           "rt_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rt_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -570,6 +823,10 @@ public final class Ic2Blocks {
           "semifluid_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("semifluid_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -584,6 +841,10 @@ public final class Ic2Blocks {
           "solar_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("solar_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -598,6 +859,10 @@ public final class Ic2Blocks {
           "stirling_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("stirling_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -612,6 +877,10 @@ public final class Ic2Blocks {
           "water_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("water_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -626,6 +895,10 @@ public final class Ic2Blocks {
           "wind_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wind_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -640,6 +913,10 @@ public final class Ic2Blocks {
           "electric_heat_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("electric_heat_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -654,6 +931,10 @@ public final class Ic2Blocks {
           "fluid_heat_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("fluid_heat_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -668,6 +949,10 @@ public final class Ic2Blocks {
           "rt_heat_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rt_heat_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -682,6 +967,10 @@ public final class Ic2Blocks {
           "solid_heat_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("solid_heat_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -696,6 +985,10 @@ public final class Ic2Blocks {
           "electric_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("electric_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -710,6 +1003,10 @@ public final class Ic2Blocks {
           "manual_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("manual_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -724,6 +1021,10 @@ public final class Ic2Blocks {
           "steam_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steam_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -738,6 +1039,10 @@ public final class Ic2Blocks {
           "stirling_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("stirling_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -752,6 +1057,10 @@ public final class Ic2Blocks {
           "water_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("water_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -766,6 +1075,10 @@ public final class Ic2Blocks {
           "wind_kinetic_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wind_kinetic_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -780,6 +1093,10 @@ public final class Ic2Blocks {
           "nuclear_reactor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("nuclear_reactor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -794,6 +1111,10 @@ public final class Ic2Blocks {
           "reactor_access_hatch",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reactor_access_hatch")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(40.0F, 90.0F)
                   .requiresCorrectToolForDrops()
@@ -808,6 +1129,10 @@ public final class Ic2Blocks {
           "reactor_chamber",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reactor_chamber")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -822,6 +1147,10 @@ public final class Ic2Blocks {
           "reactor_fluid_port",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reactor_fluid_port")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(40.0F, 90.0F)
                   .requiresCorrectToolForDrops()
@@ -836,6 +1165,10 @@ public final class Ic2Blocks {
           "reactor_redstone_port",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reactor_redstone_port")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(40.0F, 90.0F)
                   .requiresCorrectToolForDrops()
@@ -850,6 +1183,10 @@ public final class Ic2Blocks {
           "condenser",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("condenser")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -864,6 +1201,10 @@ public final class Ic2Blocks {
           "fluid_bottler",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("fluid_bottler")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -878,6 +1219,10 @@ public final class Ic2Blocks {
           "fluid_distributor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("fluid_distributor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -892,6 +1237,10 @@ public final class Ic2Blocks {
           "fluid_regulator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("fluid_regulator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -906,6 +1255,10 @@ public final class Ic2Blocks {
           "liquid_heat_exchanger",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("liquid_heat_exchanger")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -920,6 +1273,10 @@ public final class Ic2Blocks {
           "pump",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pump")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -934,6 +1291,10 @@ public final class Ic2Blocks {
           "solar_distiller",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("solar_distiller")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -948,6 +1309,10 @@ public final class Ic2Blocks {
           "steam_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steam_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -962,6 +1327,10 @@ public final class Ic2Blocks {
           "item_buffer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("item_buffer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -976,6 +1345,10 @@ public final class Ic2Blocks {
           "magnetizer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("magnetizer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -990,6 +1363,10 @@ public final class Ic2Blocks {
           "sorting_machine",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("sorting_machine")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1004,6 +1381,10 @@ public final class Ic2Blocks {
           "teleporter",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("teleporter")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1018,6 +1399,10 @@ public final class Ic2Blocks {
           "terraformer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("terraformer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1032,6 +1417,10 @@ public final class Ic2Blocks {
           "tesla_coil",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tesla_coil")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1046,12 +1435,16 @@ public final class Ic2Blocks {
           "luminator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("luminator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(5.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL)
                   .noOcclusion()
-                  .noCollission()
+                  .noCollision()
                   .lightLevel(state -> state.getValue(Ic2TileEntityBlock.ACTIVE) ? 15 : 0),
               TileEntityLuminator.class,
               true,
@@ -1063,6 +1456,10 @@ public final class Ic2Blocks {
           "canner",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("canner")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1077,6 +1474,10 @@ public final class Ic2Blocks {
           "compressor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("compressor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1091,6 +1492,10 @@ public final class Ic2Blocks {
           "electric_furnace",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("electric_furnace")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1105,6 +1510,10 @@ public final class Ic2Blocks {
           "extractor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("extractor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1119,6 +1528,10 @@ public final class Ic2Blocks {
           "iron_furnace",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_furnace")))
                   .strength(5.0F, 10.0F)
                   .requiresCorrectToolForDrops()
                   .sound(SoundType.METAL),
@@ -1132,6 +1545,10 @@ public final class Ic2Blocks {
           "macerator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("macerator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1146,6 +1563,10 @@ public final class Ic2Blocks {
           "recycler",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("recycler")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1160,6 +1581,10 @@ public final class Ic2Blocks {
           "solid_canner",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("solid_canner")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1174,6 +1599,10 @@ public final class Ic2Blocks {
           "blast_furnace",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("blast_furnace")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1188,6 +1617,10 @@ public final class Ic2Blocks {
           "block_cutter",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("block_cutter")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1202,6 +1635,10 @@ public final class Ic2Blocks {
           "centrifuge",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("centrifuge")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1216,6 +1653,10 @@ public final class Ic2Blocks {
           "fermenter",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("fermenter")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1230,6 +1671,10 @@ public final class Ic2Blocks {
           "induction_furnace",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("induction_furnace")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1244,6 +1689,10 @@ public final class Ic2Blocks {
           "metal_former",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("metal_former")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1258,6 +1707,10 @@ public final class Ic2Blocks {
           "ore_washing_plant",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("ore_washing_plant")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1272,6 +1725,10 @@ public final class Ic2Blocks {
           "advanced_miner",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("advanced_miner")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1286,6 +1743,10 @@ public final class Ic2Blocks {
           "crop_harvester",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("crop_harvester")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1300,6 +1761,10 @@ public final class Ic2Blocks {
           "cropmatron",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cropmatron")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1314,6 +1779,10 @@ public final class Ic2Blocks {
           "miner",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("miner")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1328,6 +1797,10 @@ public final class Ic2Blocks {
           "matter_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("matter_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1342,6 +1815,10 @@ public final class Ic2Blocks {
           "pattern_storage",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pattern_storage")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1356,6 +1833,10 @@ public final class Ic2Blocks {
           "replicator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("replicator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1370,6 +1851,10 @@ public final class Ic2Blocks {
           "uu_scanner",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("uu_scanner")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1384,6 +1869,10 @@ public final class Ic2Blocks {
           "energy_o_mat",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("energy_o_mat")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(-1.0F, 3600000.0F)
                   .requiresCorrectToolForDrops()
@@ -1398,6 +1887,10 @@ public final class Ic2Blocks {
           "personal_chest",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("personal_chest")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 3600000.0F)
                   .requiresCorrectToolForDrops()
@@ -1412,6 +1905,10 @@ public final class Ic2Blocks {
           "trade_o_mat",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("trade_o_mat")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(-1.0F, 3600000.0F)
                   .requiresCorrectToolForDrops()
@@ -1425,12 +1922,26 @@ public final class Ic2Blocks {
       register(
           "glass_fibre_foam_cable",
           FoamCableBlock.create(
-              Properties.of().strength(0.5F, 5.0F).sound(SoundType.GLASS), CableType.glass, 0));
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("glass_fibre_foam_cable")))
+                  .strength(0.5F, 5.0F)
+                  .sound(SoundType.GLASS),
+              CableType.glass,
+              0));
   public static final Block GLASS_FIBRE_CABLE =
       register(
           "glass_fibre_cable",
           CableBlock.create(
-              Properties.of().strength(0.5F, 5.0F).sound(SoundType.GLASS),
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("glass_fibre_cable")))
+                  .strength(0.5F, 5.0F)
+                  .sound(SoundType.GLASS),
               CableType.glass,
               0,
               GLASS_FIBRE_FOAM_CABLE));
@@ -1439,6 +1950,10 @@ public final class Ic2Blocks {
           "batbox_chargepad",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("batbox_chargepad")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1454,6 +1969,10 @@ public final class Ic2Blocks {
           "cesu_chargepad",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cesu_chargepad")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1469,6 +1988,10 @@ public final class Ic2Blocks {
           "mfe_chargepad",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mfe_chargepad")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1484,6 +2007,10 @@ public final class Ic2Blocks {
           "mfsu_chargepad",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mfsu_chargepad")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1499,6 +2026,10 @@ public final class Ic2Blocks {
           "batbox",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("batbox")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1513,6 +2044,10 @@ public final class Ic2Blocks {
           "cesu",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cesu")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1527,6 +2062,9 @@ public final class Ic2Blocks {
           "mfe",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK, IC2.getIdentifier("mfe")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1541,6 +2079,10 @@ public final class Ic2Blocks {
           "mfsu",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mfsu")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1555,6 +2097,10 @@ public final class Ic2Blocks {
           "electrolyzer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("electrolyzer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1569,6 +2115,10 @@ public final class Ic2Blocks {
           "lv_transformer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("lv_transformer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1583,6 +2133,10 @@ public final class Ic2Blocks {
           "mv_transformer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("mv_transformer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1597,6 +2151,10 @@ public final class Ic2Blocks {
           "hv_transformer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("hv_transformer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1611,6 +2169,10 @@ public final class Ic2Blocks {
           "ev_transformer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("ev_transformer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1625,6 +2187,10 @@ public final class Ic2Blocks {
           "tank",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tank")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1639,6 +2205,10 @@ public final class Ic2Blocks {
           "chunk_loader",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("chunk_loader")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1653,6 +2223,10 @@ public final class Ic2Blocks {
           "creative_generator",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("creative_generator")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(-1.0F, Float.POSITIVE_INFINITY)
                   .sound(SoundType.METAL),
@@ -1666,6 +2240,10 @@ public final class Ic2Blocks {
           "steam_repressurizer",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steam_repressurizer")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1680,6 +2258,10 @@ public final class Ic2Blocks {
           "weighted_fluid_distributor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("weighted_fluid_distributor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1694,6 +2276,10 @@ public final class Ic2Blocks {
           "weighted_item_distributor",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("weighted_item_distributor")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1708,6 +2294,10 @@ public final class Ic2Blocks {
           "rci_rsh",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rci_rsh")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1722,6 +2312,10 @@ public final class Ic2Blocks {
           "rci_lzh",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("rci_lzh")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1736,6 +2330,10 @@ public final class Ic2Blocks {
           "industrial_workbench",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("industrial_workbench")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1750,6 +2348,10 @@ public final class Ic2Blocks {
           "batch_crafter",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("batch_crafter")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1763,7 +2365,13 @@ public final class Ic2Blocks {
       register(
           "wooden_storage_box",
           Ic2TileEntityBlock.create(
-              Properties.of().strength(1.0F, 10.0F).sound(SoundType.WOOD),
+              Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wooden_storage_box")))
+                  .strength(1.0F, 10.0F)
+                  .sound(SoundType.WOOD),
               TileEntityWoodenStorageBox.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -1774,6 +2382,10 @@ public final class Ic2Blocks {
           "iron_storage_box",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_storage_box")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(1.0F, 15.0F)
                   .requiresCorrectToolForDrops()
@@ -1788,6 +2400,10 @@ public final class Ic2Blocks {
           "bronze_storage_box",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("bronze_storage_box")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(1.0F, 15.0F)
                   .requiresCorrectToolForDrops()
@@ -1802,6 +2418,10 @@ public final class Ic2Blocks {
           "steel_storage_box",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steel_storage_box")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 20.0F)
                   .requiresCorrectToolForDrops()
@@ -1816,6 +2436,10 @@ public final class Ic2Blocks {
           "iridium_storage_box",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iridium_storage_box")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(3.0F, 100.0F)
                   .requiresCorrectToolForDrops()
@@ -1830,6 +2454,10 @@ public final class Ic2Blocks {
           "bronze_tank",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("bronze_tank")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(3.0F, 15.0F)
                   .requiresCorrectToolForDrops()
@@ -1844,6 +2472,10 @@ public final class Ic2Blocks {
           "iron_tank",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_tank")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(3.0F, 15.0F)
                   .requiresCorrectToolForDrops()
@@ -1858,6 +2490,10 @@ public final class Ic2Blocks {
           "steel_tank",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("steel_tank")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(4.0F, 20.0F)
                   .requiresCorrectToolForDrops()
@@ -1872,6 +2508,10 @@ public final class Ic2Blocks {
           "iridium_tank",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iridium_tank")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(5.0F, 100.0F)
                   .requiresCorrectToolForDrops()
@@ -1886,6 +2526,10 @@ public final class Ic2Blocks {
           "coke_kiln",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("coke_kiln")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1900,6 +2544,10 @@ public final class Ic2Blocks {
           "coke_kiln_hatch",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("coke_kiln_hatch")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1914,6 +2562,10 @@ public final class Ic2Blocks {
           "coke_kiln_grate",
           Ic2TileEntityBlock.create(
               Properties.of()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("coke_kiln_grate")))
                   .mapColor(MapColor.COLOR_LIGHT_GRAY)
                   .strength(2.0F, 10.0F)
                   .requiresCorrectToolForDrops()
@@ -1923,146 +2575,503 @@ public final class Ic2Blocks {
               Ic2TileEntityBlock.DefaultDrop.Self,
               Util.allFacings,
               true));
-  private static final Properties wallSettings =
-      Properties.of().strength(3.0F, 30.0F).requiresCorrectToolForDrops().sound(SoundType.STONE);
+
+  private static Properties wallSettings() {
+    return Properties.of()
+        .strength(3.0F, 30.0F)
+        .requiresCorrectToolForDrops()
+        .sound(SoundType.STONE);
+  }
+
   public static final Block WHITE_WALL =
-      register("white_wall", new WallBlock(wallSettings, DyeColor.WHITE));
+      register(
+          "white_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("white_wall"))),
+              DyeColor.WHITE));
   public static final Block ORANGE_WALL =
-      register("orange_wall", new WallBlock(wallSettings, DyeColor.ORANGE));
+      register(
+          "orange_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("orange_wall"))),
+              DyeColor.ORANGE));
   public static final Block MAGENTA_WALL =
-      register("magenta_wall", new WallBlock(wallSettings, DyeColor.MAGENTA));
+      register(
+          "magenta_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("magenta_wall"))),
+              DyeColor.MAGENTA));
   public static final Block LIGHT_BLUE_WALL =
-      register("light_blue_wall", new WallBlock(wallSettings, DyeColor.LIGHT_BLUE));
+      register(
+          "light_blue_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("light_blue_wall"))),
+              DyeColor.LIGHT_BLUE));
   public static final Block YELLOW_WALL =
-      register("yellow_wall", new WallBlock(wallSettings, DyeColor.YELLOW));
+      register(
+          "yellow_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("yellow_wall"))),
+              DyeColor.YELLOW));
   public static final Block LIME_WALL =
-      register("lime_wall", new WallBlock(wallSettings, DyeColor.LIME));
+      register(
+          "lime_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("lime_wall"))),
+              DyeColor.LIME));
   public static final Block PINK_WALL =
-      register("pink_wall", new WallBlock(wallSettings, DyeColor.PINK));
+      register(
+          "pink_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pink_wall"))),
+              DyeColor.PINK));
   public static final Block GRAY_WALL =
-      register("gray_wall", new WallBlock(wallSettings, DyeColor.GRAY));
+      register(
+          "gray_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("gray_wall"))),
+              DyeColor.GRAY));
   public static final Block LIGHT_GRAY_WALL =
-      register("light_gray_wall", new WallBlock(wallSettings, DyeColor.LIGHT_GRAY));
+      register(
+          "light_gray_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("light_gray_wall"))),
+              DyeColor.LIGHT_GRAY));
   public static final Block CYAN_WALL =
-      register("cyan_wall", new WallBlock(wallSettings, DyeColor.CYAN));
+      register(
+          "cyan_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cyan_wall"))),
+              DyeColor.CYAN));
   public static final Block PURPLE_WALL =
-      register("purple_wall", new WallBlock(wallSettings, DyeColor.PURPLE));
+      register(
+          "purple_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("purple_wall"))),
+              DyeColor.PURPLE));
   public static final Block BLUE_WALL =
-      register("blue_wall", new WallBlock(wallSettings, DyeColor.BLUE));
+      register(
+          "blue_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("blue_wall"))),
+              DyeColor.BLUE));
   public static final Block BROWN_WALL =
-      register("brown_wall", new WallBlock(wallSettings, DyeColor.BROWN));
+      register(
+          "brown_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("brown_wall"))),
+              DyeColor.BROWN));
   public static final Block GREEN_WALL =
-      register("green_wall", new WallBlock(wallSettings, DyeColor.GREEN));
+      register(
+          "green_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("green_wall"))),
+              DyeColor.GREEN));
   public static final Block RED_WALL =
-      register("red_wall", new WallBlock(wallSettings, DyeColor.RED));
+      register(
+          "red_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("red_wall"))),
+              DyeColor.RED));
   public static final Block BLACK_WALL =
-      register("black_wall", new WallBlock(wallSettings, DyeColor.BLACK));
+      register(
+          "black_wall",
+          new WallBlock(
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("black_wall"))),
+              DyeColor.BLACK));
   public static final Block OBSCURED_WALL =
       register(
           "obscured_wall",
           Ic2TileEntityBlock.create(
-              wallSettings,
+              wallSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("obscured_wall"))),
               TileEntityWall.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
               Util.noFacings,
               false));
-  private static final Properties cableSettings =
-      Properties.of().strength(0.5F, 5.0F).sound(SoundType.METAL);
+
+  private static Properties cableSettings() {
+    return Properties.of().strength(0.5F, 5.0F).sound(SoundType.METAL);
+  }
+
   public static final FoamCableBlock COPPER_FOAM_CABLE =
-      register("copper_foam_cable", FoamCableBlock.create(cableSettings, CableType.copper, 0));
+      register(
+          "copper_foam_cable",
+          FoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("copper_foam_cable"))),
+              CableType.copper,
+              0));
   public static final Block COPPER_CABLE =
       register(
-          "copper_cable", CableBlock.create(cableSettings, CableType.copper, 0, COPPER_FOAM_CABLE));
+          "copper_cable",
+          CableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("copper_cable"))),
+              CableType.copper,
+              0,
+              COPPER_FOAM_CABLE));
   public static final FoamCableBlock GOLD_FOAM_CABLE =
-      register("gold_foam_cable", FoamCableBlock.create(cableSettings, CableType.gold, 0));
+      register(
+          "gold_foam_cable",
+          FoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("gold_foam_cable"))),
+              CableType.gold,
+              0));
   public static final Block GOLD_CABLE =
-      register("gold_cable", CableBlock.create(cableSettings, CableType.gold, 0, GOLD_FOAM_CABLE));
+      register(
+          "gold_cable",
+          CableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("gold_cable"))),
+              CableType.gold,
+              0,
+              GOLD_FOAM_CABLE));
   public static final FoamCableBlock IRON_FOAM_CABLE =
-      register("iron_foam_cable", FoamCableBlock.create(cableSettings, CableType.iron, 0));
+      register(
+          "iron_foam_cable",
+          FoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_foam_cable"))),
+              CableType.iron,
+              0));
   public static final Block IRON_CABLE =
-      register("iron_cable", CableBlock.create(cableSettings, CableType.iron, 0, IRON_FOAM_CABLE));
+      register(
+          "iron_cable",
+          CableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("iron_cable"))),
+              CableType.iron,
+              0,
+              IRON_FOAM_CABLE));
   public static final FoamCableBlock TIN_FOAM_CABLE =
-      register("tin_foam_cable", FoamCableBlock.create(cableSettings, CableType.tin, 0));
+      register(
+          "tin_foam_cable",
+          FoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tin_foam_cable"))),
+              CableType.tin,
+              0));
   public static final Block TIN_CABLE =
-      register("tin_cable", CableBlock.create(cableSettings, CableType.tin, 0, TIN_FOAM_CABLE));
+      register(
+          "tin_cable",
+          CableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tin_cable"))),
+              CableType.tin,
+              0,
+              TIN_FOAM_CABLE));
   public static final DetectorFoamCableBlock DETECTOR_FOAM_CABLE =
-      register("detector_foam_cable", DetectorFoamCableBlock.create(cableSettings));
+      register(
+          "detector_foam_cable",
+          DetectorFoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("detector_foam_cable")))));
   public static final Block DETECTOR_CABLE =
-      register("detector_cable", DetectorCableBlock.create(cableSettings, DETECTOR_FOAM_CABLE));
+      register(
+          "detector_cable",
+          DetectorCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("detector_cable"))),
+              DETECTOR_FOAM_CABLE));
   public static final SplitterFoamCableBlock SPLITTER_FOAM_CABLE =
-      register("splitter_foam_cable", SplitterFoamCableBlock.create(cableSettings));
+      register(
+          "splitter_foam_cable",
+          SplitterFoamCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("splitter_foam_cable")))));
   public static final Block SPLITTER_CABLE =
-      register("splitter_cable", SplitterCableBlock.create(cableSettings, SPLITTER_FOAM_CABLE));
-  private static final Properties insulatedCableSettings =
-      Properties.of().strength(0.5F, 5.0F).sound(SoundType.WOOL);
+      register(
+          "splitter_cable",
+          SplitterCableBlock.create(
+              cableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("splitter_cable"))),
+              SPLITTER_FOAM_CABLE));
+
+  private static Properties insulatedCableSettings() {
+    return Properties.of().strength(0.5F, 5.0F).sound(SoundType.WOOL);
+  }
+
   public static final FoamCableBlock INSULATED_COPPER_FOAM_CABLE =
       register(
           "insulated_copper_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.copper, 1));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_copper_foam_cable"))),
+              CableType.copper,
+              1));
   public static final Block INSULATED_COPPER_CABLE =
       register(
           "insulated_copper_cable",
           CableBlock.create(
-              insulatedCableSettings, CableType.copper, 1, INSULATED_COPPER_FOAM_CABLE));
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_copper_cable"))),
+              CableType.copper,
+              1,
+              INSULATED_COPPER_FOAM_CABLE));
   public static final FoamCableBlock INSULATED_GOLD_FOAM_CABLE =
       register(
           "insulated_gold_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.gold, 1));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_gold_foam_cable"))),
+              CableType.gold,
+              1));
   public static final Block INSULATED_GOLD_CABLE =
       register(
           "insulated_gold_cable",
-          CableBlock.create(insulatedCableSettings, CableType.gold, 1, INSULATED_GOLD_FOAM_CABLE));
+          CableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_gold_cable"))),
+              CableType.gold,
+              1,
+              INSULATED_GOLD_FOAM_CABLE));
   public static final FoamCableBlock DOUBLE_INSULATED_GOLD_FOAM_CABLE =
       register(
           "double_insulated_gold_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.gold, 2));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("double_insulated_gold_foam_cable"))),
+              CableType.gold,
+              2));
   public static final Block DOUBLE_INSULATED_GOLD_CABLE =
       register(
           "double_insulated_gold_cable",
           CableBlock.create(
-              insulatedCableSettings, CableType.gold, 2, DOUBLE_INSULATED_GOLD_FOAM_CABLE));
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("double_insulated_gold_cable"))),
+              CableType.gold,
+              2,
+              DOUBLE_INSULATED_GOLD_FOAM_CABLE));
   public static final FoamCableBlock INSULATED_IRON_FOAM_CABLE =
       register(
           "insulated_iron_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.iron, 1));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_iron_foam_cable"))),
+              CableType.iron,
+              1));
   public static final Block INSULATED_IRON_CABLE =
       register(
           "insulated_iron_cable",
-          CableBlock.create(insulatedCableSettings, CableType.iron, 1, INSULATED_IRON_FOAM_CABLE));
+          CableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_iron_cable"))),
+              CableType.iron,
+              1,
+              INSULATED_IRON_FOAM_CABLE));
   public static final FoamCableBlock DOUBLE_INSULATED_IRON_FOAM_CABLE =
       register(
           "double_insulated_iron_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.iron, 2));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("double_insulated_iron_foam_cable"))),
+              CableType.iron,
+              2));
   public static final Block DOUBLE_INSULATED_IRON_CABLE =
       register(
           "double_insulated_iron_cable",
           CableBlock.create(
-              insulatedCableSettings, CableType.iron, 2, DOUBLE_INSULATED_IRON_FOAM_CABLE));
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("double_insulated_iron_cable"))),
+              CableType.iron,
+              2,
+              DOUBLE_INSULATED_IRON_FOAM_CABLE));
   public static final FoamCableBlock TRIPLE_INSULATED_IRON_FOAM_CABLE =
       register(
           "triple_insulated_iron_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.iron, 3));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("triple_insulated_iron_foam_cable"))),
+              CableType.iron,
+              3));
   public static final Block TRIPLE_INSULATED_IRON_CABLE =
       register(
           "triple_insulated_iron_cable",
           CableBlock.create(
-              insulatedCableSettings, CableType.iron, 3, TRIPLE_INSULATED_IRON_FOAM_CABLE));
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("triple_insulated_iron_cable"))),
+              CableType.iron,
+              3,
+              TRIPLE_INSULATED_IRON_FOAM_CABLE));
   public static final FoamCableBlock INSULATED_TIN_FOAM_CABLE =
       register(
           "insulated_tin_foam_cable",
-          FoamCableBlock.create(insulatedCableSettings, CableType.tin, 1));
+          FoamCableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_tin_foam_cable"))),
+              CableType.tin,
+              1));
   public static final Block INSULATED_TIN_CABLE =
       register(
           "insulated_tin_cable",
-          CableBlock.create(insulatedCableSettings, CableType.tin, 1, INSULATED_TIN_FOAM_CABLE));
-  private static final Properties cropSettings =
-      Properties.of().strength(0.8F, 0.2F).sound(SoundType.CROP).noCollission();
+          CableBlock.create(
+              insulatedCableSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("insulated_tin_cable"))),
+              CableType.tin,
+              1,
+              INSULATED_TIN_FOAM_CABLE));
+
+  private static Properties cropSettings() {
+    return Properties.of().strength(0.8F, 0.2F).sound(SoundType.CROP).noCollision();
+  }
+
   public static final Block CROP_STICK =
       register(
           "crop_stick",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("crop_stick"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2073,7 +3082,11 @@ public final class Ic2Blocks {
       register(
           "weed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("weed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2084,7 +3097,11 @@ public final class Ic2Blocks {
       register(
           "wheat_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wheat_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2095,7 +3112,11 @@ public final class Ic2Blocks {
       register(
           "carrots_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("carrots_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2106,7 +3127,11 @@ public final class Ic2Blocks {
       register(
           "potato_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("potato_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2117,7 +3142,11 @@ public final class Ic2Blocks {
       register(
           "beetroots_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("beetroots_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2128,7 +3157,11 @@ public final class Ic2Blocks {
       register(
           "pumpkin_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pumpkin_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2139,7 +3172,11 @@ public final class Ic2Blocks {
       register(
           "melon_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("melon_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2150,7 +3187,11 @@ public final class Ic2Blocks {
       register(
           "dandelion_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("dandelion_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2161,7 +3202,11 @@ public final class Ic2Blocks {
       register(
           "poppy_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("poppy_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2172,7 +3217,11 @@ public final class Ic2Blocks {
       register(
           "blackthorn_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("blackthorn_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2183,7 +3232,11 @@ public final class Ic2Blocks {
       register(
           "tulip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tulip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2194,7 +3247,11 @@ public final class Ic2Blocks {
       register(
           "cyazint_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cyazint_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2205,7 +3262,11 @@ public final class Ic2Blocks {
       register(
           "venomilia_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("venomilia_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2216,7 +3277,11 @@ public final class Ic2Blocks {
       register(
           "reed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("reed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2227,7 +3292,11 @@ public final class Ic2Blocks {
       register(
           "sticky_reed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("sticky_reed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2238,7 +3307,11 @@ public final class Ic2Blocks {
       register(
           "cocoa_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cocoa_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2249,7 +3322,11 @@ public final class Ic2Blocks {
       register(
           "flax_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("flax_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2260,7 +3337,11 @@ public final class Ic2Blocks {
       register(
           "red_mushroom_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("red_mushroom_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2271,7 +3352,11 @@ public final class Ic2Blocks {
       register(
           "brown_mushroom_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("brown_mushroom_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2282,7 +3367,11 @@ public final class Ic2Blocks {
       register(
           "nether_wart_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("nether_wart_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2293,7 +3382,11 @@ public final class Ic2Blocks {
       register(
           "terra_wart_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("terra_wart_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2304,7 +3397,11 @@ public final class Ic2Blocks {
       register(
           "oak_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("oak_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2315,7 +3412,11 @@ public final class Ic2Blocks {
       register(
           "spruce_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("spruce_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2326,7 +3427,11 @@ public final class Ic2Blocks {
       register(
           "birch_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("birch_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2337,7 +3442,11 @@ public final class Ic2Blocks {
       register(
           "jungle_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("jungle_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2348,7 +3457,11 @@ public final class Ic2Blocks {
       register(
           "acacia_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("acacia_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2359,7 +3472,11 @@ public final class Ic2Blocks {
       register(
           "dark_oak_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("dark_oak_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2370,18 +3487,41 @@ public final class Ic2Blocks {
       register(
           "cherry_sapling_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cherry_sapling_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
               Util.noFacings,
               false,
               Ic2CropType.cherrySapling));
+  public static final Block PALE_OAK_SAPLING_CROP =
+      register(
+          "pale_oak_sapling_crop",
+          Ic2TileEntityBlock.create(
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pale_oak_sapling_crop"))),
+              TileEntityCrop.class,
+              false,
+              Ic2TileEntityBlock.DefaultDrop.Self,
+              Util.noFacings,
+              false,
+              Ic2CropType.paleOakSapling));
   public static final Block FERRU_CROP =
       register(
           "ferru_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("ferru_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2392,7 +3532,11 @@ public final class Ic2Blocks {
       register(
           "cyprium_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cyprium_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2403,7 +3547,11 @@ public final class Ic2Blocks {
       register(
           "stagnium_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("stagnium_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2414,7 +3562,11 @@ public final class Ic2Blocks {
       register(
           "plumbiscus_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("plumbiscus_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2425,7 +3577,11 @@ public final class Ic2Blocks {
       register(
           "aurelia_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("aurelia_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2436,7 +3592,11 @@ public final class Ic2Blocks {
       register(
           "shining_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("shining_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2447,7 +3607,11 @@ public final class Ic2Blocks {
       register(
           "red_wheat_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("red_wheat_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2458,7 +3622,11 @@ public final class Ic2Blocks {
       register(
           "coffee_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("coffee_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2469,7 +3637,11 @@ public final class Ic2Blocks {
       register(
           "hops_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("hops_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2480,7 +3652,11 @@ public final class Ic2Blocks {
       register(
           "eating_plant_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("eating_plant_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2491,7 +3667,11 @@ public final class Ic2Blocks {
       register(
           "blazereed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("blazereed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2502,7 +3682,11 @@ public final class Ic2Blocks {
       register(
           "bobs_yer_uncle_ranks_berries_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("bobs_yer_uncle_ranks_berries_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2513,7 +3697,11 @@ public final class Ic2Blocks {
       register(
           "corium_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("corium_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2524,7 +3712,11 @@ public final class Ic2Blocks {
       register(
           "corpse_plant_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("corpse_plant_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2535,7 +3727,11 @@ public final class Ic2Blocks {
       register(
           "creeper_weed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("creeper_weed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2546,7 +3742,11 @@ public final class Ic2Blocks {
       register(
           "diareed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("diareed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2557,7 +3757,11 @@ public final class Ic2Blocks {
       register(
           "egg_plant_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("egg_plant_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2568,7 +3772,11 @@ public final class Ic2Blocks {
       register(
           "ender_blossom_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("ender_blossom_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2579,7 +3787,11 @@ public final class Ic2Blocks {
       register(
           "meat_rose_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("meat_rose_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2590,7 +3802,11 @@ public final class Ic2Blocks {
       register(
           "milk_wart_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("milk_wart_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2601,7 +3817,11 @@ public final class Ic2Blocks {
       register(
           "oil_berries_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("oil_berries_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2612,7 +3832,11 @@ public final class Ic2Blocks {
       register(
           "slime_plant_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("slime_plant_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2623,7 +3847,11 @@ public final class Ic2Blocks {
       register(
           "spidernip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("spidernip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2634,7 +3862,11 @@ public final class Ic2Blocks {
       register(
           "tearstalks_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("tearstalks_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2645,7 +3877,11 @@ public final class Ic2Blocks {
       register(
           "withereed_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("withereed_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2656,7 +3892,11 @@ public final class Ic2Blocks {
       register(
           "torchflower_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("torchflower_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2667,7 +3907,11 @@ public final class Ic2Blocks {
       register(
           "pitcher_plant_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pitcher_plant_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2678,7 +3922,11 @@ public final class Ic2Blocks {
       register(
           "cornflower_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("cornflower_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2689,7 +3937,11 @@ public final class Ic2Blocks {
       register(
           "lily_of_the_valley_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("lily_of_the_valley_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2700,7 +3952,11 @@ public final class Ic2Blocks {
       register(
           "wither_rose_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("wither_rose_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2711,7 +3967,11 @@ public final class Ic2Blocks {
       register(
           "blue_orchid_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("blue_orchid_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2722,7 +3982,11 @@ public final class Ic2Blocks {
       register(
           "allium_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("allium_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2733,7 +3997,11 @@ public final class Ic2Blocks {
       register(
           "azure_bluet_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("azure_bluet_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2744,7 +4012,11 @@ public final class Ic2Blocks {
       register(
           "oxeye_daisy_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("oxeye_daisy_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2755,7 +4027,11 @@ public final class Ic2Blocks {
       register(
           "red_tulip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("red_tulip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2766,7 +4042,11 @@ public final class Ic2Blocks {
       register(
           "orange_tulip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("orange_tulip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2777,7 +4057,11 @@ public final class Ic2Blocks {
       register(
           "white_tulip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("white_tulip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2788,7 +4072,11 @@ public final class Ic2Blocks {
       register(
           "pink_tulip_crop",
           Ic2TileEntityBlock.create(
-              cropSettings,
+              cropSettings()
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          IC2.getIdentifier("pink_tulip_crop"))),
               TileEntityCrop.class,
               false,
               Ic2TileEntityBlock.DefaultDrop.Self,
@@ -2819,6 +4107,7 @@ public final class Ic2Blocks {
 
   private static Boolean canSpawnOnLeaves(
       BlockState state, BlockGetter world, BlockPos pos, EntityType<?> type) {
-    return type == EntityType.OCELOT || type == EntityType.PARROT;
+    return type == net.minecraft.world.entity.EntityTypes.OCELOT
+        || type == net.minecraft.world.entity.EntityTypes.PARROT;
   }
 }

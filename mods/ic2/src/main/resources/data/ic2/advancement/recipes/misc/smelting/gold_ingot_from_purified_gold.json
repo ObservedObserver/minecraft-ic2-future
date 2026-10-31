@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/gold_ingot_from_purified_gold"
+        "recipes": [
+          "ic2:smelting/gold_ingot_from_purified_gold"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,5 +1,6 @@
 package ic2.core.item.tool;
 
+import ic2.compat.Tier;
 import ic2.core.IC2;
 import ic2.core.profile.NotClassic;
 import ic2.core.ref.Ic2Items;
@@ -12,10 +13,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -50,6 +49,11 @@ public class ItemDrillIridium extends ItemDrill {
           return 20;
         }
 
+        public net.minecraft.tags.TagKey<net.minecraft.world.item.Item> getRepairItems() {
+          return net.minecraft.tags.TagKey.create(
+              Registries.ITEM, ic2.core.IC2.getIdentifier("repair/tool_iridium"));
+        }
+
         public @NotNull Ingredient getRepairIngredient() {
           return Ingredient.of(Ic2Items.IRIDIUM);
         }
@@ -77,9 +81,8 @@ public class ItemDrillIridium extends ItemDrill {
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      Level world, Player player, InteractionHand hand) {
-    if (!world.isClientSide && IC2.keyboard.isModeSwitchKeyDown(player)) {
+  public @NotNull InteractionResult use(Level world, Player player, InteractionHand hand) {
+    if (!world.isClientSide() && IC2.keyboard.isModeSwitchKeyDown(player)) {
       HolderLookup.RegistryLookup<Enchantment> enchants =
           world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
       Holder<Enchantment> silkTouch = enchants.getOrThrow(Enchantments.SILK_TOUCH);

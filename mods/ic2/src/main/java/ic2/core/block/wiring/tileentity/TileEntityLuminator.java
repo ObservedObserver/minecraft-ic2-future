@@ -48,7 +48,7 @@ public class TileEntityLuminator extends Ic2TileEntity {
   }
 
   public static boolean isValidPosition(LevelReader world, BlockPos pos, Direction side) {
-    if (world instanceof Level level && !level.isClientSide) {
+    if (world instanceof Level level && !level.isClientSide()) {
       if (world.getBlockState(pos).isFaceSturdy(world, pos, side, SupportType.FULL)) {
         return true;
       }
@@ -83,7 +83,7 @@ public class TileEntityLuminator extends Ic2TileEntity {
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.invertRedstone = nbt.getBoolean("invert");
+    this.invertRedstone = nbt.getBooleanOr("invert", false);
   }
 
   @Override
@@ -119,7 +119,8 @@ public class TileEntityLuminator extends Ic2TileEntity {
     AABB bounds = aabbMap.get(this.getFacing()).get(0).move(this.worldPosition);
     for (Monster monster :
         this.getLevel().getEntitiesOfClass(Monster.class, bounds, Entity::isAlive)) {
-      boolean isUndead = monster.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD);
+      boolean isUndead =
+          monster.getType().builtInRegistryHolder().is(net.minecraft.tags.EntityTypeTags.UNDEAD);
       monster.setRemainingFireTicks(isUndead ? 20 : 10);
     }
   }
@@ -131,7 +132,7 @@ public class TileEntityLuminator extends Ic2TileEntity {
   @Override
   protected InteractionResult onActivated(
       Player player, InteractionHand hand, Direction side, Vec3 hit) {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       ItemStack stack = StackUtil.get(player, hand);
       double amount = 10000.0 - this.energy.getEnergy();
       if (!StackUtil.isEmpty(stack)

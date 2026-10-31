@@ -4,7 +4,7 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 
@@ -50,12 +50,12 @@ public class ItemMug extends Item implements ItemLike {
             };
 
         int highest = 0;
-        int x = this.amplifyEffect(player, MobEffects.MOVEMENT_SPEED, maxAmplifier, extraDuration);
+        int x = this.amplifyEffect(player, MobEffects.SPEED, maxAmplifier, extraDuration);
         if (x > highest) {
           highest = x;
         }
 
-        x = this.amplifyEffect(player, MobEffects.DIG_SPEED, maxAmplifier, extraDuration);
+        x = this.amplifyEffect(player, MobEffects.HASTE, maxAmplifier, extraDuration);
         if (x > highest) {
           highest = x;
         }
@@ -65,9 +65,9 @@ public class ItemMug extends Item implements ItemLike {
         }
 
         if (highest >= 3) {
-          player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, (highest - 2) * 200, 0));
+          player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, (highest - 2) * 200, 0));
           if (highest >= 4) {
-            player.addEffect(new MobEffectInstance(MobEffects.HARM, 1, highest - 3));
+            player.addEffect(new MobEffectInstance(MobEffects.INSTANT_DAMAGE, 1, highest - 3));
           }
         }
 
@@ -103,12 +103,14 @@ public class ItemMug extends Item implements ItemLike {
     return type != null && type != ItemMug.MugType.empty ? 32 : 0;
   }
 
-  public UseAnim getUseAnimation(ItemStack stack) {
+  public ItemUseAnimation getUseAnimation(ItemStack stack) {
     ItemMug.MugType type = this.getType(stack);
-    return type != null && type != ItemMug.MugType.empty ? UseAnim.DRINK : UseAnim.NONE;
+    return type != null && type != ItemMug.MugType.empty
+        ? ItemUseAnimation.DRINK
+        : ItemUseAnimation.NONE;
   }
 
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemMug.MugType type = this.getType(StackUtil.get(player, hand));
     if (type != null && type != ItemMug.MugType.empty) {
       player.startUsingItem(hand);

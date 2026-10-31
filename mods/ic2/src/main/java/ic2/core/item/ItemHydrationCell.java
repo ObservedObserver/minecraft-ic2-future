@@ -39,7 +39,7 @@ public class ItemHydrationCell extends Item {
 
     ItemStack stack = context.getItemInHand();
     if (this.applyToCrop(stack, crop, true)) {
-      return InteractionResult.sidedSuccess(level.isClientSide);
+      return InteractionResult.SUCCESS;
     }
 
     return InteractionResult.PASS;
@@ -75,14 +75,14 @@ public class ItemHydrationCell extends Item {
 
   private int getUsage(ItemStack stack) {
     CompoundTag nbt = StackUtil.getTag(stack);
-    return nbt != null ? nbt.getInt("uses") : 0;
+    return nbt != null ? nbt.getIntOr("uses", 0) : 0;
   }
 
   private void setUsage(ItemStack stack, int uses) {
     if (uses <= 0) {
       StackUtil.setTag(stack, null);
     } else {
-      StackUtil.getOrCreateNbtData(stack).putInt("uses", uses);
+      StackUtil.setTagValue(stack, "uses", net.minecraft.nbt.IntTag.valueOf(uses));
     }
   }
 
@@ -107,6 +107,18 @@ public class ItemHydrationCell extends Item {
 
   @OnlyIn(Dist.CLIENT)
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,

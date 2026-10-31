@@ -1,16 +1,12 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.wiring.AbstractCableBlock;
 import ic2.core.ref.Ic2Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class CableGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 

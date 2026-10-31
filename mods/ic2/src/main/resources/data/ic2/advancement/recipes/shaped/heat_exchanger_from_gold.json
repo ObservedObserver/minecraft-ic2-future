@@ -13,11 +13,11 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_plates/gold": {
+    "has_plates/copper": {
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/gold"
+            "items": "#c:plates/copper"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/heat_exchanger_from_gold"
+        "recipes": [
+          "ic2:shaped/heat_exchanger_from_copper"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -33,13 +35,13 @@
   "requirements": [
     [
       "has_heat_exchanger",
-      "has_plates/gold",
+      "has_plates/copper",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "ic2:shaped/heat_exchanger_from_gold"
+      "ic2:shaped/heat_exchanger_from_copper"
     ]
   },
   "sends_telemetry_event": true

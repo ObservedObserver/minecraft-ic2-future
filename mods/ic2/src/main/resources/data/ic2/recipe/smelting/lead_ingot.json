@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "lead_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:lead_ore"
-  },
+  "ingredient": "ic2:lead_ore",
   "result": {
     "id": "ic2:lead_ingot"
   },

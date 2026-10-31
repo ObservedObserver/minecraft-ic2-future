@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -37,7 +36,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -68,20 +67,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.BlockEntityType.Builder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
@@ -109,14 +100,8 @@ public final class EnvProxyForge implements EnvProxy {
       DeferredRegister.create(Registries.RECIPE_TYPE, "ic2");
   static final DeferredRegister<RecipeSerializer<?>> recipeSerializerRegistry =
       DeferredRegister.create(Registries.RECIPE_SERIALIZER, "ic2");
-  private static final boolean isClient = FMLEnvironment.dist.isClient();
+  private static final boolean isClient = FMLEnvironment.getDist().isClient();
   static List<Runnable> pendingItemRegistrations = new ArrayList<>();
-  static List<ConfiguredFeatureRegistration<?, ?>> configuredFeatureRegistrations =
-      new ArrayList<>();
-  static List<EnvProxyForge.PlacedFeatureRegistration<?>> placedFeatureRegistrations =
-      new ArrayList<>();
-  static List<EnvProxyForge.PlacementModifierTypeRegistration> placementModifierTypeRegistrations =
-      new ArrayList<>();
   static HashMap<Item, Integer> burnTimeRecord = new HashMap<>();
 
   static void registerPendingItems() {
@@ -148,21 +133,21 @@ public final class EnvProxyForge implements EnvProxy {
   }
 
   @Override
-  public void registerBlock(ResourceLocation id, Block block) {
+  public void registerBlock(Identifier id, Block block) {
     Registry.register(BuiltInRegistries.BLOCK, id, block);
   }
 
   @Override
   public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(
-      ResourceLocation id, BiFunction<BlockPos, BlockState, T> factory, Block... blocks) {
-    BlockEntityType<T> type = Builder.of(factory::apply, blocks).build(null);
+      Identifier id, BiFunction<BlockPos, BlockState, T> factory, Block... blocks) {
+    BlockEntityType<T> type = new BlockEntityType<>(factory::apply, blocks);
     blockEntityRegistry.register(id.getPath(), () -> type);
     return type;
   }
 
   @Override
   public <T extends AbstractContainerMenu> MenuType<T> registerScreenHandler(
-      ResourceLocation id, BiFunction<Integer, Inventory, T> factory) {
+      Identifier id, BiFunction<Integer, Inventory, T> factory) {
     MenuType<T> type = new MenuType<>(factory::apply, FeatureFlags.DEFAULT_FLAGS);
     screenHandlerRegistry.register(id.getPath(), () -> type);
     return type;
@@ -170,19 +155,19 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public <T extends AbstractContainerMenu> MenuType<T> registerExtendedScreenHandler(
-      ResourceLocation id, EnvProxy.ExtendedClientScreenHandlerFactory<T> factory) {
+      Identifier id, EnvProxy.ExtendedClientScreenHandlerFactory<T> factory) {
     MenuType<T> type = IMenuTypeExtension.create(factory::create);
     screenHandlerRegistry.register(id.getPath(), () -> type);
     return type;
   }
 
   @Override
-  public void registerItem(ResourceLocation id, Item item) {
+  public void registerItem(Identifier id, Item item) {
     Registry.register(BuiltInRegistries.ITEM, id, item);
   }
 
   @Override
-  public void registerEntity(ResourceLocation id, EntityType<?> type) {
+  public void registerEntity(Identifier id, EntityType<?> type) {
     entityRegistry.register(id.getPath(), () -> type);
   }
 
@@ -192,7 +177,7 @@ public final class EnvProxyForge implements EnvProxy {
   }
 
   @Override
-  public void registerStatusEffect(ResourceLocation id, MobEffect effect) {
+  public void registerStatusEffect(Identifier id, MobEffect effect) {
     Registry.register(BuiltInRegistries.MOB_EFFECT, id, effect);
   }
 
@@ -201,7 +186,7 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public SoundEvent registerSoundEvent(String id) {
-    ResourceLocation identifier = IC2.getIdentifier(id);
+    Identifier identifier = IC2.getIdentifier(id);
     SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(identifier);
     Registry.register(BuiltInRegistries.SOUND_EVENT, identifier, soundEvent);
     return soundEvent;
@@ -209,57 +194,27 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public GameEvent registerGameEvent(String id, int range) {
-    ResourceLocation identifier = IC2.getIdentifier(id);
+    Identifier identifier = IC2.getIdentifier(id);
     return Registry.register(BuiltInRegistries.GAME_EVENT, identifier, new GameEvent(range));
   }
 
   @Override
-  public <FC extends FeatureConfiguration, F extends Feature<FC>>
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> registerConfiguredFeature(
-          ResourceLocation id, F feature, FC config) {
-    CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> ret = new CompletableFuture<>();
-    configuredFeatureRegistrations.add(
-        new ConfiguredFeatureRegistration<>(id, feature, config, ret));
-    return ret;
-  }
-
-  @Override
-  public <FC extends FeatureConfiguration> void registerPlacedFeature(
-      ResourceLocation id,
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> feature,
-      List<PlacementModifier> modifiers) {
-    placedFeatureRegistrations.add(
-        new EnvProxyForge.PlacedFeatureRegistration<>(
-            id, feature, modifiers, new CompletableFuture<>()));
-  }
-
-  @Override
-  public void attachPlacedFeatureToBiome(
-      ResourceLocation id, EnvProxy.BiomeSelector selector, Decoration step) {}
-
-  @Override
-  public void registerPlacementModifierType(ResourceLocation id, PlacementModifierType<?> type) {
-    placementModifierTypeRegistrations.add(
-        new EnvProxyForge.PlacementModifierTypeRegistration(id, type));
-  }
-
-  @Override
   public <T extends FoliagePlacer> FoliagePlacerType<T> registerFoliagePlacer(
-      ResourceLocation id, MapCodec<T> codec) {
+      Identifier id, MapCodec<T> codec) {
     FoliagePlacerType<T> type = new FoliagePlacerType<>(codec);
     foliagePlacerRegistry.register(id.getPath(), () -> type);
     return type;
   }
 
   @Override
-  public <T extends Recipe<?>> RecipeType<T> registerRecipeType(ResourceLocation id) {
+  public <T extends Recipe<?>> RecipeType<T> registerRecipeType(Identifier id) {
     RecipeType<T> type = RecipeType.simple(id);
     recipeTypeRegistry.register(id.getPath(), () -> type);
     return type;
   }
 
   @Override
-  public void registerRecipeSerializer(ResourceLocation id, RecipeSerializer<?> serializer) {
+  public void registerRecipeSerializer(Identifier id, RecipeSerializer<?> serializer) {
     recipeSerializerRegistry.register(id.getPath(), () -> serializer);
   }
 
@@ -270,7 +225,7 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public CreativeModeTab createItemGroup(
-      ResourceLocation id, Supplier<ItemStack> iconSupplier, Ic2ItemGroupType groupType) {
+      Identifier id, Supplier<ItemStack> iconSupplier, Ic2ItemGroupType groupType) {
     pendingTabRegistrations.add(new TabRegistration(id, iconSupplier, groupType));
     CreativeModeTab tab =
         CreativeModeTab.builder()
@@ -292,8 +247,10 @@ public final class EnvProxyForge implements EnvProxy {
                       }
                       if (item instanceof BlockItemEnergyStorage energyItem) {
                         ItemStack chargedStack = new ItemStack(item);
-                        StackUtil.getOrCreateNbtData(chargedStack)
-                            .putDouble("energy", energyItem.maxEnergy);
+                        StackUtil.setTagValue(
+                            chargedStack,
+                            "energy",
+                            net.minecraft.nbt.DoubleTag.valueOf(energyItem.maxEnergy));
                         output.accept(chargedStack);
                       }
                       if (item instanceof ItemArmorFluidTank tankItem) {
@@ -347,12 +304,13 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public boolean hasRecipeRemainder(ItemStack stack) {
-    return stack.getItem().hasCraftingRemainingItem(stack);
+    return stack.getItem().getCraftingRemainder(stack) != null;
   }
 
   @Override
   public ItemStack getRecipeRemainder(ItemStack stack) {
-    return stack.getItem().getCraftingRemainingItem(stack);
+    var remainder = stack.getItem().getCraftingRemainder(stack);
+    return remainder == null ? ItemStack.EMPTY : remainder.create();
   }
 
   @Override
@@ -362,7 +320,7 @@ public final class EnvProxyForge implements EnvProxy {
 
   @Override
   public int getBurnTime(ItemStack stack) {
-    return stack.getBurnTime(null);
+    return ic2.compat.FuelCompat.burnTime(stack);
   }
 
   @Override
@@ -434,20 +392,5 @@ public final class EnvProxyForge implements EnvProxy {
     return !event.isCanceled();
   }
 
-  record TabRegistration(
-      ResourceLocation id, Supplier<ItemStack> icon, Ic2ItemGroupType groupType) {}
-
-  record ConfiguredFeatureRegistration<FC extends FeatureConfiguration, F extends Feature<FC>>(
-      ResourceLocation id,
-      F feature,
-      FC config,
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> future) {}
-
-  record PlacedFeatureRegistration<FC extends FeatureConfiguration>(
-      ResourceLocation id,
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> feature,
-      List<PlacementModifier> modifiers,
-      CompletableFuture<Holder<PlacedFeature>> placedFeature) {}
-
-  record PlacementModifierTypeRegistration(ResourceLocation id, PlacementModifierType<?> type) {}
+  record TabRegistration(Identifier id, Supplier<ItemStack> icon, Ic2ItemGroupType groupType) {}
 }

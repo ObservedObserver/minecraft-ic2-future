@@ -1,17 +1,16 @@
 package ic2.core.ref;
 
 import com.google.common.base.Suppliers;
+import ic2.compat.ArmorItem;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 
 public enum Ic2ArmorMaterials {
   BRONZE(
@@ -84,25 +83,30 @@ public enum Ic2ArmorMaterials {
   }
 
   private Holder<ArmorMaterial> build() {
-    Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+    Map<net.minecraft.world.item.equipment.ArmorType, Integer> defense =
+        new EnumMap<>(net.minecraft.world.item.equipment.ArmorType.class);
     for (ArmorItem.Type type : ArmorItem.Type.values()) {
       int index = type.getSlot().getIndex();
       if (index >= 0 && index < this.protectionAmounts.length) {
-        defense.put(type, this.protectionAmounts[index]);
+        defense.put(type.vanilla(), this.protectionAmounts[index]);
       }
     }
-
-    List<ArmorMaterial.Layer> layers =
-        List.of(new ArmorMaterial.Layer(ResourceLocation.parse(this.name)));
+    Identifier id = Identifier.parse(this.name);
+    net.minecraft.tags.TagKey<net.minecraft.world.item.Item> repairTag =
+        net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM,
+            Identifier.fromNamespaceAndPath(id.getNamespace(), "repair/" + id.getPath()));
     return Holder.direct(
         new ArmorMaterial(
+            this.durabilityMultiplier,
             defense,
             this.enchantAbility,
             this.equipSound,
-            this.repairIngredientSupplier,
-            layers,
             this.toughness,
-            this.knockbackResistance));
+            this.knockbackResistance,
+            repairTag,
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.world.item.equipment.EquipmentAssets.ROOT_ID, id)));
   }
 
   public Holder<ArmorMaterial> holder() {

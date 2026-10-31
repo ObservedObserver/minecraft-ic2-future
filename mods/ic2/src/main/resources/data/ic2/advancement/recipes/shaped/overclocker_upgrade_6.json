@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/overclocker_upgrade_6"
+        "recipes": [
+          "ic2:shaped/overclocker_upgrade_6"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

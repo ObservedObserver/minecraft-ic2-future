@@ -240,16 +240,16 @@ public class TileEntityReplicator extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.extraUuStored = nbt.getDouble("extraUuStored");
-    this.uuProcessed = nbt.getDouble("uuProcessed");
-    this.index = nbt.getInt("index");
-    int modeIdx = nbt.getInt("mode");
+    this.extraUuStored = nbt.getDoubleOr("extraUuStored", 0.0);
+    this.uuProcessed = nbt.getDoubleOr("uuProcessed", 0.0);
+    this.index = nbt.getIntOr("index", 0);
+    int modeIdx = nbt.getIntOr("mode", 0);
     this.mode =
         modeIdx < TileEntityReplicator.Mode.values().length
             ? TileEntityReplicator.Mode.values()[modeIdx]
             : TileEntityReplicator.Mode.STOPPED;
-    CompoundTag contentTag = nbt.getCompound("pattern");
-    this.pattern = ItemStack.parseOptional(registries, contentTag);
+    CompoundTag contentTag = nbt.getCompoundOrEmpty("pattern");
+    this.pattern = ic2.compat.NbtCompat.readItem(registries, contentTag);
   }
 
   @Override
@@ -260,7 +260,8 @@ public class TileEntityReplicator extends TileEntityElectricMachine
     nbt.putInt("index", this.index);
     nbt.putInt("mode", this.mode.ordinal());
     if (this.pattern != null) {
-      nbt.put("pattern", this.pattern.save(registries, new CompoundTag()));
+      nbt.put(
+          "pattern", ic2.compat.NbtCompat.saveItem(this.pattern, registries, new CompoundTag()));
     }
   }
 

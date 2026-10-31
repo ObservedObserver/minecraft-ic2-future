@@ -59,7 +59,7 @@ public abstract class TileEntityTransformer extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    int mode = nbt.getInt("mode");
+    int mode = nbt.getIntOr("mode", 0);
     if (mode >= 0 && mode < TileEntityTransformer.Mode.VALUES.length) {
       this.configuredMode = TileEntityTransformer.Mode.VALUES[mode];
     } else {
@@ -76,7 +76,7 @@ public abstract class TileEntityTransformer extends TileEntityInventory
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.updateRedstone(true);
     }
   }
@@ -100,7 +100,7 @@ public abstract class TileEntityTransformer extends TileEntityInventory
   }
 
   private void updateRedstone(boolean force) {
-    assert !this.getLevel().isClientSide;
+    assert !this.getLevel().isClientSide();
 
     TileEntityTransformer.Mode newMode =
         switch (this.configuredMode) {
@@ -142,7 +142,7 @@ public abstract class TileEntityTransformer extends TileEntityInventory
   @Override
   public void setFacing(Level world, Direction facing) {
     super.setFacing(world, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.updateRedstone(true);
     }
   }

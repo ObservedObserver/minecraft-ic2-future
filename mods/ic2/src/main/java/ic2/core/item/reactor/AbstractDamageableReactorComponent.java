@@ -63,12 +63,30 @@ public abstract class AbstractDamageableReactorComponent extends Item implements
     return 0.0F;
   }
 
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
       @NotNull List<Component> tooltip,
       @NotNull TooltipFlag advanced) {
-    super.appendHoverText(stack, world, tooltip, advanced);
+    super.appendHoverText(
+        stack,
+        world,
+        net.minecraft.world.item.component.TooltipDisplay.DEFAULT,
+        tooltip::add,
+        advanced);
     Ic2Tooltip.add(
         tooltip,
         Component.translatable(
@@ -82,16 +100,18 @@ public abstract class AbstractDamageableReactorComponent extends Item implements
 
   public int getUse(ItemStack stack) {
     CompoundTag nbt = StackUtil.getTag(stack);
-    return nbt != null ? nbt.getInt("use") : 0;
+    return nbt != null ? nbt.getIntOr("use", 0) : 0;
   }
 
   public void setUse(ItemStack stack, int use) {
-    StackUtil.getOrCreateNbtData(stack).putInt("use", use);
+    StackUtil.setTagValue(stack, "use", net.minecraft.nbt.IntTag.valueOf(use));
   }
 
   protected void incrementUse(ItemStack stack) {
-    StackUtil.getOrCreateNbtData(stack)
-        .putInt("use", Math.min(this.getUse(stack) + 1, this.maxUse));
+    StackUtil.setTagValue(
+        stack,
+        "use",
+        net.minecraft.nbt.IntTag.valueOf(Math.min(this.getUse(stack) + 1, this.maxUse)));
   }
 
   public int getMaxUse() {

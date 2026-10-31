@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/dark_coffee_mug"
+        "recipes": [
+          "ic2:smelting/dark_coffee_mug"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

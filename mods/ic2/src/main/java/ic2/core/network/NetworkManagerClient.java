@@ -10,7 +10,6 @@ import ic2.core.block.comp.Components;
 import ic2.core.block.comp.TileEntityComponent;
 import ic2.core.block.tileentity.Ic2TileEntity;
 import ic2.core.item.IHandHeldInventory;
-import ic2.core.proxy.SideProxyClient;
 import ic2.core.ref.Ic2SoundEvents;
 import ic2.core.util.LogCategory;
 import ic2.core.util.StackUtil;
@@ -28,7 +27,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -133,8 +132,9 @@ public class NetworkManagerClient extends NetworkManager {
         DataEncoder.encode(buffer, te, false);
       } else {
         Player player = Minecraft.getInstance().player;
-        if ((StackUtil.isEmpty(player.getInventory().getSelected())
-                || !(player.getInventory().getSelected().getItem() instanceof IHandHeldInventory))
+        if ((StackUtil.isEmpty(player.getInventory().getSelectedItem())
+                || !(player.getInventory().getSelectedItem().getItem()
+                    instanceof IHandHeldInventory))
             && (StackUtil.isEmpty(player.getOffhandItem())
                 || !(player.getOffhandItem().getItem() instanceof IHandHeldInventory))) {
           IC2.sideProxy.displayError(
@@ -155,7 +155,7 @@ public class NetworkManagerClient extends NetworkManager {
 
   @Override
   public void onPacket(ByteBuf packet, Player player) {
-    assert player == null || player.level().isClientSide;
+    assert player == null || player.level().isClientSide();
 
     try {
       this.onPacketData(GrowingBuffer.wrap(packet), player);
@@ -240,10 +240,9 @@ public class NetworkManagerClient extends NetworkManager {
                     Level world = Minecraft.getInstance().level;
 
                     for (Player player1 : world.players()) {
-                      if (profile.getId() != null
-                              && profile.getId().equals(player1.getGameProfile().getId())
-                          || profile.getId() == null
-                              && profile.getName().equals(player1.getGameProfile().getName())) {
+                      if (profile.id() != null && profile.id().equals(player1.getGameProfile().id())
+                          || profile.id() == null
+                              && profile.name().equals(player1.getGameProfile().name())) {
                         if (stack.getItem() instanceof INetworkItemEventListener) {
                           ((INetworkItemEventListener) stack.getItem())
                               .onNetworkEvent(stack, player1, event);
@@ -334,9 +333,9 @@ public class NetworkManagerClient extends NetworkManager {
             break;
           case TileEntityBlockComponent:
             {
-              final ResourceLocation dimensionId =
+              final Identifier dimensionId =
                   DataEncoder.getValue(
-                      DataEncoder.decode(is, DataEncoder.EncodedType.ResourceLocation), null);
+                      DataEncoder.decode(is, DataEncoder.EncodedType.Identifier), null);
               final BlockPos pos = DataEncoder.decode(is, BlockPos.class);
               String componentName = is.readString();
               final Class<? extends TileEntityComponent> componentCls =
@@ -385,7 +384,7 @@ public class NetworkManagerClient extends NetworkManager {
 
   @Override
   protected final void sendC2SPacket(GrowingBuffer buffer) {
-    ClientPacketListener handler = SideProxyClient.mc.getConnection();
+    ClientPacketListener handler = net.minecraft.client.Minecraft.getInstance().getConnection();
     if (handler != null) {
       ByteBuf data = makePacket(buffer, true);
       byte[] bytes = new byte[data.readableBytes()];

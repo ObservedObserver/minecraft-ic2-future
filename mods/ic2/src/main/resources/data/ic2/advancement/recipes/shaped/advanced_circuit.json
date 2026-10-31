@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/advanced_circuit"
+        "recipes": [
+          "ic2:shaped/advanced_circuit"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

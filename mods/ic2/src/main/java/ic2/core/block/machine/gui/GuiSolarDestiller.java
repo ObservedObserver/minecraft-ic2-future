@@ -3,9 +3,9 @@ package ic2.core.block.machine.gui;
 import ic2.core.Ic2Gui;
 import ic2.core.block.machine.container.ContainerSolarDistiller;
 import ic2.core.gui.TankGauge;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiSolarDestiller extends Ic2Gui<ContainerSolarDistiller> {
@@ -17,8 +17,9 @@ public class GuiSolarDestiller extends Ic2Gui<ContainerSolarDistiller> {
   }
 
   @Override
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
-    super.renderBg(guiGraphics, delta, mouseX, mouseY);
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     this.bindTexture();
     if (((ContainerSolarDistiller) this.menu).base.canWork()) {
       this.drawTexturedRect(
@@ -27,7 +28,7 @@ public class GuiSolarDestiller extends Ic2Gui<ContainerSolarDistiller> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guisolardestiller.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guisolardestiller.png");
   }
 }

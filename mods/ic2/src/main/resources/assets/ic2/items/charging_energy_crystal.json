@@ -1,0 +1,62 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "ic2:legacy",
+    "property_id": "ic2:charge",
+    "fallback": {
+      "type": "minecraft:range_dispatch",
+      "property": "ic2:legacy",
+      "property_id": "ic2:charge",
+      "fallback": {
+        "type": "minecraft:range_dispatch",
+        "property": "ic2:legacy",
+        "property_id": "ic2:charge",
+        "fallback": {
+          "type": "minecraft:range_dispatch",
+          "property": "ic2:legacy",
+          "property_id": "ic2:charge",
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "ic2:item/charging_energy_crystal"
+          },
+          "entries": [
+            {
+              "threshold": 0.2,
+              "model": {
+                "type": "minecraft:model",
+                "model": "ic2:item/battery/charging_energy_crystal_1"
+              }
+            }
+          ]
+        },
+        "entries": [
+          {
+            "threshold": 0.4,
+            "model": {
+              "type": "minecraft:model",
+              "model": "ic2:item/battery/charging_energy_crystal_2"
+            }
+          }
+        ]
+      },
+      "entries": [
+        {
+          "threshold": 0.6,
+          "model": {
+            "type": "minecraft:model",
+            "model": "ic2:item/battery/charging_energy_crystal_3"
+          }
+        }
+      ]
+    },
+    "entries": [
+      {
+        "threshold": 0.8,
+        "model": {
+          "type": "minecraft:model",
+          "model": "ic2:item/battery/charging_energy_crystal_4"
+        }
+      }
+    ]
+  }
+}

@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/rubber_sheet"
+        "recipes": [
+          "ic2:shaped/rubber_sheet"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

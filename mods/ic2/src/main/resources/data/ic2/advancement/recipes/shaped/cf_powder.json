@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/stone"
+            "items": "#c:dusts/stone"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/cf_powder"
+        "recipes": [
+          "ic2:shaped/cf_powder"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

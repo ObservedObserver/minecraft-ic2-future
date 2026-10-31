@@ -8,13 +8,13 @@ import ic2.core.gui.VanillaButton;
 import ic2.core.gui.dynamic.TextProvider;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 public class GuiTransformer extends Ic2Gui<ContainerTransformer> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guitransfomer.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guitransfomer.png");
   public String[] mode = new String[] {"", "", "", ""};
 
   public GuiTransformer(
@@ -74,7 +74,7 @@ public class GuiTransformer extends Ic2Gui<ContainerTransformer> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

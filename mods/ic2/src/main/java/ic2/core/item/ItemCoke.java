@@ -1,16 +1,18 @@
 package ic2.core.item;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 public class ItemCoke extends Item {
   public ItemCoke() {
-    super(new Properties().stacksTo(64));
-  }
-
-  @Override
-  public int getBurnTime(
-      ItemStack itemStack, net.minecraft.world.item.crafting.RecipeType<?> recipeType) {
-    return 3200;
+    super(
+        new Properties()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.ITEM,
+                    ic2.core.IC2.getIdentifier("coke")))
+            .stacksTo(64)
+            .component(
+                net.minecraft.core.component.DataComponents.COOKING_FUEL,
+                ic2.compat.FuelCompat.constant(3200)));
   }
 }

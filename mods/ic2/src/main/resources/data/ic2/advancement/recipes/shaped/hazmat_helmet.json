@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/hazmat_helmet"
+        "recipes": [
+          "ic2:shaped/hazmat_helmet"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

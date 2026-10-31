@@ -23,7 +23,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -277,7 +277,7 @@ public class DynamicCategory extends IORecipeCategory<IORecipeWrapper> {
   public void draw(
       IORecipeWrapper recipe,
       IRecipeSlotsView recipeSlotsView,
-      GuiGraphics guiGraphics,
+      GuiGraphicsExtractor guiGraphics,
       double mouseX,
       double mouseY) {
     for (Tuple.T2<IDrawable, SlotPosition> element : this.elements) {

@@ -23,7 +23,7 @@ public abstract class TileEntityBridgeNuke extends TileEntityExplosive {
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
     if (placer instanceof Player player) {
-      String playerName = player.getGameProfile().getName() + "/" + player.getGameProfile().getId();
+      String playerName = player.getGameProfile().name() + "/" + player.getGameProfile().id();
       IC2.log.log(
           LogCategory.PlayerActivity,
           Level.INFO,

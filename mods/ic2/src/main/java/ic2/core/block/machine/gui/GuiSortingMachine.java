@@ -11,12 +11,12 @@ import ic2.core.util.Util;
 import java.util.function.Supplier;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiSortingMachine extends Ic2Gui<ContainerSortingMachine> {
-  private static final ResourceLocation texture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guisortingmachine.png");
+  private static final Identifier texture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guisortingmachine.png");
 
   public GuiSortingMachine(
       ContainerSortingMachine container, Inventory playerInventory, Component title) {
@@ -76,7 +76,7 @@ public class GuiSortingMachine extends Ic2Gui<ContainerSortingMachine> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return texture;
   }
 }

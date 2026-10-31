@@ -1,26 +1,21 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.item.tool.ItemToolPainter;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class PainterGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -34,7 +29,7 @@ public class PainterGameTests {
 
   @GameTest(template = EMPTY)
   public static void painterDyesWool(GameTestHelper helper) {
-    helper.setBlock(TARGET_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(TARGET_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = new ItemStack(Ic2Items.RED_PAINTER);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -43,7 +38,7 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.SUCCESS, "painter use result");
-    helper.assertBlockPresent(Blocks.RED_WOOL, TARGET_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.RED), TARGET_POS);
     helper.assertValueEqual(
         player.getMainHandItem().getDamageValue(), 1, "painter durability used");
     helper.succeed();
@@ -60,14 +55,15 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.SUCCESS, "painter use result");
-    helper.assertBlockPresent(Blocks.BLUE_STAINED_GLASS, TARGET_POS);
+    helper.assertBlockPresent(
+        Blocks.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.BLUE), TARGET_POS);
     helper.succeed();
   }
 
   // painting a block that already has the painter's color does nothing
   @GameTest(template = EMPTY)
   public static void painterSameColorDoesNothing(GameTestHelper helper) {
-    helper.setBlock(TARGET_POS, Blocks.RED_WOOL);
+    helper.setBlock(TARGET_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.RED));
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = new ItemStack(Ic2Items.RED_PAINTER);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -76,7 +72,7 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.PASS, "painter use result");
-    helper.assertBlockPresent(Blocks.RED_WOOL, TARGET_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.RED), TARGET_POS);
     helper.assertValueEqual(
         player.getMainHandItem().getDamageValue(), 0, "painter must not take damage");
     helper.succeed();
@@ -85,7 +81,7 @@ public class PainterGameTests {
   // the blank painter has no color and can't paint anything
   @GameTest(template = EMPTY)
   public static void blankPainterDoesNothing(GameTestHelper helper) {
-    helper.setBlock(TARGET_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(TARGET_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = new ItemStack(Ic2Items.PAINTER);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -94,7 +90,8 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.PASS, "blank painter use result");
-    helper.assertBlockPresent(Blocks.WHITE_WOOL, TARGET_POS);
+    helper.assertBlockPresent(
+        Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE), TARGET_POS);
     helper.succeed();
   }
 
@@ -104,7 +101,7 @@ public class PainterGameTests {
     ItemStack stack = new ItemStack(Ic2Items.RED_PAINTER);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-    Sheep sheep = helper.spawn(EntityType.SHEEP, TARGET_POS);
+    Sheep sheep = helper.spawn(net.minecraft.world.entity.EntityTypes.SHEEP, TARGET_POS);
     sheep.setColor(DyeColor.WHITE);
 
     InteractionResult result =
@@ -119,7 +116,7 @@ public class PainterGameTests {
   // a used-up painter reverts to the blank painter
   @GameTest(template = EMPTY)
   public static void depletedPainterTurnsBlank(GameTestHelper helper) {
-    helper.setBlock(TARGET_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(TARGET_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = new ItemStack(Ic2Items.RED_PAINTER);
     stack.setDamageValue(stack.getMaxDamage() - 1);
@@ -129,7 +126,7 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.SUCCESS, "painter use result");
-    helper.assertBlockPresent(Blocks.RED_WOOL, TARGET_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.RED), TARGET_POS);
     helper.assertValueEqual(
         player.getMainHandItem().getItem(), Ic2Items.PAINTER, "hand should hold the blank painter");
     helper.succeed();
@@ -138,11 +135,11 @@ public class PainterGameTests {
   // with auto refill on, a used-up painter is replaced by a spare from the inventory
   @GameTest(template = EMPTY)
   public static void depletedPainterAutoRefillsFromInventory(GameTestHelper helper) {
-    helper.setBlock(TARGET_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(TARGET_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     ServerPlayer player = makePlayer(helper);
     ItemStack stack = new ItemStack(Ic2Items.RED_PAINTER);
     stack.setDamageValue(stack.getMaxDamage() - 1);
-    StackUtil.getOrCreateNbtData(stack).putBoolean("autoRefill", true);
+    StackUtil.setTagValue(stack, "autoRefill", net.minecraft.nbt.ByteTag.valueOf(true));
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
     player.getInventory().add(new ItemStack(Ic2Items.RED_PAINTER));
 
@@ -150,7 +147,7 @@ public class PainterGameTests {
         stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TARGET_POS, Direction.UP));
 
     helper.assertValueEqual(result, InteractionResult.SUCCESS, "painter use result");
-    helper.assertBlockPresent(Blocks.RED_WOOL, TARGET_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.RED), TARGET_POS);
     helper.assertValueEqual(
         player.getMainHandItem().getItem(),
         Ic2Items.RED_PAINTER,
@@ -171,12 +168,12 @@ public class PainterGameTests {
     try {
       stack.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
       helper.assertTrue(
-          StackUtil.getOrCreateNbtData(stack).getBoolean("autoRefill"),
+          StackUtil.getOrCreateNbtData(stack).getBooleanOr("autoRefill", false),
           "auto refill should be enabled");
 
       stack.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
       helper.assertFalse(
-          StackUtil.getOrCreateNbtData(stack).getBoolean("autoRefill"),
+          StackUtil.getOrCreateNbtData(stack).getBooleanOr("autoRefill", false),
           "auto refill should be disabled again");
     } finally {
       Ic2GameTestUtil.releaseModeSwitchKey(player);

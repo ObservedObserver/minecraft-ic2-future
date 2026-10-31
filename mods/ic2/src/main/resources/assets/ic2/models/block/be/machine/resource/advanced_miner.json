@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/resource/advanced_miner"
+  "parent": "ic2:block/machine/resource/advanced_miner"
 }

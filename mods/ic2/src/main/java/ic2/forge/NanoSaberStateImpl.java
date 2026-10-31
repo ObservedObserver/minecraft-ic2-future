@@ -18,12 +18,12 @@ final class NanoSaberStateImpl implements INanoSaberState {
   @Override
   public boolean isActive() {
     CompoundTag nbt = StackUtil.getTag(this.stack);
-    return nbt != null && nbt.getBoolean(NBT_ACTIVE);
+    return nbt != null && nbt.getBooleanOr(NBT_ACTIVE, false);
   }
 
   @Override
   public void setActive(boolean active) {
-    StackUtil.getOrCreateNbtData(this.stack).putBoolean(NBT_ACTIVE, active);
+    StackUtil.setTagValue(this.stack, NBT_ACTIVE, net.minecraft.nbt.ByteTag.valueOf(active));
   }
 
   @Override

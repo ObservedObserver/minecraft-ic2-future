@@ -37,7 +37,7 @@ public class Mushroom extends TerraformerBase {
                     && block != Blocks.BROWN_MUSHROOM_BLOCK
                     && block != Blocks.RED_MUSHROOM_BLOCK) {
                   if (!state.isAir() && (block == Blocks.DIRT || block == Blocks.SHORT_GRASS)) {
-                    BlockPos dstPos = new BlockPos(cPos);
+                    BlockPos dstPos = cPos.immutable();
                     world.setBlockAndUpdate(dstPos, dependancy.defaultBlockState());
                     BiomeUtil.setBiome(
                         world, dstPos, BiomeUtil.getBiome(world, Biomes.MUSHROOM_FIELDS));
@@ -99,13 +99,14 @@ public class Mushroom extends TerraformerBase {
           return false;
         }
 
-        if (((MushroomBlock) base).growMushroom((ServerLevel) world, pos, state, world.random)) {
+        if (((MushroomBlock) base)
+            .growMushroom((ServerLevel) world, pos, state, world.getRandom())) {
           for (int xm = pos.getX() - 1; xm < pos.getX() + 1; xm++) {
             for (int zm = pos.getZ() - 1; zm < pos.getZ() + 1; zm++) {
               cPos.set(xm, above.getY(), zm);
               Block block = world.getBlockState(cPos).getBlock();
               if (block == Blocks.BROWN_MUSHROOM || block == Blocks.RED_MUSHROOM) {
-                world.removeBlock(new BlockPos(cPos), false);
+                world.removeBlock(cPos.immutable(), false);
               }
             }
           }

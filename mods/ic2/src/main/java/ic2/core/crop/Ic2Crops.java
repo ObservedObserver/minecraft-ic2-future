@@ -47,7 +47,7 @@ import java.util.NoSuchElementException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
@@ -160,6 +160,13 @@ public class Ic2Crops extends Crops {
           "seedling",
           new ItemStack(Blocks.CHERRY_LOG),
           new ItemStack(Blocks.CHERRY_SAPLING));
+  public static CropCard cropPaleOakSapling =
+      new CropBaseSapling(
+          Ic2CropType.paleOakSapling,
+          Ic2Blocks.PALE_OAK_SAPLING_CROP,
+          "seedling",
+          new ItemStack(Blocks.PALE_OAK_LOG),
+          new ItemStack(Blocks.PALE_OAK_SAPLING));
   public static CropCard cropFerru =
       new CropBaseMetalCommon(
           Ic2CropType.ferru,
@@ -306,7 +313,7 @@ public class Ic2Crops extends Crops {
           .setProperties(new CropProperties(7, 0, 4, 1, 3, 0))
           .setAttributes(new String[] {"Edible", "Flower", "Cow", "Chicken", "Pig", "Sheep"})
           .setMaxSize(4)
-          .setDrops(new ItemStack(Items.PINK_DYE))
+          .setDrops(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PINK)))
           .setSpecialDrops(
               new ItemStack[] {
                 new ItemStack(Items.BEEF),
@@ -522,6 +529,7 @@ public class Ic2Crops extends Crops {
     Crops.instance.registerCrop(cropAcaciaSapling);
     Crops.instance.registerCrop(cropDarkOakSapling);
     Crops.instance.registerCrop(cropCherrySapling);
+    Crops.instance.registerCrop(cropPaleOakSapling);
     Crops.instance.registerCrop(cropBlazereed);
     Crops.instance.registerCrop(cropBobsYerUncleRanksBerries);
     Crops.instance.registerCrop(cropCorium);
@@ -585,6 +593,8 @@ public class Ic2Crops extends Crops {
         new ItemStack(Blocks.DARK_OAK_SAPLING), cropDarkOakSapling, 0, 1, 1, 1);
     Crops.instance.registerBaseSeed(
         new ItemStack(Blocks.CHERRY_SAPLING), cropCherrySapling, 0, 1, 1, 1);
+    Crops.instance.registerBaseSeed(
+        new ItemStack(Blocks.PALE_OAK_SAPLING), cropPaleOakSapling, 0, 1, 1, 1);
     Crops.instance.registerBaseSeed(new ItemStack(Ic2Items.MILK_WART), cropMilkWart, 0, 1, 1, 1);
     Crops.instance.registerBaseSeed(
         new ItemStack(Items.TORCHFLOWER_SEEDS), cropTorchflower, 0, 1, 1, 1);
@@ -655,7 +665,7 @@ public class Ic2Crops extends Crops {
 
   @Override
   public CropCard getCropCard(ItemStack stack) {
-    ResourceLocation identifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
+    Identifier identifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
     if (stack.is(ItemTags.SAPLINGS) && identifier.getNamespace().equals("minecraft")) {
       return this.getCropCard("ic2", identifier.getPath());
     } else {
@@ -664,7 +674,7 @@ public class Ic2Crops extends Crops {
         return null;
       } else {
         return nbt.contains("owner") && nbt.contains("id")
-            ? this.getCropCard(nbt.getString("owner"), nbt.getString("id"))
+            ? this.getCropCard(nbt.getStringOr("owner", ""), nbt.getStringOr("id", ""))
             : null;
       }
     }
@@ -672,7 +682,7 @@ public class Ic2Crops extends Crops {
 
   @Override
   public CropCard getCropCard(Block cropBlock) {
-    ResourceLocation cropIdentifier = BuiltInRegistries.BLOCK.getKey(cropBlock);
+    Identifier cropIdentifier = BuiltInRegistries.BLOCK.getKey(cropBlock);
     String cropOwner = cropIdentifier.getNamespace();
     String cropName = cropIdentifier.getPath().replace("_crop", "");
     return this.getCropCard(cropOwner, cropName);

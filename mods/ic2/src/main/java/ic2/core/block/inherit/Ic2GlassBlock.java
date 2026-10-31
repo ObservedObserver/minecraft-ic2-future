@@ -9,15 +9,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class Ic2GlassBlock extends TransparentBlock {
-  public static final com.mojang.serialization.MapCodec<Ic2GlassBlock> CODEC =
-      simpleCodec(Ic2GlassBlock::new);
-
-  @Override
-  protected com.mojang.serialization.MapCodec<
-          ? extends net.minecraft.world.level.block.TransparentBlock>
-      codec() {
-    return CODEC;
-  }
 
   public Ic2GlassBlock(Properties settings) {
     super(settings);

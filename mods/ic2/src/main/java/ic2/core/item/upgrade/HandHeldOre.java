@@ -11,7 +11,7 @@ import ic2.core.ref.Ic2ScreenHandlers;
 import ic2.core.slot.SlotHologramSlot;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -64,7 +64,7 @@ public class HandHeldOre extends HandHeldUpgradeOption {
 
       @Override
       public void draw(
-          GuiGraphics guiGraphics,
+          GuiGraphicsExtractor guiGraphics,
           int xOffset,
           int yOffset,
           int width,

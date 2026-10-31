@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "iron_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:iron_dust"
-  },
+  "ingredient": "ic2:iron_dust",
   "result": {
     "id": "minecraft:iron_ingot"
   },

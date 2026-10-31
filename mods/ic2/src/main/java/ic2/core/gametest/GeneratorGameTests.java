@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.generator.tileentity.TileEntityGenerator;
@@ -24,7 +25,6 @@ import ic2.core.ref.Ic2Fluids;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,11 +35,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class GeneratorGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -105,8 +101,8 @@ public class GeneratorGameTests {
         getTe(helper, new BlockPos(1, 1, 1), TileEntityElectricBatBox.class);
 
     ServerLevel level = helper.getLevel();
-    level.setDayTime(6000L);
-    level.setWeatherParameters(100000, 0, false, false);
+    ic2.compat.WorldCompat.setDayTime(level, 6000L);
+    ic2.compat.WorldCompat.setWeather(level, 100000, 0, false, false);
     solar.updateSunVisibility();
     helper.assertTrue(solar.isSunlight(), "solar generator should see the noon sun");
 
@@ -364,7 +360,8 @@ public class GeneratorGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

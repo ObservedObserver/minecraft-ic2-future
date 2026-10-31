@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class NukeEntity extends ExplosiveEntity {
   public NukeEntity(Level world, double x, double y, double z, float power, int radiationRange) {
@@ -32,11 +33,16 @@ public class NukeEntity extends ExplosiveEntity {
     this(world, 0.0, 0.0, 0.0, 1.0F, 1);
   }
 
+  @Override
+  public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+    return this.interact(player, hand);
+  }
+
   public InteractionResult interact(Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if (!StackUtil.isEmpty(stack) && stack.getItem() instanceof ItemToolWrench wrench) {
       if (wrench.canTakeDamage()) {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
           return InteractionResult.PASS;
         }
 

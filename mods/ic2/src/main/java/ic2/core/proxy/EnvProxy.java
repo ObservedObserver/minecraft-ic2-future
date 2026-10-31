@@ -7,15 +7,13 @@ import ic2.core.item.EnvItemHandler;
 import ic2.core.network.GrowingBuffer;
 import io.netty.buffer.ByteBuf;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -47,14 +45,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
-import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.phys.Vec3;
 
 public interface EnvProxy {
@@ -66,24 +58,24 @@ public interface EnvProxy {
 
   MinecraftServer getServer();
 
-  void registerBlock(ResourceLocation var1, Block var2);
+  void registerBlock(Identifier var1, Block var2);
 
   <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(
-      ResourceLocation var1, BiFunction<BlockPos, BlockState, T> var2, Block... var3);
+      Identifier var1, BiFunction<BlockPos, BlockState, T> var2, Block... var3);
 
   <T extends AbstractContainerMenu> MenuType<T> registerScreenHandler(
-      ResourceLocation var1, BiFunction<Integer, Inventory, T> var2);
+      Identifier var1, BiFunction<Integer, Inventory, T> var2);
 
   <T extends AbstractContainerMenu> MenuType<T> registerExtendedScreenHandler(
-      ResourceLocation var1, EnvProxy.ExtendedClientScreenHandlerFactory<T> var2);
+      Identifier var1, EnvProxy.ExtendedClientScreenHandlerFactory<T> var2);
 
-  void registerItem(ResourceLocation var1, Item var2);
+  void registerItem(Identifier var1, Item var2);
 
-  void registerEntity(ResourceLocation var1, EntityType<?> var2);
+  void registerEntity(Identifier var1, EntityType<?> var2);
 
   WoodType registerSignType(String var1);
 
-  void registerStatusEffect(ResourceLocation var1, MobEffect var2);
+  void registerStatusEffect(Identifier var1, MobEffect var2);
 
   void registerFlammableBlock(Block var1, int var2, int var3);
 
@@ -91,31 +83,16 @@ public interface EnvProxy {
 
   GameEvent registerGameEvent(String var1, int var2);
 
-  <FC extends FeatureConfiguration, F extends Feature<FC>>
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> registerConfiguredFeature(
-          ResourceLocation var1, F var2, FC var3);
-
-  <FC extends FeatureConfiguration> void registerPlacedFeature(
-      ResourceLocation var1,
-      CompletableFuture<Holder<ConfiguredFeature<FC, ?>>> var2,
-      List<PlacementModifier> var3);
-
-  void attachPlacedFeatureToBiome(
-      ResourceLocation var1, EnvProxy.BiomeSelector var2, Decoration var3);
-
-  void registerPlacementModifierType(ResourceLocation var1, PlacementModifierType<?> var2);
-
   <T extends FoliagePlacer> FoliagePlacerType<T> registerFoliagePlacer(
-      ResourceLocation var1, com.mojang.serialization.MapCodec<T> var2);
+      Identifier var1, com.mojang.serialization.MapCodec<T> var2);
 
-  <T extends Recipe<?>> RecipeType<T> registerRecipeType(ResourceLocation var1);
+  <T extends Recipe<?>> RecipeType<T> registerRecipeType(Identifier var1);
 
-  void registerRecipeSerializer(ResourceLocation var1, RecipeSerializer<?> var2);
+  void registerRecipeSerializer(Identifier var1, RecipeSerializer<?> var2);
 
   void runAfterRegistryInit(Runnable var1);
 
-  CreativeModeTab createItemGroup(
-      ResourceLocation var1, Supplier<ItemStack> var2, Ic2ItemGroupType var3);
+  CreativeModeTab createItemGroup(Identifier var1, Supplier<ItemStack> var2, Ic2ItemGroupType var3);
 
   EnvFluidHandler createFluidStackHandler();
 

@@ -77,8 +77,8 @@ public class TileEntityBlastFurnace extends TileEntityInventory
     MachineRecipeResult<IRecipeInput, Collection<ItemStack>, ItemStack> result = this.getOutput();
     if (result != null && this.isHot()) {
       this.setActive(true);
-      int fluidPerProgress = result.recipe().getMetaData().getInt("fluid");
-      int duration = result.recipe().getMetaData().getInt("duration");
+      int fluidPerProgress = result.recipe().getMetaData().getIntOr("fluid", 0);
+      int duration = result.recipe().getMetaData().getIntOr("duration", 0);
       // Clamp so the final tick of an oxygen-boosted run doesn't drain gas past completion.
       int progressStep =
           this.isUsingOxygen()
@@ -149,8 +149,8 @@ public class TileEntityBlastFurnace extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.heat = nbt.getInt("heat");
-    this.progress = nbt.getInt("progress");
+    this.heat = nbt.getIntOr("heat", 0);
+    this.progress = nbt.getIntOr("progress", 0);
   }
 
   @Override

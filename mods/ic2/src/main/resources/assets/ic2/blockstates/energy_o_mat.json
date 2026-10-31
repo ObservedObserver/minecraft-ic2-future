@@ -1,27 +1,28 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/personal/energy_o_mat",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     },
     "facing=north": {
-      "model": "ic2:block/personal/energy_o_mat"
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     },
     "facing=south": {
-      "model": "ic2:block/personal/energy_o_mat",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     },
     "facing=west": {
-      "model": "ic2:block/personal/energy_o_mat",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     },
     "facing=up": {
-      "model": "ic2:block/personal/energy_o_mat",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     },
     "facing=down": {
-      "model": "ic2:block/personal/energy_o_mat",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/personal/energy_o_mat"
     }
   }
 }

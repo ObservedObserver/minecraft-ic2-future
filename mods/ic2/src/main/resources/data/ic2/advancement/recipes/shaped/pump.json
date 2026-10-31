@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/pump"
+        "recipes": [
+          "ic2:shaped/pump"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

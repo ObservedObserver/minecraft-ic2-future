@@ -11,14 +11,14 @@ import java.io.StringWriter;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -151,7 +151,7 @@ public final class SideProxyServer implements SideProxy {
   }
 
   @Override
-  public Level getWorld(MinecraftServer server, ResourceLocation dimId) {
+  public Level getWorld(MinecraftServer server, Identifier dimId) {
     for (Level world : server.getAllLevels()) {
       if (dimId.equals(Util.getDimId(world))) {
         return world;
@@ -167,8 +167,8 @@ public final class SideProxyServer implements SideProxy {
   }
 
   @Override
-  public RecipeManager getRecipeManager() {
-    return IC2.envProxy.getServer().getRecipeManager();
+  public RecipeMap getRecipeManager() {
+    return IC2.envProxy.getServer().getRecipeManager().recipeMap();
   }
 
   @Override
@@ -186,7 +186,7 @@ public final class SideProxyServer implements SideProxy {
         msg = Component.translatable(translatable);
       }
 
-      player.displayClientMessage(msg, false);
+      player.sendSystemMessage(msg);
     }
   }
 

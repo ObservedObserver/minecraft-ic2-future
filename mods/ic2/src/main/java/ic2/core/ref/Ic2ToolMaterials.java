@@ -1,9 +1,9 @@
 package ic2.core.ref;
 
+import ic2.compat.Tier;
 import java.util.function.Supplier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +62,13 @@ public enum Ic2ToolMaterials implements Tier {
 
   public int getEnchantmentValue() {
     return this.enchantAbility;
+  }
+
+  public net.minecraft.tags.TagKey<net.minecraft.world.item.Item> getRepairItems() {
+    return net.minecraft.tags.TagKey.create(
+        net.minecraft.core.registries.Registries.ITEM,
+        net.minecraft.resources.Identifier.fromNamespaceAndPath(
+            "ic2", "repair/tool_" + name().toLowerCase(java.util.Locale.ROOT)));
   }
 
   public @NotNull Ingredient getRepairIngredient() {

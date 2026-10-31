@@ -17,16 +17,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
-import net.minecraft.world.inventory.InventoryMenu;
 
 public abstract class GuiElement<T extends GuiElement<T>> {
-  public static final ResourceLocation commonTexture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/common.png");
+  public static final Identifier commonTexture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/common.png");
   protected static final int hoverColor = -2130706433;
   private static final Map<Class<?>, Set<GuiElement.ImplementedMethod>> IMPLEMENTED_METHOD_CACHE =
       new IdentityHashMap<>();
@@ -74,7 +73,7 @@ public abstract class GuiElement<T extends GuiElement<T>> {
     return Component.translatable(text);
   }
 
-  protected static void bindTexture(ResourceLocation texture) {
+  protected static void bindTexture(Identifier texture) {
     Ic2Gui.bindTexture(texture);
   }
 
@@ -83,12 +82,12 @@ public abstract class GuiElement<T extends GuiElement<T>> {
   }
 
   protected static void bindBlockTexture() {
-    Ic2Gui.bindTexture(InventoryMenu.BLOCK_ATLAS);
+    Ic2Gui.bindTexture(TextureAtlas.LOCATION_BLOCKS);
   }
 
   protected static TextureAtlas getBlockTextureMap() {
     return (TextureAtlas)
-        Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
+        Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS);
   }
 
   public final boolean isEnabled() {
@@ -115,9 +114,9 @@ public abstract class GuiElement<T extends GuiElement<T>> {
 
   public void tick() {}
 
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {}
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {}
 
-  public void drawForeground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawForeground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     if (this.contains(mouseX, mouseY) && !this.suppressTooltip(mouseX, mouseY)) {
       List<Component> lines = this.getToolTip();
       if (this.tooltipProvider != null) {

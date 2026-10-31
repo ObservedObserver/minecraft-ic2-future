@@ -1,5 +1,6 @@
 package ic2.forge.model;
 
-import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
+import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 
-public interface Ic2Model extends IUnbakedGeometry<Ic2Model> {}
+/** IC2 world-model descriptions, decoded in the block-state model registry. */
+public interface Ic2Model extends CustomUnbakedBlockStateModel {}

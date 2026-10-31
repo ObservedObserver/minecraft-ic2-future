@@ -10,7 +10,12 @@ public class ItemArmorLappack extends ItemArmorElectric {
     super(
         Ic2ArmorMaterials.LAP_PACK.holder(),
         EquipmentSlot.CHEST,
-        new Properties().rarity(Rarity.UNCOMMON),
+        new Properties()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.ITEM,
+                    ic2.core.IC2.getIdentifier("lappack")))
+            .rarity(Rarity.UNCOMMON),
         2.0E7,
         2500.0,
         4);

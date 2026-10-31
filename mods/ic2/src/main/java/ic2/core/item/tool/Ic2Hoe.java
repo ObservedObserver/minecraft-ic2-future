@@ -1,13 +1,10 @@
 package ic2.core.item.tool;
 
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item.Properties;
-import net.minecraft.world.item.Tier;
+import ic2.compat.Tier;
+import net.minecraft.world.item.Item;
 
-public class Ic2Hoe extends HoeItem {
-  public Ic2Hoe(Tier material, int attackDamage, float attackSpeed, Properties settings) {
-    super(
-        material,
-        settings.attributes(HoeItem.createAttributes(material, attackDamage, attackSpeed)));
+public class Ic2Hoe extends Item {
+  public Ic2Hoe(Tier material, float attackDamage, float attackSpeed, Properties settings) {
+    super(settings.hoe(material.asToolMaterial(), attackDamage, attackSpeed));
   }
 }

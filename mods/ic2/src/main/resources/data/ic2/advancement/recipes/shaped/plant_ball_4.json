@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:leaves"
+            "items": "#minecraft:leaves"
           }
         ]
       },
@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/plant_ball_4"
+        "recipes": [
+          "ic2:shaped/plant_ball_4"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

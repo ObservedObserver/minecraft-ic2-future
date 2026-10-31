@@ -1,6 +1,7 @@
 package ic2.core.item.tool;
 
 import ic2.api.item.IMiningDrill;
+import ic2.compat.Tier;
 import ic2.core.IC2;
 import ic2.core.IHitSoundOverride;
 import ic2.core.ref.Ic2Items;
@@ -18,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,7 +48,7 @@ public class ItemDrill extends ItemElectricTool implements IMiningDrill, IHitSou
   private static Player getPlayerHoldingItem(ItemStack stack) {
     if (IC2.sideProxy.isRendering()) {
       Player player = IC2.sideProxy.getPlayerInstance();
-      if (player != null && player.getInventory().getSelected() == stack) {
+      if (player != null && player.getInventory().getSelectedItem() == stack) {
         return player;
       }
     } else {
@@ -58,7 +58,7 @@ public class ItemDrill extends ItemElectricTool implements IMiningDrill, IHitSou
       }
 
       for (Player player : server.getPlayerList().getPlayers()) {
-        if (player.getInventory().getSelected() == stack) {
+        if (player.getInventory().getSelectedItem() == stack) {
           return player;
         }
       }

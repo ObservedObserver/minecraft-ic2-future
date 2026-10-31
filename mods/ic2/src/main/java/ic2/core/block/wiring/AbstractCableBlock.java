@@ -53,7 +53,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractCableBlock extends PipeBlock
+public abstract class AbstractCableBlock extends Block
     implements ChunkLoadAwareBlock, SimpleWaterloggedBlock {
   public static final DyeColor DEFAULT_COLOR = DyeColor.BLACK;
   public static final EnumProperty<DyeColor> colorProperty =
@@ -75,19 +75,11 @@ public abstract class AbstractCableBlock extends PipeBlock
   public final CableType type;
   final int insulation;
   private final boolean hasColor;
-
-  // IC2 cable blocks are created programmatically, not from datapack codecs.
-  private static final com.mojang.serialization.MapCodec<AbstractCableBlock> CABLE_CODEC =
-      com.mojang.serialization.MapCodec.unit((AbstractCableBlock) null);
-
-  @Override
-  public com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.PipeBlock>
-      codec() {
-    return CABLE_CODEC;
-  }
+  private final java.util.concurrent.ConcurrentMap<Integer, VoxelShape> cableShapes =
+      new java.util.concurrent.ConcurrentHashMap<>();
 
   protected AbstractCableBlock(Properties settings, CableType type, int insulation) {
-    super(type.getThickness(insulation) / 2.0F, settings);
+    super(settings);
     if (insulation > type.maxInsulation) {
       throw new IllegalArgumentException("invalid insulation " + insulation + " for type " + type);
     }
@@ -264,7 +256,7 @@ public abstract class AbstractCableBlock extends PipeBlock
       return false;
     }
 
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       IEnergyTile tile = EnergyNet.instance.getTile(world, pos);
       if (tile != null) {
         return !(tile instanceof IEnergyConductor);
@@ -299,14 +291,13 @@ public abstract class AbstractCableBlock extends PipeBlock
     return ret;
   }
 
-  public @NotNull VoxelShape getOcclusionShape(
-      @NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos) {
+  public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state) {
     if (!this.isFoam()) {
-      return super.getOcclusionShape(state, world, pos);
+      return super.getOcclusionShape(state);
     } else {
       return state.getValue(foamProperty).isSoft()
           ? Shapes.empty()
-          : super.getOcclusionShape(state, world, pos);
+          : super.getOcclusionShape(state);
     }
   }
 
@@ -316,10 +307,33 @@ public abstract class AbstractCableBlock extends PipeBlock
       @NotNull BlockPos pos,
       @NotNull CollisionContext context) {
     if (!this.isFoam()) {
-      return super.getShape(state, world, pos, context);
+      int connections = 0;
+      for (Direction side : Direction.values()) {
+        if (state.getValue(PipeBlock.PROPERTY_BY_DIRECTION.get(side)))
+          connections |= 1 << side.ordinal();
+      }
+      return this.cableShapes.computeIfAbsent(connections, this::makeCableShape);
     } else {
       return state.getValue(foamProperty).isPresent() ? Shapes.block() : Shapes.empty();
     }
+  }
+
+  private VoxelShape makeCableShape(int connections) {
+    double halfWidth = this.type.getThickness(this.insulation) / 2.0;
+    double low = 0.5 - halfWidth;
+    double high = 0.5 + halfWidth;
+    VoxelShape shape = Shapes.box(low, low, low, high, high, high);
+    for (Direction side : Direction.values()) {
+      if ((connections & 1 << side.ordinal()) == 0) continue;
+      double minX = side == Direction.WEST ? 0 : low;
+      double minY = side == Direction.DOWN ? 0 : low;
+      double minZ = side == Direction.NORTH ? 0 : low;
+      double maxX = side == Direction.EAST ? 1 : high;
+      double maxY = side == Direction.UP ? 1 : high;
+      double maxZ = side == Direction.SOUTH ? 1 : high;
+      shape = Shapes.or(shape, Shapes.box(minX, minY, minZ, maxX, maxY, maxZ));
+    }
+    return shape;
   }
 
   @Override
@@ -328,11 +342,11 @@ public abstract class AbstractCableBlock extends PipeBlock
       @NotNull Level world,
       @NotNull BlockPos pos,
       @NotNull Block block,
-      @NotNull BlockPos fromPos,
+      net.minecraft.world.level.redstone.Orientation orientation,
       boolean notify) {
-    super.neighborChanged(state, world, pos, block, fromPos, notify);
+    super.neighborChanged(state, world, pos, block, orientation, notify);
 
-    if (!this.isFoam() && !world.isClientSide) {
+    if (!this.isFoam() && !world.isClientSide()) {
       BlockState current = world.getBlockState(pos);
       BlockState newState = this.withConnectionStates(current, world, pos);
       if (newState != current) {
@@ -341,23 +355,37 @@ public abstract class AbstractCableBlock extends PipeBlock
     }
   }
 
-  public @NotNull BlockState updateShape(
-      @NotNull BlockState state,
-      @NotNull Direction direction,
-      @NotNull BlockState neighborState,
-      @NotNull LevelAccessor world,
-      @NotNull BlockPos pos,
-      @NotNull BlockPos neighborPos) {
+  @Override
+  public BlockState updateShape(
+      BlockState state,
+      net.minecraft.world.level.LevelReader world,
+      net.minecraft.world.level.ScheduledTickAccess ticks,
+      BlockPos pos,
+      Direction direction,
+      BlockPos neighborPos,
+      BlockState neighborState,
+      net.minecraft.util.RandomSource random) {
     if (!this.isFoam() && state.getValue(WATERLOGGED)) {
-      world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+      ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
     }
 
     if (!this.isFoam()) {
       boolean isConnected = this.isConnectedWith(state, neighborState, (Level) world, neighborPos);
       return state.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(direction), isConnected);
     } else {
-      return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+      return super.updateShape(
+          state, world, ticks, pos, direction, neighborPos, neighborState, random);
     }
+  }
+
+  @Override
+  public boolean canPlaceLiquid(
+      @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity,
+      @NotNull BlockGetter world,
+      @NotNull BlockPos pos,
+      @NotNull BlockState state,
+      @NotNull Fluid fluid) {
+    return this.canPlaceLiquid(world, pos, state, fluid);
   }
 
   public boolean canPlaceLiquid(
@@ -385,6 +413,15 @@ public abstract class AbstractCableBlock extends PipeBlock
     return true;
   }
 
+  @Override
+  public @NotNull ItemStack pickupBlock(
+      @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity,
+      @NotNull LevelAccessor world,
+      @NotNull BlockPos pos,
+      @NotNull BlockState state) {
+    return this.pickupBlock(world, pos, state);
+  }
+
   public @NotNull ItemStack pickupBlock(
       @NotNull LevelAccessor world, @NotNull BlockPos pos, @NotNull BlockState state) {
     if (!this.isFoam() && state.getValue(WATERLOGGED)) {
@@ -396,7 +433,7 @@ public abstract class AbstractCableBlock extends PipeBlock
   }
 
   private void scheduleFoamHardeningTick(Level world, BlockPos pos) {
-    if (!world.isClientSide && !world.getBlockTicks().hasScheduledTick(pos, this)) {
+    if (!world.isClientSide() && !world.getBlockTicks().hasScheduledTick(pos, this)) {
       world.scheduleTick(pos, this, 1);
     }
   }
@@ -433,9 +470,10 @@ public abstract class AbstractCableBlock extends PipeBlock
       @NotNull Level world,
       @NotNull BlockPos pos,
       @NotNull Player player,
+      ItemStack toolStack,
       boolean willHarvest,
       @NotNull FluidState fluid) {
-    if (this.isFoam() && !world.isClientSide) {
+    if (this.isFoam() && !world.isClientSide()) {
       AbstractCableBlock cableBlock = this.getCableCounterpart();
       if (cableBlock != null) {
         BlockState cableState =
@@ -445,22 +483,24 @@ public abstract class AbstractCableBlock extends PipeBlock
       }
     }
 
-    return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
+    return super.onDestroyedByPlayer(state, world, pos, player, toolStack, willHarvest, fluid);
   }
 
   @Override
   public @NotNull ItemStack getCloneItemStack(
       @NotNull net.minecraft.world.level.LevelReader level,
       @NotNull BlockPos pos,
-      @NotNull BlockState state) {
+      @NotNull BlockState state,
+      boolean includeData) {
     if (this.isFoam()) {
       AbstractCableBlock cableBlock = this.getCableCounterpart();
       if (cableBlock != null) {
-        return cableBlock.getCloneItemStack(level, pos, this.toCableState(state, cableBlock));
+        return cableBlock.getCloneItemStack(
+            level, pos, this.toCableState(state, cableBlock), includeData);
       }
     }
 
-    return super.getCloneItemStack(level, pos, state);
+    return super.getCloneItemStack(level, pos, state, includeData);
   }
 
   @Override
@@ -545,7 +585,7 @@ public abstract class AbstractCableBlock extends PipeBlock
     if (this.insulation == this.type.minColoredInsulation
         && this.getColor(state) != DEFAULT_COLOR) {
       assert newBlock.getColor(newState) == DEFAULT_COLOR;
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         tile = EnergyNet.instance.getTile(world, pos);
         if (tile != null) {
           EnergyNet.instance.removeTile(tile);
@@ -561,20 +601,20 @@ public abstract class AbstractCableBlock extends PipeBlock
     return true;
   }
 
-  public void onRemove(
+  public void affectNeighborsAfterRemoval(
       @NotNull BlockState state,
-      @NotNull Level world,
+      @NotNull net.minecraft.server.level.ServerLevel world,
       @NotNull BlockPos pos,
-      BlockState newState,
       boolean moved) {
-    if (!newState.is(this) || this.getColor(newState) != this.getColor(state)) {
+    if (!world.getBlockState(pos).is(this)
+        || this.getColor(world.getBlockState(pos)) != this.getColor(state)) {
       this.removeFromEnet(state, world, pos);
     }
   }
 
   public void onPlace(
       BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.addToEnet(state, world, pos, true);
     }
     if (this.isFoam() && state.getValue(foamProperty).isSoft()) {
@@ -584,7 +624,7 @@ public abstract class AbstractCableBlock extends PipeBlock
 
   @Override
   public void onLoad(BlockState state, Level world, BlockPos pos) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.addToEnet(state, world, pos, false);
     }
     if (this.isFoam() && state.getValue(foamProperty).isSoft()) {
@@ -594,13 +634,13 @@ public abstract class AbstractCableBlock extends PipeBlock
 
   @Override
   public void onUnload(BlockState state, Level world, BlockPos pos) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.removeFromEnet(state, world, pos);
     }
   }
 
   protected void addToEnet(BlockState state, Level world, BlockPos pos, boolean checkConflicting) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return;
     }
 
@@ -617,7 +657,7 @@ public abstract class AbstractCableBlock extends PipeBlock
   }
 
   protected void removeFromEnet(BlockState state, Level world, BlockPos pos) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return;
     }
 

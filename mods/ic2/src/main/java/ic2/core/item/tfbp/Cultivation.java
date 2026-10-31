@@ -29,7 +29,7 @@ public class Cultivation extends TerraformerBase {
     Block block = state.getBlock();
     if (state.isAir() || block == Blocks.TALL_GRASS && rng.nextInt(4) == 0) {
       BlockState plant = pickRandomPlant(rng);
-      if (plant.getValues().containsKey(DirectionalBlock.FACING)) {
+      if (plant.hasProperty(DirectionalBlock.FACING)) {
         plant =
             (BlockState)
                 plant.setValue(

@@ -24,18 +24,19 @@ public class Obscuration extends TileEntityComponent {
     this.dataMap = null;
     if (!nbt.isEmpty()) {
       for (Direction facing : Util.ALL_DIRS) {
-        if (nbt.contains(facing.getSerializedName(), 10)) {
-          CompoundTag cNbt = nbt.getCompound(facing.getSerializedName());
-          Block block = Util.getBlock(cNbt.getString("block"));
+        if (ic2.compat.NbtCompat.contains(nbt, facing.getSerializedName(), 10)) {
+          CompoundTag cNbt = nbt.getCompoundOrEmpty(facing.getSerializedName());
+          Block block = Util.getBlock(cNbt.getStringOr("block", ""));
           if (block != null) {
-            String variant = cNbt.getString("variant");
+            String variant = cNbt.getStringOr("variant", "");
             BlockState state = BlockStateUtil.getState(block, variant);
             if (state != null) {
-              int rawSide = cNbt.getByte("side");
+              int rawSide = cNbt.getByteOr("side", (byte) 0);
               if (rawSide >= 0 && rawSide < Util.ALL_DIRS.length) {
                 Direction side = Util.ALL_DIRS[rawSide];
                 int[] colorMultipliers =
-                    ItemObscurator.internColorMultipliers(cNbt.getIntArray("colorMuls"));
+                    ItemObscurator.internColorMultipliers(
+                        cNbt.getIntArray("colorMuls").orElseGet(() -> new int[0]));
                 Obscuration.ObscurationData data =
                     new Obscuration.ObscurationData(state, variant, side, colorMultipliers);
                 if (this.dataMap == null) {
@@ -84,7 +85,7 @@ public class Obscuration extends TileEntityComponent {
     }
 
     this.dataMap[side.ordinal()] = data.intern();
-    if (this.parent.getLevel() != null && !this.parent.getLevel().isClientSide) {
+    if (this.parent.getLevel() != null && !this.parent.getLevel().isClientSide()) {
       this.parent.setChanged();
     }
 

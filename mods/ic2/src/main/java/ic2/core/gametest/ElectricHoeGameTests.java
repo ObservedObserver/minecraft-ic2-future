@@ -1,11 +1,11 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -13,12 +13,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ElectricHoeGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final BlockPos DIRT_POS = new BlockPos(1, 1, 1);
@@ -97,9 +92,10 @@ public class ElectricHoeGameTests {
         1.0F,
         "empty electric hoe mining speed");
     helper.assertTrue(
-        charged.canPerformAction(ItemAbilities.HOE_DIG), "electric hoe should perform hoe digging");
+        charged.has(net.minecraft.core.component.DataComponents.TOOL),
+        "electric hoe should perform hoe digging");
     helper.assertTrue(
-        charged.canPerformAction(ItemAbilities.HOE_TILL),
+        charged.has(net.minecraft.core.component.DataComponents.BLOCK_TRANSFORMER),
         "electric hoe should perform hoe tilling");
     helper.succeed();
   }

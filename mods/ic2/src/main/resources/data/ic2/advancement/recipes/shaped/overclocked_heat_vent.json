@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/gold"
+            "items": "#c:plates/gold"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/overclocked_heat_vent"
+        "recipes": [
+          "ic2:shaped/overclocked_heat_vent"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

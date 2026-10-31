@@ -1,7 +1,8 @@
 package ic2.core.item;
 
+import ic2.compat.InteractionResults;
 import java.util.List;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,7 +14,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -48,7 +49,7 @@ public abstract class Ic2BucketItem extends BucketItem {
     this.getDrainableFluidList();
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, Player user, @NotNull InteractionHand hand) {
     ItemStack itemStack = user.getMainHandItem();
     BlockHitResult blockHitResult =
@@ -60,18 +61,18 @@ public abstract class Ic2BucketItem extends BucketItem {
                 : net.minecraft.world.level.ClipContext.Fluid.NONE);
 
     if (blockHitResult.getType() == Type.MISS) {
-      return InteractionResultHolder.pass(itemStack);
+      return InteractionResults.pass(itemStack);
     }
 
     if (blockHitResult.getType() != Type.BLOCK) {
-      return InteractionResultHolder.pass(itemStack);
+      return InteractionResults.pass(itemStack);
     }
 
     BlockPos blockPos = blockHitResult.getBlockPos();
     Direction direction = blockHitResult.getDirection();
     BlockPos blockPos1 = blockPos.relative(direction);
     if (!world.mayInteract(user, blockPos) || !user.mayUseItemAt(blockPos1, direction, itemStack)) {
-      return InteractionResultHolder.fail(itemStack);
+      return InteractionResults.fail(itemStack);
     }
 
     BlockState blockState = world.getBlockState(blockPos);
@@ -86,20 +87,20 @@ public abstract class Ic2BucketItem extends BucketItem {
           world.gameEvent(user, GameEvent.FLUID_PICKUP, blockPos);
           ItemStack exchangedStack =
               ItemUtils.createFilledResult(itemStack, user, afterDrainingItemStack);
-          if (!world.isClientSide) {
+          if (!world.isClientSide()) {
             CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) user, afterDrainingItemStack);
           }
 
-          return InteractionResultHolder.sidedSuccess(exchangedStack, world.isClientSide());
+          return InteractionResults.sidedSuccess(exchangedStack, world.isClientSide());
         }
       }
 
-      return InteractionResultHolder.fail(itemStack);
+      return InteractionResults.fail(itemStack);
     } else {
       BlockPos fluidDrainablePos =
           this.canBlockContainFluid(world, blockPos, blockState) ? blockPos : blockPos1;
       if (this.bucketUseOnBlock(new UseOnContext(user, hand, blockHitResult))) {
-        return InteractionResultHolder.pass(itemStack);
+        return InteractionResults.pass(itemStack);
       }
 
       if (this.emptyContents(user, world, fluidDrainablePos, blockHitResult)) {
@@ -112,10 +113,10 @@ public abstract class Ic2BucketItem extends BucketItem {
         ItemStack emptiedBucketExchangedItemStack =
             ItemUtils.createFilledResult(
                 itemStack, user, this.getEmptiedBucketStack(itemStack, user));
-        return InteractionResultHolder.sidedSuccess(
+        return InteractionResults.sidedSuccess(
             emptiedBucketExchangedItemStack, world.isClientSide());
       } else {
-        return InteractionResultHolder.fail(itemStack);
+        return InteractionResults.fail(itemStack);
       }
     }
   }
@@ -182,7 +183,10 @@ public abstract class Ic2BucketItem extends BucketItem {
               player, world, hitResult.getBlockPos().relative(hitResult.getDirection()), null);
     }
 
-    if (world.dimensionType().ultraWarm() && this.fluid.is(FluidTags.WATER)) {
+    if (world
+            .environmentAttributes()
+            .getValue(net.minecraft.world.attribute.EnvironmentAttributes.WATER_EVAPORATES, pos)
+        && this.fluid.is(FluidTags.WATER)) {
       int i = pos.getX();
       int j = pos.getY();
       int k = pos.getZ();
@@ -213,7 +217,7 @@ public abstract class Ic2BucketItem extends BucketItem {
         return true;
       }
 
-      if (!world.isClientSide && bl && blockState.getFluidState().isEmpty()) {
+      if (!world.isClientSide() && bl && blockState.getFluidState().isEmpty()) {
         world.destroyBlock(pos, true);
       }
 

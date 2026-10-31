@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/miner"
+        "recipes": [
+          "ic2:shaped/miner"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

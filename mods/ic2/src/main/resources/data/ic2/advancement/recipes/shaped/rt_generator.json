@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/rt_generator"
+        "recipes": [
+          "ic2:shaped/rt_generator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

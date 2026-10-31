@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/crystal_memory"
+        "recipes": [
+          "ic2:smelting/crystal_memory"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

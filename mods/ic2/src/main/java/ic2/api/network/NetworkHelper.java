@@ -10,25 +10,25 @@ public final class NetworkHelper {
   private static INetworkManager clientInstance;
 
   public static void updateTileEntityField(BlockEntity te, String field) {
-    getNetworkManager(te.getLevel().isClientSide).updateTileEntityField(te, field);
+    getNetworkManager(te.getLevel().isClientSide()).updateTileEntityField(te, field);
   }
 
   public static void initiateTileEntityEvent(BlockEntity te, int event, boolean limitRange) {
-    getNetworkManager(te.getLevel().isClientSide).initiateTileEntityEvent(te, event, limitRange);
+    getNetworkManager(te.getLevel().isClientSide()).initiateTileEntityEvent(te, event, limitRange);
   }
 
   public static void initiateItemEvent(
       Player player, ItemStack stack, int event, boolean limitRange) {
-    getNetworkManager(player.getCommandSenderWorld().isClientSide)
+    getNetworkManager(player.level().isClientSide())
         .initiateItemEvent(player, stack, event, limitRange);
   }
 
   public static void sendInitialData(BlockEntity te) {
-    getNetworkManager(te.getLevel().isClientSide).sendInitialData(te);
+    getNetworkManager(te.getLevel().isClientSide()).sendInitialData(te);
   }
 
   public static void initiateClientTileEntityEvent(BlockEntity te, int event) {
-    getNetworkManager(te.getLevel().isClientSide).initiateClientTileEntityEvent(te, event);
+    getNetworkManager(te.getLevel().isClientSide()).initiateClientTileEntityEvent(te, event);
   }
 
   public static void initiateClientItemEvent(ItemStack stack, int event) {

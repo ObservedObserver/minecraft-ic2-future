@@ -53,8 +53,8 @@ public class TileEntityInduction extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.heat = nbt.getShort("heat");
-    this.progress = nbt.getShort("progress");
+    this.heat = nbt.getShortOr("heat", (short) 0);
+    this.progress = nbt.getShortOr("progress", (short) 0);
   }
 
   @Override

@@ -2,6 +2,7 @@ package ic2.core.gametest;
 
 import com.mojang.authlib.GameProfile;
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.block.personal.TileEntityPersonalChest;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
 import ic2.core.event.EventHandler;
@@ -12,7 +13,6 @@ import ic2.core.ref.Ic2Items;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,11 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ElectricWrenchGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -94,7 +90,8 @@ public class ElectricWrenchGameTests {
   public static void electricWrenchBreaksOwnedEmptyPersonalSafe(GameTestHelper helper) {
     helper.setBlock(MACHINE_POS, Ic2Blocks.PERSONAL_CHEST);
     helper.setBlock(SECOND_MACHINE_POS, Ic2Blocks.GENERATOR);
-    TileEntityPersonalChest safe = helper.getBlockEntity(MACHINE_POS);
+    TileEntityPersonalChest safe =
+        helper.getBlockEntity(MACHINE_POS, TileEntityPersonalChest.class);
     ServerPlayer owner = makePlayer(helper);
     safe.setOwner(owner.getGameProfile());
     ItemStack stack =
@@ -136,10 +133,10 @@ public class ElectricWrenchGameTests {
   @GameTest(template = EMPTY)
   public static void electricWrenchCannotBreakAnotherPlayersPersonalSafe(GameTestHelper helper) {
     helper.setBlock(MACHINE_POS, Ic2Blocks.PERSONAL_CHEST);
-    TileEntityPersonalChest safe = helper.getBlockEntity(MACHINE_POS);
+    TileEntityPersonalChest safe =
+        helper.getBlockEntity(MACHINE_POS, TileEntityPersonalChest.class);
     safe.setOwner(
-        new GameProfile(
-            UUID.fromString("5de649d8-78d4-4d55-a34d-135d3f89a01f"), "SafeOwner"));
+        new GameProfile(UUID.fromString("5de649d8-78d4-4d55-a34d-135d3f89a01f"), "SafeOwner"));
     ServerPlayer stranger = makePlayer(helper);
     ItemStack stack =
         ElectricItemManager.getCharged(Ic2Items.ELECTRIC_WRENCH, Double.POSITIVE_INFINITY);
@@ -164,7 +161,8 @@ public class ElectricWrenchGameTests {
   @GameTest(template = EMPTY)
   public static void nonWrenchCannotMinePersonalSafe(GameTestHelper helper) {
     helper.setBlock(MACHINE_POS, Ic2Blocks.PERSONAL_CHEST);
-    TileEntityPersonalChest safe = helper.getBlockEntity(MACHINE_POS);
+    TileEntityPersonalChest safe =
+        helper.getBlockEntity(MACHINE_POS, TileEntityPersonalChest.class);
     ServerPlayer owner = makePlayer(helper);
     safe.setOwner(owner.getGameProfile());
     owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
@@ -185,7 +183,8 @@ public class ElectricWrenchGameTests {
   @GameTest(template = EMPTY)
   public static void underchargedElectricWrenchCannotMinePersonalSafe(GameTestHelper helper) {
     helper.setBlock(MACHINE_POS, Ic2Blocks.PERSONAL_CHEST);
-    TileEntityPersonalChest safe = helper.getBlockEntity(MACHINE_POS);
+    TileEntityPersonalChest safe =
+        helper.getBlockEntity(MACHINE_POS, TileEntityPersonalChest.class);
     ServerPlayer owner = makePlayer(helper);
     safe.setOwner(owner.getGameProfile());
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.ELECTRIC_WRENCH, 99.0);

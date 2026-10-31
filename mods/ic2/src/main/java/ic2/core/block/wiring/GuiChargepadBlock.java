@@ -7,7 +7,7 @@ import ic2.core.gui.VanillaButton;
 import ic2.core.gui.dynamic.TextProvider;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -16,8 +16,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiChargepadBlock extends Ic2Gui<ContainerChargepadBlock> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guichargepadblock.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guichargepadblock.png");
 
   public GuiChargepadBlock(
       ContainerChargepadBlock container, Inventory playerInventory, Component title) {
@@ -62,7 +62,7 @@ public class GuiChargepadBlock extends Ic2Gui<ContainerChargepadBlock> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

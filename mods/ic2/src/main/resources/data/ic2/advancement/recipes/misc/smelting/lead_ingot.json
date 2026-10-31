@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/lead_ingot"
+        "recipes": [
+          "ic2:smelting/lead_ingot"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -2,54 +2,69 @@ package ic2.core.crop;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import ic2.api.crops.CropCard;
-import java.util.List;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 
-/** Renders crops which use the generic crop-stick block instead of a dedicated crop block. */
-public class CropStickRenderer implements BlockEntityRenderer<TileEntityCrop> {
+/** Retains the two intersecting planes used by crops without dedicated block models. */
+public class CropStickRenderer
+    implements BlockEntityRenderer<TileEntityCrop, CropStickRenderer.State> {
+  public static class State extends BlockEntityRenderState {
+    public Identifier texture;
+  }
+
   public CropStickRenderer(BlockEntityRendererProvider.Context context) {}
 
   @Override
-  public void render(
-      TileEntityCrop cropTile,
-      float partialTick,
-      PoseStack poseStack,
-      MultiBufferSource buffers,
-      int light,
-      int overlay) {
-    CropCard crop = cropTile.getCrop();
-    if (crop == null) {
-      return;
-    }
-
-    List<ResourceLocation> textures = crop.getTexturesLocation();
-    if (textures.isEmpty()) {
-      return;
-    }
-
-    int textureIndex = Math.max(0, Math.min(cropTile.getCurrentAge() - 1, textures.size() - 1));
-    ResourceLocation texture = asTextureFile(textures.get(textureIndex));
-    VertexConsumer vertices = buffers.getBuffer(RenderType.entityCutoutNoCull(texture));
-    PoseStack.Pose pose = poseStack.last();
-
-    quad(vertices, pose, 0.0F, 0.001F, 0.5F, 1.0F, 1.001F, 0.5F, light);
-    quad(vertices, pose, 0.5F, 0.001F, 0.0F, 0.5F, 1.001F, 1.0F, light);
+  public State createRenderState() {
+    return new State();
   }
 
-  private static ResourceLocation asTextureFile(ResourceLocation texture) {
+  @Override
+  public void extractRenderState(
+      TileEntityCrop crop,
+      State state,
+      float partialTick,
+      Vec3 cameraPosition,
+      ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+    BlockEntityRenderer.super.extractRenderState(
+        crop, state, partialTick, cameraPosition, breakProgress);
+    var card = crop.getCrop();
+    var textures = card == null ? java.util.List.<Identifier>of() : card.getTexturesLocation();
+    state.texture =
+        textures.isEmpty()
+            ? null
+            : asTextureFile(
+                textures.get(Math.clamp(crop.getCurrentAge() - 1, 0, textures.size() - 1)));
+  }
+
+  @Override
+  public void submit(
+      State state, PoseStack poses, SubmitNodeCollector collector, CameraRenderState camera) {
+    if (state.texture == null) return;
+    collector.submitCustomGeometry(
+        poses,
+        RenderTypes.entityCutout(state.texture),
+        (pose, vertices) -> {
+          quad(vertices, pose, 0, 0.001F, 0.5F, 1, 1.001F, 0.5F, state.lightCoords);
+          quad(vertices, pose, 0.5F, 0.001F, 0, 0.5F, 1.001F, 1, state.lightCoords);
+        });
+  }
+
+  private static Identifier asTextureFile(Identifier texture) {
     String path = texture.getPath();
     // CropCard's API retains IC2's old "blocks/" texture convention.
     if (path.startsWith("blocks/")) {
       path = "block/" + path.substring("blocks/".length());
     }
-    return ResourceLocation.fromNamespaceAndPath(
-        texture.getNamespace(), "textures/" + path + ".png");
+    return Identifier.fromNamespaceAndPath(texture.getNamespace(), "textures/" + path + ".png");
   }
 
   private static void quad(

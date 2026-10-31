@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Energy;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.invslot.InvSlotUpgrade;
@@ -15,7 +16,6 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,12 +23,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class UpgradeGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -117,11 +113,15 @@ public class UpgradeGameTests {
     helper.setBlock(MACHINE_POS, Ic2Blocks.COMPRESSOR);
     helper.setBlock(EAST_POS, Blocks.CHEST);
     TileEntityCompressor te = getMachine(helper, MACHINE_POS, TileEntityCompressor.class);
-    ChestBlockEntity chest = (ChestBlockEntity) helper.getBlockEntity(EAST_POS);
+    ChestBlockEntity chest =
+        (ChestBlockEntity)
+            helper.getBlockEntity(
+                EAST_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.outputSlot.put(0, new ItemStack(Items.CLAY));
     ItemStack ejector = new ItemStack(Ic2Items.EJECTOR_UPGRADE);
     // "dir" is 1 + Direction ordinal, the encoding ItemUpgradeModule.useOn writes
-    StackUtil.getOrCreateNbtData(ejector).putByte("dir", (byte) (1 + Direction.WEST.ordinal()));
+    StackUtil.setTagValue(
+        ejector, "dir", net.minecraft.nbt.ByteTag.valueOf((byte) (1 + Direction.WEST.ordinal())));
     te.upgradeSlot.put(0, ejector);
 
     helper.runAtTickTime(
@@ -141,7 +141,10 @@ public class UpgradeGameTests {
     helper.setBlock(MACHINE_POS, Ic2Blocks.COMPRESSOR);
     helper.setBlock(EAST_POS, Blocks.CHEST);
     TileEntityCompressor te = getMachine(helper, MACHINE_POS, TileEntityCompressor.class);
-    ChestBlockEntity chest = (ChestBlockEntity) helper.getBlockEntity(EAST_POS);
+    ChestBlockEntity chest =
+        (ChestBlockEntity)
+            helper.getBlockEntity(
+                EAST_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     chest.setItem(0, new ItemStack(Items.CLAY_BALL, 4));
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
@@ -315,7 +318,9 @@ public class UpgradeGameTests {
     for (Item upgrade : upgrades) {
       ItemStack used = new ItemStack(upgrade);
       // Reproduce the empty component left by older builds after the upgrade ticked in a machine.
-      StackUtil.getOrCreateNbtData(used);
+      used.set(
+          net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+          net.minecraft.world.item.component.CustomData.of(new net.minecraft.nbt.CompoundTag()));
       helper.assertTrue(
           ItemUpgradeModule.getDirection(used) == null,
           "unconfigured " + upgrade + " should target any side");
@@ -343,12 +348,15 @@ public class UpgradeGameTests {
 
   private static void assertMergesWithFreshUpgrade(
       GameTestHelper helper, ItemStack used, Item upgrade) {
-    ItemStackHandler slot = new ItemStackHandler(1);
-    helper.assertTrue(slot.insertItem(0, used, false).isEmpty(), "used upgrade should enter slot");
+    ItemStacksResourceHandler slot = new ItemStacksResourceHandler(1);
     helper.assertTrue(
-        slot.insertItem(0, new ItemStack(upgrade), false).isEmpty(),
+        Ic2TransferTestSupport.insert(slot, 0, used, false).isEmpty(),
+        "used upgrade should enter slot");
+    helper.assertTrue(
+        Ic2TransferTestSupport.insert(slot, 0, new ItemStack(upgrade), false).isEmpty(),
         "used " + upgrade + " should merge with a fresh upgrade");
-    helper.assertValueEqual(slot.getStackInSlot(0).getCount(), 2, "merged upgrade count");
+    helper.assertValueEqual(
+        Ic2TransferTestSupport.stack(slot, 0).getCount(), 2, "merged upgrade count");
   }
 
   private static void assertTankHasWater(GameTestHelper helper, Ic2FluidTank tank, String what) {
@@ -387,7 +395,8 @@ public class UpgradeGameTests {
 
   private static <T extends BlockEntity> T getMachine(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

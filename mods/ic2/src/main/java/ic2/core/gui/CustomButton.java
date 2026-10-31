@@ -1,11 +1,11 @@
 package ic2.core.gui;
 
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 public class CustomButton extends Button<CustomButton> {
-  private final ResourceLocation texture;
+  private final Identifier texture;
   private final IOverlaySupplier overlaySupplier;
 
   public CustomButton(Ic2Gui<?> gui, int x, int y, int width, int height, IClickHandler handler) {
@@ -20,7 +20,7 @@ public class CustomButton extends Button<CustomButton> {
       int height,
       int overlayX,
       int overlayY,
-      ResourceLocation texture,
+      Identifier texture,
       IClickHandler handler) {
     this(
         gui,
@@ -40,7 +40,7 @@ public class CustomButton extends Button<CustomButton> {
       int width,
       int height,
       IOverlaySupplier overlaySupplier,
-      ResourceLocation texture,
+      Identifier texture,
       IClickHandler handler) {
     super(gui, x, y, width, height, handler);
     this.texture = texture;
@@ -48,7 +48,7 @@ public class CustomButton extends Button<CustomButton> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     if (this.texture != null) {
       bindTexture(this.texture);
       double scale = 0.00390625;

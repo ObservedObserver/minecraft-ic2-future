@@ -893,6 +893,30 @@
     },
     "crop_type=beetroots,age=7": {
       "model": "ic2:block/crop/crop"
+    },
+    "crop_type=pale_oak_sapling,age=0": {
+      "model": "ic2:block/crop/pale_oak_sapling_0"
+    },
+    "crop_type=pale_oak_sapling,age=1": {
+      "model": "ic2:block/crop/pale_oak_sapling_1"
+    },
+    "crop_type=pale_oak_sapling,age=2": {
+      "model": "ic2:block/crop/pale_oak_sapling_2"
+    },
+    "crop_type=pale_oak_sapling,age=3": {
+      "model": "ic2:block/crop/pale_oak_sapling_3"
+    },
+    "crop_type=pale_oak_sapling,age=4": {
+      "model": "ic2:block/crop/pale_oak_sapling_4"
+    },
+    "crop_type=pale_oak_sapling,age=5": {
+      "model": "ic2:block/crop/crop"
+    },
+    "crop_type=pale_oak_sapling,age=6": {
+      "model": "ic2:block/crop/crop"
+    },
+    "crop_type=pale_oak_sapling,age=7": {
+      "model": "ic2:block/crop/crop"
     }
   }
 }

@@ -2,6 +2,7 @@ package ic2.core.item.tool;
 
 import ic2.api.event.LaserEvent;
 import ic2.api.network.INetworkItemEventListener;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.entity.LaserBulletEntity;
 import ic2.core.item.PriorityUsableItem;
@@ -23,7 +24,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -72,11 +72,23 @@ public class ItemToolMiningLaser extends ItemElectricTool
 
   @Override
   public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
+  public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> list, TooltipFlag par4) {
     super.appendHoverText(stack, world, list, par4);
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
     Component mode;
-    switch (nbtData.getInt("laser_setting")) {
+    switch (nbtData.getIntOr("laser_setting", 0)) {
       case 0:
         mode = Component.translatable("item.ic2.mining_laser.tooltip.mode.mining");
         break;
@@ -117,31 +129,31 @@ public class ItemToolMiningLaser extends ItemElectricTool
   @Override
   public List<String> getHudInfo(ItemStack stack, boolean advanced) {
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-    Component mode = Component.translatable(getModeString(nbtData.getInt("laser_setting")));
+    Component mode = Component.translatable(getModeString(nbtData.getIntOr("laser_setting", 0)));
     List<String> info = new LinkedList<>(super.getHudInfo(stack, advanced));
     info.add(Component.translatable("item.ic2.mining_laser.tooltip.mode", mode).getString());
     return info;
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      Level world, Player player, InteractionHand hand) {
+  public @NotNull InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if (!IC2.sideProxy.isSimulating()) {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
 
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-    int laserSetting = nbtData.getInt("laser_setting");
+    int laserSetting = nbtData.getIntOr("laser_setting", 0);
     if (IC2.keyboard.isModeSwitchKeyDown(player)) {
       laserSetting = (laserSetting + 1) % 8;
-      nbtData.putInt("laser_setting", laserSetting);
+      StackUtil.setTagValue(
+          stack, nbtData, "laser_setting", net.minecraft.nbt.IntTag.valueOf(laserSetting));
       IC2.sideProxy.messagePlayer(
           player, "item.ic2.mining_laser.tooltip.mode", getModeString(laserSetting));
     } else {
       int consume = new int[] {1250, 100, 5000, 0, 2500, 10000, 5000, 7500}[laserSetting];
       if (!this.consumeEnergy(stack, consume, player)) {
-        return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+        return InteractionResults.withStack(InteractionResult.FAIL, stack);
       }
 
       switch (laserSetting) {
@@ -219,7 +231,7 @@ public class ItemToolMiningLaser extends ItemElectricTool
     Level world = context.getLevel();
     Player player = context.getPlayer();
     BlockPos pos = context.getClickedPos();
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return InteractionResult.PASS;
     }
 
@@ -229,7 +241,8 @@ public class ItemToolMiningLaser extends ItemElectricTool
 
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
     if (!IC2.keyboard.isModeSwitchKeyDown(player)
-        && (nbtData.getInt("laser_setting") == 3 || nbtData.getInt("laser_setting") == 7)) {
+        && (nbtData.getIntOr("laser_setting", 0) == 3
+            || nbtData.getIntOr("laser_setting", 0) == 7)) {
       Vector3 dir = Util.getLook(player);
       double angle = dir.dot(Vector3.UP);
       if (Math.abs(angle) < 1.0 / Math.sqrt(2.0)) {
@@ -239,7 +252,7 @@ public class ItemToolMiningLaser extends ItemElectricTool
           Vector3 start = Util.getEyePosition(player);
           start.y = pos.getY() + 0.5;
           start = adjustStartPos(start, dir);
-          if (nbtData.getInt("laser_setting") == 3) {
+          if (nbtData.getIntOr("laser_setting", 0) == 3) {
             if (this.shootLaser(
                 world,
                 start,
@@ -252,7 +265,7 @@ public class ItemToolMiningLaser extends ItemElectricTool
                 false)) {
               IC2.network.get(true).initiateItemEvent(player, stack, 3, true);
             }
-          } else if (nbtData.getInt("laser_setting") == 7
+          } else if (nbtData.getIntOr("laser_setting", 0) == 7
               && this.shootLaser(
                   world,
                   start,
@@ -414,7 +427,7 @@ public class ItemToolMiningLaser extends ItemElectricTool
             IC2.network.get(true).initiateItemEvent(player, stack, 7, true);
           }
         }
-      } else if (nbtData.getInt("laser_setting") == 7) {
+      } else if (nbtData.getIntOr("laser_setting", 0) == 7) {
         if (this.consumeEnergy(stack, 3000.0, player)) {
           dir.x = 0.0;
           dir.z = 0.0;
@@ -592,7 +605,7 @@ public class ItemToolMiningLaser extends ItemElectricTool
   }
 
   private void playShotSound(Player player, SoundEvent soundEvent) {
-    player.playNotifySound(soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
+    ic2.compat.SoundCompat.notify(player, soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
   }
 
   @Override

@@ -33,7 +33,20 @@ public class TileEntitySolarGenerator extends TileEntityBaseGenerator {
     }
 
     float sunBrightness =
-        Util.limit((float) Math.cos(world.getSunAngle(1.0F)) * 2.0F + 0.2F, 0.0F, 1.0F);
+        Util.limit(
+            (float)
+                        Math.cos(
+                            (world
+                                    .environmentAttributes()
+                                    .getValue(
+                                        net.minecraft.world.attribute.EnvironmentAttributes
+                                            .SUN_ANGLE,
+                                        pos)
+                                * ((float) Math.PI / 180.0F)))
+                    * 2.0F
+                + 0.2F,
+            0.0F,
+            1.0F);
     if (!IC2.envProxy.biomeHasType(BiomeUtil.getBiome(world, pos), EnvProxy.BiomeType.SANDY)) {
       sunBrightness *= 1.0F - world.getRainLevel(1.0F) * 5.0F / 16.0F;
       sunBrightness *= 1.0F - world.getThunderLevel(1.0F) * 5.0F / 16.0F;

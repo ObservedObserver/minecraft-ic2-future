@@ -7,12 +7,12 @@ import ic2.core.gui.SlotGrid;
 import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiElectricKineticGenerator extends Ic2Gui<ContainerElectricKineticGenerator> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guielectrickineticgenerator.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guielectrickineticgenerator.png");
 
   public GuiElectricKineticGenerator(
       ContainerElectricKineticGenerator container, Inventory playerInventory, Component title) {
@@ -43,7 +43,7 @@ public class GuiElectricKineticGenerator extends Ic2Gui<ContainerElectricKinetic
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

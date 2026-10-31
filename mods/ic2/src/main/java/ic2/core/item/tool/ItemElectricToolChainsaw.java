@@ -22,7 +22,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -55,10 +54,22 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
   }
 
   private boolean isShearMode(ItemStack stack) {
-    return !StackUtil.getOrCreateNbtData(stack).getBoolean("disableShear");
+    return !StackUtil.getOrCreateNbtData(stack).getBooleanOr("disableShear", false);
   }
 
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> list, TooltipFlag par4) {
     super.appendHoverText(stack, world, list, par4);
@@ -71,23 +82,30 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      Level world, Player player, InteractionHand hand) {
-    if (world.isClientSide) {
+  public @NotNull InteractionResult use(Level world, Player player, InteractionHand hand) {
+    if (world.isClientSide()) {
       return super.use(world, player, hand);
     }
 
     if (IC2.keyboard.isModeSwitchKeyDown(player)) {
       CompoundTag compoundTag = StackUtil.getOrCreateNbtData(StackUtil.get(player, hand));
-      if (compoundTag.getBoolean("disableShear")) {
-        compoundTag.putBoolean("disableShear", false);
+      if (compoundTag.getBooleanOr("disableShear", false)) {
+        StackUtil.setTagValue(
+            StackUtil.get(player, hand),
+            compoundTag,
+            "disableShear",
+            net.minecraft.nbt.ByteTag.valueOf(false));
         IC2.sideProxy.messagePlayer(
             player,
             Component.translatable(
                 "item.ic2.mining_laser.tooltip.mode",
                 Component.translatable("item.ic2.mining_laser.tooltip.mode.normal")));
       } else {
-        compoundTag.putBoolean("disableShear", true);
+        StackUtil.setTagValue(
+            StackUtil.get(player, hand),
+            compoundTag,
+            "disableShear",
+            net.minecraft.nbt.ByteTag.valueOf(true));
         IC2.sideProxy.messagePlayer(
             player,
             Component.translatable(
@@ -130,7 +148,7 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
       Player player, Level world, BlockPos pos, BlockState state) {
     world.levelEvent(player, 2001, pos, Block.getId(state));
     if (state.is(BlockTags.GUARDED_BY_PIGLINS)) {
-      PiglinAi.angerNearbyPiglins(player, false);
+      PiglinAi.angerNearbyPiglins((net.minecraft.server.level.ServerLevel) world, player, false);
     }
 
     world.gameEvent(GameEvent.BLOCK_DESTROY, pos, Context.of(player, state));
@@ -159,7 +177,7 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
       @NotNull Player user,
       @NotNull LivingEntity entity,
       @NotNull InteractionHand hand) {
-    if (!StackUtil.getOrCreateNbtData(stack).getBoolean("disableShear")) {
+    if (!StackUtil.getOrCreateNbtData(stack).getBooleanOr("disableShear", false)) {
       if (entity instanceof IShearable shearable) {
         Level level = entity.level();
         BlockPos pos = entity.blockPosition();
@@ -170,7 +188,7 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
 
             for (ItemStack drop : drops) {
               if (!drop.isEmpty()) {
-                entity.spawnAtLocation(drop);
+                entity.spawnAtLocation((net.minecraft.server.level.ServerLevel) level, drop);
               }
             }
             this.playUsingSound(user);
@@ -183,7 +201,7 @@ public class ItemElectricToolChainsaw extends ItemElectricTool
   }
 
   public void playUsingSound(LivingEntity user) {
-    if (user.level().isClientSide) {
+    if (user.level().isClientSide()) {
       user.playSound(this.getToolUsingSound(), 1.0F, 1.0F);
     }
   }

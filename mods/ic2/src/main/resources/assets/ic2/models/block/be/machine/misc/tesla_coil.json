@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/misc/tesla_coil"
+  "parent": "ic2:block/machine/misc/tesla_coil"
 }

@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "silver_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:crushed_silver"
-  },
+  "ingredient": "ic2:crushed_silver",
   "result": {
     "id": "ic2:silver_ingot"
   },

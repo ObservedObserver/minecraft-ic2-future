@@ -1,50 +1,52 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=up,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=up,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=down,active=false": {
-      "model": "ic2:block/machine/processing/advanced/fermenter",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     },
     "facing=down,active=true": {
-      "model": "ic2:block/machine/processing/advanced/fermenter_active",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/fermenter"
     }
   }
 }

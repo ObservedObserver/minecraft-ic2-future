@@ -27,6 +27,7 @@ public final class Ic2Entities {
           Builder.<ITntEntity>of(ITntEntity::new, MobCategory.MISC)
               .fireImmune()
               .sized(0.98F, 0.98F)
+              .eyeHeight(0.15F)
               .clientTrackingRange(10)
               .updateInterval(10));
   public static final EntityType<RubberBoatEntity> RUBBER_BOAT =
@@ -41,6 +42,7 @@ public final class Ic2Entities {
           Builder.<NukeEntity>of(NukeEntity::new, MobCategory.MISC)
               .fireImmune()
               .sized(0.98F, 0.98F)
+              .eyeHeight(0.15F)
               .clientTrackingRange(10)
               .updateInterval(10));
   public static final EntityType<ElectricBoatEntity> ELECTRIC_BOAT =
@@ -59,7 +61,10 @@ public final class Ic2Entities {
   public static void init() {}
 
   private static <T extends Entity> EntityType<T> register(String name, Builder<T> builder) {
-    EntityType<T> ret = builder.build(IC2.getIdentifier(name).toString());
+    EntityType<T> ret =
+        builder.build(
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.ENTITY_TYPE, IC2.getIdentifier(name)));
     IC2.envProxy.registerEntity(IC2.getIdentifier(name), ret);
     return ret;
   }

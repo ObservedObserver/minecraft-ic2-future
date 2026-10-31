@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/wool_sheet"
+        "recipes": [
+          "ic2:shaped/wool_sheet"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -23,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:wool_carpets"
+            "items": "#minecraft:wool_carpets"
           }
         ]
       },

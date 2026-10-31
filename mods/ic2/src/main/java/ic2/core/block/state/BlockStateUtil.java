@@ -1,32 +1,14 @@
 package ic2.core.block.state;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
 public class BlockStateUtil {
   public static String getVariantString(BlockState state) {
-    Map<Property<?>, Comparable<?>> properties = state.getValues();
-    if (properties.isEmpty()) {
-      return "normal";
-    }
-
-    StringBuilder ret = new StringBuilder();
-
-    for (Entry<Property<?>, Comparable<?>> entry : properties.entrySet()) {
-      Property property = entry.getKey();
-      if (!ret.isEmpty()) {
-        ret.append(',');
-      }
-
-      ret.append(property.getName());
-      ret.append('=');
-      ret.append(property.getName(entry.getValue()));
-    }
-
-    return ret.toString();
+    String variant =
+        state.getValues().map(Object::toString).collect(java.util.stream.Collectors.joining(","));
+    return variant.isEmpty() ? "normal" : variant;
   }
 
   public static BlockState getState(Block block, String variant) {

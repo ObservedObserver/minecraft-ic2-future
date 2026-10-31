@@ -323,6 +323,10 @@ public class HandHeldValueConfig extends HandHeldUpgradeOption {
           }
         default:
           nbt.putByte("type", saveType.getForNBT());
+          ic2.core.util.StackUtil.setTagValue(
+              HandHeldValueConfig.this.containerStack,
+              HandHeldValueConfig.this.name + "Settings",
+              nbt);
           super.removed(player);
       }
     }

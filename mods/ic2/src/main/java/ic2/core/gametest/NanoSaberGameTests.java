@@ -1,26 +1,20 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.item.tool.AbstractItemNanoSaber;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class NanoSaberGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -68,7 +62,8 @@ public class NanoSaberGameTests {
     helper.assertTrue(
         AbstractItemNanoSaber.isActive(saber), "saber should be active before attacking");
 
-    LivingEntity target = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    LivingEntity target =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     saber.getItem().hurtEnemy(saber, target, player);
 
     helper.assertValueEqual(
@@ -86,7 +81,8 @@ public class NanoSaberGameTests {
     attacker.setItemInHand(InteractionHand.MAIN_HAND, saber);
     saber.getItem().use(helper.getLevel(), attacker, InteractionHand.MAIN_HAND);
 
-    LivingEntity target = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 1, 1));
+    LivingEntity target =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
     target.setItemSlot(EquipmentSlot.FEET, new ItemStack(Ic2Items.NANO_BOOTS));
     target.setItemSlot(
         EquipmentSlot.LEGS,
@@ -139,7 +135,8 @@ public class NanoSaberGameTests {
     helper.assertTrue(
         AbstractItemNanoSaber.isActive(saber), "saber with 300 EU should still activate");
 
-    LivingEntity target = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    LivingEntity target =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     saber.getItem().hurtEnemy(saber, target, player);
 
     helper.assertFalse(
@@ -166,7 +163,7 @@ public class NanoSaberGameTests {
   private static double getAttackDamageBonus(ItemStack stack) {
     double[] total = {0.0};
     stack.forEachModifier(
-        EquipmentSlotGroup.MAINHAND,
+        net.minecraft.world.entity.EquipmentSlot.MAINHAND,
         (attribute, modifier) -> {
           if (attribute == Attributes.ATTACK_DAMAGE) {
             total[0] += modifier.amount();

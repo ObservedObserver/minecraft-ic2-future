@@ -1,10 +1,10 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.item.reactor.AbstractDamageableReactorComponent;
 import ic2.core.recipe.GradualRecipe;
 import ic2.core.ref.Ic2Items;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -12,11 +12,7 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class GradualRecipeGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -31,7 +27,7 @@ public class GradualRecipeGameTests {
     CraftingRecipe recipe = findRecipe(helper, repairInput);
     helper.assertTrue(recipe instanceof GradualRecipe, "damaged RSH recipe should be gradual");
 
-    ItemStack repaired = recipe.assemble(repairInput, helper.getLevel().registryAccess());
+    ItemStack repaired = recipe.assemble(repairInput);
     helper.assertTrue(
         repaired.getItem() == condensator, "gradual recipe should return the RSH condensator");
     helper.assertValueEqual(
@@ -47,8 +43,7 @@ public class GradualRecipeGameTests {
     CraftingRecipe clampedRecipe = findRecipe(helper, clampedInput);
     helper.assertTrue(
         clampedRecipe instanceof GradualRecipe, "lightly damaged RSH recipe should be gradual");
-    ItemStack fullyRepaired =
-        clampedRecipe.assemble(clampedInput, helper.getLevel().registryAccess());
+    ItemStack fullyRepaired = clampedRecipe.assemble(clampedInput);
     helper.assertValueEqual(
         condensator.getUse(fullyRepaired), 0, "RSH repair should clamp use to zero");
 

@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "tin_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:tin_ore"
-  },
+  "ingredient": "ic2:tin_ore",
   "result": {
     "id": "ic2:tin_ingot"
   },

@@ -63,7 +63,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/small_power_unit"
+        "recipes": [
+          "ic2:shaped/small_power_unit"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

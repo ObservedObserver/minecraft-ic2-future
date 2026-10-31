@@ -61,11 +61,11 @@ public class InvSlot implements Iterable<ItemStack> {
 
   public void readFromNbt(CompoundTag nbt, HolderLookup.Provider registries) {
     this.clear();
-    ListTag contentsTag = nbt.getList("Contents", 10);
+    ListTag contentsTag = ic2.compat.NbtCompat.getList(nbt, "Contents", 10);
 
     for (int i = 0; i < contentsTag.size(); i++) {
-      CompoundTag contentTag = contentsTag.getCompound(i);
-      int index = contentTag.getByte("Index") & 255;
+      CompoundTag contentTag = contentsTag.getCompoundOrEmpty(i);
+      int index = contentTag.getByteOr("Index", (byte) 0) & 255;
       if (index >= this.size()) {
         IC2.log.error(
             LogCategory.Block,
@@ -74,7 +74,7 @@ public class InvSlot implements Iterable<ItemStack> {
             this.name,
             index);
       } else {
-        ItemStack stack = ItemStack.parseOptional(registries, contentTag);
+        ItemStack stack = ic2.compat.NbtCompat.readItem(registries, contentTag);
         if (StackUtil.isEmpty(stack)) {
           IC2.log.warn(
               LogCategory.Block,
@@ -83,8 +83,8 @@ public class InvSlot implements Iterable<ItemStack> {
               Util.toString(this.base.getParent()),
               this.name,
               index,
-              contentTag.getShort("id"),
-              contentTag.getShort("Damage"));
+              contentTag.getShortOr("id", (short) 0),
+              contentTag.getShortOr("Damage", (short) 0));
         } else {
           if (!this.isEmpty(index)) {
             IC2.log.error(
@@ -114,7 +114,7 @@ public class InvSlot implements Iterable<ItemStack> {
         CompoundTag contentTag = new CompoundTag();
         contentTag.putByte("Index", (byte) i);
         // save() returns the merged tag instead of mutating the prefix
-        contentsTag.add(content.save(registries, contentTag));
+        contentsTag.add(ic2.compat.NbtCompat.saveItem(content, registries, contentTag));
       }
     }
 

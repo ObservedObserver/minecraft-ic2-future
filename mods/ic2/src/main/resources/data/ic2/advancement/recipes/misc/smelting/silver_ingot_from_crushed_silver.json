@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/silver_ingot_from_crushed_silver"
+        "recipes": [
+          "ic2:smelting/silver_ingot_from_crushed_silver"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

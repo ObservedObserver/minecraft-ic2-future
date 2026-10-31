@@ -68,9 +68,9 @@ public class TileEntityTradeOMat extends TileEntityInventory
       this.owner = PersonalOwnerNbt.read(nbt);
     }
 
-    this.totalTradeCount = nbt.getInt("totalTradeCount");
+    this.totalTradeCount = nbt.getIntOr("totalTradeCount", 0);
     if (nbt.contains("infinite")) {
-      this.infinite = nbt.getBoolean("infinite");
+      this.infinite = nbt.getBooleanOr("infinite", false);
     }
   }
 
@@ -191,7 +191,7 @@ public class TileEntityTradeOMat extends TileEntityInventory
               + this.worldPosition
               + "\" is loaded");
     } else {
-      if (!this.level.isClientSide) {
+      if (!this.level.isClientSide()) {
         this.updateStock();
         if (this.isWireless()) {
           WorldData.get(this.level).tradeMarket.registerTradeOMat(this);
@@ -214,7 +214,7 @@ public class TileEntityTradeOMat extends TileEntityInventory
                 + "\" is activated");
       }
 
-      if (!this.level.isClientSide) {
+      if (!this.level.isClientSide()) {
         this.setWireless(true);
       }
 
@@ -246,7 +246,7 @@ public class TileEntityTradeOMat extends TileEntityInventory
               + "\" is unloaded");
     }
 
-    if (!this.level.isClientSide && this.isWireless()) {
+    if (!this.level.isClientSide() && this.isWireless()) {
       WorldData.get(this.level).tradeMarket.unregisterTradeOMat(this);
     }
   }
@@ -345,7 +345,10 @@ public class TileEntityTradeOMat extends TileEntityInventory
   }
 
   private boolean canToggleInfinite(Player player) {
-    MinecraftServer server = player.getServer();
-    return server != null && server.getPlayerList().isOp(player.getGameProfile());
+    MinecraftServer server = ic2.compat.WorldCompat.server(player.level());
+    return server != null
+        && server
+            .getPlayerList()
+            .isOp(new net.minecraft.server.players.NameAndId(player.getGameProfile()));
   }
 }

@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "blocks",
-  "ingredient": {
-    "item": "ic2:rubber_log"
-  },
+  "ingredient": "ic2:rubber_log",
   "result": {
     "id": "minecraft:jungle_log"
   },

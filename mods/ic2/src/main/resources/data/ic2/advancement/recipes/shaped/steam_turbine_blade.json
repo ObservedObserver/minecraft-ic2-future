@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/steel"
+            "items": "#c:ingots/steel"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/steel"
+            "items": "#c:plates/steel"
           }
         ]
       },
@@ -23,7 +23,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/steam_turbine_blade"
+        "recipes": [
+          "ic2:shaped/steam_turbine_blade"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

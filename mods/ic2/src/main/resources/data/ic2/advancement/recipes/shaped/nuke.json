@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/nuke"
+        "recipes": [
+          "ic2:shaped/nuke"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

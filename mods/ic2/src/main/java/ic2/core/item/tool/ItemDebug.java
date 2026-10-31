@@ -36,7 +36,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -137,17 +137,17 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
       String name = Util.getName(entStack.getItem()).toString();
       output.both(
           "[%s] item id: %s size: %s name: %s",
-          plat, name, StackUtil.getSize(entStack), entStack.getDescriptionId());
+          plat, name, StackUtil.getSize(entStack), entStack.getItem().getDescriptionId());
       output.console("NBT: %s", StackUtil.getTag(entStack));
     }
 
     output.flush(player);
-    return world.isClientSide ? InteractionResult.PASS : InteractionResult.SUCCESS;
+    return world.isClientSide() ? InteractionResult.PASS : InteractionResult.SUCCESS;
   }
 
   private static ItemDebug.Mode getMode(ItemStack stack) {
     CompoundTag nbt = StackUtil.getTag(stack);
-    int modeIdx = nbt != null ? nbt.getInt("mode") : 0;
+    int modeIdx = nbt != null ? nbt.getIntOr("mode", 0) : 0;
     if (modeIdx < 0 || modeIdx >= ItemDebug.Mode.modes.length) {
       modeIdx = 0;
     }
@@ -156,12 +156,12 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
   }
 
   private static void setMode(ItemStack stack, ItemDebug.Mode mode) {
-    StackUtil.getOrCreateNbtData(stack).putInt("mode", mode.ordinal());
+    StackUtil.setTagValue(stack, "mode", net.minecraft.nbt.IntTag.valueOf(mode.ordinal()));
   }
 
   private static String getPlatform(Level world) {
     if (IC2.envProxy.isClientEnv()) {
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         return "sp server";
       } else {
         return world.getServer() == null ? "mp client" : "sp client";
@@ -338,7 +338,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
         || cls == Class.class
         || cls == String.class
         || cls == BlockState.class
-        || cls == ResourceLocation.class
+        || cls == Identifier.class
         || Tag.class.isAssignableFrom(cls)
         || Vec3i.class.isAssignableFrom(cls)
         || Vec3.class.isAssignableFrom(cls)
@@ -370,7 +370,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
     Player player = context.getPlayer();
     ItemDebug.Mode mode = getMode(stack);
     if (IC2.keyboard.isModeSwitchKeyDown(player)) {
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         mode = ItemDebug.Mode.modes[(mode.ordinal() + 1) % ItemDebug.Mode.modes.length];
         setMode(stack, mode);
         IC2.sideProxy.messagePlayer(player, "Debug Item Mode: " + mode.getName());
@@ -381,7 +381,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
     } else {
       BlockEntity blockEntity = world.getBlockEntity(pos);
       if (blockEntity instanceof IDebuggable dbg) {
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
           return InteractionResult.PASS;
         }
 
@@ -428,7 +428,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
             }
           case TileData:
             {
-              if (world.isClientSide) {
+              if (world.isClientSide()) {
                 return InteractionResult.PASS;
               }
 
@@ -486,7 +486,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
             }
           case EnergyNet:
             {
-              if (world.isClientSide) {
+              if (world.isClientSide()) {
                 return InteractionResult.PASS;
               }
 
@@ -514,7 +514,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
             }
           case Accelerate:
           case AccelerateX100:
-            if (world.isClientSide) {
+            if (world.isClientSide()) {
               return InteractionResult.PASS;
             }
 
@@ -523,7 +523,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
 
         output.flush(player);
       }
-      return world.isClientSide ? InteractionResult.PASS : InteractionResult.SUCCESS;
+      return world.isClientSide() ? InteractionResult.PASS : InteractionResult.SUCCESS;
     }
   }
 
@@ -634,7 +634,7 @@ public class ItemDebug extends Item implements PriorityUsableItem, ISpecialElect
     }
 
     void flush(Player player) {
-      if (player.level().isClientSide) {
+      if (player.level().isClientSide()) {
         System.out.println(this.consoleSb);
 
         for (String line : this.chatSb.toString().split("[\\r\\n]+")) {

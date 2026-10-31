@@ -9,6 +9,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import ic2.core.item.reactor.AbstractDamageableReactorComponent;
+import ic2.core.recipe.v2.RecipeIo;
 import ic2.core.ref.Ic2RecipeSerializers;
 import ic2.core.util.StackUtil;
 import java.util.stream.Stream;
@@ -18,13 +19,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -34,20 +35,29 @@ import org.jetbrains.annotations.NotNull;
  * Shapeless recipe that repairs a damageable reactor component by reducing its custom use counter
  * for each supplied charge material.
  */
-public class GradualRecipe implements CraftingRecipe {
-  private static final ResourceLocation FALLBACK_ID =
-      ResourceLocation.fromNamespaceAndPath("ic2", "gradual_recipe");
+public class GradualRecipe implements ic2.compat.Ic2CraftingRecipe {
+  private static final Identifier FALLBACK_ID =
+      Identifier.fromNamespaceAndPath("ic2", "gradual_recipe");
 
-  private final ResourceLocation id;
+  private final Identifier id;
   private final AbstractDamageableReactorComponent item;
-  private final ItemStack chargeMaterial;
+  private final ItemStackTemplate chargeMaterial;
   private final int amount;
   private final boolean hidden;
 
   public GradualRecipe(
-      ResourceLocation id,
+      Identifier id,
       AbstractDamageableReactorComponent item,
       ItemStack chargeMaterial,
+      int amount,
+      boolean hidden) {
+    this(id, item, ItemStackTemplate.fromNonEmptyStack(chargeMaterial), amount, hidden);
+  }
+
+  public GradualRecipe(
+      Identifier id,
+      AbstractDamageableReactorComponent item,
+      ItemStackTemplate chargeMaterial,
       int amount,
       boolean hidden) {
     this.id = id;
@@ -74,7 +84,7 @@ public class GradualRecipe implements CraftingRecipe {
 
       if (StackUtil.isEmpty(gridItem) && stack.getItem() == this.item) {
         gridItem = stack;
-      } else if (StackUtil.checkItemEquality(stack, this.chargeMaterial)) {
+      } else if (StackUtil.checkItemEquality(stack, this.chargeMaterial.create())) {
         chargeMaterials++;
       } else {
         return ItemStack.EMPTY;
@@ -128,7 +138,7 @@ public class GradualRecipe implements CraftingRecipe {
     NonNullList<Ingredient> ingredients = NonNullList.create();
     if (!this.hidden) {
       ingredients.add(Ingredient.of(this.item));
-      ingredients.add(Ingredient.of(this.chargeMaterial));
+      ingredients.add(Ingredient.of(this.chargeMaterial.item().value()));
     }
 
     return ingredients;
@@ -139,12 +149,12 @@ public class GradualRecipe implements CraftingRecipe {
     return true;
   }
 
-  public ResourceLocation getId() {
+  public Identifier getId() {
     return this.id;
   }
 
   @Override
-  public @NotNull RecipeSerializer<?> getSerializer() {
+  public @NotNull RecipeSerializer<? extends ic2.compat.Ic2CraftingRecipe> getSerializer() {
     return Ic2RecipeSerializers.GRADUAL;
   }
 
@@ -153,7 +163,7 @@ public class GradualRecipe implements CraftingRecipe {
     return CraftingBookCategory.MISC;
   }
 
-  public static class Serializer implements RecipeSerializer<GradualRecipe> {
+  public static class Serializer extends ic2.compat.RecipeSerializerAdapter<GradualRecipe> {
     private static final MapCodec<GradualRecipe> CODEC =
         new MapCodec<>() {
           @Override
@@ -208,8 +218,8 @@ public class GradualRecipe implements CraftingRecipe {
             "Gradual recipe item must be a damageable reactor component: " + item);
       }
 
-      ItemStack chargeMaterial =
-          parseItemStack(GsonHelper.getAsJsonObject(json, "charge_material"));
+      ItemStackTemplate chargeMaterial =
+          RecipeIo.parseOutputTemplate(GsonHelper.getAsJsonObject(json, "charge_material"));
       int amount = GsonHelper.getAsInt(json, "amount");
       boolean hidden = GsonHelper.getAsBoolean(json, "hidden", false);
       return new GradualRecipe(FALLBACK_ID, component, chargeMaterial, amount, hidden);
@@ -222,7 +232,7 @@ public class GradualRecipe implements CraftingRecipe {
             "Gradual recipe item is not a damageable reactor component: " + item);
       }
 
-      ItemStack chargeMaterial = ItemStack.STREAM_CODEC.decode(buffer);
+      ItemStackTemplate chargeMaterial = ItemStackTemplate.STREAM_CODEC.decode(buffer);
       int amount = buffer.readVarInt();
       boolean hidden = buffer.readBoolean();
       return new GradualRecipe(FALLBACK_ID, component, chargeMaterial, amount, hidden);
@@ -230,7 +240,7 @@ public class GradualRecipe implements CraftingRecipe {
 
     private static void toNetwork(RegistryFriendlyByteBuf buffer, GradualRecipe recipe) {
       buffer.writeVarInt(BuiltInRegistries.ITEM.getId(recipe.item));
-      ItemStack.STREAM_CODEC.encode(buffer, recipe.chargeMaterial);
+      ItemStackTemplate.STREAM_CODEC.encode(buffer, recipe.chargeMaterial);
       buffer.writeVarInt(recipe.amount);
       buffer.writeBoolean(recipe.hidden);
     }
@@ -240,5 +250,13 @@ public class GradualRecipe implements CraftingRecipe {
       int count = GsonHelper.getAsInt(json, "count", 1);
       return new ItemStack(item, count);
     }
+  }
+
+  public int getIc2RecipeWidth() {
+    return Math.min(3, getIngredients().size());
+  }
+
+  public int getIc2RecipeHeight() {
+    return (getIngredients().size() + 2) / 3;
   }
 }

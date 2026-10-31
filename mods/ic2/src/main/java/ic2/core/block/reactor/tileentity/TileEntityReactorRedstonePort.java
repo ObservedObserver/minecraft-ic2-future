@@ -19,7 +19,7 @@ public class TileEntityReactorRedstonePort extends TileEntityReactorVessel {
   }
 
   private void updateRedstoneLink() {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       TileEntityNuclearReactorElectric reactor = this.lookup.getReactor();
       if (reactor != null) {
         this.redstone.linkTo(reactor.redstone);

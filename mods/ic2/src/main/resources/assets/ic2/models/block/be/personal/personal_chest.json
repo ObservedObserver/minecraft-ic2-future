@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/personal/personal_chest"
+  "parent": "ic2:block/personal/personal_chest"
 }

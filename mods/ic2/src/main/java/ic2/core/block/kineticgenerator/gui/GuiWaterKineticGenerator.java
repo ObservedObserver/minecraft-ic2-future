@@ -7,12 +7,12 @@ import ic2.core.gui.IEnableHandler;
 import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiWaterKineticGenerator extends Ic2Gui<ContainerWaterKineticGenerator> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiwaterkineticgenerator.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiwaterkineticgenerator.png");
 
   public GuiWaterKineticGenerator(
       ContainerWaterKineticGenerator container, Inventory playerInventory, Component title) {
@@ -85,7 +85,7 @@ public class GuiWaterKineticGenerator extends Ic2Gui<ContainerWaterKineticGenera
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

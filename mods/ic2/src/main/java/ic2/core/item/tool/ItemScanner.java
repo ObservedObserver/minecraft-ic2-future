@@ -2,6 +2,7 @@ package ic2.core.item.tool;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IBoxable;
+import ic2.compat.InteractionResults;
 import ic2.core.IHasGui;
 import ic2.core.item.BaseElectricItem;
 import ic2.core.item.IHandHeldInventory;
@@ -20,7 +21,6 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +37,19 @@ public class ItemScanner extends BaseElectricItem implements IBoxable, IHandHeld
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
@@ -46,31 +59,30 @@ public class ItemScanner extends BaseElectricItem implements IBoxable, IHandHeld
     Ic2Tooltip.add(tooltip, Component.translatable("ic2.scanner.range", this.getScanRange()));
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, @NotNull Player player, @NotNull InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if ((this.tier != 1 || ElectricItem.manager.use(stack, 50.0, player))
         && (this.tier != 2 || ElectricItem.manager.use(stack, 250.0, player))) {
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         if (this.getInventory(player, hand, stack).openManagedItem(player, hand, null)
             && player.containerMenu instanceof ContainerToolScanner container) {
           Map<ItemComparableItemStack, Integer> scanResult =
-              this.scan(
-                  player.getCommandSenderWorld(), player.blockPosition(), this.getScanRange());
+              this.scan(player.level(), player.blockPosition(), this.getScanRange());
           container.setResults(this.scanMapToSortedList(scanResult));
         }
       } else {
         player.playSound(Ic2SoundEvents.ITEM_SCANNER_USE, 1.0F, 1.0F);
       }
 
-      return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+      return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
     } else {
-      return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+      return InteractionResults.withStack(InteractionResult.FAIL, stack);
     }
   }
 
   public boolean onDroppedByPlayer(ItemStack stack, Player player) {
-    if (!player.getCommandSenderWorld().isClientSide
+    if (!player.level().isClientSide()
         && !StackUtil.isEmpty(stack)
         && player.containerMenu instanceof ContainerToolScanner) {
       HandHeldScanner scanner = ((ContainerToolScanner) player.containerMenu).base;
@@ -113,7 +125,7 @@ public class ItemScanner extends BaseElectricItem implements IBoxable, IHandHeld
           if (!state.isAir()) {
             ItemStack blockItemStack = new ItemStack(state.getBlock().asItem(), 1);
             if (StackUtil.isOreStack(blockItemStack)) {
-              ItemStack pickStack = state.getBlock().getCloneItemStack(world, center, state);
+              ItemStack pickStack = state.getCloneItemStack(world, center, false);
               ItemComparableItemStack key = new ItemComparableItemStack(pickStack, true);
               Integer count = ret.get(key);
               if (count == null) {

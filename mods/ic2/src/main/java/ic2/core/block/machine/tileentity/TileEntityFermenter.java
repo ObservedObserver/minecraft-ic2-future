@@ -97,10 +97,10 @@ public class TileEntityFermenter extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.inputTank.fromNbt(nbt.getCompound("inputTank"));
-    this.outputTank.fromNbt(nbt.getCompound("outputTank"));
-    this.progress = nbt.getInt("progress");
-    this.heatBuffer = nbt.getInt("heatBuffer");
+    this.inputTank.fromNbt(nbt.getCompoundOrEmpty("inputTank"));
+    this.outputTank.fromNbt(nbt.getCompoundOrEmpty("outputTank"));
+    this.progress = nbt.getIntOr("progress", 0);
+    this.heatBuffer = nbt.getIntOr("heatBuffer", 0);
   }
 
   @Override

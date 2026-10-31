@@ -33,7 +33,7 @@ public class TileEntityMagnetizer extends TileEntityElectricMachine
   public void setChanged() {
     super.setChanged();
     Level world = this.getLevel();
-    if (world != null && !world.isClientSide) {
+    if (world != null && !world.isClientSide()) {
       this.setOverclockRates();
     }
   }

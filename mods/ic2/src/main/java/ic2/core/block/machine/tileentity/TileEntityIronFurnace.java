@@ -49,7 +49,7 @@ public class TileEntityIronFurnace extends TileEntityBase
   }
 
   public static double spawnXP(Player player, double xp) {
-    Level world = player.getCommandSenderWorld();
+    Level world = player.level();
     long balls = (long) Math.floor(xp);
 
     while (balls > 0L) {
@@ -73,10 +73,10 @@ public class TileEntityIronFurnace extends TileEntityBase
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.fuel = nbt.getInt("fuel");
-    this.totalFuel = nbt.getInt("totalFuel");
-    this.progress = nbt.getShort("progress");
-    this.xp = nbt.getDouble("xp");
+    this.fuel = nbt.getIntOr("fuel", 0);
+    this.totalFuel = nbt.getIntOr("totalFuel", 0);
+    this.progress = nbt.getShortOr("progress", (short) 0);
+    this.xp = nbt.getDoubleOr("xp", 0.0);
   }
 
   @Override
@@ -149,7 +149,7 @@ public class TileEntityIronFurnace extends TileEntityBase
     ItemStack output = result.getOutput();
     this.outputSlot.add(output);
     this.inputSlot.consume(result);
-    this.xp = this.xp + result.recipe().getMetaData().getFloat("experience");
+    this.xp = this.xp + result.recipe().getMetaData().getFloatOr("experience", 0.0F);
   }
 
   private boolean canOperate() {
@@ -190,7 +190,7 @@ public class TileEntityIronFurnace extends TileEntityBase
   @Override
   public void onNetworkEvent(Player player, int event) {
     if (event == 0) {
-      assert !this.getLevel().isClientSide;
+      assert !this.getLevel().isClientSide();
       this.xp = spawnXP(player, this.xp);
     }
   }

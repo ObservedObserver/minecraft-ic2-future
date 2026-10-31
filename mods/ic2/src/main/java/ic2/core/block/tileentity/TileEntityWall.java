@@ -42,7 +42,7 @@ public class TileEntityWall extends Ic2TileEntity {
       return;
     }
 
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       IC2.network.get(true).updateTileEntityField(this, "color");
       this.setChanged();
     } else if (this.updateRenderState()) {
@@ -64,7 +64,7 @@ public class TileEntityWall extends Ic2TileEntity {
     this.color = color;
     this.obscuration.applyObscuration(
         side, new Obscuration.ObscurationData(refState, refVariant, refSide, colorMultipliers));
-    if (this.getLevel() != null && !this.getLevel().isClientSide) {
+    if (this.getLevel() != null && !this.getLevel().isClientSide()) {
       this.setChanged();
       NetworkHelper.sendInitialData(this);
     }
@@ -79,7 +79,7 @@ public class TileEntityWall extends Ic2TileEntity {
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.color = DyeColor.byId(nbt.getByte("color"));
+    this.color = DyeColor.byId(nbt.getByteOr("color", (byte) 0));
   }
 
   @Override
@@ -91,7 +91,7 @@ public class TileEntityWall extends Ic2TileEntity {
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (this.getLevel().isClientSide && this.updateRenderState()) {
+    if (this.getLevel().isClientSide() && this.updateRenderState()) {
       this.rerender();
     }
   }
@@ -120,7 +120,7 @@ public class TileEntityWall extends Ic2TileEntity {
     }
 
     this.color = color;
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       IC2.network.get(true).updateTileEntityField(this, "color");
       this.setChanged();
     } else if (this.updateRenderState()) {

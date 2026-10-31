@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/resource/advanced_miner",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/resource/advanced_miner_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/resource/advanced_miner"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/resource/advanced_miner_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/resource/advanced_miner",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/resource/advanced_miner_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/resource/advanced_miner",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/resource/advanced_miner_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/resource/advanced_miner"
     }
   }
 }

@@ -2,6 +2,7 @@ package ic2.core.item.tool;
 
 import ic2.api.crops.CropCard;
 import ic2.api.item.ElectricItem;
+import ic2.compat.InteractionResults;
 import ic2.core.IHasGui;
 import ic2.core.crop.TileEntityCrop;
 import ic2.core.item.BaseElectricItem;
@@ -11,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -27,14 +27,14 @@ public class ItemCropAnalyzer extends BaseElectricItem implements IHandHeldInven
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       Level world, @NotNull Player player, @NotNull InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.getInventory(player, hand, stack).openManagedItem(player, hand, null);
     }
 
-    return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class ItemCropAnalyzer extends BaseElectricItem implements IHandHeldInven
     BlockPos pos = context.getClickedPos();
     Player player = context.getPlayer();
 
-    if (!world.isClientSide && player != null && !player.isCrouching()) {
+    if (!world.isClientSide() && player != null && !player.isCrouching()) {
       BlockEntity te = world.getBlockEntity(pos);
       if (te instanceof TileEntityCrop crop) {
         if (crop.getCrop() == null) {
@@ -86,7 +86,7 @@ public class ItemCropAnalyzer extends BaseElectricItem implements IHandHeldInven
 
   @Override
   public boolean onDroppedByPlayer(ItemStack stack, Player player) {
-    if (!player.getCommandSenderWorld().isClientSide
+    if (!player.level().isClientSide()
         && !StackUtil.isEmpty(stack)
         && player.containerMenu instanceof ContainerAnalyzer) {
       HandHeldCropAnalyzer analyzer = ((ContainerAnalyzer) player.containerMenu).base;

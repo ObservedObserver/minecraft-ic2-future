@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
@@ -144,8 +144,7 @@ public class ConfigUtil {
         amount = 1000;
       }
       // TODO
-      ResourceLocation id =
-          ResourceLocation.withDefaultNamespace(itemName.substring("Fluid:".length()));
+      Identifier id = Identifier.withDefaultNamespace(itemName.substring("Fluid:".length()));
       Fluid fluid = Util.getFluid(id);
       return fluid == null ? null : Recipes.inputFactory.forFluidContainer(fluid, amount);
     } else {

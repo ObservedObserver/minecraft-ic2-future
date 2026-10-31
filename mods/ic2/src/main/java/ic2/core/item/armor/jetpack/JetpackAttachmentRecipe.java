@@ -15,25 +15,24 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class JetpackAttachmentRecipe implements CraftingRecipe {
+public class JetpackAttachmentRecipe implements ic2.compat.Ic2CraftingRecipe {
   public static final Set<Item> blacklistedItems =
       Collections.newSetFromMap(new IdentityHashMap<>());
-  private final ResourceLocation id;
+  private final Identifier id;
 
-  public JetpackAttachmentRecipe(ResourceLocation id) {
+  public JetpackAttachmentRecipe(Identifier id) {
     this.id = id;
   }
 
@@ -132,11 +131,11 @@ public class JetpackAttachmentRecipe implements CraftingRecipe {
   }
 
   @Override
-  public @NotNull RecipeSerializer<?> getSerializer() {
+  public @NotNull RecipeSerializer<? extends ic2.compat.Ic2CraftingRecipe> getSerializer() {
     return Ic2RecipeSerializers.JETPACK_ATTACHMENT;
   }
 
-  public @NotNull ResourceLocation getId() {
+  public @NotNull Identifier getId() {
     return this.id;
   }
 
@@ -145,7 +144,8 @@ public class JetpackAttachmentRecipe implements CraftingRecipe {
     return CraftingBookCategory.MISC;
   }
 
-  public static final class Serializer implements RecipeSerializer<JetpackAttachmentRecipe> {
+  public static final class Serializer
+      extends ic2.compat.RecipeSerializerAdapter<JetpackAttachmentRecipe> {
     private final MapCodec<JetpackAttachmentRecipe> codec =
         MapCodec.unit(() -> new JetpackAttachmentRecipe(null));
     private final StreamCodec<RegistryFriendlyByteBuf, JetpackAttachmentRecipe> streamCodec =
@@ -160,5 +160,13 @@ public class JetpackAttachmentRecipe implements CraftingRecipe {
     public @NotNull StreamCodec<RegistryFriendlyByteBuf, JetpackAttachmentRecipe> streamCodec() {
       return this.streamCodec;
     }
+  }
+
+  public int getIc2RecipeWidth() {
+    return Math.min(3, getIngredients().size());
+  }
+
+  public int getIc2RecipeHeight() {
+    return (getIngredients().size() + 2) / 3;
   }
 }

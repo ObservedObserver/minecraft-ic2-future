@@ -13,5 +13,23 @@ description='''
 ${mod_description}
 '''
 
-[[mixin]]
+[[mixins]]
+config="ic2.fluid-movement.mixins.json"
+
+[[mixins]]
 config="ic2.mixins.json"
+requiredMods=["twilightforest"]
+
+[[dependencies.ic2]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.ic2]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"

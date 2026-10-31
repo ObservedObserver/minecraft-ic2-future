@@ -1,6 +1,6 @@
 package ic2.core.util;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -53,7 +53,7 @@ public class WorldUtil {
       Player player,
       ItemStack mainHandItem,
       BlockState strippedBlockState) {
-    world.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
+    world.playSound(player, pos, SoundEvents.AXE_STRIP.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
     if (player instanceof ServerPlayer) {
       CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, pos, mainHandItem);
     }

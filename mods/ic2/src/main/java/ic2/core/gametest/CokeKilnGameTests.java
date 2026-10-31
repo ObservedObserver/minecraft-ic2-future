@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.comp.Fluids;
 import ic2.core.block.steam.TileEntityCokeKiln;
 import ic2.core.block.steam.TileEntityCokeKilnGrate;
@@ -12,7 +13,6 @@ import ic2.core.ref.Ic2Fluids;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,11 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class CokeKilnGameTests {
   private static final String EMPTY_LARGE = "gametest/empty7x7x7";
 
@@ -147,7 +143,7 @@ public class CokeKilnGameTests {
 
   private static int countItems(Player player, Item item) {
     int count = 0;
-    for (ItemStack stack : player.getInventory().items) {
+    for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
       if (stack.getItem() == item) {
         count += stack.getCount();
       }
@@ -158,7 +154,8 @@ public class CokeKilnGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

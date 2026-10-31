@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/processing/advanced/centrifuge_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/advanced/centrifuge"
     }
   }
 }

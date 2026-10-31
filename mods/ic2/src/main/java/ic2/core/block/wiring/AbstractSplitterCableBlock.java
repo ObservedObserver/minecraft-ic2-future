@@ -32,8 +32,13 @@ public abstract class AbstractSplitterCableBlock extends AbstractCableBlock {
 
   @Override
   public void neighborChanged(
-      BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-    if (!world.isClientSide) {
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Block block,
+      net.minecraft.world.level.redstone.Orientation orientation,
+      boolean notify) {
+    if (!world.isClientSide()) {
       boolean newActive = world.hasNeighborSignal(pos);
       if ((Boolean) state.getValue(active) != newActive) {
         state = (BlockState) state.setValue(active, newActive);
@@ -46,7 +51,7 @@ public abstract class AbstractSplitterCableBlock extends AbstractCableBlock {
       }
     }
 
-    super.neighborChanged(state, world, pos, block, fromPos, notify);
+    super.neighborChanged(state, world, pos, block, orientation, notify);
   }
 
   // a redstone signal (active) takes the splitter out of the enet, cutting the current

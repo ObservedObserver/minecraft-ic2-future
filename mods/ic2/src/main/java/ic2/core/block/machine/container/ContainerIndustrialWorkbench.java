@@ -179,9 +179,7 @@ public class ContainerIndustrialWorkbench extends ContainerFullInv<TileEntityInd
       if (world.getServer() != null) {
         CraftingRecipe recipe = this.getRecipe(this.craftMatrix);
         ItemStack output =
-            recipe == null
-                ? ItemStack.EMPTY
-                : recipe.assemble(toCraftingInput(this.craftMatrix), world.registryAccess());
+            recipe == null ? ItemStack.EMPTY : recipe.assemble(toCraftingInput(this.craftMatrix));
         this.craftResult.setItem(0, output);
       }
     }
@@ -256,9 +254,7 @@ public class ContainerIndustrialWorkbench extends ContainerFullInv<TileEntityInd
               CraftingRecipe recipe = this.getRecipe(inputInv);
               if (recipe != null
                   && StackUtil.checkItemEquality(
-                      recipe.assemble(
-                          toCraftingInput(inputInv), this.base.getLevel().registryAccess()),
-                      start)) {
+                      recipe.assemble(toCraftingInput(inputInv)), start)) {
                 sourceItemStack = craftingSlot.getItem();
                 start = sourceItemStack.copy();
                 assert it.hasNext();

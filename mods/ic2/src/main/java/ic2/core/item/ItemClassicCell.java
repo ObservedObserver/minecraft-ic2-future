@@ -1,5 +1,6 @@
 package ic2.core.item;
 
+import ic2.compat.InteractionResults;
 import ic2.core.crop.TileEntityCrop;
 import ic2.core.fluid.FluidHandler;
 import ic2.core.fluid.Ic2FluidItem;
@@ -15,7 +16,7 @@ import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -65,10 +66,10 @@ public class ItemClassicCell extends Ic2BucketItem implements Ic2FluidItem {
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, Player user, @NotNull InteractionHand hand) {
     if (this == Ic2Items.AIR_CELL) {
-      return InteractionResultHolder.pass(user.getItemInHand(hand));
+      return InteractionResults.pass(user.getItemInHand(hand));
     }
 
     return super.use(world, user, hand);
@@ -183,6 +184,19 @@ public class ItemClassicCell extends Ic2BucketItem implements Ic2FluidItem {
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,

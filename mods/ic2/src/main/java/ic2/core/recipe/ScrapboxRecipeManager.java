@@ -50,7 +50,7 @@ public final class ScrapboxRecipeManager implements IScrapboxManager {
       if (output.size() != 1) {
         throw new IllegalArgumentException("currently only a single drop stack is supported");
       } else {
-        float weight = metadata.getFloat("weight");
+        float weight = metadata.getFloatOr("weight", 0.0F);
         if (!(weight <= 0.0F) && !Float.isInfinite(weight) && !Float.isNaN(weight)) {
           this.addDrop(output.iterator().next(), weight);
           return true;

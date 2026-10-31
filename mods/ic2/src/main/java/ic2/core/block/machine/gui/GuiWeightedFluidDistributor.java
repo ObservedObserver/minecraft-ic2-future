@@ -3,13 +3,13 @@ package ic2.core.block.machine.gui;
 import ic2.core.block.machine.container.ContainerWeightedFluidDistributor;
 import ic2.core.gui.TankGauge;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiWeightedFluidDistributor
     extends GuiWeightedDistributor<ContainerWeightedFluidDistributor> {
-  private static final ResourceLocation TEXTURE =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiweightedfluiddistributor.png");
+  private static final Identifier TEXTURE =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiweightedfluiddistributor.png");
 
   public GuiWeightedFluidDistributor(
       ContainerWeightedFluidDistributor container, Inventory playerInventory, Component title) {
@@ -18,7 +18,7 @@ public class GuiWeightedFluidDistributor
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return TEXTURE;
   }
 }

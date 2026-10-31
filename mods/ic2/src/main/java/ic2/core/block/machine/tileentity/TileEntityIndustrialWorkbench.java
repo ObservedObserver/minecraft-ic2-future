@@ -100,7 +100,7 @@ public class TileEntityIndustrialWorkbench extends TileEntityInventory implement
   @Override
   public ItemStack adjustDrop(ItemStack drop, boolean wrench) {
     drop = super.adjustDrop(drop, wrench);
-    StackUtil.getOrCreateNbtData(drop).putBoolean("PLACED", true);
+    StackUtil.setTagValue(drop, "PLACED", net.minecraft.nbt.ByteTag.valueOf(true));
     return drop;
   }
 
@@ -170,7 +170,7 @@ public class TileEntityIndustrialWorkbench extends TileEntityInventory implement
     public final InvSlotConsumableTag tool;
     public final CraftingContainer crafting =
         new SimpleCraftingInventory(2, 1) {
-          private InvSlot getSlot(int index) {
+          private InvSlot getInvSlot(int index) {
             return switch (index) {
               case 0 -> InvSlotCraftingCombo.this.tool;
               case 1 -> InvSlotCraftingCombo.this.input;
@@ -180,18 +180,18 @@ public class TileEntityIndustrialWorkbench extends TileEntityInventory implement
 
           @Override
           protected ItemStack get(int index) {
-            return this.getSlot(index).get();
+            return this.getInvSlot(index).get();
           }
 
           @Override
           protected void set(int index, ItemStack stack) {
-            this.getSlot(index).put(stack);
+            this.getInvSlot(index).put(stack);
           }
 
           @Override
           public ItemStack removeItem(int index, int amount) {
             ItemStack stack = super.removeItem(index, amount);
-            this.getSlot(index).onChanged();
+            this.getInvSlot(index).onChanged();
             return stack;
           }
         };
@@ -273,7 +273,7 @@ public class TileEntityIndustrialWorkbench extends TileEntityInventory implement
         return StackUtil.emptyStack;
       }
       Level world = this.tool.base.getParent().getLevel();
-      return this.recipe.assemble(toCraftingInput(this.crafting), world.registryAccess());
+      return this.recipe.assemble(toCraftingInput(this.crafting));
     }
   }
 }

@@ -1,7 +1,8 @@
 {
   "variants": {
     "": {
-      "model": "ic2:block/machine/fluid/tank"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/tank"
     }
   }
 }

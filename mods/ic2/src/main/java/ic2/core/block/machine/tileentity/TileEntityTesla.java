@@ -17,11 +17,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.joml.Vector3f;
 
 public class TileEntityTesla extends Ic2TileEntity {
   private static final DustParticleOptions effect =
-      new DustParticleOptions(new Vector3f(0.1F, 0.1F, 1.0F), 1.0F);
+      new DustParticleOptions(
+          net.minecraft.util.ARGB.colorFromFloat(
+              1.0F,
+              Math.clamp(0.1F, 0.0F, 1.0F),
+              Math.clamp(0.1F, 0.0F, 1.0F),
+              Math.clamp(1.0F, 0.0F, 1.0F)),
+          1.0F);
   protected final Redstone redstone;
   protected final Energy energy;
   private int ticker = IC2.random.nextInt(32);
@@ -76,7 +81,7 @@ public class TileEntityTesla extends Ic2TileEntity {
 
     for (LivingEntity entity : entities) {
       if (!ItemArmorHazmat.hasCompleteHazmat(entity)
-          && entity.hurt(Ic2DamageSource.electricity, damage)) {
+          && entity.hurtOrSimulate(Ic2DamageSource.electricity, damage)) {
         if (world instanceof ServerLevel worldServer) {
           RandomSource rnd = RandomSource.create();
           System.out.println(entity);

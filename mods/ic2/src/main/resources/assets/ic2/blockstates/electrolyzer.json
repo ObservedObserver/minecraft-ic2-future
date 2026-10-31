@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/wiring/storage/electrolyzer",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/wiring/storage/electrolyzer_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/wiring/storage/electrolyzer"
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/wiring/storage/electrolyzer_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/wiring/storage/electrolyzer",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/wiring/storage/electrolyzer_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/wiring/storage/electrolyzer",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/wiring/storage/electrolyzer_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/electrolyzer"
     }
   }
 }

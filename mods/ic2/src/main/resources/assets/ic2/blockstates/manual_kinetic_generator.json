@@ -1,27 +1,28 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     },
     "facing=north": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     },
     "facing=south": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     },
     "facing=west": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     },
     "facing=up": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     },
     "facing=down": {
-      "model": "ic2:block/generator/kinetic/manual_kinetic_generator",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/kinetic/manual_kinetic_generator"
     }
   }
 }

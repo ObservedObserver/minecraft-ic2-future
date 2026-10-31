@@ -2,7 +2,6 @@ package ic2.api.entity.block;
 
 import ic2.core.Ic2Explosion;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -42,7 +41,7 @@ public abstract class ExplosiveEntity extends Entity {
       BlockState renderBlockState,
       int radiationRange) {
     this(type, world);
-    this.absMoveTo(x, y, z);
+    this.absSnapTo(x, y, z);
     RandomSource rng = RandomSource.create();
     double angle = (Math.PI * 2) * rng.nextDouble();
     this.setDeltaMovement(-Math.sin(angle) * 0.02, 0.2, -Math.cos(angle) * 0.02);
@@ -62,8 +61,21 @@ public abstract class ExplosiveEntity extends Entity {
     this.blocksBuilding = true;
   }
 
+  @Override
+  public boolean hurtServer(
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.damagesource.DamageSource source,
+      float damage) {
+    return false;
+  }
+
   protected void defineSynchedData(SynchedEntityData.Builder builder) {
     builder.define(FUSE, 80);
+  }
+
+  @Override
+  public boolean canBeCollidedWith(@Nullable Entity other) {
+    return this.canBeCollidedWith();
   }
 
   public boolean canBeCollidedWith() {
@@ -85,12 +97,12 @@ public abstract class ExplosiveEntity extends Entity {
     this.setFuse(i);
     if (i <= 0) {
       this.discard();
-      if (!this.level().isClientSide) {
+      if (!this.level().isClientSide()) {
         this.explode();
       }
     } else {
-      this.updateInWaterStateAndDoFluidPushing();
-      if (this.level().isClientSide) {
+      this.updateFluidInteraction();
+      if (this.level().isClientSide()) {
         this.level()
             .addParticle(
                 ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), 0.0, 0.0, 0.0);
@@ -101,7 +113,7 @@ public abstract class ExplosiveEntity extends Entity {
   private void explode() {
     Ic2Explosion explosion =
         new Ic2Explosion(
-            this.getCommandSenderWorld(),
+            this.level(),
             this,
             this.getX(),
             this.getY(),
@@ -131,12 +143,12 @@ public abstract class ExplosiveEntity extends Entity {
     return !this.isRemoved();
   }
 
-  protected void addAdditionalSaveData(CompoundTag nbt) {
+  protected void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput nbt) {
     nbt.putShort("Fuse", (short) this.getFuse());
   }
 
-  protected void readAdditionalSaveData(CompoundTag nbt) {
-    this.setFuse(nbt.getShort("Fuse"));
+  protected void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput nbt) {
+    this.setFuse(nbt.getShortOr("Fuse", (short) 0));
   }
 
   protected float getEyeHeight(Pose pose, EntityDimensions dimensions) {

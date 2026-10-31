@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/generator/reactor/nuclear_reactor_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/nuclear_reactor"
     }
   }
 }

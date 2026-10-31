@@ -4,7 +4,7 @@ import java.util.Collection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,13 +17,14 @@ import org.jetbrains.annotations.Nullable;
 
 public interface EnvFluidHandler {
   EnvFluidHandler.FluidRefs createFluid(
-      ResourceLocation var1,
+      Identifier var1,
       int var3,
       int var4,
       int var5,
       int var6,
-      ResourceLocation var7,
-      ResourceLocation var8,
+      boolean isGaseous,
+      Identifier var7,
+      Identifier var8,
       int var9);
 
   Collection<Fluid> getAllFluids();
@@ -34,9 +35,9 @@ public interface EnvFluidHandler {
 
   boolean isGaseous(Fluid var1);
 
-  ResourceLocation getStillSpriteId(Fluid var1);
+  Identifier getStillSpriteId(Fluid var1);
 
-  ResourceLocation getFlowingSpriteId(Fluid var1);
+  Identifier getFlowingSpriteId(Fluid var1);
 
   int getColor(Fluid var1);
 

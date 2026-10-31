@@ -16,7 +16,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.ResultSlot;
@@ -73,7 +73,7 @@ public abstract class ContainerBase<T extends Container> extends AbstractContain
   }
 
   public void clicked(
-      int slotIndex, int button, @NotNull ClickType clickType, @NotNull Player player) {
+      int slotIndex, int button, @NotNull ContainerInput clickType, @NotNull Player player) {
     Slot slot;
     if (slotIndex >= 0
         && slotIndex < this.slots.size()
@@ -103,7 +103,7 @@ public abstract class ContainerBase<T extends Container> extends AbstractContain
           sourceSlot.onTake(player, sourceItemStack);
         }
 
-        if (!player.getCommandSenderWorld().isClientSide) {
+        if (!player.level().isClientSide()) {
           this.broadcastChanges();
         }
       }

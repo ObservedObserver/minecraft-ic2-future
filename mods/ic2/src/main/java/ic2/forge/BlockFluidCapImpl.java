@@ -1,142 +1,112 @@
 package ic2.forge;
 
-import ic2.core.fluid.FluidTankInfo;
-import ic2.core.fluid.Ic2FluidBlock;
-import ic2.core.util.Util;
+import com.google.common.collect.MapMaker;
+import ic2.core.block.comp.Fluids;
+import ic2.core.fluid.Ic2FluidStack;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
-final class BlockFluidCapImpl {
+/** Exposes IC2 tanks to the transactional transfer API without changing their internal units. */
+final class BlockFluidCapImpl implements ResourceHandler<FluidResource> {
+  private static final Map<Fluids.InternalFluidTank, TankJournal> JOURNALS =
+      new MapMaker().weakKeys().weakValues().makeMap();
+  private final Fluids fluids;
+  private final BlockEntity owner;
+  private final Direction side;
 
-  private final Ic2FluidBlock parent;
-
-  private final BlockEntity be;
-
-  private final IFluidHandler[] sides;
-
-  public BlockFluidCapImpl(Ic2FluidBlock fluidBlock, BlockEntity be) {
-    this.parent = fluidBlock;
-    this.be = be;
-    this.sides = new IFluidHandler[Util.ALL_DIRS.length];
-    for (Direction dir : Util.ALL_DIRS) {
-      this.sides[dir.ordinal()] = new BlockFluidCapImpl.SideHandler(dir);
-    }
+  BlockFluidCapImpl(Fluids fluids, BlockEntity owner, Direction side) {
+    this.fluids = fluids;
+    this.owner = owner;
+    this.side = side != null ? side : Direction.DOWN;
   }
 
-  public IFluidHandler getHandler(Direction facing) {
-    return facing == null ? this.sides[0] : this.sides[facing.ordinal()];
+  private List<Fluids.InternalFluidTank> tanks() {
+    List<Fluids.InternalFluidTank> result = new ArrayList<>();
+    for (Fluids.InternalFluidTank tank : fluids.getAllTanks()) {
+      if (tank.canFill(side) || tank.canDrain(side)) result.add(tank);
+    }
+    return result;
   }
 
-  private class SideHandler implements IFluidHandler {
+  private TankJournal journal(Fluids.InternalFluidTank tank) {
+    return JOURNALS.computeIfAbsent(tank, key -> new TankJournal(key, owner));
+  }
 
-    private final Direction side;
+  public int size() {
+    return tanks().size();
+  }
 
-    SideHandler(Direction side) {
-      this.side = side;
+  public FluidResource getResource(int index) {
+    Ic2FluidStack stack = tanks().get(index).getFluidStack();
+    return stack == null || stack.isEmpty()
+        ? FluidResource.EMPTY
+        : FluidResource.of(EnvFluidHandlerForge.getForgeFs(stack));
+  }
+
+  public long getAmountAsLong(int index) {
+    return tanks().get(index).getFluidAmount();
+  }
+
+  public long getCapacityAsLong(int index, FluidResource resource) {
+    var tank = tanks().get(index);
+    return resource.isEmpty() || tank.canFill(resource.getFluid(), side) ? tank.getCapacity() : 0;
+  }
+
+  public boolean isValid(int index, FluidResource resource) {
+    return !resource.isEmpty() && tanks().get(index).canFill(resource.getFluid(), side);
+  }
+
+  public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
+    if (resource.isEmpty() || amount < 0)
+      throw new IllegalArgumentException("Invalid fluid insertion");
+    var tank = tanks().get(index);
+    if (amount == 0 || !tank.canFill(resource.getFluid(), side)) return 0;
+    Ic2FluidStack fluid = new Ic2FluidStackImpl(resource.toStack(amount));
+    int accepted = tank.fillMb(fluid, true);
+    if (accepted == 0) return 0;
+    journal(tank).updateSnapshots(transaction);
+    return tank.fillMb(fluid.copyWithAmountMb(accepted), false);
+  }
+
+  public int extract(
+      int index, FluidResource resource, int amount, TransactionContext transaction) {
+    if (resource.isEmpty() || amount < 0)
+      throw new IllegalArgumentException("Invalid fluid extraction");
+    var tank = tanks().get(index);
+    if (amount == 0 || !tank.canDrain(side)) return 0;
+    Ic2FluidStack fluid = new Ic2FluidStackImpl(resource.toStack(amount));
+    int extracted = tank.drainMb(fluid, true);
+    if (extracted == 0) return 0;
+    journal(tank).updateSnapshots(transaction);
+    return tank.drainMb(fluid.copyWithAmountMb(extracted), false);
+  }
+
+  private static final class TankJournal extends SnapshotJournal<Ic2FluidStack> {
+    private final Fluids.InternalFluidTank tank;
+    private final BlockEntity owner;
+
+    TankJournal(Fluids.InternalFluidTank tank, BlockEntity owner) {
+      this.tank = tank;
+      this.owner = owner;
     }
 
-    @Override
-    public int getTanks() {
-      FluidTankInfo[] infos =
-          BlockFluidCapImpl.this.parent.getTankInfos(null, null, null, BlockFluidCapImpl.this.be);
-      if (infos == null) {
-        return 0;
-      }
-      int sideMaskReq = 1 << this.side.ordinal();
-      int ret = 0;
-      for (FluidTankInfo info : infos) {
-        if (((info.drainSideMask() | info.fillSideMask()) & sideMaskReq) != 0) {
-          ret++;
-        }
-      }
-      return ret;
+    protected Ic2FluidStack createSnapshot() {
+      return tank.getFluidStack() == null ? null : tank.getFluidStack().copy();
     }
 
-    private FluidTankInfo getTankInfo(int tank) {
-      FluidTankInfo[] infos =
-          BlockFluidCapImpl.this.parent.getTankInfos(null, null, null, BlockFluidCapImpl.this.be);
-      if (infos == null) {
-        return null;
-      }
-      int sideMaskReq = 1 << this.side.ordinal();
-      for (FluidTankInfo info : infos) {
-        if (((info.drainSideMask() | info.fillSideMask()) & sideMaskReq) != 0 && tank-- == 0) {
-          return info;
-        }
-      }
-      return null;
+    protected void revertToSnapshot(Ic2FluidStack state) {
+      tank.setFluidStack(state == null ? null : state.copy());
     }
 
-    @Override
-    public int getTankCapacity(int tank) {
-      FluidTankInfo info = this.getTankInfo(tank);
-      return info != null ? info.capacity() : 0;
-    }
-
-    @Override
-    public FluidStack getFluidInTank(int tank) {
-      FluidTankInfo info = this.getTankInfo(tank);
-      return info != null ? EnvFluidHandlerForge.getForgeFs(info.content()) : FluidStack.EMPTY;
-    }
-
-    @Override
-    public boolean isFluidValid(int tank, FluidStack fs) {
-      FluidTankInfo info = this.getTankInfo(tank);
-      return info != null && info.capacity() > 0;
-    }
-
-    @Override
-    public FluidStack drain(int amount, IFluidHandler.FluidAction action) {
-      return amount <= 0
-          ? FluidStack.EMPTY
-          : EnvFluidHandlerForge.getForgeFs(
-              BlockFluidCapImpl.this.parent.drainMb(
-                  null,
-                  null,
-                  null,
-                  BlockFluidCapImpl.this.be,
-                  this.side,
-                  amount,
-                  action.simulate()));
-    }
-
-    @Override
-    public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
-      if (resource != null && !resource.isEmpty()) {
-        int amount =
-            BlockFluidCapImpl.this.parent.drainMb(
-                null,
-                null,
-                null,
-                BlockFluidCapImpl.this.be,
-                this.side,
-                new Ic2FluidStackImpl(resource),
-                action.simulate());
-        if (amount <= 0) {
-          return FluidStack.EMPTY;
-        }
-        resource = resource.copy();
-        resource.setAmount(amount);
-        return resource;
-      } else {
-        return FluidStack.EMPTY;
-      }
-    }
-
-    @Override
-    public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
-      return resource != null && !resource.isEmpty()
-          ? BlockFluidCapImpl.this.parent.fillMb(
-              null,
-              null,
-              null,
-              BlockFluidCapImpl.this.be,
-              this.side,
-              new Ic2FluidStackImpl(resource),
-              action.simulate())
-          : 0;
+    protected void onRootCommit(Ic2FluidStack original) {
+      owner.setChanged();
     }
   }
 }

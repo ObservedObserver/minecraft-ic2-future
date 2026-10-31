@@ -4,7 +4,7 @@ import ic2.api.crops.ICropTile;
 import ic2.api.crops.ICropType;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class CropVanilla extends Ic2CropCard {
@@ -12,16 +12,16 @@ public abstract class CropVanilla extends Ic2CropCard {
     super(cropType);
   }
 
-  protected List<ResourceLocation> getDefaultTexturesLocation() {
+  protected List<Identifier> getDefaultTexturesLocation() {
     return super.getTexturesLocation();
   }
 
   @Override
-  public List<ResourceLocation> getTexturesLocation() {
-    List<ResourceLocation> ret = new ArrayList<>(this.getMaxAge());
+  public List<Identifier> getTexturesLocation() {
+    List<Identifier> ret = new ArrayList<>(this.getMaxAge());
 
     for (int size = 1; size <= this.getMaxAge(); size++) {
-      ret.add(ResourceLocation.withDefaultNamespace("blocks/" + this.getId() + "_stage_" + size));
+      ret.add(Identifier.withDefaultNamespace("blocks/" + this.getId() + "_stage_" + size));
     }
 
     return ret;

@@ -29,19 +29,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class Ic2Explosion extends Explosion {
+public class Ic2Explosion implements Explosion {
   private final Level worldObj;
   private final Entity exploder;
   private final double explosionX;
@@ -97,7 +97,6 @@ public class Ic2Explosion extends Explosion {
       Ic2Explosion.Type type,
       LivingEntity igniter,
       int radiationRange) {
-    super(world, entity, x, y, z, power, true, BlockInteraction.DESTROY);
     this.worldObj = world;
     this.exploder = entity;
     this.explosionX = x;
@@ -132,6 +131,38 @@ public class Ic2Explosion extends Explosion {
   public Ic2Explosion(
       Level world, Entity entity, BlockPos pos, int i, float f, Ic2Explosion.Type heat) {
     this(world, entity, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, i, f, heat);
+  }
+
+  public ServerLevel level() {
+    return (ServerLevel) this.worldObj;
+  }
+
+  public BlockInteraction getBlockInteraction() {
+    return BlockInteraction.DESTROY;
+  }
+
+  public LivingEntity getIndirectSourceEntity() {
+    return this.igniter != null ? this.igniter : Explosion.getIndirectSourceEntity(this.exploder);
+  }
+
+  public Entity getDirectSourceEntity() {
+    return this.exploder;
+  }
+
+  public float radius() {
+    return this.power;
+  }
+
+  public Vec3 center() {
+    return new Vec3(this.explosionX, this.explosionY, this.explosionZ);
+  }
+
+  public boolean canTriggerBlocks() {
+    return true;
+  }
+
+  public boolean shouldAffectBlocklikeEntities() {
+    return true;
   }
 
   private static double getEntityHealth(Entity entity) {
@@ -292,8 +323,11 @@ public class Ic2Explosion extends Explosion {
         }
 
         IC2.network.get(true).initiateExplosionEffect(this.worldObj, position, this.type);
-        RandomSource rng = this.worldObj.random;
-        boolean doDrops = this.worldObj.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
+        RandomSource rng = this.worldObj.getRandom();
+        boolean doDrops =
+            ((net.minecraft.server.level.ServerLevel) this.worldObj)
+                .getGameRules()
+                .get(GameRules.BLOCK_DROPS);
         Map<Ic2Explosion.XZPosition, Map<ItemComparableItemStack, Ic2Explosion.DropData>>
             blocksToDrop = new HashMap<>();
         Builder builder =
@@ -350,7 +384,8 @@ public class Ic2Explosion extends Explosion {
               if (blockEntity instanceof TileEntityExplosive explosive) {
                 explosive.onExploded(this);
               } else {
-                state.onBlockExploded(this.worldObj, tmpPos, this);
+                state.onBlockExploded(
+                    (net.minecraft.server.level.ServerLevel) this.worldObj, tmpPos, this);
               }
             }
           }
@@ -370,9 +405,9 @@ public class Ic2Explosion extends Explosion {
               ItemEntity entityItem =
                   new ItemEntity(
                       this.worldObj,
-                      (xZposition.x + this.worldObj.random.nextFloat()) * 2.0F,
+                      (xZposition.x + this.worldObj.getRandom().nextFloat()) * 2.0F,
                       entry2.getValue().maxY + 0.5,
-                      (xZposition.z + this.worldObj.random.nextFloat()) * 2.0F,
+                      (xZposition.z + this.worldObj.getRandom().nextFloat()) * 2.0F,
                       isw.toStack(stackSize));
               entityItem.setDefaultPickUpDelay();
               this.worldObj.addFreshEntity(entityItem);

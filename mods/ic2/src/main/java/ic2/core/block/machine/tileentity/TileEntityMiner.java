@@ -122,9 +122,9 @@ public class TileEntityMiner extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.lastMode = TileEntityMiner.Mode.values()[nbt.getInt("lastMode")];
-    this.progress = nbt.getInt("progress");
-    this.pumpMode = nbt.getBoolean("pumpMode");
+    this.lastMode = TileEntityMiner.Mode.values()[nbt.getIntOr("lastMode", 0)];
+    this.progress = nbt.getIntOr("progress", 0);
+    this.pumpMode = nbt.getBooleanOr("pumpMode", false);
   }
 
   @Override
@@ -170,12 +170,11 @@ public class TileEntityMiner extends TileEntityElectricMachine
       return this.withDrawPipe(operatingPos);
     }
 
-    if (operatingPos.getY() >= this.level.getMinBuildHeight()) {
+    if (operatingPos.getY() >= this.level.getMinY()) {
       Level world = this.getLevel();
       BlockState state = world.getBlockState(operatingPos);
       if (state.getBlock() != Ic2Blocks.MINING_PIPE_TIP) {
-        return operatingPos.getY() > world.getMinBuildHeight()
-            && this.digDown(operatingPos, state, false);
+        return operatingPos.getY() > world.getMinY() && this.digDown(operatingPos, state, false);
       } else {
         TileEntityMiner.MineResult result = this.mineLevel(operatingPos.getY());
         if (result == TileEntityMiner.MineResult.Done) {
@@ -194,7 +193,7 @@ public class TileEntityMiner extends TileEntityElectricMachine
   private MutableBlockPos getOperationPos() {
     MutableBlockPos ret = this.worldPosition.mutable().move(Direction.DOWN);
     Level world = this.getLevel();
-    int bottom = world.getMinBuildHeight();
+    int bottom = world.getMinY();
     BlockState pipeState = Ic2Blocks.MINING_PIPE.defaultBlockState();
 
     while (ret.getY() >= bottom) {
@@ -215,7 +214,7 @@ public class TileEntityMiner extends TileEntityElectricMachine
       this.progress = 0;
     }
 
-    if (operatingPos.getY() < this.level.getMinBuildHeight()
+    if (operatingPos.getY() < this.level.getMinY()
         || this.level.getBlockState(operatingPos).getBlock() != Ic2Blocks.MINING_PIPE_TIP) {
       operatingPos.move(Direction.UP);
     }
@@ -258,12 +257,11 @@ public class TileEntityMiner extends TileEntityElectricMachine
       return false;
     }
 
-    if (operatingPos.getY() < this.level.getMinBuildHeight()) {
+    if (operatingPos.getY() < this.level.getMinY()) {
       if (removeTipAbove) {
         this.getLevel()
             .setBlockAndUpdate(
-                operatingPos.setY(this.level.getMinBuildHeight()),
-                Ic2Blocks.MINING_PIPE.defaultBlockState());
+                operatingPos.setY(this.level.getMinY()), Ic2Blocks.MINING_PIPE.defaultBlockState());
       }
 
       return false;
@@ -410,7 +408,7 @@ public class TileEntityMiner extends TileEntityElectricMachine
       LiquidUtil.LiquidData liquidData = LiquidUtil.getLiquid(world, target);
       if (liquidData != null) {
         if (liquidData.isSource || this.pumpMode && this.canPump(target)) {
-          this.liquidPos = new BlockPos(target);
+          this.liquidPos = target.immutable();
           this.canProvideLiquid = true;
           return !this.pumpMode && !this.canMine(target, state)
               ? TileEntityMiner.MineResult.Failed_Perm

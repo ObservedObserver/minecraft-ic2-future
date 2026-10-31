@@ -12,7 +12,9 @@ public interface StandardFluidItem extends Ic2FluidItem {
     if (nbt == null) {
       return null;
     } else {
-      return !nbt.contains("Fluid", 10) ? null : Ic2FluidStack.read(nbt.getCompound("Fluid"));
+      return !ic2.compat.NbtCompat.contains(nbt, "Fluid", 10)
+          ? null
+          : Ic2FluidStack.read(nbt.getCompoundOrEmpty("Fluid"));
     }
   }
 
@@ -21,9 +23,9 @@ public interface StandardFluidItem extends Ic2FluidItem {
     if (fs != null && !fs.isEmpty()) {
       CompoundTag fsNbt = new CompoundTag();
       fs.toNbt(fsNbt);
-      nbt.put("Fluid", fsNbt);
+      StackUtil.setTagValue(stack, nbt, "Fluid", fsNbt);
     } else {
-      nbt.remove("Fluid");
+      StackUtil.removeTagValue(stack, nbt, "Fluid");
     }
 
     StackUtil.setTag(stack, nbt);

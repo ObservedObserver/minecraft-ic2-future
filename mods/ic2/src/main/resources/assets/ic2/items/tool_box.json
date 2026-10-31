@@ -1,0 +1,34 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "ic2:legacy",
+    "property_id": "ic2:tool_box_open",
+    "fallback": {
+      "type": "minecraft:range_dispatch",
+      "property": "ic2:legacy",
+      "property_id": "ic2:tool_box_open",
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "ic2:item/tool_box"
+      },
+      "entries": [
+        {
+          "threshold": 0,
+          "model": {
+            "type": "minecraft:model",
+            "model": "ic2:item/tool/tool_box/close"
+          }
+        }
+      ]
+    },
+    "entries": [
+      {
+        "threshold": 1,
+        "model": {
+          "type": "minecraft:model",
+          "model": "ic2:item/tool/tool_box/open"
+        }
+      }
+    ]
+  }
+}

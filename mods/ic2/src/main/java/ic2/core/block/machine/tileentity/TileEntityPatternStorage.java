@@ -62,7 +62,7 @@ public class TileEntityPatternStorage extends TileEntityInventory
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
       this.readContents(nbt);
     }
@@ -80,11 +80,12 @@ public class TileEntityPatternStorage extends TileEntityInventory
   }
 
   public void readContents(CompoundTag nbt) {
-    ListTag patternList = nbt.getList("patterns", 10);
+    ListTag patternList = ic2.compat.NbtCompat.getList(nbt, "patterns", 10);
 
     for (int i = 0; i < patternList.size(); i++) {
-      CompoundTag contentTag = patternList.getCompound(i);
-      ItemStack Item = ItemStack.parseOptional(net.minecraft.core.RegistryAccess.EMPTY, contentTag);
+      CompoundTag contentTag = patternList.getCompoundOrEmpty(i);
+      ItemStack Item =
+          ic2.compat.NbtCompat.readItem(net.minecraft.core.RegistryAccess.EMPTY, contentTag);
       this.addPattern(Item);
     }
 
@@ -95,7 +96,9 @@ public class TileEntityPatternStorage extends TileEntityInventory
     ListTag list = new ListTag();
 
     for (ItemStack stack : this.patterns) {
-      list.add(stack.save(net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag()));
+      list.add(
+          ic2.compat.NbtCompat.saveItem(
+              stack, net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag()));
     }
 
     nbt.put("patterns", list);

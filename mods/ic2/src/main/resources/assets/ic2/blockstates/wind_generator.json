@@ -1,19 +1,20 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/generator/electric/wind_generator",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/wind_generator"
     },
     "facing=north": {
-      "model": "ic2:block/generator/electric/wind_generator"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/wind_generator"
     },
     "facing=south": {
-      "model": "ic2:block/generator/electric/wind_generator",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/wind_generator"
     },
     "facing=west": {
-      "model": "ic2:block/generator/electric/wind_generator",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/wind_generator"
     }
   }
 }

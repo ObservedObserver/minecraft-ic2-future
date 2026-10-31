@@ -4,9 +4,9 @@ import ic2.core.Ic2Gui;
 import ic2.core.block.inherit.Ic2FenceBlock;
 import ic2.core.block.machine.container.ContainerMagnetizer;
 import ic2.core.gui.EnergyGauge;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiMagnetizer extends Ic2Gui<ContainerMagnetizer> {
@@ -16,12 +16,12 @@ public class GuiMagnetizer extends Ic2Gui<ContainerMagnetizer> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guimagnetizer.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guimagnetizer.png");
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     if (Ic2FenceBlock.hasMetalShoes(this.menu.getPlayer())) {
       this.drawString(

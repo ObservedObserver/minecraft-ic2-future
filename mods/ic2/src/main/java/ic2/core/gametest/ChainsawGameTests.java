@@ -1,30 +1,25 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.item.tool.ItemElectricToolChainsaw;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ChainsawGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -45,7 +40,7 @@ public class ChainsawGameTests {
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.CHAINSAW, Double.POSITIVE_INFINITY);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-    helper.setBlock(WOOL_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(WOOL_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     InteractionResult result =
         chainsaw()
             .onBlockStartBreak(
@@ -61,7 +56,8 @@ public class ChainsawGameTests {
     helper.succeedWhen(
         () -> {
           helper.assertBlockPresent(Blocks.AIR, WOOL_POS);
-          helper.assertItemEntityPresent(Items.WHITE_WOOL, WOOL_POS, 2.0);
+          helper.assertItemEntityPresent(
+              Items.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE), WOOL_POS, 2.0);
         });
   }
 
@@ -80,10 +76,10 @@ public class ChainsawGameTests {
     }
 
     helper.assertTrue(
-        StackUtil.getOrCreateNbtData(stack).getBoolean("disableShear"),
+        StackUtil.getOrCreateNbtData(stack).getBooleanOr("disableShear", false),
         "mode switch should disable shearing");
 
-    helper.setBlock(WOOL_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(WOOL_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     InteractionResult result =
         chainsaw()
             .onBlockStartBreak(
@@ -94,7 +90,7 @@ public class ChainsawGameTests {
                 Direction.UP);
 
     helper.assertValueEqual(result, InteractionResult.PASS, "shear result with shearing disabled");
-    helper.assertBlockPresent(Blocks.WHITE_WOOL, WOOL_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE), WOOL_POS);
     helper.assertValueEqual(
         ElectricItem.manager.getCharge(stack),
         MAX_CHARGE,
@@ -109,7 +105,7 @@ public class ChainsawGameTests {
     ItemStack stack = new ItemStack(Ic2Items.CHAINSAW);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-    helper.setBlock(WOOL_POS, Blocks.WHITE_WOOL);
+    helper.setBlock(WOOL_POS, Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE));
     InteractionResult result =
         chainsaw()
             .onBlockStartBreak(
@@ -120,7 +116,7 @@ public class ChainsawGameTests {
                 Direction.UP);
 
     helper.assertValueEqual(result, InteractionResult.PASS, "shear result without charge");
-    helper.assertBlockPresent(Blocks.WHITE_WOOL, WOOL_POS);
+    helper.assertBlockPresent(Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE), WOOL_POS);
     helper.succeed();
   }
 
@@ -131,7 +127,7 @@ public class ChainsawGameTests {
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.CHAINSAW, Double.POSITIVE_INFINITY);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-    Sheep sheep = helper.spawn(EntityType.SHEEP, new BlockPos(1, 1, 1));
+    Sheep sheep = helper.spawn(net.minecraft.world.entity.EntityTypes.SHEEP, new BlockPos(1, 1, 1));
     sheep.setColor(DyeColor.WHITE);
     sheep.setSheared(false);
 
@@ -145,7 +141,11 @@ public class ChainsawGameTests {
         MAX_CHARGE - USE_COST,
         "charge after shearing a sheep");
     helper.succeedWhen(
-        () -> helper.assertItemEntityPresent(Items.WHITE_WOOL, new BlockPos(1, 1, 1), 2.0));
+        () ->
+            helper.assertItemEntityPresent(
+                Items.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE),
+                new BlockPos(1, 1, 1),
+                2.0));
   }
 
   @GameTest(template = EMPTY)
@@ -155,7 +155,7 @@ public class ChainsawGameTests {
     ItemStack stack = ElectricItemManager.getCharged(Ic2Items.CHAINSAW, Double.POSITIVE_INFINITY);
     player.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     chainsaw().onAttackEntity(player, pig);
 
     helper.assertValueEqual(

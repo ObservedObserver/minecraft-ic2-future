@@ -4,6 +4,7 @@ import ic2.api.energy.EnergyNet;
 import ic2.api.energy.NodeStats;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
+import ic2.compat.GameTest;
 import ic2.core.block.wiring.tileentity.TileEntityElectricBatBox;
 import ic2.core.item.tool.ContainerMeter;
 import ic2.core.item.tool.HandHeldMeter;
@@ -12,7 +13,6 @@ import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -20,11 +20,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class MeterGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -35,7 +31,10 @@ public class MeterGameTests {
     BlockPos sourcePos = new BlockPos(1, 2, 1);
     helper.setBlock(sourcePos, Ic2Blocks.BATBOX);
     helper.setBlock(TARGET_POS, Ic2Blocks.MACERATOR);
-    TileEntityElectricBatBox batbox = (TileEntityElectricBatBox) helper.getBlockEntity(sourcePos);
+    TileEntityElectricBatBox batbox =
+        (TileEntityElectricBatBox)
+            helper.getBlockEntity(
+                sourcePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     batbox.energy.addEnergy(320.0);
     boolean[] sawFlow = {false};
 

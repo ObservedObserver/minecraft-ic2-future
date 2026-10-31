@@ -64,7 +64,7 @@ public abstract class TileEntityTank extends TileEntityInventory
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
       this.contents.fromNbt(nbt);
     }

@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/industrial_workbench"
+        "recipes": [
+          "ic2:shaped/industrial_workbench"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

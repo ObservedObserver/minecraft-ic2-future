@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/obsidian"
+            "items": "#c:dusts/obsidian"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/raw_crystal_memory"
+        "recipes": [
+          "ic2:shaped/raw_crystal_memory"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

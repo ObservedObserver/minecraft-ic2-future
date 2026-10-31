@@ -1,14 +1,13 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.machine.tileentity.TileEntityTeleporter;
 import ic2.core.block.wiring.tileentity.TileEntityElectricMFSU;
 import ic2.core.init.IC2Config;
 import ic2.core.ref.Ic2Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,11 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class TeleporterGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -38,7 +33,7 @@ public class TeleporterGameTests {
     mfsu.energy.addEnergy(PIG_COST);
     helper.assertValueEqual(source.getAvailableEnergy(), PIG_COST, "energy seen by the teleporter");
 
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(0, 2, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(0, 2, 1));
     BlockPos destination = helper.absolutePos(TARGET_POS);
 
     helper.succeedWhen(
@@ -61,7 +56,7 @@ public class TeleporterGameTests {
   @GameTest(template = EMPTY, timeoutTicks = 100)
   public static void teleporterWithoutEnergyKeepsEntity(GameTestHelper helper) {
     setupTeleporterPair(helper);
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(0, 2, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(0, 2, 1));
     pig.setNoAi(true);
     BlockPos start = helper.absolutePos(SOURCE_POS);
 
@@ -83,7 +78,8 @@ public class TeleporterGameTests {
         getTe(helper, new BlockPos(0, 0, 1), TileEntityElectricMFSU.class);
     mfsu.energy.addEnergy(1000000.0);
 
-    ArmorStand stand = helper.spawn(EntityType.ARMOR_STAND, new BlockPos(0, 2, 1));
+    ArmorStand stand =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.ARMOR_STAND, new BlockPos(0, 2, 1));
     helper.assertValueEqual(source.getWeightOf(stand), 0, "armor stand weight");
     BlockPos start = helper.absolutePos(SOURCE_POS);
 
@@ -112,8 +108,8 @@ public class TeleporterGameTests {
         te.getWeightOf(player), 1000, "weight of a player with an empty inventory");
 
     // a full stack adds 100, a half stack 50 (outside the hotbar so it is not the held item)
-    player.getInventory().items.set(9, new ItemStack(Items.COBBLESTONE, 64));
-    player.getInventory().items.set(10, new ItemStack(Items.COBBLESTONE, 32));
+    player.getInventory().getNonEquipmentItems().set(9, new ItemStack(Items.COBBLESTONE, 64));
+    player.getInventory().getNonEquipmentItems().set(10, new ItemStack(Items.COBBLESTONE, 32));
     helper.assertValueEqual(
         te.getWeightOf(player), 1150, "weight of a player with 1.5 stacks of cobblestone");
 
@@ -141,7 +137,8 @@ public class TeleporterGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

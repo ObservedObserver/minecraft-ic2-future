@@ -76,7 +76,7 @@ public class TileEntityPump extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!Objects.requireNonNull(this.getLevel()).isClientSide) {
+    if (!Objects.requireNonNull(this.getLevel()).isClientSide()) {
       this.setUpgradestat();
     }
   }
@@ -91,7 +91,7 @@ public class TileEntityPump extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getShort("progress");
+    this.progress = nbt.getShortOr("progress", (short) 0);
   }
 
   @Override

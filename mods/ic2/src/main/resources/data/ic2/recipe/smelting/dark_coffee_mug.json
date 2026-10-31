@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:cold_coffee_mug"
-  },
+  "ingredient": "ic2:cold_coffee_mug",
   "result": {
     "id": "ic2:dark_coffee_mug"
   },

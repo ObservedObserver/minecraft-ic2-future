@@ -1,9 +1,8 @@
 package ic2.core.gui;
 
 import ic2.core.Ic2Gui;
-import ic2.core.proxy.SideProxyClient;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -38,7 +37,7 @@ public abstract class Button<T extends Button<T>> extends GuiElement<T> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     if (this.textProvider != null) {
       String text = this.textProvider.get();
       if (text != null && !text.isEmpty()) {
@@ -61,7 +60,7 @@ public abstract class Button<T extends Button<T>> extends GuiElement<T> {
 
   @Override
   protected boolean onMouseClick(int mouseX, int mouseY, MouseButton button) {
-    SideProxyClient.mc
+    net.minecraft.client.Minecraft.getInstance()
         .getSoundManager()
         .play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     this.handler.onClick(button);

@@ -1,21 +1,18 @@
 package ic2.core.proxy;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import ic2.compat.client.LegacyRenderHooks.BlockColor;
+import ic2.compat.client.LegacyRenderHooks.ItemColor;
+import ic2.compat.client.LegacyRenderHooks.Property;
 import ic2.core.fluid.Ic2FluidStack;
 import java.io.File;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,21 +36,23 @@ public interface ClientEnvProxy {
 
   void registerKeyBinding(KeyMapping var1);
 
-  <E extends BlockEntity> void registerBer(
-      BlockEntityType<E> var1, BlockEntityRendererProvider<? super E> var2);
+  <
+          E extends BlockEntity,
+          S extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState>
+      void registerBer(BlockEntityType<E> var1, BlockEntityRendererProvider<E, S> var2);
 
-  void registerModelPredicateProvider(ResourceLocation var1, ClampedItemPropertyFunction var2);
+  void registerModelPredicateProvider(Identifier var1, Property var2);
 
-  void registerModelPredicateProvider(
-      Item var1, ResourceLocation var2, ClampedItemPropertyFunction var3);
-
-  void registerBlockLayer(RenderType var1, Block... var2);
+  void registerModelPredicateProvider(Item var1, Identifier var2, Property var3);
 
   <E extends Entity> void registerEntityRenderer(
       EntityType<? extends E> var1, EntityRendererProvider<E> var2);
 
-  <E extends BlockEntity> void registerBlockEntityRenderer(
-      BlockEntityType<? extends E> var1, BlockEntityRendererProvider<E> var2);
+  <
+          E extends BlockEntity,
+          S extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState>
+      void registerBlockEntityRenderer(
+          BlockEntityType<? extends E> var1, BlockEntityRendererProvider<E, S> var2);
 
   TextureAtlasSprite getFluidStillSprite(Ic2FluidStack var1);
 
@@ -62,24 +61,15 @@ public interface ClientEnvProxy {
   String getFluidName(Ic2FluidStack var1);
 
   default ClientEnvProxy.QuadData getQuadData(BakedQuad quad) {
-    VertexFormat format = DefaultVertexFormat.BLOCK;
-    int[] data = quad.getVertices();
-    int stride = format.getVertexSize() / 4;
-    int posOffset = 0;
-    int uvOffset = 4;
     final float[] positions = new float[12];
     final float[] uvs = new float[8];
-
     for (int i = 0; i < 4; i++) {
-      int offset = i * stride;
-
-      for (int j = 0; j < 3; j++) {
-        positions[i * 3 + j] = Float.intBitsToFloat(data[offset + posOffset + j]);
-      }
-
-      for (int j = 0; j < 2; j++) {
-        uvs[i * 2 + j] = Float.intBitsToFloat(data[offset + uvOffset + j]);
-      }
+      var position = quad.position(i);
+      positions[i * 3] = position.x();
+      positions[i * 3 + 1] = position.y();
+      positions[i * 3 + 2] = position.z();
+      uvs[i * 2] = net.minecraft.client.model.geom.builders.UVPair.unpackU(quad.packedUV(i));
+      uvs[i * 2 + 1] = net.minecraft.client.model.geom.builders.UVPair.unpackV(quad.packedUV(i));
     }
 
     return new ClientEnvProxy.QuadData() {
@@ -95,12 +85,12 @@ public interface ClientEnvProxy {
 
       @Override
       public int tint() {
-        return quad.getTintIndex();
+        return quad.materialInfo().tintIndex();
       }
 
       @Override
       public TextureAtlasSprite sprite() {
-        return quad.getSprite();
+        return quad.materialInfo().sprite();
       }
     };
   }

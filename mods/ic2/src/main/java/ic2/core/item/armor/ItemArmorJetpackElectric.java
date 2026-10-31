@@ -18,7 +18,11 @@ public class ItemArmorJetpackElectric extends ItemArmorElectric implements IJetp
     super(
         Ic2ArmorMaterials.JET_PACK_ELECTRIC.holder(),
         EquipmentSlot.CHEST,
-        new Properties(),
+        new Properties()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.ITEM,
+                    ic2.core.IC2.getIdentifier("jetpack_electric"))),
         30000.0,
         60.0,
         1);
@@ -70,6 +74,18 @@ public class ItemArmorJetpackElectric extends ItemArmorElectric implements IJetp
   }
 
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag context) {
     super.appendHoverText(stack, world, tooltip, context);

@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/wiring/transformer/lv_transformer"
+  "parent": "ic2:block/wiring/transformer/lv_transformer"
 }

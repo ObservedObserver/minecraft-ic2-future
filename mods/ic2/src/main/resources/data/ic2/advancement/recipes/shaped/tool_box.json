@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:chests/wooden"
+            "items": "#c:chests/wooden"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/tool_box"
+        "recipes": [
+          "ic2:shaped/tool_box"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

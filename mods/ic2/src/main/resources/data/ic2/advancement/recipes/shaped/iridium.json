@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:gems/diamond"
+            "items": "#c:gems/diamond"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/iridium"
+        "recipes": [
+          "ic2:shaped/iridium"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

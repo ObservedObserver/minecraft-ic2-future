@@ -81,7 +81,7 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.setUpgradeStat();
     }
   }
@@ -93,11 +93,13 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
     if (nbt.contains("mineTargetX")) {
       this.mineTarget =
           new BlockPos(
-              nbt.getInt("mineTargetX"), nbt.getInt("mineTargetY"), nbt.getInt("mineTargetZ"));
+              nbt.getIntOr("mineTargetX", 0),
+              nbt.getIntOr("mineTargetY", 0),
+              nbt.getIntOr("mineTargetZ", 0));
     }
 
-    this.blacklist = nbt.getBoolean("blacklist");
-    this.silkTouch = nbt.getBoolean("silkTouch");
+    this.blacklist = nbt.getBooleanOr("blacklist", false);
+    this.silkTouch = nbt.getBooleanOr("silkTouch", false);
     // Pre-upgrade-slot mining filter cards lived in InvSlots.card. Migrate into upgrade slots.
     this.migrateLegacyCardSlot(nbt, registries);
   }
@@ -105,28 +107,28 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
   /** Moves a legacy {@code InvSlots.card} stack into the first empty upgrade slot (if any). */
   private void migrateLegacyCardSlot(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
-    if (!nbt.contains("InvSlots", 10)) {
+    if (!ic2.compat.NbtCompat.contains(nbt, "InvSlots", 10)) {
       return;
     }
 
-    CompoundTag invSlotsTag = nbt.getCompound("InvSlots");
-    if (!invSlotsTag.contains("card", 10)) {
+    CompoundTag invSlotsTag = nbt.getCompoundOrEmpty("InvSlots");
+    if (!ic2.compat.NbtCompat.contains(invSlotsTag, "card", 10)) {
       return;
     }
 
-    ListTag contentsTag = invSlotsTag.getCompound("card").getList("Contents", 10);
+    ListTag contentsTag = invSlotsTag.getCompoundOrEmpty("card").getListOrEmpty("Contents");
     if (contentsTag.isEmpty()) {
       return;
     }
 
-    CompoundTag stackTag = contentsTag.getCompound(0).copy();
+    CompoundTag stackTag = contentsTag.getCompoundOrEmpty(0).copy();
     // The card item id no longer exists; there is no registry alias system, so rewrite the id and
     // let the stack keep its filter data.
-    if ("ic2:mining_filter_card".equals(stackTag.getString("id"))) {
+    if ("ic2:mining_filter_card".equals(stackTag.getStringOr("id", ""))) {
       stackTag.putString("id", "ic2:mining_filter_upgrade");
     }
 
-    ItemStack card = ItemStack.parseOptional(registries, stackTag);
+    ItemStack card = ic2.compat.NbtCompat.readItem(registries, stackTag);
     if (StackUtil.isEmpty(card)) {
       return;
     }
@@ -161,7 +163,7 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
   @Override
   public void setChanged() {
     super.setChanged();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.setUpgradeStat();
     }
   }
@@ -243,7 +245,7 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
                   scanPos.getY() - 1,
                   this.worldPosition.getZ() - range);
           if (scanPos.getY() < yMin) {
-            this.mineTarget = new BlockPos(scanPos);
+            this.mineTarget = scanPos.immutable();
             return true;
           }
         }
@@ -252,12 +254,12 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
         BlockState state = world.getBlockState(scanPos);
         Block block = state.getBlock();
         if (!state.isAir() && this.canMine(scanPos, block, state)) {
-          this.mineTarget = new BlockPos(scanPos);
+          this.mineTarget = scanPos.immutable();
           this.doMine(this.mineTarget, state);
           break;
         }
 
-        this.mineTarget = new BlockPos(scanPos);
+        this.mineTarget = scanPos.immutable();
       } while (--blockScanCount > 0 && ElectricItem.manager.canUse(scanner, 64.0));
 
       return true;
@@ -306,12 +308,14 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
       if (!StackUtil.isEmpty(filterUpgrade)) {
         CompoundTag nbt = StackUtil.getTag(filterUpgrade);
         if (nbt != null) {
-          boolean cardBlacklist = !nbt.contains("blacklist") || nbt.getBoolean("blacklist");
+          boolean cardBlacklist =
+              !nbt.contains("blacklist") || nbt.getBooleanOr("blacklist", false);
           List<ItemStack> cardFilter = new ArrayList<>();
-          ListTag items = nbt.getList("Items", 10);
+          ListTag items = ic2.compat.NbtCompat.getList(nbt, "Items", 10);
           for (int i = 0; i < items.size(); i++) {
             cardFilter.add(
-                ItemStack.parseOptional(this.getLevel().registryAccess(), items.getCompound(i)));
+                ic2.compat.NbtCompat.readItem(
+                    this.getLevel().registryAccess(), items.getCompoundOrEmpty(i)));
           }
           return evaluateFilter(drops, cardFilter, cardBlacklist);
         }
@@ -416,9 +420,9 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-      this.energy.addEnergy(nbt.getDouble("energy"));
+      this.energy.addEnergy(nbt.getDoubleOr("energy", 0.0));
     }
   }
 
@@ -429,7 +433,11 @@ public class TileEntityAdvMiner extends TileEntityElectricMachine
       double retainedRatio = IC2Config.balance.energyRetainedInStorageBlockDrops.get();
       if (retainedRatio > 0.0) {
         CompoundTag nbt = StackUtil.getOrCreateNbtData(drop);
-        nbt.putDouble("energy", this.energy.getEnergy() * retainedRatio);
+        StackUtil.setTagValue(
+            drop,
+            nbt,
+            "energy",
+            net.minecraft.nbt.DoubleTag.valueOf(this.energy.getEnergy() * retainedRatio));
       }
     }
 

@@ -14,7 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemReactorUranium extends AbstractDamageableReactorComponent {
+public class ItemReactorUranium extends AbstractDamageableReactorComponent
+    implements ic2.compat.LegacyInventoryTicker {
   public final int numberOfCells;
 
   public ItemReactorUranium(Properties settings, int cells) {
@@ -139,6 +140,20 @@ public class ItemReactorUranium extends AbstractDamageableReactorComponent {
   @Override
   public float influenceExplosion(ItemStack stack, IReactor reactor) {
     return 2 * this.numberOfCells;
+  }
+
+  @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
   }
 
   public void inventoryTick(

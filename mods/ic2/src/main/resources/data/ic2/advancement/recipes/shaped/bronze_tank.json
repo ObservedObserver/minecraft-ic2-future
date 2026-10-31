@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/bronze"
+            "items": "#c:plates/bronze"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/bronze_tank"
+        "recipes": [
+          "ic2:shaped/bronze_tank"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

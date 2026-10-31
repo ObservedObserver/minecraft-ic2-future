@@ -51,7 +51,7 @@ public class TradingMarket {
   }
 
   public void registerTradeOMat(TileEntityTradeOMat tradeOMat) {
-    assert tradeOMat.hasLevel() && !tradeOMat.getLevel().isClientSide;
+    assert tradeOMat.hasLevel() && !tradeOMat.getLevel().isClientSide();
     assert tradeOMat.getLevel() == this.world;
     assert !this.traders.contains(tradeOMat.getBlockPos());
 
@@ -61,7 +61,7 @@ public class TradingMarket {
   }
 
   public void unregisterTradeOMat(TileEntityTradeOMat tradeOMat) {
-    assert tradeOMat.hasLevel() && !tradeOMat.getLevel().isClientSide;
+    assert tradeOMat.hasLevel() && !tradeOMat.getLevel().isClientSide();
     assert this.traders.contains(tradeOMat.getBlockPos());
 
     for (TradingMarket.MarketWatcher watcher : this.watchers) {

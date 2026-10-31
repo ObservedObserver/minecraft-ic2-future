@@ -4,6 +4,7 @@ import ic2.api.energy.EnergyNet;
 import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.info.ILocatable;
+import ic2.compat.GameTest;
 import ic2.core.block.ChunkLoadAwareBlockHandler;
 import ic2.core.block.machine.tileentity.TileEntityMacerator;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
@@ -21,21 +22,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedstoneLampBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class EnergyNetGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
   private static final String TALL = "gametest/empty3x9x3";
@@ -285,7 +280,7 @@ public class EnergyNetGameTests {
     helper.setBlock(new BlockPos(1, 0, 1), Ic2Blocks.CESU);
     TileEntityElectricCESU source =
         getTe(helper, new BlockPos(1, 2, 1), TileEntityElectricCESU.class);
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(0, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(0, 1, 1));
 
     source.energy.addEnergy(1280.0);
 
@@ -467,7 +462,7 @@ public class EnergyNetGameTests {
         getTe(helper, new BlockPos(1, 2, 1), TileEntityElectricCESU.class);
     TileEntityElectricCESU sink =
         getTe(helper, new BlockPos(1, 0, 1), TileEntityElectricCESU.class);
-    Pig pig = helper.spawn(EntityType.PIG, new BlockPos(0, 1, 1));
+    Pig pig = helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(0, 1, 1));
 
     source.energy.addEnergy(1280.0);
 
@@ -746,7 +741,8 @@ public class EnergyNetGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

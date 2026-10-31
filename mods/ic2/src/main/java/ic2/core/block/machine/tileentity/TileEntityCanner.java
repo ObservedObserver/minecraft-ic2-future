@@ -62,7 +62,7 @@ public class TileEntityCanner extends TileEntityStandardMachine<Object, Object, 
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.setMode(TileEntityCanner.Mode.values[nbt.getInt("mode")]);
+    this.setMode(TileEntityCanner.Mode.values[nbt.getIntOr("mode", 0)]);
   }
 
   @Override

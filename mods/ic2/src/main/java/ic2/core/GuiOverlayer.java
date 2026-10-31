@@ -1,6 +1,5 @@
 package ic2.core;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.HudMode;
 import ic2.api.item.IElectricItem;
@@ -14,25 +13,25 @@ import ic2.core.util.Util;
 import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 public class GuiOverlayer {
-  private static final ResourceLocation BACKGROUND =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guioverlay.png");
+  private static final Identifier BACKGROUND =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guioverlay.png");
   private final Minecraft mc;
 
   public GuiOverlayer(Minecraft mc) {
     this.mc = mc;
   }
 
-  public void render(GuiGraphics guiGraphics) {
+  public void render(GuiGraphicsExtractor guiGraphics) {
     assert this.mc.player != null;
     ItemStack helm = this.mc.player.getItemBySlot(EquipmentSlot.HEAD);
     if (!StackUtil.isEmpty(helm)
@@ -44,29 +43,30 @@ public class GuiOverlayer {
         ItemStack legs = this.mc.player.getItemBySlot(EquipmentSlot.LEGS);
         ItemStack chestplate = this.mc.player.getItemBySlot(EquipmentSlot.CHEST);
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
         guiGraphics.blit(BACKGROUND, 0, 0, 0, 0, 71, 69, 256, 256);
-        guiGraphics.renderItem(helm, 5, 4);
-        guiGraphics.drawString(this.mc.font, mapCharge(helm) + "%", 25, 9, 0xFFFFFF);
-        if (StackUtil.getOrCreateNbtData(helm).getBoolean("night_vision")) {
-          guiGraphics.renderItem(Ic2Items.NIGHT_VISION_GOGGLES.getDefaultInstance(), 50, 4);
+        guiGraphics.item(helm, 5, 4);
+        ic2.compat.GuiCompat.drawString(
+            guiGraphics, this.mc.font, mapCharge(helm) + "%", 25, 9, 0xFFFFFF);
+        if (StackUtil.getOrCreateNbtData(helm).getBooleanOr("night_vision", false)) {
+          guiGraphics.item(Ic2Items.NIGHT_VISION_GOGGLES.getDefaultInstance(), 50, 4);
         }
 
         if (!StackUtil.isEmpty(chestplate)) {
           int charge = getCharge(chestplate);
           if (charge >= 0) {
-            guiGraphics.drawString(this.mc.font, charge + "%", 25, 25, 0xFFFFFF);
-            guiGraphics.renderItem(chestplate, 5, 20);
+            ic2.compat.GuiCompat.drawString(
+                guiGraphics, this.mc.font, charge + "%", 25, 25, 0xFFFFFF);
+            guiGraphics.item(chestplate, 5, 20);
 
             Item chestItem = chestplate.getItem();
             if (chestItem instanceof IJetpack jetpack && jetpack.isJetpackActive(chestplate)) {
-              boolean hoverMode = StackUtil.getOrCreateNbtData(chestplate).getBoolean("hover_mode");
+              boolean hoverMode =
+                  StackUtil.getOrCreateNbtData(chestplate).getBooleanOr("hover_mode", false);
               ItemStack jetpackIcon =
                   hoverMode
                       ? Ic2Items.JETPACK_ELECTRIC.getDefaultInstance()
                       : Ic2Items.JETPACK.getDefaultInstance();
-              guiGraphics.renderItem(jetpackIcon, 50, 20);
+              guiGraphics.item(jetpackIcon, 50, 20);
             }
           }
         }
@@ -74,12 +74,14 @@ public class GuiOverlayer {
         if (!StackUtil.isEmpty(legs)) {
           int charge = getCharge(legs);
           if (charge >= 0) {
-            guiGraphics.drawString(this.mc.font, charge + "%", 25, 41, 0xFFFFFF);
-            guiGraphics.renderItem(legs, 5, 36);
+            ic2.compat.GuiCompat.drawString(
+                guiGraphics, this.mc.font, charge + "%", 25, 41, 0xFFFFFF);
+            guiGraphics.item(legs, 5, 36);
             if (legs.getItem() instanceof ItemArmorQuantumSuit) {
               CompoundTag legsNbt = StackUtil.getOrCreateNbtData(legs);
-              if (!legsNbt.contains("speed_enabled") || legsNbt.getBoolean("speed_enabled")) {
-                guiGraphics.renderItem(Ic2Items.NANO_LEGGINGS.getDefaultInstance(), 50, 36);
+              if (!legsNbt.contains("speed_enabled")
+                  || legsNbt.getBooleanOr("speed_enabled", false)) {
+                guiGraphics.item(Ic2Items.NANO_LEGGINGS.getDefaultInstance(), 50, 36);
               }
             }
           }
@@ -88,12 +90,14 @@ public class GuiOverlayer {
         if (!StackUtil.isEmpty(boots)) {
           int charge = getCharge(boots);
           if (charge >= 0) {
-            guiGraphics.drawString(this.mc.font, charge + "%", 25, 56, 0xFFFFFF);
-            guiGraphics.renderItem(boots, 5, 52);
+            ic2.compat.GuiCompat.drawString(
+                guiGraphics, this.mc.font, charge + "%", 25, 56, 0xFFFFFF);
+            guiGraphics.item(boots, 5, 52);
             if (boots.getItem() instanceof ItemArmorQuantumSuit) {
               CompoundTag bootsNbt = StackUtil.getOrCreateNbtData(boots);
-              if (!bootsNbt.contains("jump_enabled") || bootsNbt.getBoolean("jump_enabled")) {
-                guiGraphics.renderItem(Ic2Items.NANO_BOOTS.getDefaultInstance(), 50, 52);
+              if (!bootsNbt.contains("jump_enabled")
+                  || bootsNbt.getBooleanOr("jump_enabled", false)) {
+                guiGraphics.item(Ic2Items.NANO_BOOTS.getDefaultInstance(), 50, 52);
               }
             }
           }
@@ -105,9 +109,9 @@ public class GuiOverlayer {
           int nextLine = 83;
 
           if (!StackUtil.isEmpty(rightItem)) {
-            guiGraphics.renderItem(rightItem, 5, 74);
-            guiGraphics.drawString(
-                this.mc.font, rightItem.getHoverName().getString(), 30, 78, 0xFFFFFF);
+            guiGraphics.item(rightItem, 5, 74);
+            ic2.compat.GuiCompat.drawString(
+                guiGraphics, this.mc.font, rightItem.getHoverName().getString(), 30, 78, 0xFFFFFF);
 
             List<String> info = new LinkedList<>();
             if (rightItem.getItem() instanceof IItemHudInfo) {
@@ -116,7 +120,8 @@ public class GuiOverlayer {
                       .getHudInfo(rightItem, hudMode == HudMode.ADVANCED));
               if (!info.isEmpty()) {
                 for (int l = 0; l < info.size(); l++) {
-                  guiGraphics.drawString(this.mc.font, info.get(l), 8, 83 + (l + 1) * 14, 0xFFFFFF);
+                  ic2.compat.GuiCompat.drawString(
+                      guiGraphics, this.mc.font, info.get(l), 8, 83 + (l + 1) * 14, 0xFFFFFF);
                 }
               }
 
@@ -131,8 +136,13 @@ public class GuiOverlayer {
                           : TooltipFlag.Default.NORMAL);
               if (tooltip.size() > 1) {
                 for (int l = 1; l < tooltip.size(); l++) {
-                  guiGraphics.drawString(
-                      this.mc.font, tooltip.get(l).getString(), 8, 83 + l * 14, 0xFFFFFF);
+                  ic2.compat.GuiCompat.drawString(
+                      guiGraphics,
+                      this.mc.font,
+                      tooltip.get(l).getString(),
+                      8,
+                      83 + l * 14,
+                      0xFFFFFF);
                 }
               }
 
@@ -143,9 +153,14 @@ public class GuiOverlayer {
           }
 
           if (!StackUtil.isEmpty(leftItem)) {
-            guiGraphics.renderItem(leftItem, 5, nextLine - 9);
-            guiGraphics.drawString(
-                this.mc.font, leftItem.getHoverName().getString(), 30, nextLine - 5, 0xFFFFFF);
+            guiGraphics.item(leftItem, 5, nextLine - 9);
+            ic2.compat.GuiCompat.drawString(
+                guiGraphics,
+                this.mc.font,
+                leftItem.getHoverName().getString(),
+                30,
+                nextLine - 5,
+                0xFFFFFF);
 
             List<String> info = new LinkedList<>();
             if (leftItem.getItem() instanceof IItemHudInfo) {
@@ -154,8 +169,8 @@ public class GuiOverlayer {
                       .getHudInfo(leftItem, hudMode == HudMode.ADVANCED));
               if (!info.isEmpty()) {
                 for (int l = 0; l < info.size(); l++) {
-                  guiGraphics.drawString(
-                      this.mc.font, info.get(l), 8, nextLine + (l + 1) * 14, 0xFFFFFF);
+                  ic2.compat.GuiCompat.drawString(
+                      guiGraphics, this.mc.font, info.get(l), 8, nextLine + (l + 1) * 14, 0xFFFFFF);
                 }
               }
             } else {
@@ -168,8 +183,13 @@ public class GuiOverlayer {
                           : TooltipFlag.Default.NORMAL);
               if (tooltip.size() > 1) {
                 for (int l = 1; l < tooltip.size(); l++) {
-                  guiGraphics.drawString(
-                      this.mc.font, tooltip.get(l).getString(), 8, nextLine + l * 14, 0xFFFFFF);
+                  ic2.compat.GuiCompat.drawString(
+                      guiGraphics,
+                      this.mc.font,
+                      tooltip.get(l).getString(),
+                      8,
+                      nextLine + l * 14,
+                      0xFFFFFF);
                 }
               }
             }

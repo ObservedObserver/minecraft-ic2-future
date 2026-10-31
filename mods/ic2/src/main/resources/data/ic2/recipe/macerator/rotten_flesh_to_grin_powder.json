@@ -1,0 +1,11 @@
+{
+  "type": "ic2:macerator",
+  "ingredient": {
+    "item": "minecraft:rotten_flesh",
+    "count": 4
+  },
+  "result": {
+    "item": "ic2:grin_powder",
+    "count": 1
+  }
+}

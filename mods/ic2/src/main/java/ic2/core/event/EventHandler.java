@@ -51,7 +51,6 @@ import ic2.core.uu.UuIndex;
 import ic2.core.world.Ic2WorldGen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -63,8 +62,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -98,10 +97,6 @@ public final class EventHandler {
     Ic2RecipeTypes.init();
     Ic2RecipeSerializers.init();
     Ic2WorldGen.init();
-    TileEntityRecycler.init();
-    TileEntityElectrolyzer.init();
-    Rezepte.registerRecipes();
-    Ic2Crops.init();
     IC2.sideProxy.preInit();
     IC2.initialized = true;
     IC2.log.debug(
@@ -111,6 +106,12 @@ public final class EventHandler {
   }
 
   public static void onInit() {
+    // 26.3 binds item components after registries. Recipes/crop stacks and fluid
+    // references must be created only once that binding and fluid registration are complete.
+    TileEntityRecycler.init();
+    TileEntityElectrolyzer.init();
+    Rezepte.registerRecipes();
+    Ic2Crops.init();
     MainConfig.ignoreInvalidRecipes = IC2Config.recipes.ignoreInvalidRecipes.get();
     TileEntityMatter.init();
     TileEntitySemifluidGenerator.init();
@@ -147,6 +148,17 @@ public final class EventHandler {
   }
 
   public static void onServerStart(MinecraftServer server) {
+    // Fail at startup with the recipe ID if any deferred machine recipe is invalid.
+    for (var holder : server.getRecipeManager().getRecipes()) {
+      if (holder.value() instanceof ic2.core.recipe.v2.RecipeHolder<?, ?> machine) {
+        try {
+          machine.recipe();
+        } catch (RuntimeException exception) {
+          throw new IllegalStateException(
+              "Invalid IC2 machine recipe " + holder.id().identifier(), exception);
+        }
+      }
+    }
     IC2.sideProxy.onServerAvailable(server);
     // Recipe-backed UU values require the server's loaded recipe manager.
     UuIndex.instance.refresh(true);
@@ -159,7 +171,7 @@ public final class EventHandler {
   }
 
   public static void onWorldLoad(Level world) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       ServerLevel serverWorld = (ServerLevel) world;
       ChunkLoaderLogic.onWorldLoad(serverWorld);
     }
@@ -170,17 +182,20 @@ public final class EventHandler {
     WorldData.onWorldUnload(world);
   }
 
-  public static void onChunkDataLoad(LevelChunk chunk, CompoundTag data) {}
+  public static void onChunkDataLoad(
+      LevelChunk chunk, net.minecraft.world.level.chunk.storage.SerializableChunkData data) {}
 
-  public static void onChunkSave(LevelChunk chunk, CompoundTag data) {}
+  public static void onChunkSave(
+      LevelChunk chunk, net.minecraft.world.level.chunk.storage.SerializableChunkData data) {}
 
   public static void onChunkLoad(LevelChunk chunk) {
     ChunkLoadAwareBlockHandler.onChunkLoad(chunk);
+    ChunkLoaderLogic.onChunkLoad(chunk);
   }
 
   public static void onChunkUnload(LevelChunk chunk) {
     ChunkLoadAwareBlockHandler.onChunkUnload(chunk);
-    if (!chunk.getLevel().isClientSide) {
+    if (!chunk.getLevel().isClientSide()) {
       ChunkLoaderLogic.onChunkUnload(chunk);
     }
   }
@@ -235,7 +250,7 @@ public final class EventHandler {
   public static void onLivingSpecialSpawn(LivingEntity rawEntity) {
     if (IC2.seasonal
         && (rawEntity instanceof Zombie || rawEntity instanceof Skeleton)
-        && rawEntity.getCommandSenderWorld().random.nextFloat() < 0.1F) {
+        && rawEntity.level().getRandom().nextFloat() < 0.1F) {
       Mob entity = (Mob) rawEntity;
 
       for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -245,7 +260,7 @@ public final class EventHandler {
   }
 
   public static boolean onLivingFall(LivingEntity entity, float distance) {
-    if (entity.getCommandSenderWorld().isClientSide) {
+    if (entity.level().isClientSide()) {
       return false;
     } else {
       ItemStack armor = entity.getItemBySlot(EquipmentSlot.FEET);
@@ -277,7 +292,7 @@ public final class EventHandler {
   }
 
   public static boolean onEntityInteract(Player player, InteractionHand hand, Entity target) {
-    if (player.getCommandSenderWorld().isClientSide) {
+    if (player.level().isClientSide()) {
       return false;
     }
 

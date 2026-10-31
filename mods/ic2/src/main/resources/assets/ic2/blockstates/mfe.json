@@ -1,27 +1,28 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/wiring/storage/mfe",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     },
     "facing=north": {
-      "model": "ic2:block/wiring/storage/mfe"
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     },
     "facing=south": {
-      "model": "ic2:block/wiring/storage/mfe",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     },
     "facing=west": {
-      "model": "ic2:block/wiring/storage/mfe",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     },
     "facing=up": {
-      "model": "ic2:block/wiring/storage/mfe",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     },
     "facing=down": {
-      "model": "ic2:block/wiring/storage/mfe",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/mfe"
     }
   }
 }

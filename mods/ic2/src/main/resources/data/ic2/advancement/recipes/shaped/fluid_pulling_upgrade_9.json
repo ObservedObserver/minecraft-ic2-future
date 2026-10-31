@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/fluid_pulling_upgrade_9"
+        "recipes": [
+          "ic2:shaped/fluid_pulling_upgrade_9"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

@@ -3,17 +3,12 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
+          "name": "ic2:cesu",
+          "modifier": [
             {
-              "function": "minecraft:copy_custom_data",
               "ops": [
                 {
                   "op": "replace",
@@ -23,13 +18,16 @@
               ],
               "source": {
                 "type": "ic2:block_nbt"
-              }
+              },
+              "type": "minecraft:copy_custom_data"
             }
-          ],
-          "name": "ic2:cesu"
+          ]
         }
       ],
-      "rolls": 1.0
+      "rolls": 1.0,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

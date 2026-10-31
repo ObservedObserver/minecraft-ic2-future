@@ -8,8 +8,8 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
-import net.minecraft.world.level.LevelSimulatedReader;
-import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +22,12 @@ public final class RubberTreeFoliagePlacer extends FoliagePlacer {
           instance ->
               instance
                   .group(
-                      IntProvider.CODEC.fieldOf("radius").forGetter(placer -> placer.radius),
-                      IntProvider.CODEC.fieldOf("offset").forGetter(placer -> placer.offset))
+                      net.minecraft.util.valueproviders.IntProviders.CODEC
+                          .fieldOf("radius")
+                          .forGetter(placer -> placer.radius),
+                      net.minecraft.util.valueproviders.IntProviders.CODEC
+                          .fieldOf("offset")
+                          .forGetter(placer -> placer.offset))
                   .apply(instance, RubberTreeFoliagePlacer::new));
   public static final FoliagePlacerType<RubberTreeFoliagePlacer> TYPE =
       IC2.envProxy.registerFoliagePlacer(IC2.getIdentifier("rubber_tree"), CODEC);
@@ -39,10 +43,10 @@ public final class RubberTreeFoliagePlacer extends FoliagePlacer {
   }
 
   protected void createFoliage(
-      @NotNull LevelSimulatedReader world,
+      @NotNull WorldGenLevel world,
       @NotNull FoliageSetter replacer,
       @NotNull RandomSource random,
-      @NotNull TreeConfiguration config,
+      @NotNull TreeFeature config,
       int trunkHeight,
       @NotNull FoliageAttachment treeNode,
       int foliageHeight,
@@ -91,8 +95,7 @@ public final class RubberTreeFoliagePlacer extends FoliagePlacer {
     }
   }
 
-  public int foliageHeight(
-      RandomSource random, int trunkHeight, @NotNull TreeConfiguration config) {
+  public int foliageHeight(RandomSource random, int trunkHeight, @NotNull TreeFeature config) {
     return 1 + trunkHeight / 4 + random.nextInt(2);
   }
 

@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/iron_ingot_from_purified_iron"
+        "recipes": [
+          "ic2:smelting/iron_ingot_from_purified_iron"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

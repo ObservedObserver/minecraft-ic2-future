@@ -66,10 +66,10 @@ public abstract class TileEntityInventory extends Ic2TileEntity
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    CompoundTag invSlotsTag = nbt.getCompound("InvSlots");
+    CompoundTag invSlotsTag = nbt.getCompoundOrEmpty("InvSlots");
 
     for (InvSlot invSlot : this.invSlots) {
-      invSlot.readFromNbt(invSlotsTag.getCompound(invSlot.name), registries);
+      invSlot.readFromNbt(invSlotsTag.getCompoundOrEmpty(invSlot.name), registries);
     }
   }
 

@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'com.diffplug.spotless' version '8.8.0'
     id 'idea'
 }
@@ -30,7 +30,7 @@ base {
     archivesName = "${mod_id}-neoforge"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 spotless {
     java {
@@ -48,10 +48,6 @@ spotless {
 neoForge {
     version = project.neo_version
 
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
 
     runs {
         client {
@@ -67,15 +63,25 @@ neoForge {
 
         gameTestServer {
             type = "gameTestServer"
+            if (providers.gradleProperty('ic2TestFilter').isPresent()) {
+                programArguments.addAll '--tests', providers.gradleProperty('ic2TestFilter').get()
+            }
+            if (providers.gradleProperty('ic2TestRepeat').isPresent()) {
+                programArguments.addAll '--repeatCount', providers.gradleProperty('ic2TestRepeat').get()
+            }
+            if (providers.gradleProperty('ic2TestReport').isPresent()) {
+                programArguments.addAll '--report', file(providers.gradleProperty('ic2TestReport').get()).getAbsolutePath()
+            }
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
-            data()
+            clientData()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
         configureEach {
+            gameDirectory = layout.projectDirectory.dir("run-ic2r-${name}")
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.DEBUG
         }
@@ -98,10 +104,8 @@ configurations {
 }
 
 dependencies {
-    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
-    runtimeOnly "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
-
-    compileOnly "org.appliedenergistics:appliedenergistics2:${ae2_version}:api"
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-26.3-neoforge-api:${jei_version}"
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

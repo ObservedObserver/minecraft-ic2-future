@@ -10,7 +10,7 @@ import ic2.core.gui.VanillaButton;
 import ic2.core.ref.Ic2Items;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -59,7 +59,7 @@ public class GuiMetalFormer extends Ic2Gui<ContainerMetalFormer> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guimetalformer.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guimetalformer.png");
   }
 }

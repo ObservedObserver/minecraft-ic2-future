@@ -17,12 +17,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 
 public class BasicMachineRecipeSerializer
-    implements RecipeSerializer<RecipeHolder<IRecipeInput, Collection<ItemStack>>> {
+    extends ic2.compat.RecipeSerializerAdapter<RecipeHolder<IRecipeInput, Collection<ItemStack>>> {
   private final RecipeType<?> recipeType;
   @Nullable private final Function<JsonObject, CompoundTag> metaProcessor;
   private final MapCodec<RecipeHolder<IRecipeInput, Collection<ItemStack>>> codec =
@@ -45,7 +44,12 @@ public class BasicMachineRecipeSerializer
                       json.add(
                           key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                     });
-            return DataResult.success(fromJson(json));
+            RecipeIo.validateTemplates(json);
+            return DataResult.success(
+                RecipeHolder.defer(
+                    () -> fromJson(json),
+                    BasicMachineRecipeSerializer.this.serializer(),
+                    BasicMachineRecipeSerializer.this.recipeType));
           } catch (RuntimeException e) {
             return DataResult.error(() -> "Failed to parse IC2 machine recipe: " + e.getMessage());
           }
@@ -75,7 +79,7 @@ public class BasicMachineRecipeSerializer
     Collection<ItemStack> output = RecipeIo.parseOutputs(json.get("result"), "result");
     CompoundTag meta = this.metaProcessor != null ? this.metaProcessor.apply(json) : null;
     return new RecipeHolder<>(
-        new MachineRecipe<>(input, output, meta), null, this, this.recipeType);
+        new MachineRecipe<>(input, output, meta), null, this.serializer(), this.recipeType);
   }
 
   private RecipeHolder<IRecipeInput, Collection<ItemStack>> fromNetwork(
@@ -87,7 +91,7 @@ public class BasicMachineRecipeSerializer
       return new RecipeHolder<>(
           new MachineRecipe<>(RecipeIo.readInput(buf), RecipeIo.readOutput(buf), buf.readNbt()),
           null,
-          this,
+          this.serializer(),
           this.recipeType);
     }
   }

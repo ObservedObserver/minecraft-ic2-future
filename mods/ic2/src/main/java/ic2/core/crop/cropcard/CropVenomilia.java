@@ -61,7 +61,9 @@ public class CropVenomilia extends Ic2CropCard {
     if (crop.getCurrentAge() == 4) {
       return new ItemStack(Ic2Items.GRIN_POWDER);
     } else {
-      return crop.getCurrentAge() >= 3 ? new ItemStack(Items.PURPLE_DYE) : null;
+      return crop.getCurrentAge() >= 3
+          ? new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PURPLE))
+          : null;
     }
   }
 

@@ -1,16 +1,15 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.item.ElectricItemManager;
 import ic2.core.item.armor.ItemArmorElectric;
 import ic2.core.item.armor.ItemArmorNanoSuit;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,11 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class NanoSuitGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -36,7 +31,8 @@ public class NanoSuitGameTests {
         ElectricItemManager.getCharged(Ic2Items.NANO_CHESTPLATE, Double.POSITIVE_INFINITY);
     player.setItemSlot(EquipmentSlot.CHEST, chest);
 
-    LivingEntity attacker = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    LivingEntity attacker =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     DamageSource source = helper.getLevel().damageSources().mobAttack(attacker);
 
     // chest absorbs baseRatio 0.4 * nano ratio 0.9 = 36% of incoming damage
@@ -60,7 +56,8 @@ public class NanoSuitGameTests {
     ItemStack chest = ElectricItemManager.getCharged(Ic2Items.NANO_CHESTPLATE, ENERGY_PER_DAMAGE);
     player.setItemSlot(EquipmentSlot.CHEST, chest);
 
-    LivingEntity attacker = helper.spawn(EntityType.PIG, new BlockPos(1, 1, 1));
+    LivingEntity attacker =
+        helper.spawn(net.minecraft.world.entity.EntityTypes.PIG, new BlockPos(1, 1, 1));
     DamageSource source = helper.getLevel().damageSources().mobAttack(attacker);
 
     float remaining = ItemArmorElectric.damageArmor(player, source, 10.0F);
@@ -145,10 +142,15 @@ public class NanoSuitGameTests {
     Player player = helper.makeMockPlayer(GameType.SURVIVAL);
     ItemStack helmet =
         ElectricItemManager.getCharged(Ic2Items.NANO_HELMET, Double.POSITIVE_INFINITY);
-    StackUtil.getOrCreateNbtData(helmet).putBoolean("night_vision", true);
+    StackUtil.setTagValue(helmet, "night_vision", net.minecraft.nbt.ByteTag.valueOf(true));
     player.setItemSlot(EquipmentSlot.HEAD, helmet);
 
-    player.getInventory().tick();
+    // Keep the real equipment tick isolated from other tests' entities at the default origin.
+    player.setPos(
+        net.minecraft.world.phys.Vec3.atCenterOf(
+            helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1))));
+    // Equipment now ticks through LivingEntity.aiStep rather than Inventory.tick.
+    player.aiStep();
 
     Ic2GameTestAssertions.assertNear(
         helper,
@@ -162,7 +164,7 @@ public class NanoSuitGameTests {
     double[] total = {0.0};
     stack.forEachModifier(
         slotGroup,
-        (attribute, modifier) -> {
+        (attribute, modifier, display) -> {
           if (attribute == Attributes.ARMOR) {
             total[0] += modifier.amount();
           }

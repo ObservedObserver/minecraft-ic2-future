@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/uu/uu_scanner"
+  "parent": "ic2:block/machine/uu/uu_scanner"
 }

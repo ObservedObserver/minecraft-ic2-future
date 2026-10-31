@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/water_kinetic_generator"
+        "recipes": [
+          "ic2:shaped/water_kinetic_generator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

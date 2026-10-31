@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -63,8 +63,7 @@ class TeUpdate {
               if (playerBuffer == null) {
                 playerBuffer = new GrowingBuffer(0);
                 buffers.put(player, playerBuffer);
-                DataEncoder.encode(
-                    playerBuffer, Util.getDimId(player.getCommandSenderWorld()), false);
+                DataEncoder.encode(playerBuffer, Util.getDimId(player.level()), false);
               }
 
               commonBuffer.writeTo(playerBuffer);
@@ -93,9 +92,8 @@ class TeUpdate {
   }
 
   static void receive(GrowingBuffer buffer) throws IOException {
-    final ResourceLocation worldId =
-        DataEncoder.getValue(
-            DataEncoder.decode(buffer, DataEncoder.EncodedType.ResourceLocation), null);
+    final Identifier worldId =
+        DataEncoder.getValue(DataEncoder.decode(buffer, DataEncoder.EncodedType.Identifier), null);
     final TeUpdateDataClient updateData = new TeUpdateDataClient();
 
     while (buffer.hasAvailable()) {
@@ -108,8 +106,8 @@ class TeUpdate {
         Object value = DataEncoder.decode(buffer);
         if (fieldName.equals("teBlk")) {
           String id = ((String) Objects.requireNonNull(value)).split(":")[1];
-          ResourceLocation identifier = IC2.getIdentifier(id);
-          teData.teType = (Ic2TileEntityBlock) BuiltInRegistries.BLOCK.get(identifier);
+          Identifier identifier = IC2.getIdentifier(id);
+          teData.teType = (Ic2TileEntityBlock) BuiltInRegistries.BLOCK.getValue(identifier);
         } else {
           teData.addField(fieldName, value);
         }
@@ -148,7 +146,7 @@ class TeUpdate {
         });
   }
 
-  private static void printDebugOutput(ResourceLocation dimensionId, TeUpdateDataClient data) {
+  private static void printDebugOutput(Identifier dimensionId, TeUpdateDataClient data) {
     StringBuilder out = new StringBuilder();
     out.append("dimension: ");
     out.append(dimensionId);

@@ -15,10 +15,10 @@ public class ItemTerraWart extends Item {
   }
 
   public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity player) {
-    player.removeEffect(MobEffects.CONFUSION);
-    player.removeEffect(MobEffects.DIG_SLOWDOWN);
+    player.removeEffect(MobEffects.NAUSEA);
+    player.removeEffect(MobEffects.MINING_FATIGUE);
     player.removeEffect(MobEffects.HUNGER);
-    player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+    player.removeEffect(MobEffects.SLOWNESS);
     player.removeEffect(MobEffects.WEAKNESS);
     player.removeEffect(MobEffects.BLINDNESS);
     player.removeEffect(MobEffects.POISON);

@@ -1,11 +1,11 @@
 package ic2.forge;
 
+import ic2.compat.IFluidHandler;
+import ic2.compat.IFluidHandlerItem;
 import ic2.core.fluid.Ic2FluidItem;
 import ic2.core.fluid.Ic2FluidStack;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.apache.commons.lang3.mutable.Mutable;
 
 final class ItemFluidCapImpl implements IFluidHandlerItem, Mutable<ItemStack> {

@@ -2,7 +2,7 @@ package ic2.core.ref;
 
 import ic2.core.IC2;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -64,8 +64,7 @@ public final class Ic2ItemTags {
   }
 
   private static TagKey<Item> create(String fabricName, String forgeName) {
-    ResourceLocation id =
-        ResourceLocation.parse(IC2.envProxy.isFabricEnv() ? fabricName : toCommon(forgeName));
+    Identifier id = Identifier.parse(IC2.envProxy.isFabricEnv() ? fabricName : toCommon(forgeName));
     return TagKey.create(Registries.ITEM, id);
   }
 

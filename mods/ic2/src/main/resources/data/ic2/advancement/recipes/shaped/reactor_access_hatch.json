@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/reactor_access_hatch"
+        "recipes": [
+          "ic2:shaped/reactor_access_hatch"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -23,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:trapdoors"
+            "items": "#minecraft:trapdoors"
           }
         ]
       },

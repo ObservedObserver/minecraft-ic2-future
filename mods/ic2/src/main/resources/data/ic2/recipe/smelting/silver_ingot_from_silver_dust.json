@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "copper_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:silver_dust"
-  },
+  "ingredient": "ic2:silver_dust",
   "result": {
     "id": "ic2:silver_ingot"
   },

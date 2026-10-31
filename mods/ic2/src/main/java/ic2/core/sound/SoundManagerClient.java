@@ -1,7 +1,6 @@
 package ic2.core.sound;
 
 import ic2.core.IHitSoundOverride;
-import ic2.core.proxy.SideProxyClient;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
@@ -32,17 +31,17 @@ public class SoundManagerClient extends SoundManager {
   public static SoundInstance onSoundPlayed(SoundInstance sound) {
     if (sound == null) return null;
     SoundSource category = sound.getSource();
-    String name = sound.getLocation().getPath();
+    String name = sound.getIdentifier().getPath();
     if (category == SoundSource.BLOCKS && name.endsWith(".hit")
         || category == SoundSource.BLOCKS && name.endsWith(".break")) {
       LocalPlayer player = Minecraft.getInstance().player;
       ItemStack stack = null;
       if (player != null) {
-        stack = player.getInventory().getSelected();
+        stack = player.getInventory().getSelectedItem();
       }
 
       if (stack != null && stack.getItem() instanceof IHitSoundOverride hitSoundOverride) {
-        Level world = player.getCommandSenderWorld();
+        Level world = player.level();
         BlockPos pos = new BlockPos((int) sound.getX(), (int) sound.getY(), (int) sound.getZ());
 
         SoundEvent replaceSound = null;
@@ -134,19 +133,22 @@ public class SoundManagerClient extends SoundManager {
   @Override
   public void pauseAll() {
     super.pauseAll();
-    DeferredSoundOps.run(() -> SideProxyClient.mc.getSoundManager().pause());
+    DeferredSoundOps.run(
+        () -> net.minecraft.client.Minecraft.getInstance().getSoundManager().pauseAllExcept());
   }
 
   @Override
   public void resumeAll() {
     super.resumeAll();
-    DeferredSoundOps.run(() -> SideProxyClient.mc.getSoundManager().resume());
+    DeferredSoundOps.run(
+        () -> net.minecraft.client.Minecraft.getInstance().getSoundManager().resume());
   }
 
   @Override
   public void stopAll() {
     super.stopAll();
-    DeferredSoundOps.run(() -> SideProxyClient.mc.getSoundManager().stop());
+    DeferredSoundOps.run(
+        () -> net.minecraft.client.Minecraft.getInstance().getSoundManager().stop());
   }
 
   @Override

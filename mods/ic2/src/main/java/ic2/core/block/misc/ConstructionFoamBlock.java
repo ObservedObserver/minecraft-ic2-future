@@ -16,9 +16,15 @@ public class ConstructionFoamBlock extends LiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-    if (!world.isClientSide && entity instanceof LivingEntity living) {
-      living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 280, 2));
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
+    if (!world.isClientSide() && entity instanceof LivingEntity living) {
+      living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 280, 2));
     }
   }
 }

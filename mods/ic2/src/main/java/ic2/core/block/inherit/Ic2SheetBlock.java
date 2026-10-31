@@ -22,14 +22,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class Ic2SheetBlock extends Block {
-  public static final com.mojang.serialization.MapCodec<Ic2SheetBlock> CODEC =
-      simpleCodec(Ic2SheetBlock::new);
-
-  @Override
-  protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.Block>
-      codec() {
-    return CODEC;
-  }
 
   private static final VoxelShape aabb = Shapes.box(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
   private static final Direction[] positiveHorizontalFacings =
@@ -141,12 +133,35 @@ public class Ic2SheetBlock extends Block {
     return Block.isShapeFullBlock(state.getCollisionShape(world, pos));
   }
 
+  @Override
+  public void neighborChanged(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Block block,
+      @Nullable net.minecraft.world.level.redstone.Orientation orientation,
+      boolean notify) {
+    // The support check does not depend on the removed source-position parameter.
+    this.neighborChanged(state, world, pos, block, pos, notify);
+  }
+
   public void neighborChanged(
       BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
     if (!this.isValidPosition(world, pos, state)) {
       Block.dropResources(state, world, pos, null);
       world.removeBlock(pos, false);
     }
+  }
+
+  @Override
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
+    this.entityInside(state, world, pos, entity);
   }
 
   public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {

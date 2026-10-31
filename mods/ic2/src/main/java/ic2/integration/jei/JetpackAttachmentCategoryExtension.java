@@ -54,6 +54,28 @@ final class JetpackAttachmentCategoryExtension
   }
 
   @Override
+  public java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> getIngredients(
+      RecipeHolder<JetpackAttachmentRecipe> holder) {
+    var chest =
+        new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(
+            this.chestplates.stream()
+                .<net.minecraft.world.item.crafting.display.SlotDisplay>map(
+                    stack ->
+                        new net.minecraft.world.item.crafting.display.SlotDisplay
+                            .ItemStackSlotDisplay(
+                            net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack)))
+                .toList());
+    return java.util.List.of(
+        chest,
+        new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(
+            net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(
+                ElectricItemManager.getCharged(
+                    Ic2Items.JETPACK_ELECTRIC, Double.POSITIVE_INFINITY))),
+        new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(
+            new net.minecraft.world.item.ItemStackTemplate(Ic2Items.JETPACK_ATTACHMENT_PLATE)));
+  }
+
+  @Override
   public void setRecipe(
       RecipeHolder<JetpackAttachmentRecipe> holder,
       IRecipeLayoutBuilder builder,

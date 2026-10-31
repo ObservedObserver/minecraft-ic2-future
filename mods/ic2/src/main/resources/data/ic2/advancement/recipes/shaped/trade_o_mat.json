@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:chests/wooden"
+            "items": "#c:chests/wooden"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/trade_o_mat"
+        "recipes": [
+          "ic2:shaped/trade_o_mat"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -4,14 +4,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 
 public class BlockRefractoryBricks extends Block {
-  public static final com.mojang.serialization.MapCodec<BlockRefractoryBricks> CODEC =
-      simpleCodec(BlockRefractoryBricks::new);
-
-  @Override
-  protected com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.Block>
-      codec() {
-    return CODEC;
-  }
 
   public BlockRefractoryBricks(
       net.minecraft.world.level.block.state.BlockBehaviour.Properties properties) {
@@ -20,6 +12,13 @@ public class BlockRefractoryBricks extends Block {
 
   public BlockRefractoryBricks() {
     super(
-        Properties.of().strength(2.0F, 10.0F).requiresCorrectToolForDrops().sound(SoundType.STONE));
+        Properties.of()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.BLOCK,
+                    ic2.core.IC2.getIdentifier("refractory_bricks")))
+            .strength(2.0F, 10.0F)
+            .requiresCorrectToolForDrops()
+            .sound(SoundType.STONE));
   }
 }

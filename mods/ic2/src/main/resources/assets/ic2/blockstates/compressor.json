@@ -1,34 +1,36 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/processing/basic/compressor",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/processing/basic/compressor_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/processing/basic/compressor"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/processing/basic/compressor_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/processing/basic/compressor",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/processing/basic/compressor_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/processing/basic/compressor",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/processing/basic/compressor_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/processing/basic/compressor"
     }
   }
 }

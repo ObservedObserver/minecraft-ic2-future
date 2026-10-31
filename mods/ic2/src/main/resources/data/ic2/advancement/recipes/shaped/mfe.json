@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/mfe"
+        "recipes": [
+          "ic2:shaped/mfe"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

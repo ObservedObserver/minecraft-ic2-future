@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.IntSupplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class TextLabel extends GuiElement<TextLabel> {
   private final TextProvider.ITextProvider textProvider;
@@ -226,7 +226,7 @@ public class TextLabel extends GuiElement<TextLabel> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     String text = this.textProvider.get(this.getBase(), this.getTokens());
     int textWidth;
     int textHeight;

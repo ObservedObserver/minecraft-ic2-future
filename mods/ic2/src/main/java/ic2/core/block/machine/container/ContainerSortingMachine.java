@@ -28,7 +28,9 @@ public class ContainerSortingMachine extends ContainerElectricMachine<TileEntity
       ItemStack[] filterSlots = be.getFilterSlots(dir);
 
       for (int j = 0; j < filterSlots.length; j++) {
-        this.addSlot(new SlotHologramSlot(filterSlots, j, 80 + j * 18, 19 + i * 20, 64, null));
+        this.addSlot(
+            new SlotHologramSlot(
+                filterSlots, j, 80 + j * 18, 19 + i * 20, 64, index -> be.setChanged()));
       }
     }
   }

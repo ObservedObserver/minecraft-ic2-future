@@ -45,7 +45,7 @@ public final class ChunkLoadAwareBlockHandler {
 
   public static void onChunkLoad(LevelChunk chunk) {
     Level world = chunk.getLevel();
-    if (world == null || world.isClientSide) {
+    if (world == null || world.isClientSide()) {
       return;
     }
 
@@ -55,7 +55,7 @@ public final class ChunkLoadAwareBlockHandler {
 
   public static void onChunkUnload(LevelChunk chunk) {
     Level world = chunk.getLevel();
-    if (world == null || world.isClientSide) {
+    if (world == null || world.isClientSide()) {
       return;
     }
 
@@ -69,7 +69,7 @@ public final class ChunkLoadAwareBlockHandler {
   }
 
   public static void onWorldTick(Level world) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return;
     }
 
@@ -83,8 +83,8 @@ public final class ChunkLoadAwareBlockHandler {
     pending.clear();
 
     for (ChunkPos pos : toProcess) {
-      if (world.getChunkSource().hasChunk(pos.x, pos.z)) {
-        processChunk(world.getChunk(pos.x, pos.z), true);
+      if (world.getChunkSource().hasChunk(pos.x(), pos.z())) {
+        processChunk(world.getChunk(pos.x(), pos.z()), true);
       }
     }
   }
@@ -99,7 +99,7 @@ public final class ChunkLoadAwareBlockHandler {
     }
 
     Level world = chunk.getLevel();
-    if (world == null || world.isClientSide) {
+    if (world == null || world.isClientSide()) {
       return;
     }
 
@@ -113,7 +113,7 @@ public final class ChunkLoadAwareBlockHandler {
           MutableBlockPos pos = new MutableBlockPos();
           pos.set(
               chunk.getPos().getMinBlockX(),
-              chunk.getMinBuildHeight() + sectionIdx * 16,
+              chunk.getMinY() + sectionIdx * 16,
               chunk.getPos().getMinBlockZ());
           BlockState lastState = null;
           ChunkLoadAwareBlock lastBlock = null;

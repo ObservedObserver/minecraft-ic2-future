@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/electric_motor"
+        "recipes": [
+          "ic2:shaped/electric_motor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

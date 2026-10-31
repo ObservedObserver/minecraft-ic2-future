@@ -1,27 +1,28 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/wiring/storage/batbox",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     },
     "facing=north": {
-      "model": "ic2:block/wiring/storage/batbox"
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     },
     "facing=south": {
-      "model": "ic2:block/wiring/storage/batbox",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     },
     "facing=west": {
-      "model": "ic2:block/wiring/storage/batbox",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     },
     "facing=up": {
-      "model": "ic2:block/wiring/storage/batbox",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     },
     "facing=down": {
-      "model": "ic2:block/wiring/storage/batbox",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/wiring/storage/batbox"
     }
   }
 }

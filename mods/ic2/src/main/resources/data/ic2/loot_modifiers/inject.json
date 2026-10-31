@@ -1,4 +1,4 @@
 {
   "type": "ic2:inject",
-  "conditions": []
+  "priority": 1000
 }

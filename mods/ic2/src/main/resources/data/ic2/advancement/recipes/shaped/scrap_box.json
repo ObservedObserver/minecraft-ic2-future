@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/scrap_box"
+        "recipes": [
+          "ic2:shaped/scrap_box"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

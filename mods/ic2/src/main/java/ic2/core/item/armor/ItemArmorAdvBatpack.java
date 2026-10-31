@@ -9,7 +9,11 @@ public class ItemArmorAdvBatpack extends ItemArmorElectric {
     super(
         Ic2ArmorMaterials.ADVANCED_BAT_PACK.holder(),
         EquipmentSlot.CHEST,
-        new Properties(),
+        new Properties()
+            .setId(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.ITEM,
+                    ic2.core.IC2.getIdentifier("advanced_batpack"))),
         600000.0,
         1000.0,
         2);

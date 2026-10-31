@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/steam_repressurizer_from_tank"
+        "recipes": [
+          "ic2:shaped/steam_repressurizer_from_tank"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

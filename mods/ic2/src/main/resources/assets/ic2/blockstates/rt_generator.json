@@ -1,10 +1,12 @@
 {
   "variants": {
     "active=false": {
-      "model": "ic2:block/generator/electric/rt_generator"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/rt_generator"
     },
     "active=true": {
-      "model": "ic2:block/generator/electric/rt_generator_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/electric/rt_generator"
     }
   }
 }

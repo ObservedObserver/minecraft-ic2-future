@@ -4,7 +4,7 @@ import ic2.core.Ic2Gui;
 import ic2.core.block.comp.Process;
 import ic2.core.block.tileentity.Ic2TileEntity;
 import ic2.core.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class ProgressGauge extends GuiElement<ProgressGauge> {
   private final Process process;
@@ -18,7 +18,7 @@ public class ProgressGauge extends GuiElement<ProgressGauge> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     this.gui.drawTexturedRect(
         guiGraphics.pose(),

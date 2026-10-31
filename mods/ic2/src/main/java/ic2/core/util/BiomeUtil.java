@@ -36,7 +36,7 @@ public final class BiomeUtil {
   }
 
   public static Holder<Biome> getBiome(Level world, ResourceKey<Biome> key) {
-    return world.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
+    return world.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(key);
   }
 
   public static Holder<Biome> getOriginalBiome(LevelReader world, BlockPos pos) {
@@ -81,10 +81,10 @@ public final class BiomeUtil {
           .chunkMap
           .getPlayers(chunk.getPos(), false)
           .forEach(player -> player.connection.send(packet));
-      chunk.setUnsaved(true);
+      chunk.markUnsaved();
     } else {
-      assert !world.isClientSide : "Can't notify a server of a client side biome change";
-      world.getChunkAt(pos).setUnsaved(true);
+      assert !world.isClientSide() : "Can't notify a server of a client side biome change";
+      world.getChunkAt(pos).markUnsaved();
     }
   }
 

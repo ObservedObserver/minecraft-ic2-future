@@ -1,24 +1,24 @@
 package ic2.core.item.tool;
 
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiCropAnalyzer extends Ic2Gui<ContainerAnalyzer> {
-  private static final ResourceLocation BACKGROUND =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guicrop_analyzer.png");
+  private static final Identifier BACKGROUND =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guicrop_analyzer.png");
 
   public GuiCropAnalyzer(ContainerAnalyzer container, Inventory playerInventory, Component title) {
     super(container, playerInventory, title, 223);
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     HandHeldCropAnalyzer analyzer = this.getContainer().base;
     int scannedLevel = analyzer.getScannedLevel();
@@ -54,7 +54,7 @@ public class GuiCropAnalyzer extends Ic2Gui<ContainerAnalyzer> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return BACKGROUND;
   }
 }

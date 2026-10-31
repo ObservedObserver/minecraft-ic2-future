@@ -52,7 +52,7 @@ public class CropNetherWart extends Ic2CropCard {
       if (this.canGrow(crop)) {
         crop.setGrowthPoints(crop.getGrowthPoints() + 100);
       }
-    } else if (crop.isBlockBelow(Blocks.SNOW) && crop.getWorldObj().random.nextInt(300) == 0) {
+    } else if (crop.isBlockBelow(Blocks.SNOW) && crop.getWorldObj().getRandom().nextInt(300) == 0) {
       crop.setCrop(Ic2Crops.cropTerraWart);
     }
   }

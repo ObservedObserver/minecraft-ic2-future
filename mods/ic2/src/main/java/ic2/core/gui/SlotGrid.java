@@ -5,8 +5,8 @@ import ic2.core.util.StackUtil;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 
 public class SlotGrid extends GuiElement<SlotGrid> {
@@ -47,7 +47,7 @@ public class SlotGrid extends GuiElement<SlotGrid> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawBackground(guiGraphics, mouseX, mouseY);
     if (this.style.background != null) {
       bindTexture(this.style.background);
@@ -83,7 +83,7 @@ public class SlotGrid extends GuiElement<SlotGrid> {
     return slot != null && slot.hasItem();
   }
 
-  public record SlotStyle(int u, int v, int width, int height, ResourceLocation background) {
+  public record SlotStyle(int u, int v, int width, int height, Identifier background) {
     public static final SlotStyle Normal = new SlotStyle(103, 7, 18, 18);
     public static final SlotStyle Large = new SlotStyle(99, 35, 26, 26);
     public static final SlotStyle Plain = new SlotStyle(16, 16);

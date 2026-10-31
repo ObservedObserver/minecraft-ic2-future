@@ -4,9 +4,9 @@ import ic2.core.Ic2Gui;
 import ic2.core.gui.CustomButton;
 import ic2.core.gui.IClickHandler;
 import ic2.core.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiToolMeter extends Ic2Gui<ContainerMeter> {
@@ -46,7 +46,7 @@ public class GuiToolMeter extends Ic2Gui<ContainerMeter> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     ContainerMeter container = this.getContainer();
     String unit =
@@ -110,8 +110,9 @@ public class GuiToolMeter extends Ic2Gui<ContainerMeter> {
   }
 
   @Override
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
-    super.renderBg(guiGraphics, delta, mouseX, mouseY);
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     this.bindTexture();
     ContainerMeter container = this.getContainer();
     switch (container.getMode()) {
@@ -130,7 +131,7 @@ public class GuiToolMeter extends Ic2Gui<ContainerMeter> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guitooleumeter.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guitooleumeter.png");
   }
 }

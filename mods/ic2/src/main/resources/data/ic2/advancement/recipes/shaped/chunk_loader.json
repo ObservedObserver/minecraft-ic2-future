@@ -53,7 +53,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/tin"
+            "items": "#c:plates/tin"
           }
         ]
       },
@@ -61,7 +61,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/chunk_loader"
+        "recipes": [
+          "ic2:shaped/chunk_loader"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

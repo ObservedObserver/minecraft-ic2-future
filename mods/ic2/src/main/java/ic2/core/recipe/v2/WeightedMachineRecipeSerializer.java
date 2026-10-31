@@ -20,12 +20,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 
 public class WeightedMachineRecipeSerializer
-    implements RecipeSerializer<RecipeHolder<IRecipeInput, Collection<ItemStack>>> {
+    extends ic2.compat.RecipeSerializerAdapter<RecipeHolder<IRecipeInput, Collection<ItemStack>>> {
   private final RecipeType<?> recipeType;
   @Nullable private final Function<JsonObject, CompoundTag> metaProcessor;
   private final MapCodec<RecipeHolder<IRecipeInput, Collection<ItemStack>>> codec =
@@ -48,7 +47,12 @@ public class WeightedMachineRecipeSerializer
                       json.add(
                           key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                     });
-            return DataResult.success(fromJson(json));
+            RecipeIo.validateTemplates(json);
+            return DataResult.success(
+                RecipeHolder.defer(
+                    () -> fromJson(json),
+                    WeightedMachineRecipeSerializer.this.serializer(),
+                    WeightedMachineRecipeSerializer.this.recipeType));
           } catch (RuntimeException e) {
             return DataResult.error(
                 () -> "Failed to parse IC2 weighted machine recipe: " + e.getMessage());
@@ -88,7 +92,7 @@ public class WeightedMachineRecipeSerializer
       machineRecipe = new MachineRecipe<>(input, RecipeIo.parseOutputs(resultJsonObj, "result"));
     }
 
-    return new RecipeHolder<>(machineRecipe, null, this, this.recipeType);
+    return new RecipeHolder<>(machineRecipe, null, this.serializer(), this.recipeType);
   }
 
   private RecipeHolder<IRecipeInput, Collection<ItemStack>> fromNetwork(
@@ -106,7 +110,7 @@ public class WeightedMachineRecipeSerializer
           new MachineRecipe<>(RecipeIo.readInput(buf), RecipeIo.readOutput(buf), buf.readNbt());
     }
 
-    return new RecipeHolder<>(machineRecipe, null, this, this.recipeType);
+    return new RecipeHolder<>(machineRecipe, null, this.serializer(), this.recipeType);
   }
 
   private void toNetwork(

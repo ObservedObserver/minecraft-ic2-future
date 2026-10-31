@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "gold_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:gold_dust"
-  },
+  "ingredient": "ic2:gold_dust",
   "result": {
     "id": "minecraft:gold_ingot"
   },

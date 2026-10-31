@@ -1,6 +1,7 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.IC2;
 import ic2.core.fluid.Ic2FluidStack;
 import ic2.core.item.ElectricItemManager;
@@ -14,7 +15,6 @@ import ic2.core.ref.Ic2Items;
 import ic2.core.util.Keyboard;
 import java.util.EnumSet;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,11 +24,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class JetpackGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -150,7 +146,7 @@ public class JetpackGameTests {
     IJetpack jetpack = (IJetpack) stack.getItem();
 
     int maxFlightHeight =
-        (int) (helper.getLevel().getMaxBuildHeight() / jetpack.getWorldHeightDivisor(stack));
+        (int) (helper.getLevel().getMaxY() / jetpack.getWorldHeightDivisor(stack));
     player.setPos(player.getX(), maxFlightHeight + 30, player.getZ());
 
     helper.assertTrue(
@@ -322,8 +318,7 @@ public class JetpackGameTests {
         JetpackHandler.hasJetpackAttached(nanoChestplate),
         "checking the attachment recipe must not mutate its NanoSuit input");
 
-    ItemStack attached =
-        attachmentRecipe.assemble(attachmentInput, helper.getLevel().registryAccess());
+    ItemStack attached = attachmentRecipe.assemble(attachmentInput);
     helper.assertTrue(
         JetpackHandler.hasJetpackAttached(attached),
         "assembling the attachment recipe should produce attached NanoSuit bodyarmor");
@@ -342,9 +337,7 @@ public class JetpackGameTests {
                 new ItemStack(Ic2Items.CARBON_PLATE),
                 new ItemStack(Ic2Items.CARBON_PLATE),
                 new ItemStack(Ic2Items.CARBON_PLATE)));
-    ItemStack craftedNanoSuit =
-        findCraftingRecipe(helper, nanoSuitInput)
-            .assemble(nanoSuitInput, helper.getLevel().registryAccess());
+    ItemStack craftedNanoSuit = findCraftingRecipe(helper, nanoSuitInput).assemble(nanoSuitInput);
 
     helper.assertTrue(
         craftedNanoSuit.is(Ic2Items.NANO_CHESTPLATE),
@@ -359,7 +352,7 @@ public class JetpackGameTests {
   private static CraftingRecipe findCraftingRecipe(GameTestHelper helper, CraftingInput input) {
     return helper
         .getLevel()
-        .getRecipeManager()
+        .recipeAccess()
         .getRecipeFor(RecipeType.CRAFTING, input, helper.getLevel())
         .map(RecipeHolder::value)
         .orElseThrow(() -> new AssertionError("missing crafting recipe for test input"));

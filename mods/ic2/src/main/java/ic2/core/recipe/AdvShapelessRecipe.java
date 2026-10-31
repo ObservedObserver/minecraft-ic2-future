@@ -25,26 +25,31 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
-public class AdvShapelessRecipe implements CraftingRecipe {
-  public final ItemStack output;
+public class AdvShapelessRecipe implements ic2.compat.Ic2CraftingRecipe {
+  public final ItemStackTemplate output;
   public final IRecipeInput[] input;
   public final boolean hidden;
   public final boolean consuming;
-  private final ResourceLocation id;
+  private final Identifier id;
 
   public AdvShapelessRecipe(
-      ResourceLocation id,
+      Identifier id, IRecipeInput[] input, ItemStack output, boolean hidden, boolean consuming) {
+    this(id, input, ItemStackTemplate.fromNonEmptyStack(output), hidden, consuming);
+  }
+
+  public AdvShapelessRecipe(
+      Identifier id,
       IRecipeInput[] input,
-      ItemStack output,
+      ItemStackTemplate output,
       boolean hidden,
       boolean consuming) {
     this.id = id;
@@ -88,22 +93,22 @@ public class AdvShapelessRecipe implements CraftingRecipe {
       return StackUtil.emptyStack;
     }
 
-    ItemStack ret = this.output.copy();
+    ItemStack ret = this.output.create();
     ElectricItem.manager.charge(ret, outputCharge, Integer.MAX_VALUE, true, false);
     return ret;
   }
 
   public ItemStack getResultItem() {
-    return this.output;
+    return this.output.create();
   }
 
   @Override
   public ItemStack getResultItem(HolderLookup.Provider registries) {
-    return this.output;
+    return this.output.create();
   }
 
   public boolean canShow() {
-    return AdvRecipe.canShow(this.input, this.output, this.hidden);
+    return AdvRecipe.canShow(this.input, this.output.create(), this.hidden);
   }
 
   @Override
@@ -155,7 +160,7 @@ public class AdvShapelessRecipe implements CraftingRecipe {
     return this.hidden;
   }
 
-  public ResourceLocation getId() {
+  public Identifier getId() {
     return this.id;
   }
 
@@ -170,11 +175,11 @@ public class AdvShapelessRecipe implements CraftingRecipe {
   }
 
   @Override
-  public RecipeSerializer<?> getSerializer() {
+  public RecipeSerializer<? extends ic2.compat.Ic2CraftingRecipe> getSerializer() {
     return Ic2RecipeSerializers.SHAPELESS;
   }
 
-  public static class Serializer implements RecipeSerializer<AdvShapelessRecipe> {
+  public static class Serializer extends ic2.compat.RecipeSerializerAdapter<AdvShapelessRecipe> {
     private final MapCodec<AdvShapelessRecipe> codec =
         new MapCodec<>() {
           @Override
@@ -194,7 +199,7 @@ public class AdvShapelessRecipe implements CraftingRecipe {
                         json.add(
                             key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                       });
-              return DataResult.success(fromJson(json));
+              return DataResult.success(fromJson(json, RecipeIo.registryJsonOps(ops)));
             } catch (RuntimeException e) {
               return DataResult.error(
                   () -> "Failed to parse IC2 shapeless recipe: " + e.getMessage());
@@ -211,18 +216,19 @@ public class AdvShapelessRecipe implements CraftingRecipe {
     private final StreamCodec<RegistryFriendlyByteBuf, AdvShapelessRecipe> streamCodec =
         StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
 
-    private static IRecipeInput[] getIngredients(JsonArray json) {
+    private static IRecipeInput[] getIngredients(JsonArray json, DynamicOps<JsonElement> context) {
       IRecipeInput[] inputs = new IRecipeInput[json.size()];
 
       for (int i = 0; i < json.size(); i++) {
-        inputs[i] = RecipeIo.parseInput(json.get(i));
+        inputs[i] = RecipeIo.parseInput(json.get(i), context);
       }
 
       return inputs;
     }
 
-    private static AdvShapelessRecipe fromJson(JsonObject json) {
-      IRecipeInput[] ingredients = getIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
+    private static AdvShapelessRecipe fromJson(JsonObject json, DynamicOps<JsonElement> context) {
+      IRecipeInput[] ingredients =
+          getIngredients(GsonHelper.getAsJsonArray(json, "ingredients"), context);
       if (ingredients.length == 0) {
         throw new JsonParseException("No ingredients for IC2 shapeless recipe");
       }
@@ -231,7 +237,8 @@ public class AdvShapelessRecipe implements CraftingRecipe {
         throw new JsonParseException("Too many ingredients for IC2 shapeless recipe");
       }
 
-      ItemStack result = RecipeIo.parseOutput(GsonHelper.getAsJsonObject(json, "result"));
+      ItemStackTemplate result =
+          RecipeIo.parseOutputTemplate(GsonHelper.getAsJsonObject(json, "result"));
       boolean consuming = GsonHelper.getAsBoolean(json, "consuming", false);
       boolean hidden = GsonHelper.getAsBoolean(json, "hidden", false);
       return new AdvShapelessRecipe(null, ingredients, result, hidden, consuming);
@@ -245,7 +252,11 @@ public class AdvShapelessRecipe implements CraftingRecipe {
       }
 
       return new AdvShapelessRecipe(
-          null, inputs, ItemStack.STREAM_CODEC.decode(buf), buf.readBoolean(), buf.readBoolean());
+          null,
+          inputs,
+          ItemStackTemplate.STREAM_CODEC.decode(buf),
+          buf.readBoolean(),
+          buf.readBoolean());
     }
 
     private static void toNetwork(RegistryFriendlyByteBuf buf, AdvShapelessRecipe recipe) {
@@ -255,7 +266,7 @@ public class AdvShapelessRecipe implements CraftingRecipe {
         RecipeIo.writeInput(buf, input);
       }
 
-      ItemStack.STREAM_CODEC.encode(buf, recipe.output);
+      ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.output);
       buf.writeBoolean(recipe.hidden);
       buf.writeBoolean(recipe.consuming);
     }
@@ -269,5 +280,13 @@ public class AdvShapelessRecipe implements CraftingRecipe {
     public StreamCodec<RegistryFriendlyByteBuf, AdvShapelessRecipe> streamCodec() {
       return this.streamCodec;
     }
+  }
+
+  public int getIc2RecipeWidth() {
+    return Math.min(3, getIngredients().size());
+  }
+
+  public int getIc2RecipeHeight() {
+    return (getIngredients().size() + 2) / 3;
   }
 }

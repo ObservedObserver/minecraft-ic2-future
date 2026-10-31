@@ -1,0 +1,62 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "ic2:legacy",
+    "property_id": "ic2:charge",
+    "fallback": {
+      "type": "minecraft:range_dispatch",
+      "property": "ic2:legacy",
+      "property_id": "ic2:charge",
+      "fallback": {
+        "type": "minecraft:range_dispatch",
+        "property": "ic2:legacy",
+        "property_id": "ic2:charge",
+        "fallback": {
+          "type": "minecraft:range_dispatch",
+          "property": "ic2:legacy",
+          "property_id": "ic2:charge",
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "ic2:item/charging_re_battery"
+          },
+          "entries": [
+            {
+              "threshold": 0.2,
+              "model": {
+                "type": "minecraft:model",
+                "model": "ic2:item/battery/charging_re_battery_1"
+              }
+            }
+          ]
+        },
+        "entries": [
+          {
+            "threshold": 0.4,
+            "model": {
+              "type": "minecraft:model",
+              "model": "ic2:item/battery/charging_re_battery_2"
+            }
+          }
+        ]
+      },
+      "entries": [
+        {
+          "threshold": 0.6,
+          "model": {
+            "type": "minecraft:model",
+            "model": "ic2:item/battery/charging_re_battery_3"
+          }
+        }
+      ]
+    },
+    "entries": [
+      {
+        "threshold": 0.8,
+        "model": {
+          "type": "minecraft:model",
+          "model": "ic2:item/battery/charging_re_battery_4"
+        }
+      }
+    ]
+  }
+}

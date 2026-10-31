@@ -1,27 +1,23 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.IHasGui;
 import ic2.core.item.IHandHeldInventory;
 import ic2.core.item.tool.ContainerToolbox;
 import ic2.core.item.tool.HandHeldToolbox;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ToolboxGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -90,7 +86,7 @@ public class ToolboxGameTests {
     ItemStack savedStack = player.getMainHandItem();
     helper.assertValueEqual(savedStack.getItem(), Ic2Items.TOOL_BOX, "held item after saving");
     helper.assertFalse(
-        StackUtil.getOrCreateNbtData(savedStack).getList("Items", 10).isEmpty(),
+        StackUtil.getOrCreateNbtData(savedStack).getListOrEmpty("Items").isEmpty(),
         "toolbox NBT should contain the stored item");
 
     HandHeldToolbox reopened =
@@ -114,7 +110,7 @@ public class ToolboxGameTests {
     player.containerMenu = menu;
 
     // Toolbox slots occupy 0-8, the main inventory 9-35, and hotbar slot 0 is menu slot 36.
-    menu.clicked(36, 0, ClickType.THROW, player);
+    menu.clicked(36, 0, ContainerInput.THROW, player);
 
     ItemEntity droppedToolbox =
         helper
@@ -133,7 +129,7 @@ public class ToolboxGameTests {
     helper.assertFalse(
         droppedData.contains("uid"), "the dropped toolbox must not retain its GUI uid");
     helper.assertFalse(
-        droppedData.getList("Items", 10).isEmpty(),
+        ic2.compat.NbtCompat.getList(droppedData, "Items", 10).isEmpty(),
         "the dropped toolbox should retain its contents");
     helper.succeed();
   }

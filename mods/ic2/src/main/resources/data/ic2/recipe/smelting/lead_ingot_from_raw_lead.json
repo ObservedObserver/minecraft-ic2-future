@@ -1,8 +1,6 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "ic2:raw_lead"
-  },
+  "ingredient": "ic2:raw_lead",
   "result": {
     "id": "ic2:lead_ingot"
   },

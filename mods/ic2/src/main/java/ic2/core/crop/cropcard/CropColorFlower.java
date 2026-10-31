@@ -5,7 +5,6 @@ import ic2.api.crops.ICropTile;
 import ic2.api.crops.ICropType;
 import ic2.core.crop.Ic2CropCard;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
@@ -50,7 +49,7 @@ public class CropColorFlower extends Ic2CropCard {
 
   @Override
   public ItemStack getGain(ICropTile crop) {
-    return new ItemStack(DyeItem.byColor(this.color));
+    return new ItemStack(net.minecraft.world.item.Items.DYE.pick(this.color));
   }
 
   @Override

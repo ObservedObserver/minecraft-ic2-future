@@ -5,8 +5,8 @@ import ic2.core.Ic2Gui;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
   protected final Gauge.GaugeProperties properties;
@@ -28,7 +28,7 @@ public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     double ratio = this.getRatio();
     if (!(ratio <= 0.0) || this.properties.bgWidth > 0) {
       bindTexture(this.properties.texture);
@@ -267,7 +267,7 @@ public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
       boolean vertical,
       boolean reverse,
       boolean smooth,
-      ResourceLocation texture) {
+      Identifier texture) {
     public GaugeProperties(
         int uInner,
         int vInner,
@@ -288,7 +288,7 @@ public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
         boolean vertical,
         boolean reverse,
         boolean smooth,
-        ResourceLocation texture) {
+        Identifier texture) {
       this(
           (short) uInner,
           (short) vInner,
@@ -333,7 +333,7 @@ public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
     private short uBgActive;
     private short vBgActive;
     private boolean smooth = true;
-    private ResourceLocation texture = GuiElement.commonTexture;
+    private Identifier texture = GuiElement.commonTexture;
 
     public GaugePropertyBuilder(
         int uInner,
@@ -410,7 +410,7 @@ public abstract class Gauge<T extends Gauge<T>> extends GuiElement<T> {
       return this;
     }
 
-    public Gauge.GaugePropertyBuilder withTexture(ResourceLocation texture) {
+    public Gauge.GaugePropertyBuilder withTexture(Identifier texture) {
       this.texture = texture;
       return this;
     }

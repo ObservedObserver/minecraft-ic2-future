@@ -1,9 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:coal_fuel_dust"
-  },
+  "ingredient": "ic2:coal_fuel_dust",
   "result": {
     "id": "ic2:coal_dust"
   },

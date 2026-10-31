@@ -1,8 +1,7 @@
 package ic2.core.slot;
 
-import com.mojang.datafixers.util.Pair;
 import ic2.core.util.StackUtil;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -11,8 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class SlotArmor extends Slot {
-  private static final ResourceLocation[] EMPTY_ARMOR_SLOT_TEXTURES =
-      new ResourceLocation[] {
+  private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES =
+      new Identifier[] {
         InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS,
         InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS,
         InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE,
@@ -30,7 +29,7 @@ public class SlotArmor extends Slot {
     return item == null ? false : StackUtil.getEquipmentSlotForItem(stack) == this.armorType;
   }
 
-  public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-    return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_ARMOR_SLOT_TEXTURES[this.armorType.getIndex()]);
+  public Identifier getNoItemIcon() {
+    return EMPTY_ARMOR_SLOT_TEXTURES[this.armorType.getIndex()];
   }
 }

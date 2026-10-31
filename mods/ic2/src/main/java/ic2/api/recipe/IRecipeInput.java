@@ -14,6 +14,6 @@ public interface IRecipeInput {
   List<ItemStack> getInputs();
 
   default Ingredient getIngredient() {
-    return Ingredient.of(this.getInputs().stream());
+    return Ingredient.of(this.getInputs().stream().map(ItemStack::getItem));
   }
 }

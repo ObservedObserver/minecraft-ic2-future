@@ -1,16 +1,12 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.tileentity.Ic2TileEntity;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
 import ic2.core.ref.Ic2Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ActiveStateGameTests {
   private static final String TEMPLATE = "gametest/empty3x3x3";
   private static final BlockPos POS = new BlockPos(1, 1, 1);
@@ -21,7 +17,9 @@ public class ActiveStateGameTests {
   @GameTest(template = TEMPLATE, timeoutTicks = 20)
   public static void setActiveSyncsServerBlockstate(GameTestHelper helper) {
     helper.setBlock(POS, Ic2Blocks.CREATIVE_GENERATOR);
-    Ic2TileEntity te = (Ic2TileEntity) helper.getBlockEntity(POS);
+    Ic2TileEntity te =
+        (Ic2TileEntity)
+            helper.getBlockEntity(POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     helper.assertTrue(te != null, "creative generator must have a tile entity");
     te.setActive(true);
 

@@ -5,7 +5,7 @@ import ic2.core.ref.Ic2ScreenHandlers;
 import ic2.core.util.Util;
 import java.io.IOException;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
@@ -17,13 +17,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public interface IHasGui extends Container {
   static Component getBeName(BlockEntity be) {
-    ResourceLocation id = Util.getName(be.getBlockState().getBlock());
+    Identifier id = Util.getName(be.getBlockState().getBlock());
     return Component.translatable(
         String.format("container.%s.%s", id.getNamespace(), id.getPath().replace('/', '.')));
   }
 
   static Component getItemName(Item item, Integer subGuiId) {
-    ResourceLocation id = Util.getName(item);
+    Identifier id = Util.getName(item);
     return Component.translatable(
         String.format(
             "container.%s.%s%s",

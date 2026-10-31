@@ -8,7 +8,7 @@ import ic2.core.util.Ic2Tooltip;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ public class ItemWindRotor extends Item implements IKineticRotor {
   private final int minWindStrength;
   private final int radius;
   private final float efficiency;
-  private final ResourceLocation renderTexture;
+  private final Identifier renderTexture;
   private final boolean water;
 
   public ItemWindRotor(
@@ -32,7 +32,7 @@ public class ItemWindRotor extends Item implements IKineticRotor {
       float efficiency,
       int minWindStrength,
       int maxWindStrength,
-      ResourceLocation RenderTexture) {
+      Identifier RenderTexture) {
     super(settings);
     this.radius = Radius;
     this.efficiency = efficiency;
@@ -43,6 +43,19 @@ public class ItemWindRotor extends Item implements IKineticRotor {
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag advanced) {
     Ic2Tooltip.add(
@@ -50,9 +63,9 @@ public class ItemWindRotor extends Item implements IKineticRotor {
         Component.translatable(
             "ic2.itemrotor.wind.info", this.minWindStrength, this.maxWindStrength));
     IKineticRotor.GearboxType type = null;
-    if (Minecraft.getInstance().screen instanceof GuiWaterKineticGenerator) {
+    if (Minecraft.getInstance().gui.screen() instanceof GuiWaterKineticGenerator) {
       type = IKineticRotor.GearboxType.WATER;
-    } else if (Minecraft.getInstance().screen instanceof GuiWindKineticGenerator) {
+    } else if (Minecraft.getInstance().gui.screen() instanceof GuiWindKineticGenerator) {
       type = IKineticRotor.GearboxType.WIND;
     }
 
@@ -69,7 +82,7 @@ public class ItemWindRotor extends Item implements IKineticRotor {
   }
 
   @Override
-  public ResourceLocation getRotorRenderTexture(ItemStack stack) {
+  public Identifier getRotorRenderTexture(ItemStack stack) {
     return this.renderTexture;
   }
 

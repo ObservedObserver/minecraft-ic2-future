@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/generator/electric/generator"
+  "parent": "ic2:block/generator/electric/generator"
 }

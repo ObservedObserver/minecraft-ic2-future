@@ -17,15 +17,16 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProvider {
+public class ItemArmorNanoSuit extends ItemArmorElectric
+    implements IItemHudProvider, ic2.compat.LegacyInventoryTicker {
   public static final int[] CHARGED_PROTECTION = new int[] {3, 6, 8, 3};
 
   public ItemArmorNanoSuit(
@@ -40,16 +41,15 @@ public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProv
       byte toggleTimer,
       boolean isNightVisionEnabled) {
     if (IC2.sideProxy.isSimulating() && toggleTimer > 0) {
-      nbtData.putByte("toggle_timer", --toggleTimer);
+      StackUtil.setTagValue(
+          stack, nbtData, "toggle_timer", net.minecraft.nbt.ByteTag.valueOf(--toggleTimer));
     }
 
     if (isNightVisionEnabled
         && IC2.sideProxy.isSimulating()
         && ElectricItem.manager.use(stack, 1.0, player)) {
       int skylight =
-          player
-              .getCommandSenderWorld()
-              .getMaxLocalRawBrightness(BlockPos.containing(player.position()));
+          player.level().getMaxLocalRawBrightness(BlockPos.containing(player.position()));
       affectPlayer(player, skylight);
     }
   }
@@ -89,27 +89,51 @@ public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProv
     return true;
   }
 
+  @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+  }
+
   public void inventoryTick(
       @NotNull ItemStack stack,
       @NotNull Level world,
       @NotNull Entity entity,
       int slot,
       boolean selected) {
-    super.inventoryTick(stack, world, entity, slot, selected);
+    if (world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+      super.inventoryTick(
+          stack,
+          serverLevel,
+          entity,
+          selected ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : null);
+    }
     if (entity instanceof Player player) {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      byte toggleTimer = nbtData.getByte("toggle_timer");
+      byte toggleTimer = nbtData.getByteOr("toggle_timer", (byte) 0);
       boolean ret = false;
       if (player.getItemBySlot(EquipmentSlot.HEAD) == stack) {
-        boolean isNightVisionEnabled = nbtData.getBoolean("night_vision");
-        short hubmode = nbtData.getShort("hud_mode");
+        boolean isNightVisionEnabled = nbtData.getBooleanOr("night_vision", false);
+        short hubmode = nbtData.getShortOr("hud_mode", (short) 0);
         if (IC2.keyboard.isAltKeyDown(player)
             && IC2.keyboard.isModeSwitchKeyDown(player)
             && toggleTimer == 0) {
           toggleTimer = 10;
           isNightVisionEnabled = !isNightVisionEnabled;
           if (IC2.sideProxy.isSimulating()) {
-            nbtData.putBoolean("night_vision", isNightVisionEnabled);
+            StackUtil.setTagValue(
+                stack,
+                nbtData,
+                "night_vision",
+                net.minecraft.nbt.ByteTag.valueOf(isNightVisionEnabled));
             if (isNightVisionEnabled) {
               IC2.sideProxy.messagePlayer(player, "ic2.night_vision.mode.enabled");
             } else {
@@ -129,7 +153,8 @@ public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProv
           }
 
           if (IC2.sideProxy.isSimulating()) {
-            nbtData.putShort("hud_mode", hubmode);
+            StackUtil.setTagValue(
+                stack, nbtData, "hud_mode", net.minecraft.nbt.ShortTag.valueOf(hubmode));
             IC2.sideProxy.messagePlayer(
                 player,
                 Component.translatable(HudMode.getFromID(hubmode).getTranslationKey()).getString());
@@ -142,6 +167,18 @@ public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProv
   }
 
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag context) {
     super.appendHoverText(stack, world, tooltip, context);
@@ -167,6 +204,6 @@ public class ItemArmorNanoSuit extends ItemArmorElectric implements IItemHudProv
 
   @Override
   public HudMode getHudMode(ItemStack stack) {
-    return HudMode.getFromID(StackUtil.getOrCreateNbtData(stack).getShort("hud_mode"));
+    return HudMode.getFromID(StackUtil.getOrCreateNbtData(stack).getShortOr("hud_mode", (short) 0));
   }
 }

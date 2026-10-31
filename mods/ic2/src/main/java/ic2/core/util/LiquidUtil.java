@@ -346,7 +346,7 @@ public class LiquidUtil {
 
   private static void storeRemainingOrDrop(Player player, ItemStack stack) {
     if (!StackUtil.isEmpty(stack) && !StackUtil.storeInventoryItem(stack, player, false)) {
-      player.drop(stack, false);
+      player.drop(stack, false, net.minecraft.util.Prediction.SERVER_ONLY);
     }
   }
 
@@ -685,7 +685,10 @@ public class LiquidUtil {
           return true;
         }
 
-        if (world.dimensionType().ultraWarm() && fluidBlock == Blocks.WATER) {
+        if (world
+                .environmentAttributes()
+                .getValue(net.minecraft.world.attribute.EnvironmentAttributes.WATER_EVAPORATES, pos)
+            && fluidBlock == Blocks.WATER) {
           world.playSound(
               null,
               pos,
@@ -705,7 +708,7 @@ public class LiquidUtil {
                 0.0);
           }
         } else {
-          if (!world.isClientSide && !state.canOcclude() && state.getFluidState().isEmpty()) {
+          if (!world.isClientSide() && !state.canOcclude() && state.getFluidState().isEmpty()) {
             world.removeBlock(pos, true);
           }
 
@@ -738,7 +741,7 @@ public class LiquidUtil {
     if (drained != null) {
       return drained.getAmountMb() >= 1000;
     } else {
-      return state.getValues().containsKey(LiquidBlock.LEVEL)
+      return state.hasProperty(LiquidBlock.LEVEL)
           ? (Integer) state.getValue(LiquidBlock.LEVEL) == 0
           : false;
     }

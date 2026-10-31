@@ -80,8 +80,8 @@ public class TileEntityCokeKiln extends TileEntityBase implements IHasGui, IGuiV
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getInt("progress");
-    this.operationLength = nbt.getInt("operationLength");
+    this.progress = nbt.getIntOr("progress", 0);
+    this.operationLength = nbt.getIntOr("operationLength", 0);
   }
 
   @Override

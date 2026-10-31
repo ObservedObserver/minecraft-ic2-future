@@ -3,7 +3,7 @@ package ic2.core.gui;
 import ic2.core.Ic2Gui;
 import ic2.core.util.StackUtil;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemImage extends GuiElement<ItemImage> {
@@ -15,7 +15,7 @@ public class ItemImage extends GuiElement<ItemImage> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawBackground(guiGraphics, mouseX, mouseY);
     ItemStack stack = this.itemSupplier.get();
     if (!StackUtil.isEmpty(stack)) {

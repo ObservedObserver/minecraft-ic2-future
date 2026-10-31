@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/lead"
+            "items": "#c:dusts/lead"
           }
         ]
       },
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/sulfur"
+            "items": "#c:dusts/sulfur"
           }
         ]
       },
@@ -47,7 +47,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/advanced_re_battery"
+        "recipes": [
+          "ic2:shaped/advanced_re_battery"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

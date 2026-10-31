@@ -52,17 +52,23 @@ public class PahoehoeLavaBlock extends LiquidBlock {
       Level world,
       BlockPos pos,
       Block neighborBlock,
-      BlockPos neighborPos,
+      net.minecraft.world.level.redstone.Orientation orientation,
       boolean movedByPiston) {
-    super.neighborChanged(state, world, pos, neighborBlock, neighborPos, movedByPiston);
+    super.neighborChanged(state, world, pos, neighborBlock, orientation, movedByPiston);
     if (state.getValue(LiquidBlock.LEVEL) == 0 && isTouchingWater(world, pos)) {
       world.setBlockAndUpdate(pos, Blocks.BASALT.defaultBlockState());
     }
   }
 
   @Override
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-    if (!world.isClientSide) {
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
+    if (!world.isClientSide()) {
       entity.hurt(world.damageSources().lava(), 4.0F);
       entity.igniteForSeconds(30);
     }

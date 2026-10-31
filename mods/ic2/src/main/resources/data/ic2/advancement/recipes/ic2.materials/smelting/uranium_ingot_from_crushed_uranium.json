@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/uranium_ingot_from_crushed_uranium"
+        "recipes": [
+          "ic2:smelting/uranium_ingot_from_crushed_uranium"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

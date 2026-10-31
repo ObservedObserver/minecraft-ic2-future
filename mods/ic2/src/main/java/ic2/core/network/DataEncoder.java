@@ -30,7 +30,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.effect.MobEffect;
@@ -240,8 +240,8 @@ public final class DataEncoder {
         break;
       case GameProfile:
         GameProfile gp = (GameProfile) o;
-        encode(os, gp.getId(), true);
-        os.writeString(gp.getName());
+        encode(os, gp.id(), true);
+        os.writeString(gp.name());
         break;
       case Integer:
         os.writeInt((Integer) o);
@@ -285,8 +285,8 @@ public final class DataEncoder {
       case Potion:
         encode(os, BuiltInRegistries.MOB_EFFECT.getKey((MobEffect) o), false);
         break;
-      case ResourceLocation:
-        ResourceLocation loc = (ResourceLocation) o;
+      case Identifier:
+        Identifier loc = (Identifier) o;
         os.writeString(loc.getNamespace());
         os.writeString(loc.getPath());
         break;
@@ -454,8 +454,7 @@ public final class DataEncoder {
               return ret;
             };
       case Block:
-        return Util.getBlock(
-            (ResourceLocation) decode(is, DataEncoder.EncodedType.ResourceLocation));
+        return Util.getBlock((Identifier) decode(is, DataEncoder.EncodedType.Identifier));
       case BlockPos:
         return new BlockPos(is.readInt(), is.readInt(), is.readInt());
       case Boolean:
@@ -508,8 +507,8 @@ public final class DataEncoder {
       case Float:
         return is.readFloat();
       case Fluid:
-        return BuiltInRegistries.FLUID.get(
-            (ResourceLocation) decode(is, DataEncoder.EncodedType.ResourceLocation));
+        return BuiltInRegistries.FLUID.getValue(
+            (Identifier) decode(is, DataEncoder.EncodedType.Identifier));
       case FluidStack:
         {
           Fluid fluid = (Fluid) decode(is, DataEncoder.EncodedType.Fluid);
@@ -540,8 +539,7 @@ public final class DataEncoder {
           return ret;
         }
       case Item:
-        return Util.getItem(
-            (ResourceLocation) decode(is, DataEncoder.EncodedType.ResourceLocation));
+        return Util.getItem((Identifier) decode(is, DataEncoder.EncodedType.Identifier));
       case ItemStack:
         {
           int size = is.readByte();
@@ -565,9 +563,9 @@ public final class DataEncoder {
         return new Object();
       case Potion:
         return BuiltInRegistries.MOB_EFFECT.get(
-            (ResourceLocation) decode(is, DataEncoder.EncodedType.ResourceLocation));
-      case ResourceLocation:
-        return ResourceLocation.fromNamespaceAndPath(is.readString(), is.readString());
+            (Identifier) decode(is, DataEncoder.EncodedType.Identifier));
+      case Identifier:
+        return Identifier.fromNamespaceAndPath(is.readString(), is.readString());
       case Short:
         return is.readShort();
       case String:
@@ -590,8 +588,7 @@ public final class DataEncoder {
       case Vec3:
         return new Vec3(is.readDouble(), is.readDouble(), is.readDouble());
       case World:
-        final ResourceLocation dimensionId =
-            (ResourceLocation) decode(is, DataEncoder.EncodedType.ResourceLocation);
+        final Identifier dimensionId = (Identifier) decode(is, DataEncoder.EncodedType.Identifier);
         return (IResolvableValue<Level>) server -> IC2.sideProxy.getWorld(server, dimensionId);
       default:
         throw new IllegalArgumentException("unhandled type: " + type);
@@ -795,7 +792,7 @@ public final class DataEncoder {
     ItemStack(ItemStack.class),
     World(Level.class, false),
     NBTTagCompound(CompoundTag.class),
-    ResourceLocation(ResourceLocation.class),
+    Identifier(Identifier.class),
     GameProfile(GameProfile.class),
     Potion(MobEffect.class),
     Enchantment(Enchantment.class),

@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/mox_1"
+        "recipes": [
+          "ic2:shaped/mox_1"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

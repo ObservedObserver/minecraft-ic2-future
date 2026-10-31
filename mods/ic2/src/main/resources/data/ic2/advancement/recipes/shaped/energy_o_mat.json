@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/energy_o_mat"
+        "recipes": [
+          "ic2:shaped/energy_o_mat"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -8,12 +8,12 @@ import ic2.core.gui.ItemStackImage;
 import ic2.core.gui.LinkedGauge;
 import ic2.core.util.StackUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiBatchCrafter extends Ic2Gui<ContainerBatchCrafter> {
-  private static final ResourceLocation TEXTURE =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guibatchcrafter.png");
+  private static final Identifier TEXTURE =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guibatchcrafter.png");
 
   public GuiBatchCrafter(
       ContainerBatchCrafter container, Inventory playerInventory, Component title) {
@@ -32,7 +32,7 @@ public class GuiBatchCrafter extends Ic2Gui<ContainerBatchCrafter> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return TEXTURE;
   }
 }

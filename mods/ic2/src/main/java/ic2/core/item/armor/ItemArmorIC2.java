@@ -1,14 +1,14 @@
 package ic2.core.item.armor;
 
 import ic2.api.item.IMetalArmor;
+import ic2.compat.ArmorItem;
 import ic2.core.ref.Ic2ArmorMaterials;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 
 public class ItemArmorIC2 extends ArmorItem implements IMetalArmor {
   public ItemArmorIC2(Holder<ArmorMaterial> material, EquipmentSlot slot, Properties settings) {

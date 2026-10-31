@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/bronze"
+            "items": "#c:ingots/bronze"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/bronze"
+            "items": "#c:plates/bronze"
           }
         ]
       },
@@ -23,7 +23,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/bronze_rotor_blade"
+        "recipes": [
+          "ic2:shaped/bronze_rotor_blade"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -4,20 +4,22 @@
       "name": "ic2",
       "rolls": {
         "min": 1,
-        "max": 3
+        "max": 3,
+        "type": "minecraft:uniform"
       },
       "entries": [
         {
           "type": "item",
           "name": "minecraft:copper_ingot",
           "weight": 9,
-          "functions": [
+          "modifier": [
             {
-              "function": "set_count",
               "count": {
                 "min": 2,
-                "max": 6
-              }
+                "max": 6,
+                "type": "minecraft:uniform"
+              },
+              "type": "set_count"
             }
           ]
         },
@@ -25,13 +27,14 @@
           "type": "item",
           "name": "ic2:tin_ingot",
           "weight": 8,
-          "functions": [
+          "modifier": [
             {
-              "function": "set_count",
               "count": {
                 "min": 1,
-                "max": 5
-              }
+                "max": 5,
+                "type": "minecraft:uniform"
+              },
+              "type": "set_count"
             }
           ]
         },
@@ -41,18 +44,8 @@
           "weight": 1
         },
         {
-          "type": "item",
-          "name": "ic2:iridium_shard",
-          "weight": 8,
-          "functions": [
-            {
-              "function": "set_count",
-              "count": {
-                "min": 2,
-                "max": 5
-              }
-            }
-          ]
+          "type": "minecraft:empty",
+          "weight": 8
         },
         {
           "type": "item",
@@ -87,6 +80,34 @@
         {
           "type": "empty",
           "weight": 44
+        }
+      ]
+    },
+    {
+      "name": "ic2_iridium_shard",
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 3
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "ic2:iridium_shard",
+          "condition": {
+            "type": "minecraft:random_chance",
+            "chance": 0.1952154776946307
+          },
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 10
+              }
+            }
+          ]
         }
       ]
     }

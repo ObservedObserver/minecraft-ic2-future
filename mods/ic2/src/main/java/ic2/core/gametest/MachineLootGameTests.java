@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
 import ic2.core.block.wiring.tileentity.TileEntityElectricBlock;
 import ic2.core.init.IC2Config;
@@ -10,7 +11,6 @@ import ic2.core.util.StackUtil;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -28,11 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class MachineLootGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -209,7 +205,7 @@ public class MachineLootGameTests {
           double expectedEnergy =
               STORED_ENERGY * IC2Config.balance.energyRetainedInStorageBlockDrops.get();
           helper.assertValueEqual(
-              StackUtil.getOrCreateNbtData(pickedStack).getDouble("energy"),
+              StackUtil.getOrCreateNbtData(pickedStack).getDoubleOr("energy", 0.0),
               expectedEnergy,
               "picked-up stack energy");
 
@@ -261,7 +257,8 @@ public class MachineLootGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       helper.fail("expected " + type.getSimpleName() + " at " + pos + ", found " + be);
     }

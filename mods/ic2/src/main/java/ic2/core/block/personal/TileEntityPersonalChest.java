@@ -6,10 +6,10 @@ import ic2.core.IC2;
 import ic2.core.IHasGui;
 import ic2.core.block.invslot.InvSlot;
 import ic2.core.block.tileentity.TileEntityInventory;
-import ic2.core.item.tool.ItemToolWrench;
-import ic2.core.item.tool.ItemToolWrenchElectric;
 import ic2.core.gui.dynamic.DynamicContainer;
 import ic2.core.gui.dynamic.GuiParser;
+import ic2.core.item.tool.ItemToolWrench;
+import ic2.core.item.tool.ItemToolWrenchElectric;
 import ic2.core.network.GrowingBuffer;
 import ic2.core.ref.Ic2BlockEntities;
 import ic2.core.ref.Ic2ScreenHandlers;
@@ -63,7 +63,7 @@ public class TileEntityPersonalChest extends TileEntityInventory
     }
 
     GameProfile teOwner = te.getOwner();
-    if (!te.getLevel().isClientSide) {
+    if (!te.getLevel().isClientSide()) {
       if (teOwner == null) {
         te.setOwner(profile);
         // without marking dirty, a claim followed by a chunk unload silently loses the owner
@@ -72,16 +72,19 @@ public class TileEntityPersonalChest extends TileEntityInventory
         return true;
       }
 
-      if (te.getLevel().getServer().getPlayerList().isOp(profile)) {
+      if (te.getLevel()
+          .getServer()
+          .getPlayerList()
+          .isOp(new net.minecraft.server.players.NameAndId(profile))) {
         return true;
       }
     } else if (teOwner == null) {
       return true;
     }
 
-    return teOwner.getId() != null
-        ? teOwner.getId().equals(profile.getId())
-        : teOwner.getName().equals(profile.getName());
+    return teOwner.id() != null
+        ? teOwner.id().equals(profile.id())
+        : teOwner.name().equals(profile.name());
   }
 
   @Override
@@ -145,7 +148,7 @@ public class TileEntityPersonalChest extends TileEntityInventory
 
   @Override
   public void startOpen(Player player) {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.usingPlayers.add(player);
       this.updateUsingPlayerCount();
     }
@@ -153,7 +156,7 @@ public class TileEntityPersonalChest extends TileEntityInventory
 
   @Override
   public void stopOpen(Player player) {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.usingPlayers.remove(player);
       this.updateUsingPlayerCount();
     }
@@ -175,7 +178,7 @@ public class TileEntityPersonalChest extends TileEntityInventory
   @Override
   public boolean wrenchCanRemove(Player player) {
     if (!this.permitsAccess(player.getGameProfile())) {
-      IC2.sideProxy.messagePlayer(player, "This safe is owned by " + this.owner.getName());
+      IC2.sideProxy.messagePlayer(player, "This safe is owned by " + this.owner.name());
       return false;
     } else if (!this.contentSlot.isEmpty()) {
       IC2.sideProxy.messagePlayer(player, "Can't wrench non-empty safe");
@@ -293,8 +296,8 @@ public class TileEntityPersonalChest extends TileEntityInventory
   @Override
   protected InteractionResult onActivated(
       Player player, InteractionHand hand, Direction side, Vec3 hit) {
-    if (!this.getLevel().isClientSide && !this.permitsAccess(player.getGameProfile())) {
-      IC2.sideProxy.messagePlayer(player, "This safe is owned by " + this.getOwner().getName());
+    if (!this.getLevel().isClientSide() && !this.permitsAccess(player.getGameProfile())) {
+      IC2.sideProxy.messagePlayer(player, "This safe is owned by " + this.getOwner().name());
       return InteractionResult.FAIL;
     } else {
       return super.onActivated(player, hand, side, hit);

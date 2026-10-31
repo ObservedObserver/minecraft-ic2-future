@@ -1,0 +1,26 @@
+{
+  "pools": [
+    {
+      "name": "ic2_iridium_shard",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "ic2:iridium_shard",
+          "condition": {
+            "type": "minecraft:random_chance",
+            "chance": 0.5
+          },
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 6,
+              "max": 12
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

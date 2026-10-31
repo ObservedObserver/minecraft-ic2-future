@@ -2,8 +2,8 @@ package ic2.forge.model;
 
 import ic2.core.item.tool.ItemObscurator;
 import java.util.Arrays;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 
 final class OverlayRenderUtil {
@@ -31,7 +31,7 @@ final class OverlayRenderUtil {
       float uE,
       float vE,
       int colorMul) {
-    int[] oldData = template.getVertices();
+    int[] oldData = ic2.compat.client.QuadCompat.vertices(template);
     int[] newData = Arrays.copyOf(oldData, oldData.length);
     int stride = oldData.length >>> 2;
 
@@ -60,8 +60,12 @@ final class OverlayRenderUtil {
       }
     }
 
-    return new BakedQuad(
-        newData, template.getTintIndex(), template.getDirection(), sprite, template.isShade());
+    return ic2.compat.client.QuadCompat.fromVertices(
+        newData,
+        template.materialInfo().tintIndex(),
+        template.direction(),
+        sprite,
+        template.materialInfo().ambientOcclusion());
   }
 
   static BakedQuad applyBlockOverlay(
@@ -79,7 +83,7 @@ final class OverlayRenderUtil {
     TextureAtlasSprite sprite = renderInfo.sprites[textureIndex];
     byte[] uvMap = BLOCK_UV_MAP[face.ordinal() / 2];
     int mappedColor = mapVertexColor(colorMul);
-    int[] oldData = quad.getVertices();
+    int[] oldData = ic2.compat.client.QuadCompat.vertices(quad);
     int[] newData = Arrays.copyOf(oldData, oldData.length);
     int stride = oldData.length >>> 2;
 
@@ -95,10 +99,15 @@ final class OverlayRenderUtil {
           Float.floatToRawIntBits(vS + dv * (x * uvMap[3] + y * uvMap[4] + z * uvMap[5]));
     }
 
-    return new BakedQuad(newData, quad.getTintIndex(), face, sprite, quad.isShade());
+    return ic2.compat.client.QuadCompat.fromVertices(
+        newData,
+        quad.materialInfo().tintIndex(),
+        face,
+        sprite,
+        quad.materialInfo().ambientOcclusion());
   }
 
-  static BakedQuad createBlockOverlayQuad(Direction face, float offset) {
+  static BakedQuad createBlockOverlayQuad(Direction face, float offset, TextureAtlasSprite sprite) {
     float neg = -offset;
     float pos = 1.0f + offset;
     int[] data = new int[32];
@@ -137,7 +146,7 @@ final class OverlayRenderUtil {
       data[i + 7] = normal;
     }
 
-    return new BakedQuad(data, -1, face, null, true);
+    return ic2.compat.client.QuadCompat.fromVertices(data, -1, face, sprite, true);
   }
 
   private static void fillFaceQuad(

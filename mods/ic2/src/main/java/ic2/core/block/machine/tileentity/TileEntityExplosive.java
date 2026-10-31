@@ -80,7 +80,9 @@ public abstract class TileEntityExplosive extends TileEntityInventory
 
   @Override
   protected void onEntityCollision(Entity entity) {
-    if (!this.getLevel().isClientSide && entity instanceof Projectile arrow && entity.isOnFire()) {
+    if (!this.getLevel().isClientSide()
+        && entity instanceof Projectile arrow
+        && entity.isOnFire()) {
       Entity owner = arrow.getOwner();
       this.explode(owner instanceof LivingEntity ? (LivingEntity) owner : null, false);
     }
@@ -103,7 +105,7 @@ public abstract class TileEntityExplosive extends TileEntityInventory
     }
 
     Level world = this.getLevel();
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return true;
     }
 

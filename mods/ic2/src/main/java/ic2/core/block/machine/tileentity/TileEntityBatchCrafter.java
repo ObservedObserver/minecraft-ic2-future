@@ -102,7 +102,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
             @Override
             public boolean accepts(ItemStack ingredient) {
               CraftingRecipe recipe =
-                  TileEntityBatchCrafter.this.level.isClientSide
+                  TileEntityBatchCrafter.this.level.isClientSide()
                       ? TileEntityBatchCrafter.this.findRecipe()
                       : TileEntityBatchCrafter.this.recipe;
               if (recipe == null) {
@@ -142,13 +142,13 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getShort("progress");
-    ListTag grid = nbt.getList("grid", 10);
+    this.progress = nbt.getShortOr("progress", (short) 0);
+    ListTag grid = ic2.compat.NbtCompat.getList(nbt, "grid", 10);
 
     for (int i = 0; i < grid.size(); i++) {
-      CompoundTag contentTag = grid.getCompound(i);
-      this.craftingGrid[contentTag.getByte("index")] =
-          ItemStack.parseOptional(registries, contentTag);
+      CompoundTag contentTag = grid.getCompoundOrEmpty(i);
+      this.craftingGrid[contentTag.getByteOr("index", (byte) 0)] =
+          ic2.compat.NbtCompat.readItem(registries, contentTag);
     }
   }
 
@@ -164,7 +164,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
         CompoundTag contentTag = new CompoundTag();
         contentTag.putByte("index", i);
         // save() returns the merged tag instead of mutating the prefix
-        grid.add(content.save(registries, contentTag));
+        grid.add(ic2.compat.NbtCompat.saveItem(content, registries, contentTag));
       }
     }
 
@@ -203,7 +203,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
     CraftingRecipe craftingRecipe = this.findCraftingRecipe();
     Level world = this.getLevel();
     return craftingRecipe != null
-        ? craftingRecipe.assemble(toCraftingInput(this.ingredients), world.registryAccess())
+        ? craftingRecipe.assemble(toCraftingInput(this.ingredients))
         : StackUtil.emptyStack;
   }
 
@@ -215,7 +215,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
 
     this.recipeOutput =
         this.recipe != null
-            ? this.recipe.assemble(toCraftingInput(this.crafting), this.getLevel().registryAccess())
+            ? this.recipe.assemble(toCraftingInput(this.crafting))
             : StackUtil.emptyStack;
     this.newChange = true;
   }
@@ -227,7 +227,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.setOverclockRates();
       this.matrixChange(-1);
     }
@@ -236,7 +236,7 @@ public class TileEntityBatchCrafter extends TileEntityElectricMachine
   @Override
   public void setChanged() {
     super.setChanged();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.setOverclockRates();
       this.attemptToBalance = true;
     }

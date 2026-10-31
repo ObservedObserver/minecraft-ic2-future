@@ -1,10 +1,12 @@
 {
   "variants": {
     "active=false": {
-      "model": "ic2:block/machine/misc/terraformer"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/terraformer"
     },
     "active=true": {
-      "model": "ic2:block/machine/misc/terraformer_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/terraformer"
     }
   }
 }

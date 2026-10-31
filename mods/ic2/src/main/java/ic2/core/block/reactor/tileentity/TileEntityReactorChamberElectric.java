@@ -52,7 +52,7 @@ public class TileEntityReactorChamberElectric extends Ic2TileEntity
   }
 
   private void updateRedstoneLink() {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       TileEntityNuclearReactorElectric reactor = this.getReactor();
       if (reactor != null) {
         this.redstone.linkTo(reactor.redstone);

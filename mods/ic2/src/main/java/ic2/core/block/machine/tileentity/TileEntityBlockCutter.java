@@ -48,7 +48,7 @@ public class TileEntityBlockCutter
       if (ret != null && ret.recipe().getMetaData() != null) {
         ItemStack bladeStack = this.cutterSlot.get();
         IBlockCuttingBlade blade = (IBlockCuttingBlade) bladeStack.getItem();
-        if (ret.recipe().getMetaData().getInt("hardness") > blade.getHardness(bladeStack)) {
+        if (ret.recipe().getMetaData().getIntOr("hardness", 0) > blade.getHardness(bladeStack)) {
           if (!this.bladeTooWeak) {
             this.bladeTooWeak = true;
           }

@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "bronze_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:bronze_dust"
-  },
+  "ingredient": "ic2:bronze_dust",
   "result": {
     "id": "ic2:bronze_ingot"
   },

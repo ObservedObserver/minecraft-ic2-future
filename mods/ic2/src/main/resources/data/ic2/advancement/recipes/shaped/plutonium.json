@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/plutonium"
+        "recipes": [
+          "ic2:shaped/plutonium"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

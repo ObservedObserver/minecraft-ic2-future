@@ -42,7 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
@@ -95,25 +95,27 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
     if (nbt.contains("cropOwner") && nbt.contains("cropId")) {
-      this.crop = Crops.instance.getCropCard(nbt.getString("cropOwner"), nbt.getString("cropId"));
+      this.crop =
+          Crops.instance.getCropCard(
+              nbt.getStringOr("cropOwner", ""), nbt.getStringOr("cropId", ""));
     }
     if (nbt.contains("crossingBase")) {
-      this.crossingBase = nbt.getBoolean("crossingBase");
+      this.crossingBase = nbt.getBooleanOr("crossingBase", false);
     }
     if (nbt.contains("statGrowth") && nbt.contains("statGain")) {
-      this.statGrowth = nbt.getByte("statGrowth");
-      this.statGain = nbt.getByte("statGain");
-      this.statResistance = nbt.getByte("statResistance");
-      this.storageNutrients = nbt.getShort("storageNutrients");
-      this.storageWater = nbt.getShort("storageWater");
-      this.storageWeedEX = nbt.getShort("storageWeedEX");
-      this.terrainHumidity = nbt.getByte("terrainHumidity");
-      this.terrainNutrients = nbt.getByte("terrainNutrients");
-      this.terrainAirQuality = nbt.getByte("terrainAirQuality");
-      this.currentAge = nbt.getByte("currentAge");
-      this.growthPoints = nbt.getShort("growthPoints");
-      this.scanLevel = nbt.getByte("scanLevel");
-      this.customData = nbt.getCompound("customData");
+      this.statGrowth = nbt.getByteOr("statGrowth", (byte) 0);
+      this.statGain = nbt.getByteOr("statGain", (byte) 0);
+      this.statResistance = nbt.getByteOr("statResistance", (byte) 0);
+      this.storageNutrients = nbt.getShortOr("storageNutrients", (short) 0);
+      this.storageWater = nbt.getShortOr("storageWater", (short) 0);
+      this.storageWeedEX = nbt.getShortOr("storageWeedEX", (short) 0);
+      this.terrainHumidity = nbt.getByteOr("terrainHumidity", (byte) 0);
+      this.terrainNutrients = nbt.getByteOr("terrainNutrients", (byte) 0);
+      this.terrainAirQuality = nbt.getByteOr("terrainAirQuality", (byte) 0);
+      this.currentAge = nbt.getByteOr("currentAge", (byte) 0);
+      this.growthPoints = nbt.getShortOr("growthPoints", (short) 0);
+      this.scanLevel = nbt.getByteOr("scanLevel", (byte) 0);
+      this.customData = nbt.getCompoundOrEmpty("customData");
     }
   }
 
@@ -183,9 +185,9 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
 
       BlockState state = world.getBlockState(this.worldPosition);
       world.sendBlockUpdated(this.worldPosition, state, state, 3);
-      world.blockUpdated(this.worldPosition, this.getBlockType());
+      world.updateNeighborsAt(this.worldPosition, this.getBlockType(), null);
       world.getChunkSource().getLightEngine().checkBlock(this.worldPosition);
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         for (String field : this.getNetworkedFields()) {
           IC2.network.get(true).updateTileEntityField(this, field);
         }
@@ -194,7 +196,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
   }
 
   public void performTick() {
-    assert !this.getLevel().isClientSide;
+    assert !this.getLevel().isClientSide();
     long ticker = this.level.getGameTime();
     if (ticker % ((long) tickRate << 2) == 0L) {
       this.updateTerrainHumidity();
@@ -371,10 +373,19 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
         }
 
         BlockPos soilPos = dstPos.below();
-        Block block = world.getBlockState(soilPos).getBlock();
-        if (block == Blocks.DIRT || block == Blocks.SHORT_GRASS || block == Blocks.FARMLAND) {
-          world.setBlock(soilPos, Blocks.SHORT_GRASS.defaultBlockState(), 7);
-          world.setBlock(dstPos, Blocks.TALL_GRASS.defaultBlockState(), 7);
+        BlockState soilState = world.getBlockState(soilPos);
+        Block block = soilState.getBlock();
+        if (block == Blocks.DIRT || block == Blocks.GRASS_BLOCK || block == Blocks.FARMLAND) {
+          // "Grass" soil is the solid grass block, not the non-colliding grass plant.
+          BlockState grassSoil =
+              Block.pushEntitiesUp(soilState, Blocks.GRASS_BLOCK.defaultBlockState(), world, soilPos);
+          world.setBlock(soilPos, grassSoil, 7);
+          if (world.isEmptyBlock(dstPos.above())) {
+            net.minecraft.world.level.block.DoublePlantBlock.placeAt(
+                world, Blocks.TALL_GRASS.defaultBlockState(), dstPos, 7);
+          } else {
+            world.setBlock(dstPos, Blocks.SHORT_GRASS.defaultBlockState(), 7);
+          }
         }
       }
     }
@@ -392,7 +403,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
   @Override
   protected InteractionResult onActivated(
       Player player, InteractionHand hand, Direction side, Vec3 hit) {
-    if (this.getLevel().isClientSide) {
+    if (this.getLevel().isClientSide()) {
       return InteractionResult.CONSUME;
     } else {
       return this.rightClick(player, hand) ? InteractionResult.CONSUME : InteractionResult.PASS;
@@ -408,7 +419,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
       return this.crop.onLeftClick(this, player)
           ? InteractionResult.SUCCESS
           : InteractionResult.PASS;
-    } else if (this.isCrossingBase() && !this.getLevel().isClientSide) {
+    } else if (this.isCrossingBase() && !this.getLevel().isClientSide()) {
       this.setCrossingBase(false);
       this.dirty = true;
       StackUtil.dropAsEntity(
@@ -421,7 +432,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
 
   @Override
   protected void onBlockBreak() {
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.pick();
     }
   }
@@ -546,21 +557,9 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
 
   @Override
   public void onEntityCollision(Entity entity) {
-    if (this.crop != null) {
-      if (this.crop.onEntityCollision(this, entity)) {
-        Level world = this.getLevel();
-        if (world.isClientSide) {
-          return;
-        }
-
-        if (IC2.random.nextInt(100) == 0 && IC2.random.nextInt(40) > this.statResistance) {
-          this.reset();
-          world.setBlock(this.worldPosition.below(), Blocks.DIRT.defaultBlockState(), 7);
-          if (debugCollision) {
-            IC2.log.info(LogCategory.Block, "Crop at %s - crop was trampled", this.worldPosition);
-          }
-        }
-      }
+    // Crop-specific contact effects remain active, but contact must not destroy the crop or soil.
+    if (this.crop != null && !this.getLevel().isClientSide()) {
+      this.crop.onEntityCollision(this, entity);
     }
   }
 
@@ -607,7 +606,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
     int humidity =
         Crops.instance.getHumidityBiomeBonus(BiomeUtil.getBiome(world, this.worldPosition));
     BlockState below = world.getBlockState(this.worldPosition.below());
-    if (below.getBlock() instanceof FarmBlock && below.getValue(FarmBlock.MOISTURE) >= 7) {
+    if (below.getBlock() instanceof FarmlandBlock && below.getValue(FarmlandBlock.MOISTURE) >= 7) {
       humidity += 2;
     }
 
@@ -878,7 +877,7 @@ public class TileEntityCrop extends Ic2TileEntity implements ICropTile {
     }
 
     this.reset();
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       for (ItemStack drop : drops) {
         if (drop.getItem() != Ic2Items.CROP_SEED_BACK) {
           StackUtil.setTag(drop, null);

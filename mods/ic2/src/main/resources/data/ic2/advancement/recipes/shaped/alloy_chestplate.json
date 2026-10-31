@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/alloy_chestplate"
+        "recipes": [
+          "ic2:shaped/alloy_chestplate"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

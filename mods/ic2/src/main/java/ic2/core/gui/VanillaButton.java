@@ -1,16 +1,16 @@
 package ic2.core.gui;
 
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class VanillaButton extends Button<VanillaButton> {
   private static final WidgetSprites sprites =
       new WidgetSprites(
-          ResourceLocation.withDefaultNamespace("widget/button"),
-          ResourceLocation.withDefaultNamespace("widget/button_disabled"),
-          ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
+          Identifier.withDefaultNamespace("widget/button"),
+          Identifier.withDefaultNamespace("widget/button_disabled"),
+          Identifier.withDefaultNamespace("widget/button_highlighted"));
   private static final int colorNormal = 14737632;
   private static final int colorHover = 16777120;
   private static final int colorDisabled = 10526880;
@@ -30,8 +30,9 @@ public class VanillaButton extends Button<VanillaButton> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     guiGraphics.blitSprite(
+        net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
         sprites.get(!this.isDisabled(), this.isActive(mouseX, mouseY)),
         this.gui.getX() + this.x,
         this.gui.getY() + this.y,

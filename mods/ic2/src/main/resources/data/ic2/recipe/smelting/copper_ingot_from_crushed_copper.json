@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "copper_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:crushed_copper"
-  },
+  "ingredient": "ic2:crushed_copper",
   "result": {
     "id": "minecraft:copper_ingot"
   },

@@ -65,7 +65,7 @@ public class ItemToolWrench extends Item
             player,
             removeBlock);
     if (result != WrenchResult.Nothing) {
-      if (!context.getLevel().isClientSide) {
+      if (!context.getLevel().isClientSide()) {
         return result == WrenchResult.Rotated ? 1 : 10;
       }
 
@@ -221,7 +221,7 @@ public class ItemToolWrench extends Item
       return InteractionResult.FAIL;
     }
 
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       player.playSound(Ic2SoundEvents.ITEM_WRENCH_USE, 1.0F, 1.0F);
       return InteractionResult.PASS;
     }
@@ -248,7 +248,7 @@ public class ItemToolWrench extends Item
 
   private static WrenchResult removeBlockWithWrench(
       Level world, BlockPos pos, BlockState state, Player player, IWrenchAble wrenchAble) {
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return WrenchResult.Removed;
     }
 
@@ -261,7 +261,7 @@ public class ItemToolWrench extends Item
     BlockEntity te = world.getBlockEntity(pos);
 
     if (IC2Config.protection.wrenchLogging.get()) {
-      String playerName = player.getGameProfile().getName() + "/" + player.getGameProfile().getId();
+      String playerName = player.getGameProfile().name() + "/" + player.getGameProfile().id();
       IC2.log.info(
           LogCategory.PlayerActivity,
           "Player %s used a wrench to remove the block %s (te %s) at %s.",
@@ -400,6 +400,19 @@ public class ItemToolWrench extends Item
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext context,

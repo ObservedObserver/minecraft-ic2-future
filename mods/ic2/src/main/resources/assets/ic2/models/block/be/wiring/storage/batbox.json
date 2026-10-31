@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/wiring/storage/batbox"
+  "parent": "ic2:block/wiring/storage/batbox"
 }

@@ -6,14 +6,14 @@ import ic2.core.block.machine.tileentity.TileEntityScanner;
 import ic2.core.gui.CustomButton;
 import ic2.core.gui.EnergyGauge;
 import ic2.core.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiScanner extends Ic2Gui<ContainerScanner> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiscanner.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiscanner.png");
   private final Component[] info = new Component[9];
 
   public GuiScanner(ContainerScanner container, Inventory playerInventory, Component title) {
@@ -45,7 +45,7 @@ public class GuiScanner extends Ic2Gui<ContainerScanner> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(guiGraphics, 123, 6, this.info[5].getString() + ":", 4210752);
     TileEntityScanner te = this.menu.base;
@@ -91,8 +91,9 @@ public class GuiScanner extends Ic2Gui<ContainerScanner> {
   }
 
   @Override
-  protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
-    super.renderBg(guiGraphics, delta, mouseX, mouseY);
+  public void extractBackground(
+      GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    super.extractBackground(guiGraphics, mouseX, mouseY, delta);
     this.bindTexture();
     TileEntityScanner te = this.menu.base;
     int scanning = te.getSubPercentageDoneScaled(43);
@@ -103,7 +104,7 @@ public class GuiScanner extends Ic2Gui<ContainerScanner> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

@@ -197,7 +197,7 @@ public class TileEntitySteamKineticGenerator extends TileEntityAbstractKineticGe
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.condensationProgress = nbt.getInt("condensationprogress");
+    this.condensationProgress = nbt.getIntOr("condensationprogress", 0);
   }
 
   @Override

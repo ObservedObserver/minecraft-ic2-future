@@ -13,7 +13,8 @@ public final class Ic2Network {
     event
         .registrar("1")
         .optional()
-        .playBidirectional(Ic2Payload.TYPE, Ic2Payload.CODEC, Ic2Network::handle);
+        .playBidirectional(
+            Ic2Payload.TYPE, Ic2Payload.CODEC, Ic2Network::handle, Ic2Network::handle);
   }
 
   private static void handle(Ic2Payload payload, IPayloadContext context) {

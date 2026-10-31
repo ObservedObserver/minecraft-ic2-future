@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/block_cutter"
+        "recipes": [
+          "ic2:shaped/block_cutter"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

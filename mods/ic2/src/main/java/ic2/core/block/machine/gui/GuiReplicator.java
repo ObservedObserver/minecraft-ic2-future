@@ -12,7 +12,7 @@ import ic2.core.gui.dynamic.TextProvider;
 import ic2.core.util.Util;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -96,7 +96,7 @@ public class GuiReplicator extends Ic2Gui<ContainerReplicator> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guireplicator.png");
+  public Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guireplicator.png");
   }
 }

@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/copper"
+            "items": "#c:plates/copper"
           }
         ]
       },
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/tin"
+            "items": "#c:plates/tin"
           }
         ]
       },
@@ -35,7 +35,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/heat_exchanger_from_copper"
+        "recipes": [
+          "ic2:shaped/heat_exchanger_from_copper"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

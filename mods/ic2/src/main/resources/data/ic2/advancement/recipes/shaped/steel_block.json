@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/steel"
+            "items": "#c:ingots/steel"
           }
         ]
       },
@@ -13,7 +13,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/steel_block"
+        "recipes": [
+          "ic2:shaped/steel_block"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

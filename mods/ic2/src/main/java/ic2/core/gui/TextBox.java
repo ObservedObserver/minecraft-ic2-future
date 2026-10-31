@@ -2,19 +2,9 @@ package ic2.core.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.mojang.blaze3d.platform.GlStateManager.LogicOp;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import ic2.core.Ic2Gui;
-import ic2.core.proxy.SideProxyClient;
 import ic2.core.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.StringUtil;
 
 public class TextBox extends GuiElement<TextBox> {
@@ -125,7 +115,7 @@ public class TextBox extends GuiElement<TextBox> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawBackground(guiGraphics, mouseX, mouseY);
     if (this.drawBackground) {
       this.gui.drawColoredRect(
@@ -136,7 +126,7 @@ public class TextBox extends GuiElement<TextBox> {
   }
 
   @Override
-  public void drawForeground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawForeground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForeground(guiGraphics, mouseX, mouseY);
     int colour = this.willDraw() ? 14737632 : 7368816;
     int textOffset = this.cursor - this.scrollOffset;
@@ -146,8 +136,8 @@ public class TextBox extends GuiElement<TextBox> {
             this.text.substring(this.scrollOffset),
             this.drawBackground ? this.width - 8 : this.width);
     boolean validOffset = textOffset >= 0 && textOffset <= text.length();
-    int xStartPos = (this.drawBackground ? this.x + 4 : this.x) - this.gui.getX();
-    int yPos = (this.drawBackground ? this.y + (this.height - 8) / 2 : this.y) - this.gui.getY();
+    int xStartPos = (this.drawBackground ? this.x + 4 : this.x);
+    int yPos = (this.drawBackground ? this.y + (this.height - 8) / 2 : this.y);
     int xPos = xStartPos;
     if (selectionOffset > text.length()) {
       selectionOffset = text.length();
@@ -188,47 +178,21 @@ public class TextBox extends GuiElement<TextBox> {
 
     if (selectionOffset != textOffset) {
       int selectionEnd = xStartPos + this.gui.getStringWidth(text.substring(0, selectionOffset));
-      this.drawHighlightedArea(xCursorPos, yPos - 1, selectionEnd - 1, yPos + 1 + 8);
+      this.drawHighlightedArea(guiGraphics, xCursorPos, yPos - 1, selectionEnd - 1, yPos + 1 + 8);
     }
   }
 
-  protected void drawHighlightedArea(int startX, int startY, int endX, int endY) {
-    if (startX < endX) {
-      int temp = startX;
-      startX = endX;
-      endX = temp;
-    }
-
-    if (startY < endY) {
-      int temp = startY;
-      startY = endY;
-      endY = temp;
-    }
-
-    startX += this.gui.getX();
-    endX += this.gui.getX();
-    startY += this.gui.getY();
-    endY += this.gui.getY();
-    if (endX > this.x + this.width) {
-      endX = this.x + this.width;
-    }
-
-    if (startX > this.x + this.width) {
-      startX = this.x + this.width;
-    }
-
-    RenderSystem.setShader(GameRenderer::getPositionShader);
-    RenderSystem.setShaderColor(0.0F, 0.0F, 1.0F, 1.0F);
-    RenderSystem.enableColorLogicOp();
-    RenderSystem.logicOp(LogicOp.OR_REVERSE);
-    BufferBuilder buffer = Tesselator.getInstance().begin(Mode.QUADS, DefaultVertexFormat.POSITION);
-    buffer.addVertex((float) startX, (float) endY, 0.0F);
-    buffer.addVertex((float) endX, (float) endY, 0.0F);
-    buffer.addVertex((float) endX, (float) startY, 0.0F);
-    buffer.addVertex((float) startX, (float) startY, 0.0F);
-    BufferUploader.drawWithShader(buffer.buildOrThrow());
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderSystem.disableColorLogicOp();
+  protected void drawHighlightedArea(
+      GuiGraphicsExtractor graphics, int startX, int startY, int endX, int endY) {
+    int left = this.gui.getX();
+    int top = this.gui.getY();
+    int maxX = left + this.x + this.width;
+    graphics.textHighlight(
+        Math.min(maxX, left + Math.min(startX, endX)),
+        top + Math.min(startY, endY),
+        Math.min(maxX, left + Math.max(startX, endX)),
+        top + Math.max(startY, endY),
+        true);
   }
 
   @Override
@@ -256,24 +220,32 @@ public class TextBox extends GuiElement<TextBox> {
       return super.onKeyTyped(typedChar, keyCode);
     }
 
-    if (Screen.isSelectAll(keyCode)) {
+    if ((net.minecraft.client.Minecraft.getInstance().hasControlDown()
+        && keyCode == com.mojang.blaze3d.platform.InputConstants.KEY_A)) {
       this.setCursorPositionEnd();
       this.setSelectionPos(0);
-    } else if (Screen.isCopy(keyCode)) {
-      SideProxyClient.mc.keyboardHandler.setClipboard(this.getSelectedText());
-    } else if (Screen.isPaste(keyCode)) {
+    } else if ((net.minecraft.client.Minecraft.getInstance().hasControlDown()
+        && keyCode == com.mojang.blaze3d.platform.InputConstants.KEY_C)) {
+      net.minecraft.client.Minecraft.getInstance()
+          .keyboardHandler
+          .setClipboard(this.getSelectedText());
+    } else if ((net.minecraft.client.Minecraft.getInstance().hasControlDown()
+        && keyCode == com.mojang.blaze3d.platform.InputConstants.KEY_V)) {
       if (this.willDraw()) {
-        this.writeText(SideProxyClient.mc.keyboardHandler.getClipboard());
+        this.writeText(net.minecraft.client.Minecraft.getInstance().keyboardHandler.getClipboard());
       }
-    } else if (Screen.isCut(keyCode)) {
-      SideProxyClient.mc.keyboardHandler.setClipboard(this.getSelectedText());
+    } else if ((net.minecraft.client.Minecraft.getInstance().hasControlDown()
+        && keyCode == com.mojang.blaze3d.platform.InputConstants.KEY_X)) {
+      net.minecraft.client.Minecraft.getInstance()
+          .keyboardHandler
+          .setClipboard(this.getSelectedText());
       if (this.willDraw()) {
         this.writeText("");
       }
     } else {
       switch (keyCode) {
-        case 259:
-          if (Screen.hasControlDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_BACKSPACE:
+          if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
             if (this.willDraw()) {
               this.deleteWords(-1);
             }
@@ -281,11 +253,11 @@ public class TextBox extends GuiElement<TextBox> {
             this.deleteFromCursor(-1);
           }
           break;
-        case 260:
-        case 264:
-        case 265:
-        case 266:
-        case 267:
+        case com.mojang.blaze3d.platform.InputConstants.KEY_INSERT:
+        case com.mojang.blaze3d.platform.InputConstants.KEY_DOWN:
+        case com.mojang.blaze3d.platform.InputConstants.KEY_UP:
+        case com.mojang.blaze3d.platform.InputConstants.KEY_PAGEUP:
+        case com.mojang.blaze3d.platform.InputConstants.KEY_PAGEDOWN:
         default:
           if (!StringUtil.isAllowedChatCharacter(typedChar) || !this.willDraw()) {
             return super.onKeyTyped(typedChar, keyCode);
@@ -293,8 +265,8 @@ public class TextBox extends GuiElement<TextBox> {
 
           this.writeText(String.valueOf(typedChar));
           break;
-        case 261:
-          if (Screen.hasControlDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_DELETE:
+          if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
             if (this.willDraw()) {
               this.deleteWords(1);
             }
@@ -302,41 +274,41 @@ public class TextBox extends GuiElement<TextBox> {
             this.deleteFromCursor(1);
           }
           break;
-        case 262:
-          if (Screen.hasShiftDown()) {
-            if (Screen.hasControlDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT:
+          if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
+            if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
               this.setSelectionPos(this.getNthWordFromPos(1, this.selectionEnd));
             } else {
               this.setSelectionPos(this.selectionEnd + 1);
             }
-          } else if (Screen.hasControlDown()) {
+          } else if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
             this.setCursorPosition(this.getNthWordFromCursor(1));
           } else {
             this.moveCursorBy(1);
           }
           break;
-        case 263:
-          if (Screen.hasShiftDown()) {
-            if (Screen.hasControlDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_LEFT:
+          if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
+            if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
               this.setSelectionPos(this.getNthWordFromPos(-1, this.selectionEnd));
             } else {
               this.setSelectionPos(this.selectionEnd - 1);
             }
-          } else if (Screen.hasControlDown()) {
+          } else if (net.minecraft.client.Minecraft.getInstance().hasControlDown()) {
             this.setCursorPosition(this.getNthWordFromCursor(-1));
           } else {
             this.moveCursorBy(-1);
           }
           break;
-        case 268:
-          if (Screen.hasShiftDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_HOME:
+          if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
             this.setSelectionPos(0);
           } else {
             this.setCursorPositionStart();
           }
           break;
-        case 269:
-          if (Screen.hasShiftDown()) {
+        case com.mojang.blaze3d.platform.InputConstants.KEY_END:
+          if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
             this.setSelectionPos(this.text.length());
           } else {
             this.setCursorPositionEnd();

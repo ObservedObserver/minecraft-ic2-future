@@ -9,7 +9,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -23,7 +23,16 @@ public abstract class AbstractBoatEntity extends Boat {
   protected boolean isExtraItemDropped = false;
 
   public AbstractBoatEntity(EntityType<? extends Boat> entityType, Level world) {
-    super(entityType, world);
+    super(
+        entityType,
+        world,
+        () -> {
+          if (entityType == ic2.core.ref.Ic2Entities.RUBBER_BOAT)
+            return ic2.core.ref.Ic2Items.BROKEN_RUBBER_BOAT;
+          if (entityType == ic2.core.ref.Ic2Entities.ELECTRIC_BOAT)
+            return ic2.core.ref.Ic2Items.ELECTRIC_BOAT;
+          return ic2.core.ref.Ic2Items.CARBON_BOAT;
+        });
   }
 
   public AbstractBoatEntity(
@@ -71,7 +80,8 @@ public abstract class AbstractBoatEntity extends Boat {
   }
 
   private Status checkLocation() {
-    Class<Boat> boatEntityClass = Boat.class;
+    Class<net.minecraft.world.entity.vehicle.boat.AbstractBoat> boatEntityClass =
+        net.minecraft.world.entity.vehicle.boat.AbstractBoat.class;
 
     try {
       Field waterLevelField = getFieldSafe(boatEntityClass, "f_38277_", "waterLevel");
@@ -99,7 +109,8 @@ public abstract class AbstractBoatEntity extends Boat {
   }
 
   private boolean checkBoatInWater() {
-    Class<Boat> boatEntityClass = Boat.class;
+    Class<net.minecraft.world.entity.vehicle.boat.AbstractBoat> boatEntityClass =
+        net.minecraft.world.entity.vehicle.boat.AbstractBoat.class;
 
     try {
       Field waterLevelField = getFieldSafe(boatEntityClass, "f_38277_", "waterLevel");
@@ -168,7 +179,8 @@ public abstract class AbstractBoatEntity extends Boat {
   }
 
   public float getWaterLevelAbove() {
-    Class<Boat> boatEntityClass = Boat.class;
+    Class<net.minecraft.world.entity.vehicle.boat.AbstractBoat> boatEntityClass =
+        net.minecraft.world.entity.vehicle.boat.AbstractBoat.class;
 
     try {
       Field lastYdField = getFieldSafe(boatEntityClass, "f_38281_", "lastYd");
@@ -222,14 +234,15 @@ public abstract class AbstractBoatEntity extends Boat {
     }
   }
 
-  public ItemEntity spawnAtLocation(@NotNull ItemLike item) {
+  public ItemEntity spawnAtLocation(
+      net.minecraft.server.level.ServerLevel level, @NotNull ItemLike item) {
     if (item == this.getOverrideBoatType().getBaseItem()) {
-      return this.spawnAtLocation(new ItemStack(this.getOverrideBoatType().getBaseItem()));
+      return this.spawnAtLocation(level, new ItemStack(this.getOverrideBoatType().getBaseItem()));
     } else if (item == Items.STICK && !this.isExtraItemDropped) {
       this.isExtraItemDropped = true;
-      return this.spawnAtLocation(this.getExtraDropItemStack());
+      return this.spawnAtLocation(level, this.getExtraDropItemStack());
     } else {
-      return super.spawnAtLocation(item);
+      return super.spawnAtLocation(level, item);
     }
   }
 

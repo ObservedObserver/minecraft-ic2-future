@@ -2,7 +2,7 @@ package ic2.api.crops;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -43,13 +43,12 @@ public class ExampleCropCard extends CropCard {
   }
 
   @Override
-  public List<ResourceLocation> getTexturesLocation() {
-    List<ResourceLocation> ret = new ArrayList<>(this.getMaxAge());
+  public List<Identifier> getTexturesLocation() {
+    List<Identifier> ret = new ArrayList<>(this.getMaxAge());
 
     for (int size = 1; size <= this.getMaxAge(); size++) {
       ret.add(
-          ResourceLocation.fromNamespaceAndPath(
-              "myaddon", "blocks/crop/" + this.getId() + "_" + size));
+          Identifier.fromNamespaceAndPath("myaddon", "blocks/crop/" + this.getId() + "_" + size));
     }
 
     return ret;

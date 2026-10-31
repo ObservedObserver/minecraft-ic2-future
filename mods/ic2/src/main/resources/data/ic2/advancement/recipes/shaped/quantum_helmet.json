@@ -75,7 +75,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/quantum_helmet"
+        "recipes": [
+          "ic2:shaped/quantum_helmet"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

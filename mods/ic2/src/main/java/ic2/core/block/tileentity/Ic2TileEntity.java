@@ -200,7 +200,7 @@ public abstract class Ic2TileEntity extends BlockEntity
     }
 
     this.loadState = 2;
-    this.enableWorldTick = getTickSubscription(this.getClass()).get(this.level.isClientSide);
+    this.enableWorldTick = getTickSubscription(this.getClass()).get(this.level.isClientSide());
     if (this.components != null) {
       for (TileEntityComponent component : this.components.values()) {
         component.onLoaded();
@@ -228,17 +228,49 @@ public abstract class Ic2TileEntity extends BlockEntity
     }
   }
 
+  @Override
+  protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+    super.loadAdditional(input);
+    CompoundTag tag =
+        input
+            .read(com.mojang.serialization.MapCodec.assumeMapUnsafe(CompoundTag.CODEC))
+            .orElseGet(CompoundTag::new);
+    this.loadAdditional(tag, input.lookup());
+  }
+
+  @Override
+  protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+    super.saveAdditional(output);
+    CompoundTag tag = new CompoundTag();
+    this.saveAdditional(
+        tag,
+        this.level != null ? this.level.registryAccess() : net.minecraft.core.RegistryAccess.EMPTY);
+    output.store(tag);
+  }
+
+  public final void loadWithComponents(
+      CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+    CompoundTag normalized = tag.copy();
+    CompoundTag legacy = normalized.getCompoundOrEmpty(LEGACY_COMPONENTS_NBT_KEY);
+    if (legacy.keySet().stream().anyMatch(name -> Components.getClass(name) != null)) {
+      normalized.put(COMPONENTS_NBT_KEY, legacy);
+      normalized.remove(LEGACY_COMPONENTS_NBT_KEY);
+    }
+    this.loadWithComponents(
+        net.minecraft.world.level.storage.TagValueInput.create(
+            net.minecraft.util.ProblemReporter.DISCARDING, registries, normalized));
+  }
+
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
-    this.active = nbt.getBoolean("active");
+    this.active = nbt.getBooleanOr("active", false);
     CompoundTag componentsNbt = null;
-    if (nbt.contains(COMPONENTS_NBT_KEY, 10)) {
-      componentsNbt = nbt.getCompound(COMPONENTS_NBT_KEY);
-    } else if (nbt.contains(LEGACY_COMPONENTS_NBT_KEY, 10)) {
-      CompoundTag legacyComponentsNbt = nbt.getCompound(LEGACY_COMPONENTS_NBT_KEY);
+    if (ic2.compat.NbtCompat.contains(nbt, COMPONENTS_NBT_KEY, 10)) {
+      componentsNbt = nbt.getCompoundOrEmpty(COMPONENTS_NBT_KEY);
+    } else if (ic2.compat.NbtCompat.contains(nbt, LEGACY_COMPONENTS_NBT_KEY, 10)) {
+      CompoundTag legacyComponentsNbt = nbt.getCompoundOrEmpty(LEGACY_COMPONENTS_NBT_KEY);
       boolean containsIc2Component =
-          legacyComponentsNbt.getAllKeys().stream()
-              .anyMatch(name -> Components.getClass(name) != null);
+          legacyComponentsNbt.keySet().stream().anyMatch(name -> Components.getClass(name) != null);
       if (containsIc2Component) {
         componentsNbt = legacyComponentsNbt;
         // loadWithComponents invokes this method before vanilla decodes its reserved key. Removing
@@ -249,11 +281,11 @@ public abstract class Ic2TileEntity extends BlockEntity
 
     if (this.components != null && componentsNbt != null) {
 
-      for (String name : componentsNbt.getAllKeys()) {
+      for (String name : componentsNbt.keySet()) {
         Class<? extends TileEntityComponent> cls = Components.getClass(name);
         TileEntityComponent component;
         if (cls != null && (component = this.getComponent(cls)) != null) {
-          CompoundTag componentNbt = componentsNbt.getCompound(name);
+          CompoundTag componentNbt = componentsNbt.getCompoundOrEmpty(name);
           component.readFromNbt(componentNbt);
         } else {
           IC2.log.warn(LogCategory.Block, "Can't find component %s while loading %s.", name, this);
@@ -295,7 +327,7 @@ public abstract class Ic2TileEntity extends BlockEntity
       }
 
       if (this.enableWorldTick) {
-        if (this.level.isClientSide) {
+        if (this.level.isClientSide()) {
           this.updateEntityClient();
         } else {
           this.updateEntityServer();
@@ -377,7 +409,7 @@ public abstract class Ic2TileEntity extends BlockEntity
       Player player, InteractionHand hand, Direction side, Vec3 hit) {
     if (!(this instanceof IHasGui) || this.level == null) {
       return InteractionResult.PASS;
-    } else if (this.level.isClientSide) {
+    } else if (this.level.isClientSide()) {
       return InteractionResult.SUCCESS;
     } else {
       return ((IHasGui) this).openManagedBe(player, hand)
@@ -403,6 +435,17 @@ public abstract class Ic2TileEntity extends BlockEntity
   }
 
   protected void onExploded(Explosion explosion) {}
+
+  @Override
+  public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    // Vanilla invokes this before removing the BE. Aux drops already include IC2 inventories.
+    if (this.level != null) {
+      for (ItemStack stack : this.getAuxDrops(0)) {
+        net.minecraft.world.level.block.Block.popResource(this.level, pos, stack);
+      }
+      this.onBlockBreak();
+    }
+  }
 
   protected void onBlockBreak() {}
 
@@ -506,7 +549,7 @@ public abstract class Ic2TileEntity extends BlockEntity
     }
 
     this.active = active;
-    if (this.level == null || this.level.isClientSide) {
+    if (this.level == null || this.level.isClientSide()) {
       return;
     }
 
@@ -573,7 +616,14 @@ public abstract class Ic2TileEntity extends BlockEntity
     return this.components == null ? emptyComponents : this.components.values();
   }
 
+  @Override
+  public net.neoforged.neoforge.model.data.ModelData getModelData() {
+    return net.neoforged.neoforge.model.data.ModelData.of(
+        ic2.core.model.Ic2ModelSnapshot.PROPERTY, ic2.core.model.Ic2ModelSnapshot.capture(this));
+  }
+
   protected final void rerender() {
+    this.requestModelDataUpdate();
     BlockState state = this.getBlockState();
     Objects.requireNonNull(this.getLevel()).sendBlockUpdated(this.worldPosition, state, state, 2);
     if (this.teBlock.canActive() && this.level != null) {

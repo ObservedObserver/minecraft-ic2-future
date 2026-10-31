@@ -2,6 +2,8 @@ package ic2.core.item.tool;
 
 import ic2.api.item.ElectricItem;
 import ic2.api.sound.item.ISwingSoundItem;
+import ic2.compat.InteractionResults;
+import ic2.compat.Tiers;
 import ic2.core.IC2;
 import ic2.core.item.armor.ItemArmorNanoSuit;
 import ic2.core.item.armor.ItemArmorQuantumSuit;
@@ -15,21 +17,20 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractItemNanoSaber extends ItemElectricTool implements ISwingSoundItem {
+public abstract class AbstractItemNanoSaber extends ItemElectricTool
+    implements ISwingSoundItem, ic2.compat.LegacyInventoryTicker {
   private static final int SYNC_ACTIVE_BASE = 0x100;
 
   private int soundTicker = 0;
@@ -105,7 +106,7 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
     if (isActive(stack)) {
       this.soundTicker++;
       if (IC2.sideProxy.isRendering() && this.soundTicker % 4 == 0) {
-        Entity entity = stack.getEntityRepresentation();
+        Entity entity = IC2.sideProxy.getPlayerInstance();
         if (entity != null) {
           entity.playSound(this.getRandomSwingSound(), 1.0F, 1.0F);
         }
@@ -118,9 +119,9 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
   }
 
   @Override
-  public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity source) {
+  public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity source) {
     if (!isActive(stack)) {
-      return true;
+      return;
     }
 
     if (IC2.sideProxy.isSimulating()) {
@@ -153,7 +154,7 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
       }
     }
 
-    return true;
+    return;
   }
 
   public SoundEvent getRandomSwingSound() {
@@ -164,9 +165,14 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
     };
   }
 
-  public boolean canAttackBlock(
-      @NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, Player miner) {
-    return !miner.isCreative() && super.canAttackBlock(state, world, pos, miner);
+  public boolean canDestroyBlock(
+      ItemStack stack,
+      @NotNull BlockState state,
+      @NotNull Level world,
+      @NotNull BlockPos pos,
+      LivingEntity miner) {
+    return !(miner instanceof Player player && player.isCreative())
+        && super.canDestroyBlock(stack, state, world, pos, miner);
   }
 
   @Override
@@ -175,16 +181,15 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      @NotNull Level world, Player player, InteractionHand hand) {
+  public @NotNull InteractionResult use(@NotNull Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if (isActive(stack) || ElectricItem.manager.canUse(stack, 16.0)) {
       toggleActive(stack, player);
-      return InteractionResultHolder.consume(stack);
+      return InteractionResults.consume(stack);
     }
 
-    return world.isClientSide
-        ? InteractionResultHolder.consume(stack)
+    return world.isClientSide()
+        ? InteractionResults.consume(stack)
         : super.use(world, player, hand);
   }
 
@@ -199,12 +204,25 @@ public abstract class AbstractItemNanoSaber extends ItemElectricTool implements 
       return;
     }
 
-    if (!player.level().isClientSide) {
+    if (!player.level().isClientSide()) {
       syncActiveState(player, stack, isActive(stack));
     }
   }
 
   @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+  }
+
   public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean par5) {
     super.inventoryTick(stack, world, entity, slot, par5 && isActive(stack));
     if (!isActive(stack)) {

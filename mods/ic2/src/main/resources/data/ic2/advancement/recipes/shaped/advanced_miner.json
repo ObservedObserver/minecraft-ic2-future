@@ -63,7 +63,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/advanced_miner"
+        "recipes": [
+          "ic2:shaped/advanced_miner"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

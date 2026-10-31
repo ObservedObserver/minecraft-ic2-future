@@ -31,14 +31,13 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.joml.Vector3f;
 
 public class TileEntityTeleporter extends TileEntityBase
     implements INetworkTileEntityEventListener {
@@ -60,7 +59,8 @@ public class TileEntityTeleporter extends TileEntityBase
     super.loadAdditional(nbt, registries);
     if (nbt.contains("targetX")) {
       this.target =
-          new BlockPos(nbt.getInt("targetX"), nbt.getInt("targetY"), nbt.getInt("targetZ"));
+          new BlockPos(
+              nbt.getIntOr("targetX", 0), nbt.getIntOr("targetY", 0), nbt.getIntOr("targetZ", 0));
     }
   }
 
@@ -172,7 +172,7 @@ public class TileEntityTeleporter extends TileEntityBase
           user.teleportTo(
               this.target.getX() + 0.5, this.target.getY() + 1.5, this.target.getZ() + 0.5);
         } else {
-          user.absMoveTo(
+          user.absSnapTo(
               this.target.getX() + 0.5,
               this.target.getY() + 1.5,
               this.target.getZ() + 0.5,
@@ -205,7 +205,13 @@ public class TileEntityTeleporter extends TileEntityBase
     Level world = this.getLevel();
     RandomSource rnd = RandomSource.create();
     DustParticleOptions effect =
-        new DustParticleOptions(new Vector3f(-1 / 255.0F, green / 255.0F, blue / 255.0F), 1.0F);
+        new DustParticleOptions(
+            net.minecraft.util.ARGB.colorFromFloat(
+                1.0F,
+                Math.clamp(-1 / 255.0F, 0.0F, 1.0F),
+                Math.clamp(green / 255.0F, 0.0F, 1.0F),
+                Math.clamp(blue / 255.0F, 0.0F, 1.0F)),
+            1.0F);
 
     for (int i = 0; i < n; i++) {
       world.addParticle(
@@ -287,7 +293,7 @@ public class TileEntityTeleporter extends TileEntityBase
     } else if (user instanceof Player) {
       weight += 1000;
       if (teleporterUseInventoryWeight) {
-        for (ItemStack stack : ((Player) user).getInventory().items) {
+        for (ItemStack stack : ((Player) user).getInventory().getNonEquipmentItems()) {
           weight += getStackCost(stack);
         }
       }
@@ -302,7 +308,8 @@ public class TileEntityTeleporter extends TileEntityBase
     }
 
     if (teleporterUseInventoryWeight && user instanceof LivingEntity living) {
-      for (ItemStack stack : living.getAllSlots()) {
+      for (var slot : net.minecraft.world.entity.EquipmentSlot.values()) {
+        ItemStack stack = living.getItemBySlot(slot);
         weight += getStackCost(stack);
       }
 

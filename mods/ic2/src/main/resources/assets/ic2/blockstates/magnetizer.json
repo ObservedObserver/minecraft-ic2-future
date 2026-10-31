@@ -1,19 +1,20 @@
 {
   "variants": {
     "facing=east": {
-      "model": "ic2:block/machine/misc/magnetizer",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/magnetizer"
     },
     "facing=north": {
-      "model": "ic2:block/machine/misc/magnetizer"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/magnetizer"
     },
     "facing=south": {
-      "model": "ic2:block/machine/misc/magnetizer",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/magnetizer"
     },
     "facing=west": {
-      "model": "ic2:block/machine/misc/magnetizer",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/misc/magnetizer"
     }
   }
 }

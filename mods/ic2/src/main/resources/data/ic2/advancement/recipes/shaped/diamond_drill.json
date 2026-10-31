@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:gems/diamond"
+            "items": "#c:gems/diamond"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/diamond_drill"
+        "recipes": [
+          "ic2:shaped/diamond_drill"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

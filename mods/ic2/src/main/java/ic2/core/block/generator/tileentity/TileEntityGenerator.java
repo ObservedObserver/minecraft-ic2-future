@@ -77,7 +77,7 @@ public class TileEntityGenerator extends TileEntityBaseGenerator implements IGui
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.totalFuel = nbt.getInt("totalFuel");
+    this.totalFuel = nbt.getIntOr("totalFuel", 0);
   }
 
   @Override

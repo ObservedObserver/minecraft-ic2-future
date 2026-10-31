@@ -4,7 +4,7 @@ import ic2.core.Ic2Gui;
 import ic2.core.fluid.FluidHandler;
 import ic2.core.fluid.Ic2FluidStack;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.material.Fluid;
@@ -15,7 +15,7 @@ public abstract class AbstractFluidSlot extends GuiElement<TankFluidSlot> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     Ic2FluidStack fs = this.getFluidStack();
     this.gui.drawTexturedRect(

@@ -95,7 +95,7 @@ public abstract class TileEntityStandardMachine<RI, RO, I> extends TileEntityEle
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getShort("progress");
+    this.progress = nbt.getShortOr("progress", (short) 0);
   }
 
   @Override

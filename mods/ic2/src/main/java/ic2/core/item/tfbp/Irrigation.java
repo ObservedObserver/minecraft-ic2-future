@@ -67,7 +67,7 @@ public class Irrigation extends TerraformerBase {
   boolean terraform(Level world, BlockPos pos) {
     RandomSource rng = RandomSource.create();
     if (rng.nextInt(48000) == 0) {
-      world.getLevelData().setRaining(true);
+      ((ServerLevel) world).getWeatherData().setRaining(true);
       return true;
     }
 
@@ -85,8 +85,16 @@ public class Irrigation extends TerraformerBase {
     BlockState state = world.getBlockState(pos);
     Block block = state.getBlock();
     if (block instanceof BonemealableBlock
-        && ((BonemealableBlock) block).isValidBonemealTarget(world, pos, state)) {
-      ((BonemealableBlock) block).performBonemeal((ServerLevel) world, world.random, pos, state);
+        && ((BonemealableBlock) block)
+            .isValidBonemealTarget(
+                world, pos, state, net.minecraft.world.level.block.BonemealSource.INTERACTION)) {
+      ((BonemealableBlock) block)
+          .performBonemeal(
+              (ServerLevel) world,
+              world.getRandom(),
+              pos,
+              state,
+              net.minecraft.world.level.block.BonemealSource.INTERACTION);
       return true;
     }
 

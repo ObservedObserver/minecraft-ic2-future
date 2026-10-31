@@ -7,7 +7,7 @@ import ic2.core.gui.TankGauge;
 import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiLiquidHeatExchanger extends Ic2Gui<ContainerLiquidHeatExchanger> {
@@ -44,7 +44,7 @@ public class GuiLiquidHeatExchanger extends Ic2Gui<ContainerLiquidHeatExchanger>
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiheatsourcefluid.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiheatsourcefluid.png");
   }
 }

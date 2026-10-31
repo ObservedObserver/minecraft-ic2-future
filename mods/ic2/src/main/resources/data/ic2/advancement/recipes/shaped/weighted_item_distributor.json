@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/weighted_item_distributor"
+        "recipes": [
+          "ic2:shaped/weighted_item_distributor"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

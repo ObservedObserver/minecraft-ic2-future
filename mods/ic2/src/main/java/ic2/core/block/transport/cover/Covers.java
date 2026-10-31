@@ -23,7 +23,8 @@ public class Covers extends TileEntityComponent {
     if (StackUtil.isEmpty(this.covers[side.ordinal()])) {
       ItemStack ret = cover.copy();
       CompoundTag nbtTagCompound = StackUtil.getOrCreateNbtData(ret);
-      nbtTagCompound.putByte("side", (byte) side.ordinal());
+      StackUtil.setTagValue(
+          ret, nbtTagCompound, "side", net.minecraft.nbt.ByteTag.valueOf((byte) side.ordinal()));
       this.covers[side.ordinal()] = ret;
     }
   }
@@ -46,11 +47,11 @@ public class Covers extends TileEntityComponent {
 
   @Override
   public void readFromNbt(CompoundTag nbt) {
-    ListTag coversTag = nbt.getList("covers", 10);
+    ListTag coversTag = ic2.compat.NbtCompat.getList(nbt, "covers", 10);
 
     for (int i = 0; i < coversTag.size(); i++) {
-      CompoundTag coverTag = coversTag.getCompound(i);
-      int index = coverTag.getByte("facing") & 255;
+      CompoundTag coverTag = coversTag.getCompoundOrEmpty(i);
+      int index = coverTag.getByteOr("facing", (byte) 0) & 255;
       if (index >= this.covers.length) {
         IC2.log.error(
             LogCategory.Block,
@@ -58,7 +59,7 @@ public class Covers extends TileEntityComponent {
             Util.toString(this.parent),
             index);
       } else {
-        ItemStack cover = ItemStack.parseOptional(RegistryAccess.EMPTY, coverTag);
+        ItemStack cover = ic2.compat.NbtCompat.readItem(RegistryAccess.EMPTY, coverTag);
         if (StackUtil.isEmpty(cover)) {
           IC2.log.warn(
               LogCategory.Block,
@@ -66,8 +67,8 @@ public class Covers extends TileEntityComponent {
               StackUtil.toStringSafe(cover),
               Util.toString(this.parent),
               index,
-              coverTag.getShort("id"),
-              coverTag.getShort("Damage"));
+              coverTag.getShortOr("id", (short) 0),
+              coverTag.getShortOr("Damage", (short) 0));
         } else {
           if (!StackUtil.isEmpty(this.covers[index])) {
             IC2.log.error(
@@ -96,7 +97,7 @@ public class Covers extends TileEntityComponent {
         CompoundTag coverTag = new CompoundTag();
         coverTag.putByte("facing", (byte) facing.ordinal());
         // save() returns the merged tag instead of mutating the prefix
-        coversTag.add(cover.save(RegistryAccess.EMPTY, coverTag));
+        coversTag.add(ic2.compat.NbtCompat.saveItem(cover, RegistryAccess.EMPTY, coverTag));
       }
     }
 
@@ -106,7 +107,7 @@ public class Covers extends TileEntityComponent {
 
   @Override
   public boolean enableWorldTick() {
-    return !this.parent.getLevel().isClientSide;
+    return !this.parent.getLevel().isClientSide();
   }
 
   @Override

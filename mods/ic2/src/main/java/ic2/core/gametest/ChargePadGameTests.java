@@ -1,11 +1,11 @@
 package ic2.core.gametest;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.block.wiring.tileentity.TileEntityChargePadBlock;
 import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -13,11 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class ChargePadGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -58,7 +54,12 @@ public class ChargePadGameTests {
         () ->
             helper
                 .getBlockState(pos)
-                .entityInside(helper.getLevel(), helper.absolutePos(pos), player));
+                .entityInside(
+                    helper.getLevel(),
+                    helper.absolutePos(pos),
+                    player,
+                    net.minecraft.world.entity.InsideBlockEffectApplier.NOOP,
+                    true));
 
     // 20 ticks worth of the pad's output rate
     double target = output * 20.0;
@@ -78,7 +79,8 @@ public class ChargePadGameTests {
   }
 
   private static TileEntityChargePadBlock getPad(GameTestHelper helper, BlockPos pos) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!(be instanceof TileEntityChargePadBlock pad)) {
       throw new IllegalStateException("expected a charge pad at " + pos + ", found " + be);
     }

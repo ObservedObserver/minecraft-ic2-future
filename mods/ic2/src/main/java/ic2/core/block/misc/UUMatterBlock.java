@@ -1,6 +1,7 @@
 package ic2.core.block.misc;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,14 +32,20 @@ public class UUMatterBlock extends LiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-    if (!world.isClientSide && entity instanceof LivingEntity living) {
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
+    if (!world.isClientSide() && entity instanceof LivingEntity living) {
       living.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1));
     }
   }
 
   @Override
-  public net.minecraft.world.ItemInteractionResult useItemOn(
+  public net.minecraft.world.InteractionResult useItemOn(
       ItemStack heldItem,
       BlockState state,
       Level world,
@@ -47,7 +54,7 @@ public class UUMatterBlock extends LiquidBlock {
       InteractionHand hand,
       BlockHitResult hit) {
     if (heldItem.is(Items.GLASS_BOTTLE) && state.getValue(LiquidBlock.LEVEL) == 0) {
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         ItemStack waterBottle = new ItemStack(Items.POTION);
         waterBottle.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER));
         if (!player.getAbilities().instabuild) {
@@ -56,13 +63,13 @@ public class UUMatterBlock extends LiquidBlock {
         if (heldItem.isEmpty()) {
           player.setItemInHand(hand, waterBottle);
         } else if (!player.getInventory().add(waterBottle)) {
-          player.drop(waterBottle, false);
+          player.drop(waterBottle, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
       }
       world.playSound(player, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-      return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
+      return net.minecraft.world.InteractionResult.SUCCESS;
     }
-    return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    return net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND;
   }
 
   @Override
@@ -71,26 +78,30 @@ public class UUMatterBlock extends LiquidBlock {
       Level world,
       BlockPos pos,
       Block neighborBlock,
-      BlockPos neighborPos,
+      net.minecraft.world.level.redstone.Orientation orientation,
       boolean movedByPiston) {
     // LiquidBlock#neighborChanged re-schedules fluid flow ticks; keep it alongside the custom
     // fluid interactions below.
-    super.neighborChanged(state, world, pos, neighborBlock, neighborPos, movedByPiston);
+    super.neighborChanged(state, world, pos, neighborBlock, orientation, movedByPiston);
     if (state.getValue(LiquidBlock.LEVEL) != 0) return;
 
-    FluidState neighborFluidState = world.getFluidState(neighborPos);
-    Fluid neighborFluid = neighborFluidState.getType();
+    // Source positions are no longer provided. Re-evaluate each adjacent fluid.
+    for (Direction direction : Direction.values()) {
+      BlockPos neighborPos = pos.relative(direction);
+      FluidState neighborFluidState = world.getFluidState(neighborPos);
+      Fluid neighborFluid = neighborFluidState.getType();
 
-    if (!neighborFluidState.isEmpty()
-        && neighborFluid != this.getFluidState(this.defaultBlockState()).getType()) {
-      if (neighborFluidState.is(FluidTags.LAVA)) {
-        if (neighborFluidState.isSource()) {
-          world.setBlockAndUpdate(neighborPos, Blocks.OBSIDIAN.defaultBlockState());
-        } else {
-          world.setBlockAndUpdate(neighborPos, Blocks.COBBLESTONE.defaultBlockState());
+      if (!neighborFluidState.isEmpty()
+          && neighborFluid != this.getFluidState(this.defaultBlockState()).getType()) {
+        if (neighborFluidState.is(FluidTags.LAVA)) {
+          if (neighborFluidState.isSource()) {
+            world.setBlockAndUpdate(neighborPos, Blocks.OBSIDIAN.defaultBlockState());
+          } else {
+            world.setBlockAndUpdate(neighborPos, Blocks.COBBLESTONE.defaultBlockState());
+          }
+        } else if (neighborFluidState.isSource()) {
+          world.setBlock(neighborPos, Blocks.AIR.defaultBlockState(), 3);
         }
-      } else if (neighborFluidState.isSource()) {
-        world.setBlock(neighborPos, Blocks.AIR.defaultBlockState(), 3);
       }
     }
   }

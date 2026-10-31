@@ -3,13 +3,13 @@ package ic2.core.item;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IBoxable;
 import ic2.api.item.IItemHudInfo;
+import ic2.compat.InteractionResults;
 import ic2.core.util.StackUtil;
 import ic2.core.util.Util;
 import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
@@ -26,12 +26,12 @@ public class ItemBatterySU extends Item implements IBoxable, IItemHudInfo {
     this.tier = tier;
   }
 
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     double energy = this.capacity;
 
     for (int i = 0; i < 9 && energy > 0.0; i++) {
-      ItemStack target = (ItemStack) player.getInventory().items.get(i);
+      ItemStack target = (ItemStack) player.getInventory().getNonEquipmentItems().get(i);
       if (target != null && target != stack) {
         energy -= ElectricItem.manager.charge(target, energy, this.tier, true, false);
       }
@@ -39,9 +39,9 @@ public class ItemBatterySU extends Item implements IBoxable, IItemHudInfo {
 
     if (!Util.isSimilar(energy, this.capacity)) {
       stack = StackUtil.decSize(stack);
-      return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+      return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
     } else {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
   }
 

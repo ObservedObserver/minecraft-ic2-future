@@ -3,9 +3,9 @@ package ic2.core.block.machine.gui;
 import ic2.core.Ic2Gui;
 import ic2.core.block.machine.container.ContainerMatter;
 import ic2.core.gui.TankGauge;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiMatter extends Ic2Gui<ContainerMatter> {
@@ -20,7 +20,7 @@ public class GuiMatter extends Ic2Gui<ContainerMatter> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(guiGraphics, 8, 22, this.progressLabel, 4210752);
     this.drawString(guiGraphics, 18, 31, this.menu.base.getProgressAsString(), 4210752);
@@ -31,7 +31,7 @@ public class GuiMatter extends Ic2Gui<ContainerMatter> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guimatter.png");
+  public Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guimatter.png");
   }
 }

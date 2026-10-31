@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/stripped_rubber_wood"
+        "recipes": [
+          "ic2:shaped/stripped_rubber_wood"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

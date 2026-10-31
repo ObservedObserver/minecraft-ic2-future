@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/bronze_tank"
+  "parent": "ic2:block/bronze_tank"
 }

@@ -7,15 +7,18 @@
         {
           "type": "minecraft:item",
           "name": "ic2:resin",
-          "conditions": [
-            {
-              "condition": "minecraft:random_chance",
-              "chance": 0.8
-            },
-            {
-              "condition": "minecraft:survives_explosion"
-            }
-          ]
+          "condition": {
+            "type": "minecraft:all_of",
+            "terms": [
+              {
+                "chance": 0.8,
+                "type": "minecraft:random_chance"
+              },
+              {
+                "type": "minecraft:survives_explosion"
+              }
+            ]
+          }
         }
       ]
     }

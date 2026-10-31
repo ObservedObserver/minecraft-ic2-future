@@ -1,5 +1,6 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.heatgenerator.tileentity.TileEntitySolidHeatGenerator;
 import ic2.core.block.kineticgenerator.tileentity.TileEntitySteamKineticGenerator;
 import ic2.core.block.machine.tileentity.TileEntitySteamGenerator;
@@ -13,7 +14,6 @@ import ic2.core.util.StackUtil;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,16 +31,12 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * Calcification mechanics of the steam generator: boiling regular water deposits scale at 1 point
  * per mB while distilled water is scale-free, water merely preheated and passed through below the
  * boiling point never calcifies, and at 100,000 points the boiler shuts down permanently.
  */
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class SteamBoilerCalcificationGameTests {
   private static final String EMPTY_LARGE = "gametest/empty7x7x7";
 
@@ -171,7 +167,7 @@ public class SteamBoilerCalcificationGameTests {
           ItemStack dropStack = drops.get(0).getItem().copy();
           drops.get(0).discard();
           helper.assertValueEqual(
-              StackUtil.getOrCreateNbtData(dropStack).getInt("calcification"),
+              StackUtil.getOrCreateNbtData(dropStack).getIntOr("calcification", 0),
               MAX_CALCIFICATION,
               "calcification carried by the dropped stack");
 
@@ -202,7 +198,7 @@ public class SteamBoilerCalcificationGameTests {
           List<ItemEntity> drops = getBoilerDrops(helper);
           helper.assertTrue(!drops.isEmpty(), "the mined boiler should drop itself");
           helper.assertValueEqual(
-              StackUtil.getOrCreateNbtData(drops.get(0).getItem()).getInt("calcification"),
+              StackUtil.getOrCreateNbtData(drops.get(0).getItem()).getIntOr("calcification", 0),
               MAX_CALCIFICATION,
               "calcification carried by the mined drop");
         });
@@ -258,7 +254,9 @@ public class SteamBoilerCalcificationGameTests {
 
   // the calcification counter is not exposed as a raw value, read it off the save data
   private static int rawCalcification(GameTestHelper helper, TileEntitySteamGenerator boiler) {
-    return boiler.saveWithFullMetadata(helper.getLevel().registryAccess()).getInt("calcification");
+    return boiler
+        .saveWithFullMetadata(helper.getLevel().registryAccess())
+        .getIntOr("calcification", 0);
   }
 
   // preset the operating point through the save data: the GUI dials by their NBT names, the
@@ -308,7 +306,8 @@ public class SteamBoilerCalcificationGameTests {
 
   private static <T extends BlockEntity> T getTe(
       GameTestHelper helper, BlockPos pos, Class<T> type) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!type.isInstance(be)) {
       throw new IllegalStateException(
           "expected " + type.getSimpleName() + " at " + pos + ", found " + be);

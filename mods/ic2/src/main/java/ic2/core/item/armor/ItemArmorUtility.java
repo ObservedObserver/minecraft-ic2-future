@@ -1,10 +1,10 @@
 package ic2.core.item.armor;
 
+import ic2.compat.ArmorItem;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 
 public class ItemArmorUtility extends ArmorItem {
   public ItemArmorUtility(Holder<ArmorMaterial> material, Properties settings, EquipmentSlot slot) {

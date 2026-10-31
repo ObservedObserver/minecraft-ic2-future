@@ -6,12 +6,12 @@ import ic2.core.gui.TextLabel;
 import ic2.core.gui.dynamic.TextProvider;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiRTHeatGenerator extends Ic2Gui<ContainerRTHeatGenerator> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guirtheatgenerator.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guirtheatgenerator.png");
 
   public GuiRTHeatGenerator(
       ContainerRTHeatGenerator container, Inventory playerInventory, Component title) {
@@ -39,7 +39,7 @@ public class GuiRTHeatGenerator extends Ic2Gui<ContainerRTHeatGenerator> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

@@ -4,17 +4,14 @@ import ic2.api.entity.boat.AbstractBoatEntity;
 import ic2.api.entity.boat.BoatType;
 import ic2.api.item.ElectricItem;
 import ic2.core.ref.Ic2BoatTypes;
-import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.NotNull;
 
 public class ElectricBoatEntity extends AbstractBoatEntity {
   private boolean hasPower = false;
@@ -32,10 +29,6 @@ public class ElectricBoatEntity extends AbstractBoatEntity {
       double z) {
     /* This method are used by reflection. */
     super(entityType, world, x, y, z);
-  }
-
-  public @NotNull Item getDropItem() {
-    return Ic2Items.ELECTRIC_BOAT;
   }
 
   @Override
@@ -70,7 +63,8 @@ public class ElectricBoatEntity extends AbstractBoatEntity {
     hasPower = false;
     if (getControllingPassenger() instanceof Player player) {
       int powerCost = 4;
-      for (ItemStack stack : player.getInventory().armor) {
+      for (var slot : ic2.core.slot.ArmorSlot.getAll()) {
+        ItemStack stack = player.getItemBySlot(slot);
         if (!StackUtil.isEmpty(stack)
             && ElectricItem.manager.discharge(stack, powerCost, Integer.MAX_VALUE, true, true, true)
                 == powerCost) {
@@ -83,7 +77,7 @@ public class ElectricBoatEntity extends AbstractBoatEntity {
 
     super.tick();
 
-    if (!this.level().isClientSide
+    if (!this.level().isClientSide()
         && this.level().getFluidState(this.blockPosition()).is(FluidTags.LAVA)) {
       Entity rider = this.getControllingPassenger();
       if (rider != null) {

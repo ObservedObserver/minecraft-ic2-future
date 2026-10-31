@@ -5,7 +5,7 @@ import ic2.core.util.Util;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -68,13 +68,13 @@ public class SlotHologramSlot extends Slot {
   }
 
   public ItemStack slotClick(
-      int button, ClickType clickType, Player player, AbstractContainerMenu screenHandler) {
-    if (Util.inDev() && player.getCommandSenderWorld().isClientSide) {
+      int button, ContainerInput clickType, Player player, AbstractContainerMenu screenHandler) {
+    if (Util.inDev() && player.level().isClientSide()) {
       System.out.printf(
           "button=%d clickType=%s stack=%s%n", button, clickType, screenHandler.getCarried());
     }
 
-    if (clickType == ClickType.PICKUP && (button == 0 || button == 1)) {
+    if (clickType == ContainerInput.PICKUP && (button == 0 || button == 1)) {
       ItemStack playerStack = screenHandler.getCarried();
       ItemStack slotStack = this.stacks[this.index];
       if (!StackUtil.isEmpty(playerStack)) {

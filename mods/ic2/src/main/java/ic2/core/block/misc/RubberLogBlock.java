@@ -12,7 +12,6 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -26,15 +25,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 public class RubberLogBlock extends RotatedPillarBlock {
-  public static final com.mojang.serialization.MapCodec<RubberLogBlock> CODEC =
-      simpleCodec(RubberLogBlock::new);
-
-  @Override
-  public com.mojang.serialization.MapCodec<
-          ? extends net.minecraft.world.level.block.RotatedPillarBlock>
-      codec() {
-    return CODEC;
-  }
 
   public static final EnumProperty<RubberLogBlock.RubberWoodState> stateProperty =
       EnumProperty.create("state", RubberLogBlock.RubberWoodState.class);
@@ -72,13 +62,12 @@ public class RubberLogBlock extends RotatedPillarBlock {
   }
 
   @Override
-  public void onRemove(
+  public void affectNeighborsAfterRemoval(
       @NotNull BlockState state,
-      @NotNull Level world,
+      @NotNull ServerLevel world,
       @NotNull BlockPos pos,
-      @NotNull BlockState newState,
       boolean movedByPiston) {
-    if (!state.is(newState.getBlock()) && !world.isClientSide) {
+    if (!world.isClientSide()) {
       BlockPos.MutableBlockPos cPos = new BlockPos.MutableBlockPos();
 
       for (int y = -4; y <= 4; y++) {
@@ -94,12 +83,12 @@ public class RubberLogBlock extends RotatedPillarBlock {
       }
     }
 
-    super.onRemove(state, world, pos, newState, movedByPiston);
+    super.affectNeighborsAfterRemoval(state, world, pos, movedByPiston);
   }
 
   public PushReaction getPistonPushReaction(BlockState state) {
     RubberWoodState rwState = state.getValue(stateProperty);
-    return rwState.isPlain() ? PushReaction.NORMAL : PushReaction.BLOCK;
+    return rwState.isPlain() ? PushReaction.PUSH_PULL : PushReaction.IMMOVEABLE;
   }
 
   private static boolean hasContactingLeaves(Level world, BlockPos pos) {
@@ -119,7 +108,7 @@ public class RubberLogBlock extends RotatedPillarBlock {
   }
 
   @Override
-  public @NotNull net.minecraft.world.ItemInteractionResult useItemOn(
+  public @NotNull net.minecraft.world.InteractionResult useItemOn(
       @NotNull ItemStack mainHandItem,
       @NotNull BlockState state,
       @NotNull Level world,
@@ -128,7 +117,7 @@ public class RubberLogBlock extends RotatedPillarBlock {
       @NotNull InteractionHand hand,
       @NotNull BlockHitResult hit) {
     RandomSource rng = RandomSource.create();
-    if (!(mainHandItem.getItem() instanceof AxeItem)) {
+    if (!(mainHandItem.is(net.minecraft.tags.ItemTags.AXES))) {
       return super.useItemOn(mainHandItem, state, world, pos, player, hand, hit);
     }
 
@@ -149,7 +138,7 @@ public class RubberLogBlock extends RotatedPillarBlock {
       this.dropResin(world, pos, rng.nextInt(2) + 1);
     }
 
-    return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
+    return net.minecraft.world.InteractionResult.SUCCESS;
   }
 
   private void dropResin(Level world, BlockPos pos, int amount) {

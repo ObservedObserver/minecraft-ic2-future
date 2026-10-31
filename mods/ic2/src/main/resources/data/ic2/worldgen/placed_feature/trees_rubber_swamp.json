@@ -32,8 +32,8 @@
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "ic2:rubber_sapling",
-          "Properties": {
+          "id": "ic2:rubber_sapling",
+          "properties": {
             "stage": "0"
           }
         }

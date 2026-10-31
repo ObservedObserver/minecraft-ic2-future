@@ -4,7 +4,7 @@ import ic2.core.IC2;
 import ic2.core.gui.GuiDefaultBackground;
 import ic2.core.gui.SlotGrid;
 import ic2.core.gui.VanillaButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
@@ -41,7 +41,7 @@ public class GuiMiningFilter extends GuiDefaultBackground<ContainerMiningFilter>
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
   }
 }

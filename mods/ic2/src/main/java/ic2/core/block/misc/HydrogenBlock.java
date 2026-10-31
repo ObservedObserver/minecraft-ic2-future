@@ -25,7 +25,7 @@ public class HydrogenBlock extends LiquidBlock {
           if (world.getBlockState(neighborPos).is(Blocks.FIRE)) {
             // Remove fluid first so the source block is gone before the blast.
             world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-            if (!world.isClientSide && world instanceof ServerLevel serverLevel) {
+            if (!world.isClientSide() && world instanceof ServerLevel serverLevel) {
               // Custom damage type so advancements can detect hydrogen blasts specifically.
               serverLevel.explode(
                   null,
@@ -46,7 +46,13 @@ public class HydrogenBlock extends LiquidBlock {
   }
 
   @Override
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {}
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {}
 
   @Override
   public void onPlace(
@@ -65,10 +71,10 @@ public class HydrogenBlock extends LiquidBlock {
       Level world,
       BlockPos pos,
       Block neighborBlock,
-      BlockPos neighborPos,
+      net.minecraft.world.level.redstone.Orientation orientation,
       boolean movedByPiston) {
     // Same as onPlace: re-schedule fluid flow ticks for source and flowing cells.
-    super.neighborChanged(state, world, pos, neighborBlock, neighborPos, movedByPiston);
+    super.neighborChanged(state, world, pos, neighborBlock, orientation, movedByPiston);
     if (state.getValue(LiquidBlock.LEVEL) == 0) {
       checkFireAndExplode(world, pos);
     }

@@ -31,9 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -44,9 +42,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -58,11 +57,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class Ic2TileEntityBlock extends Block
     implements EntityBlock, IWrenchAble, BreakableBlock, RetexturableBlock {
   public static final Property<Direction> anyFacingProperty =
-      DirectionProperty.create("facing", Util.allFacings);
+      EnumProperty.create("facing", Direction.class, java.util.List.copyOf(Util.allFacings));
   public static final Property<Direction> horizontalFacingProperty =
-      DirectionProperty.create("facing", Util.horizontalFacings);
+      EnumProperty.create("facing", Direction.class, java.util.List.copyOf(Util.horizontalFacings));
   public static final Property<Direction> verticalFacingProperty =
-      DirectionProperty.create("facing", Util.verticalFacings);
+      EnumProperty.create("facing", Direction.class, java.util.List.copyOf(Util.verticalFacings));
   public static final BooleanProperty CROSSING_BASE = BooleanProperty.create("crossing_base");
   public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
   private static final BlockEntityTicker<Ic2TileEntity> TICKER =
@@ -238,7 +237,7 @@ public final class Ic2TileEntityBlock extends Block
       } else if (facings.equals(Util.verticalFacings)) {
         builder.add(verticalFacingProperty);
       } else {
-        builder.add(DirectionProperty.create("facing", facings));
+        builder.add(EnumProperty.create("facing", Direction.class, java.util.List.copyOf(facings)));
       }
     }
 
@@ -298,7 +297,7 @@ public final class Ic2TileEntityBlock extends Block
       double maxMatch = Double.NEGATIVE_INFINITY;
 
       for (Direction cFacing : supportedFacings) {
-        double match = dir.dot(Vec3.atLowerCornerOf(cFacing.getOpposite().getNormal()));
+        double match = dir.dot(Vec3.atLowerCornerOf(cFacing.getOpposite().getUnitVec3i()));
         if (match > maxMatch) {
           maxMatch = match;
           bestFacing = cFacing;
@@ -325,19 +324,24 @@ public final class Ic2TileEntityBlock extends Block
             && super.canSurvive(state, world, pos);
   }
 
+  @Override
   public BlockState updateShape(
       BlockState state,
-      Direction direction,
-      BlockState neighborState,
-      LevelAccessor world,
+      net.minecraft.world.level.LevelReader world,
+      net.minecraft.world.level.ScheduledTickAccess ticks,
       BlockPos pos,
-      BlockPos neighborPos) {
+      Direction direction,
+      BlockPos neighborPos,
+      BlockState neighborState,
+      net.minecraft.util.RandomSource random) {
     if (this.cropType == null) {
-      return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+      return super.updateShape(
+          state, world, ticks, pos, direction, neighborPos, neighborState, random);
     } else {
       return !state.canSurvive(world, pos)
           ? Blocks.AIR.defaultBlockState()
-          : super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+          : super.updateShape(
+              state, world, ticks, pos, direction, neighborPos, neighborState, random);
     }
   }
 
@@ -346,12 +350,15 @@ public final class Ic2TileEntityBlock extends Block
       Level world,
       BlockPos pos,
       Block sourceBlock,
-      BlockPos sourcePos,
+      net.minecraft.world.level.redstone.Orientation orientation,
       boolean notify) {
-    super.neighborChanged(state, world, pos, sourceBlock, sourcePos, notify);
+    super.neighborChanged(state, world, pos, sourceBlock, orientation, notify);
     Ic2TileEntity tileEntity = getTe(world, pos);
     if (tileEntity != null) {
-      tileEntity.onNeighborChange(sourceBlock, sourcePos);
+      // The modern callback omits the source position. Refresh all adjacent inputs.
+      for (Direction side : Direction.values()) {
+        tileEntity.onNeighborChange(sourceBlock, pos.relative(side));
+      }
     }
   }
 
@@ -373,6 +380,12 @@ public final class Ic2TileEntityBlock extends Block
     return this.dummyTe.get().hasComponent(ComparatorEmitter.class);
   }
 
+  @Override
+  public int getAnalogOutputSignal(
+      BlockState state, Level world, BlockPos pos, Direction direction) {
+    return this.getAnalogOutputSignal(state, world, pos);
+  }
+
   public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
     Ic2TileEntity te = getTe(world, pos);
     if (te == null) {
@@ -383,10 +396,17 @@ public final class Ic2TileEntityBlock extends Block
     return emitter != null ? emitter.getLevel() : 0;
   }
 
-  public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+  public void entityInside(
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      Entity entity,
+      net.minecraft.world.entity.InsideBlockEffectApplier effects,
+      boolean precise) {
     if (this.cropType != null
         && entity instanceof Ravager
-        && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        && world instanceof net.minecraft.server.level.ServerLevel serverWorld
+        && serverWorld.getGameRules().get(GameRules.MOB_GRIEFING)) {
       world.destroyBlock(pos, true, entity);
     }
 
@@ -395,7 +415,7 @@ public final class Ic2TileEntityBlock extends Block
       te.onEntityCollision(entity);
     }
 
-    super.entityInside(state, world, pos, entity);
+    super.entityInside(state, world, pos, entity, effects, precise);
   }
 
   private void updateStateForEnergyNet(
@@ -490,22 +510,6 @@ public final class Ic2TileEntityBlock extends Block
     return super.getDrops(state, builder);
   }
 
-  public void onRemove(
-      BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-    if (!state.is(newState.getBlock()) && !moved) {
-      if (world.getBlockEntity(pos) instanceof Ic2TileEntity tileEntity) {
-        for (ItemStack stack : tileEntity.getAuxDrops(0)) {
-          Block.popResource(world, pos, stack);
-        }
-
-        super.onRemove(state, world, pos, newState, moved);
-        tileEntity.onBlockBreak();
-      }
-    } else {
-      super.onRemove(state, world, pos, newState, moved);
-    }
-  }
-
   @Override
   public Direction getFacing(Level world, BlockPos pos) {
     Ic2TileEntity te = getTe(world, pos);
@@ -563,10 +567,14 @@ public final class Ic2TileEntityBlock extends Block
   }
 
   @Override
-  public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+  public void onBlockExploded(
+      BlockState state,
+      net.minecraft.server.level.ServerLevel level,
+      BlockPos pos,
+      Explosion explosion) {
     // Explosive blocks must be primed, never silently deleted by the default
     // setBlock(AIR)+wasExploded path (wasExploded is a no-op for TE explosives).
-    if (!level.isClientSide && this.explosive) {
+    if (!level.isClientSide() && this.explosive) {
       BlockEntity blockEntity = level.getBlockEntity(pos);
       if (blockEntity instanceof TileEntityExplosive explosive) {
         explosive.onExploded(explosion);

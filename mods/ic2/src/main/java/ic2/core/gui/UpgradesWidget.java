@@ -8,7 +8,7 @@ import ic2.core.Ic2Gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -39,7 +39,7 @@ public class UpgradesWidget extends GuiElement<UpgradesWidget> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     this.gui.drawTexturedRect(
         guiGraphics.pose(), this.x, this.y, this.width, this.height, 96.0, 128.0);

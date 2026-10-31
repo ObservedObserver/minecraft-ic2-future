@@ -1,5 +1,7 @@
 package ic2.forge;
 
+import ic2.compat.IFluidHandler;
+import ic2.compat.IFluidHandlerItem;
 import ic2.core.block.misc.AirBlock;
 import ic2.core.block.misc.ConstructionFoamBlock;
 import ic2.core.block.misc.HotCoolantBlock;
@@ -14,14 +16,13 @@ import ic2.core.util.StackUtil;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
@@ -37,17 +38,18 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.commons.lang3.mutable.Mutable;
 
 class EnvFluidHandlerForge implements EnvFluidHandler {
+  static final java.util.Map<FluidType, FluidVisual> FLUID_VISUALS =
+      new java.util.concurrent.ConcurrentHashMap<>();
+
+  record FluidVisual(Identifier still, Identifier flowing, int color) {}
 
   static final DeferredRegister<Fluid> fluidRegistry =
       DeferredRegister.create(Registries.FLUID, "ic2");
@@ -62,7 +64,7 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
       new java.util.ArrayList<>();
 
   private static IFluidHandlerItem getFluidHandler(ItemStack stack) {
-    return stack.getCapability(Capabilities.FluidHandler.ITEM);
+    return ic2.compat.TransferFluidView.forStack(stack);
   }
 
   private static void updateResultStack(Mutable<ItemStack> out, IFluidHandlerItem handler) {
@@ -87,7 +89,8 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
     if (level == null) {
       return null;
     }
-    return level.getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), state, be, side);
+    var handler = level.getCapability(Capabilities.Fluid.BLOCK, be.getBlockPos(), state, be, side);
+    return handler != null ? new ic2.compat.TransferFluidView(handler, null) : null;
   }
 
   private static IFluidHandler.FluidAction getAction(boolean simulate) {
@@ -135,13 +138,14 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
 
   @Override
   public EnvFluidHandler.FluidRefs createFluid(
-      ResourceLocation id,
+      Identifier id,
       int density,
       int viscosity,
       int luminosity,
       int temperature,
-      ResourceLocation stillSpriteId,
-      ResourceLocation flowingSpriteId,
+      boolean isGaseous,
+      Identifier stillSpriteId,
+      Identifier flowingSpriteId,
       int color) {
     EnvFluidHandler.FluidRefs ret = new EnvFluidHandler.FluidRefs(null, null, null, null);
     java.util.concurrent.atomic.AtomicReference<FluidType> fluidTypeRef =
@@ -154,31 +158,11 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
                   .viscosity(viscosity)
                   .lightLevel(luminosity)
                   .temperature(temperature);
-          FluidType fluidType =
-              new FluidType(attributesBuilder) {
-
-                @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-                  consumer.accept(
-                      new IClientFluidTypeExtensions() {
-
-                        @Override
-                        public int getTintColor() {
-                          return color;
-                        }
-
-                        @Override
-                        public ResourceLocation getStillTexture() {
-                          return stillSpriteId;
-                        }
-
-                        @Override
-                        public ResourceLocation getFlowingTexture() {
-                          return flowingSpriteId != null ? flowingSpriteId : stillSpriteId;
-                        }
-                      });
-                }
-              };
+          FluidType fluidType = Ic2FluidType.create(id, attributesBuilder, isGaseous);
+          FLUID_VISUALS.put(
+              fluidType,
+              new FluidVisual(
+                  stillSpriteId, flowingSpriteId == null ? stillSpriteId : flowingSpriteId, color));
           Registry.register(NeoForgeRegistries.FLUID_TYPES, id, fluidType);
           fluidTypeRef.set(fluidType);
         });
@@ -197,30 +181,40 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
           ret.flowing(flowing);
           Registry.register(
               BuiltInRegistries.FLUID,
-              ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "flowing_" + id.getPath()),
+              Identifier.fromNamespaceAndPath(id.getNamespace(), "flowing_" + id.getPath()),
               flowing);
           Block.Properties fluidBlockProperties =
               BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+                  .setId(
+                      net.minecraft.resources.ResourceKey.create(
+                          net.minecraft.core.registries.Registries.BLOCK,
+                          Identifier.fromNamespaceAndPath(
+                              id.getNamespace(), "fluid_block_" + id.getPath())))
                   .noLootTable()
-                  .noCollission()
+                  .noCollision()
                   .randomTicks()
-                  .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY);
+                  .pushReaction(net.minecraft.world.level.material.PushReaction.POPPED);
           LiquidBlock fluidBlock =
               createFluidBlock(id.getPath(), (FlowingFluid) ret.still(), fluidBlockProperties);
           Registry.register(
               BuiltInRegistries.BLOCK,
-              ResourceLocation.fromNamespaceAndPath(
-                  id.getNamespace(), "fluid_block_" + id.getPath()),
+              Identifier.fromNamespaceAndPath(id.getNamespace(), "fluid_block_" + id.getPath()),
               fluidBlock);
           fluidBlockRef.set(fluidBlock);
         });
-    ResourceLocation bucketId =
-        ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_bucket");
+    Identifier bucketId =
+        Identifier.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_bucket");
     EnvProxyForge.pendingItemRegistrations.add(
         () -> {
           BucketItem bucket =
               new BucketItem(
-                  ret.still(), new Properties().craftRemainder(Items.BUCKET).stacksTo(1));
+                  ret.still(),
+                  new Properties()
+                      .setId(
+                          net.minecraft.resources.ResourceKey.create(
+                              net.minecraft.core.registries.Registries.ITEM, bucketId))
+                      .craftRemainder(Items.BUCKET)
+                      .stacksTo(1));
           Registry.register(BuiltInRegistries.ITEM, bucketId, bucket);
           ret.bucket(bucket);
         });
@@ -248,12 +242,12 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
   }
 
   @Override
-  public ResourceLocation getStillSpriteId(Fluid fluid) {
+  public Identifier getStillSpriteId(Fluid fluid) {
     throw new UnsupportedOperationException("client only");
   }
 
   @Override
-  public ResourceLocation getFlowingSpriteId(Fluid fluid) {
+  public Identifier getFlowingSpriteId(Fluid fluid) {
     throw new UnsupportedOperationException("client only");
   }
 
@@ -268,13 +262,17 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
     // stack (fluid + components), so when present we reconstruct it and just re-apply the amount;
     // IC2's own fluids carry no components, so nbt is null and we build a plain stack.
     if (nbt != null && !nbt.isEmpty()) {
-      FluidStack parsed = FluidStack.parseOptional(net.minecraft.core.RegistryAccess.EMPTY, nbt);
+      FluidStack parsed =
+          ic2.compat.NbtCompat.readFluid(net.minecraft.core.RegistryAccess.EMPTY, nbt);
       if (!parsed.isEmpty()) {
         parsed.setAmount(amount);
         return new Ic2FluidStackImpl(parsed);
       }
     }
-    return new Ic2FluidStackImpl(new FluidStack(fluid, amount));
+    return new Ic2FluidStackImpl(
+        amount == 0 || fluid == net.minecraft.world.level.material.Fluids.EMPTY
+            ? FluidStack.EMPTY
+            : new FluidStack(fluid, amount));
   }
 
   @Override
@@ -330,14 +328,14 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
 
   @Override
   public Ic2FluidStack readFluidStack(CompoundTag nbt) {
-    if (nbt.contains("Tag", 10)) {
+    if (ic2.compat.NbtCompat.contains(nbt, "Tag", 10)) {
       return new Ic2FluidStackImpl(
-          FluidStack.parseOptional(net.minecraft.core.RegistryAccess.EMPTY, nbt));
+          ic2.compat.NbtCompat.readFluid(net.minecraft.core.RegistryAccess.EMPTY, nbt));
     }
-    String id = nbt.getString("FluidName");
-    int amount = nbt.getInt("Amount");
+    String id = nbt.getStringOr("FluidName", "");
+    int amount = nbt.getIntOr("Amount", 0);
     Fluid fluid;
-    return (fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(id))) != null && amount >= 0
+    return (fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(id))) != null && amount >= 0
         ? Ic2FluidStack.create(fluid, amount)
         : null;
   }
@@ -347,7 +345,8 @@ class EnvFluidHandlerForge implements EnvFluidHandler {
     if (fs instanceof Ic2FluidStackImpl impl && !impl.parent().getComponentsPatch().isEmpty()) {
       // save() returns the merged tag instead of mutating the prefix
       return (CompoundTag)
-          impl.parent().save(net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag());
+          ic2.compat.NbtCompat.saveFluid(
+              impl.parent(), net.minecraft.core.RegistryAccess.EMPTY, new CompoundTag());
     }
     return null;
   }

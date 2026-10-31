@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/lead"
+            "items": "#c:plates/lead"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/reactor_chamber"
+        "recipes": [
+          "ic2:shaped/reactor_chamber"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

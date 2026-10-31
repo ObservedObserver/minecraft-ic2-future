@@ -110,7 +110,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -271,6 +271,8 @@ public final class Ic2BlockEntities {
       register("dark_oak_sapling_crop", TileEntityCrop::new, Ic2Blocks.DARK_OAK_SAPLING_CROP);
   public static final BlockEntityType<TileEntityCrop> CHERRY_SAPLING_CROP =
       register("cherry_sapling_crop", TileEntityCrop::new, Ic2Blocks.CHERRY_SAPLING_CROP);
+  public static final BlockEntityType<TileEntityCrop> PALE_OAK_SAPLING_CROP =
+      register("pale_oak_sapling_crop", TileEntityCrop::new, Ic2Blocks.PALE_OAK_SAPLING_CROP);
   public static final BlockEntityType<TileEntityFluidBottler> FLUID_BOTTLER =
       register("fluid_bottler", TileEntityFluidBottler::new, Ic2Blocks.FLUID_BOTTLER);
   public static final BlockEntityType<TileEntityCrop> FERRU_CROP =
@@ -417,7 +419,7 @@ public final class Ic2BlockEntities {
       blockEntityTypeMap = new HashMap<>();
     }
 
-    ResourceLocation identifier = IC2.getIdentifier(name);
+    Identifier identifier = IC2.getIdentifier(name);
     BlockEntityType<T> blockEntityType =
         IC2.envProxy.registerBlockEntity(identifier, factory, blocks);
     blockEntityTypeMap.put(identifier.toString(), blockEntityType);
@@ -427,7 +429,7 @@ public final class Ic2BlockEntities {
   public static final BlockEntityType<TileEntityMetalFormer> METAL_FORMER =
       register("metal_former", TileEntityMetalFormer::new, Ic2Blocks.METAL_FORMER);
 
-  public static BlockEntityType<?> get(ResourceLocation identifier) {
+  public static BlockEntityType<?> get(Identifier identifier) {
     return blockEntityTypeMap.get(identifier.toString());
   }
 

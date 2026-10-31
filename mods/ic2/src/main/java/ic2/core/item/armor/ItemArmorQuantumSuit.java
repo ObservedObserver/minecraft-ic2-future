@@ -4,6 +4,7 @@ import ic2.api.item.ElectricItem;
 import ic2.api.item.HudMode;
 import ic2.api.item.IHazmatLike;
 import ic2.api.item.IItemHudProvider;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.Ic2Potion;
 import ic2.core.init.IC2ClientConfig;
@@ -24,7 +25,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -32,17 +32,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemArmorQuantumSuit extends ItemArmorElectric
-    implements IJetpack, IHazmatLike, IItemHudProvider {
+    implements IJetpack, IHazmatLike, IItemHudProvider, ic2.compat.LegacyInventoryTicker {
   public static final int[] CHARGED_PROTECTION = new int[] {3, 6, 8, 3};
   protected static final Map<Holder<MobEffect>, Integer> potionRemovalCost =
       new IdentityHashMap<>();
@@ -94,12 +94,12 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
 
   public void clearColor(@NotNull ItemStack stack) {
     CompoundTag rootNbt = StackUtil.getTag(stack);
-    if (rootNbt == null || !rootNbt.contains("display", 10)) {
+    if (rootNbt == null || !ic2.compat.NbtCompat.contains(rootNbt, "display", 10)) {
       return;
     }
 
-    CompoundTag nbt = rootNbt.getCompound("display");
-    if (nbt.contains("color", 3)) {
+    CompoundTag nbt = rootNbt.getCompoundOrEmpty("display");
+    if (ic2.compat.NbtCompat.contains(nbt, "color", 3)) {
       nbt.remove("color");
       if (nbt.isEmpty()) {
         rootNbt.remove("display");
@@ -111,13 +111,16 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
 
   public int getColor(@NotNull ItemStack stack) {
     CompoundTag nbt = this.getDisplayNbt(stack, false);
-    return nbt != null && nbt.contains("color", 3) ? nbt.getInt("color") : -1;
+    return nbt != null && ic2.compat.NbtCompat.contains(nbt, "color", 3)
+        ? nbt.getIntOr("color", 0)
+        : -1;
   }
 
   public void setColor(@NotNull ItemStack stack, int color) {
     CompoundTag nbt = this.getDisplayNbt(stack, true);
     assert nbt != null;
     nbt.putInt("color", color);
+    StackUtil.setTagValue(stack, "display", nbt);
   }
 
   private CompoundTag getDisplayNbt(ItemStack stack, boolean create) {
@@ -127,7 +130,7 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
     }
 
     CompoundTag ret;
-    if (!nbt.contains("display", 10)) {
+    if (!ic2.compat.NbtCompat.contains(nbt, "display", 10)) {
       if (!create) {
         return null;
       }
@@ -135,7 +138,7 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       ret = new CompoundTag();
       nbt.put("display", ret);
     } else {
-      ret = nbt.getCompound("display");
+      ret = nbt.getCompoundOrEmpty("display");
     }
 
     return ret;
@@ -157,12 +160,23 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
     return true;
   }
 
-  @Override
   public int getEnchantmentValue() {
     return 0;
   }
 
   @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag context) {
     super.appendHoverText(stack, world, tooltip, context);
@@ -202,12 +216,31 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
 
   @Override
   public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+  }
+
+  public void inventoryTick(
       @NotNull ItemStack stack,
       @NotNull Level world,
       @NotNull Entity entity,
       int slot,
       boolean selected) {
-    super.inventoryTick(stack, world, entity, slot, selected);
+    if (world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+      super.inventoryTick(
+          stack,
+          serverLevel,
+          entity,
+          selected ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : null);
+    }
     if (!(entity instanceof Player player)) {
       return;
     }
@@ -217,7 +250,7 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
     }
 
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-    byte toggleTimer = nbtData.getByte("toggle_timer");
+    byte toggleTimer = nbtData.getByteOr("toggle_timer", (byte) 0);
     boolean ret = false;
     EquipmentSlot equipSlot = this.getEquipmentSlot();
 
@@ -236,8 +269,8 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       if (ElectricItem.manager.canUse(stack, 1000.0) && player.getFoodData().needsFood()) {
         int foodSlot = -1;
 
-        for (int i = 0; i < player.getInventory().items.size(); i++) {
-          ItemStack invStack = player.getInventory().items.get(i);
+        for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
+          ItemStack invStack = player.getInventory().getNonEquipmentItems().get(i);
           if (!StackUtil.isEmpty(invStack) && invStack.getItem() == Ic2Items.FILLED_TIN_CAN) {
             foodSlot = i;
             break;
@@ -245,12 +278,15 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
         }
 
         if (foodSlot > -1) {
-          ItemStack foodStack = player.getInventory().items.get(foodSlot);
+          ItemStack foodStack = player.getInventory().getNonEquipmentItems().get(foodSlot);
           ItemTinCan can = (ItemTinCan) foodStack.getItem();
-          InteractionResultHolder<ItemStack> result = can.onEaten(player, foodStack);
-          player.getInventory().items.set(foodSlot, result.getObject());
+          InteractionResult result = can.onEaten(player, foodStack);
+          player
+              .getInventory()
+              .getNonEquipmentItems()
+              .set(foodSlot, InteractionResults.stackOr(result, foodStack));
 
-          if (result.getResult() == InteractionResult.SUCCESS) {
+          if (result.consumesAction()) {
             ElectricItem.manager.use(stack, 1000.0, player);
           }
 
@@ -276,15 +312,16 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
         }
       }
 
-      boolean Nightvision = nbtData.getBoolean("night_vision");
-      short hudmode = nbtData.getShort("hud_mode");
+      boolean Nightvision = nbtData.getBooleanOr("night_vision", false);
+      short hudmode = nbtData.getShortOr("hud_mode", (short) 0);
       if (IC2.keyboard.isAltKeyDown(player)
           && IC2.keyboard.isModeSwitchKeyDown(player)
           && toggleTimer == 0) {
         toggleTimer = 10;
         Nightvision = !Nightvision;
         if (IC2.sideProxy.isSimulating()) {
-          nbtData.putBoolean("night_vision", Nightvision);
+          StackUtil.setTagValue(
+              stack, nbtData, "night_vision", net.minecraft.nbt.ByteTag.valueOf(Nightvision));
           if (Nightvision) {
             IC2.sideProxy.messagePlayer(player, "ic2.night_vision.mode.enabled");
           } else {
@@ -304,7 +341,8 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
         }
 
         if (IC2.sideProxy.isSimulating()) {
-          nbtData.putShort("hud_mode", hudmode);
+          StackUtil.setTagValue(
+              stack, nbtData, "hud_mode", net.minecraft.nbt.ShortTag.valueOf(hudmode));
           IC2.sideProxy.messagePlayer(
               player,
               Component.translatable(HudMode.getFromID(hudmode).getTranslationKey()).getString());
@@ -312,14 +350,15 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       }
 
       if (IC2.sideProxy.isSimulating() && toggleTimer > 0) {
-        nbtData.putByte("toggle_timer", --toggleTimer);
+        StackUtil.setTagValue(
+            stack, nbtData, "toggle_timer", net.minecraft.nbt.ByteTag.valueOf(--toggleTimer));
       }
 
       if (Nightvision
           && IC2.sideProxy.isSimulating()
           && ElectricItem.manager.use(stack, 1.0, player)) {
         BlockPos pos = BlockPos.containing(player.position());
-        int skylight = player.getCommandSenderWorld().getMaxLocalRawBrightness(pos);
+        int skylight = player.level().getMaxLocalRawBrightness(pos);
         ItemArmorNanoSuit.affectPlayer(player, skylight);
 
         ret = true;
@@ -329,14 +368,15 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       player.clearFire();
     } else if (equipSlot == EquipmentSlot.LEGS) {
       boolean speedEnabled =
-          !nbtData.contains("speed_enabled") || nbtData.getBoolean("speed_enabled");
+          !nbtData.contains("speed_enabled") || nbtData.getBooleanOr("speed_enabled", false);
       boolean speedTogglePressed =
           IC2.keyboard.isAltKeyDown(player) && IC2.keyboard.isSneakKeyDown(player);
-      boolean speedToggleWasPressed = nbtData.getBoolean("speed_toggle_pressed");
+      boolean speedToggleWasPressed = nbtData.getBooleanOr("speed_toggle_pressed", false);
       if (speedTogglePressed && !speedToggleWasPressed) {
         speedEnabled = !speedEnabled;
         if (IC2.sideProxy.isSimulating()) {
-          nbtData.putBoolean("speed_enabled", speedEnabled);
+          StackUtil.setTagValue(
+              stack, nbtData, "speed_enabled", net.minecraft.nbt.ByteTag.valueOf(speedEnabled));
           if (speedEnabled) {
             IC2.sideProxy.messagePlayer(player, "ic2.speed.mode.enabled");
           } else {
@@ -345,7 +385,11 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
         }
       }
 
-      nbtData.putBoolean("speed_toggle_pressed", speedTogglePressed);
+      StackUtil.setTagValue(
+          stack,
+          nbtData,
+          "speed_toggle_pressed",
+          net.minecraft.nbt.ByteTag.valueOf(speedTogglePressed));
 
       if (speedEnabled) {
         boolean enableQuantumSpeedOnSprint;
@@ -360,14 +404,15 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
             && IC2.keyboard.isForwardKeyDown(player)
             && (enableQuantumSpeedOnSprint && player.isSprinting()
                 || !enableQuantumSpeedOnSprint && IC2.keyboard.isBoostKeyDown(player))) {
-          byte speedTicker = nbtData.getByte("speed_ticker");
+          byte speedTicker = nbtData.getByteOr("speed_ticker", (byte) 0);
           if (++speedTicker >= 10) {
             speedTicker = 0;
             ElectricItem.manager.use(stack, 1000.0, player);
             ret = true;
           }
 
-          nbtData.putByte("speed_ticker", speedTicker);
+          StackUtil.setTagValue(
+              stack, nbtData, "speed_ticker", net.minecraft.nbt.ByteTag.valueOf(speedTicker));
           float speed = 0.22F;
           if (player.isInWater()) {
             speed = 0.1F;
@@ -387,14 +432,16 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       }
 
     } else if (equipSlot == EquipmentSlot.FEET) {
-      boolean jumpEnabled = !nbtData.contains("jump_enabled") || nbtData.getBoolean("jump_enabled");
+      boolean jumpEnabled =
+          !nbtData.contains("jump_enabled") || nbtData.getBooleanOr("jump_enabled", false);
       if (IC2.keyboard.isAltKeyDown(player)
           && IC2.keyboard.isJumpKeyDown(player)
           && toggleTimer == 0) {
         toggleTimer = 10;
         jumpEnabled = !jumpEnabled;
         if (IC2.sideProxy.isSimulating()) {
-          nbtData.putBoolean("jump_enabled", jumpEnabled);
+          StackUtil.setTagValue(
+              stack, nbtData, "jump_enabled", net.minecraft.nbt.ByteTag.valueOf(jumpEnabled));
           if (jumpEnabled) {
             IC2.sideProxy.messagePlayer(player, "ic2.jump.mode.enabled");
           } else {
@@ -404,12 +451,14 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
       }
 
       if (IC2.sideProxy.isSimulating() && toggleTimer > 0) {
-        nbtData.putByte("toggle_timer", --toggleTimer);
+        StackUtil.setTagValue(
+            stack, nbtData, "toggle_timer", net.minecraft.nbt.ByteTag.valueOf(--toggleTimer));
       }
 
       if (jumpEnabled) {
         if (IC2.sideProxy.isSimulating()) {
-          boolean wasOnGround = !nbtData.contains("on_ground") || nbtData.getBoolean("on_ground");
+          boolean wasOnGround =
+              !nbtData.contains("on_ground") || nbtData.getBooleanOr("on_ground", false);
           if (wasOnGround
               && !player.onGround()
               && IC2.keyboard.isJumpKeyDown(player)
@@ -419,7 +468,8 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
           }
 
           if (player.onGround() != wasOnGround) {
-            nbtData.putBoolean("on_ground", player.onGround());
+            StackUtil.setTagValue(
+                stack, nbtData, "on_ground", net.minecraft.nbt.ByteTag.valueOf(player.onGround()));
           }
         }
 
@@ -493,6 +543,6 @@ public class ItemArmorQuantumSuit extends ItemArmorElectric
 
   @Override
   public HudMode getHudMode(ItemStack stack) {
-    return HudMode.getFromID(StackUtil.getOrCreateNbtData(stack).getShort("hud_mode"));
+    return HudMode.getFromID(StackUtil.getOrCreateNbtData(stack).getShortOr("hud_mode", (short) 0));
   }
 }

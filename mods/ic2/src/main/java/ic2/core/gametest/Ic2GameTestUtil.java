@@ -18,7 +18,7 @@ final class Ic2GameTestUtil {
   static UseOnContext useOn(
       GameTestHelper helper, Player player, BlockPos relativePos, Direction side) {
     BlockPos pos = helper.absolutePos(relativePos);
-    Vec3 hitVec = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(side.getNormal()).scale(0.5));
+    Vec3 hitVec = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(0.5));
     return new UseOnContext(
         player, InteractionHand.MAIN_HAND, new BlockHitResult(hitVec, side, pos, false));
   }

@@ -82,7 +82,7 @@ public class TileEntityBase extends TileEntityInventory {
   @Override
   public void onNetworkUpdate(String field) {
     super.onNetworkUpdate(field);
-    if (this.level == null || !this.level.isClientSide) {
+    if (this.level == null || !this.level.isClientSide()) {
       return;
     }
 
@@ -155,10 +155,10 @@ public class TileEntityBase extends TileEntityInventory {
   public void activate(boolean playSubSound) {
     if (!this.getActive()) {
       this.teBlock.setActive(this.level, this.worldPosition, this.getBlockState(), true);
-      if (this.level != null && this.level.isClientSide) {
+      if (this.level != null && this.level.isClientSide()) {
         this.startPlaySound(playSubSound);
       }
-    } else if (this.level != null && this.level.isClientSide && this.isLoopingSoundIdling()) {
+    } else if (this.level != null && this.level.isClientSide() && this.isLoopingSoundIdling()) {
       this.playLoopingSound(playSubSound);
     }
   }
@@ -171,7 +171,7 @@ public class TileEntityBase extends TileEntityInventory {
     boolean useInterrupt = isInterrupted && this.getInterruptSoundEvent() != null;
     if (useInterrupt) {
       this.playInterruptOnDeactivate = true;
-      if (this.level != null && !this.level.isClientSide) {
+      if (this.level != null && !this.level.isClientSide()) {
         IC2.network.get(true).updateTileEntityField(this, "playInterruptOnDeactivate");
       }
     } else {
@@ -180,7 +180,7 @@ public class TileEntityBase extends TileEntityInventory {
 
     this.teBlock.setActive(this.level, this.worldPosition, this.getBlockState(), false);
 
-    if (this.level != null && this.level.isClientSide) {
+    if (this.level != null && this.level.isClientSide()) {
       this.handleClientDeactivation();
     }
   }

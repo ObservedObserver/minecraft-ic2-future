@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/rci_lzh"
+        "recipes": [
+          "ic2:shaped/rci_lzh"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

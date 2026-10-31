@@ -170,8 +170,8 @@ public class Fluids extends TileEntityComponent implements Ic2FluidBlock {
   @Override
   public void readFromNbt(CompoundTag nbt) {
     for (Fluids.InternalFluidTank tank : this.managedTanks) {
-      if (nbt.contains(tank.identifier, 10)) {
-        tank.fromNbt(nbt.getCompound(tank.identifier));
+      if (ic2.compat.NbtCompat.contains(nbt, tank.identifier, 10)) {
+        tank.fromNbt(nbt.getCompoundOrEmpty(tank.identifier));
       }
     }
   }

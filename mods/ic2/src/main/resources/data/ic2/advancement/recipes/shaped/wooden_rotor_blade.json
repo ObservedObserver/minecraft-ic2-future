@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:logs"
+            "items": "#minecraft:logs"
           }
         ]
       },
@@ -15,7 +15,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:planks"
+            "items": "#minecraft:planks"
           }
         ]
       },
@@ -23,7 +23,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/wooden_rotor_blade"
+        "recipes": [
+          "ic2:shaped/wooden_rotor_blade"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

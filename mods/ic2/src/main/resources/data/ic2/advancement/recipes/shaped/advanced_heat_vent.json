@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:gems/diamond"
+            "items": "#c:gems/diamond"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/advanced_heat_vent"
+        "recipes": [
+          "ic2:shaped/advanced_heat_vent"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

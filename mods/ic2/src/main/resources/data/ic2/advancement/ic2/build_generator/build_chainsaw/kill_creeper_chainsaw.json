@@ -2,7 +2,7 @@
   "parent": "ic2:ic2/build_generator/build_chainsaw",
   "display": {
     "icon": {
-      "item": "ic2:chainsaw"
+      "id": "ic2:chainsaw"
     },
     "title": {
       "translate": "advancements.ic2.kill_creeper_with_chainsaw"
@@ -20,11 +20,15 @@
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
         "entity": {
-          "type": "minecraft:creeper"
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:creeper"
+          }
         },
         "killing_blow": {
           "source_entity": {
-            "equipment": {
+            "minecraft:equipment": {
               "mainhand": {
                 "items": [
                   "ic2:chainsaw"

@@ -1,12 +1,12 @@
 package ic2.core.item.tool;
 
+import ic2.compat.InteractionResults;
 import ic2.core.IHasGui;
 import ic2.core.item.IHandHeldInventory;
 import ic2.core.util.StackUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
@@ -19,17 +19,17 @@ public class ItemToolbox extends Item implements IHandHeldInventory {
     super(settings);
   }
 
-  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+  public InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       this.getInventory(player, hand, stack).openManagedItem(player, hand, null);
     }
 
-    return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
   }
 
   public boolean onDroppedByPlayer(ItemStack stack, Player player) {
-    if (!player.getCommandSenderWorld().isClientSide
+    if (!player.level().isClientSide()
         && !StackUtil.isEmpty(stack)
         && player.containerMenu instanceof ContainerToolbox) {
       HandHeldToolbox toolbox = ((ContainerToolbox) player.containerMenu).base;

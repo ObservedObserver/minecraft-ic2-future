@@ -48,7 +48,7 @@ public class ItemTreetap extends Item implements IBoxable {
     }
 
     if (rwState.wet) {
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         world.setBlockAndUpdate(
             pos, (BlockState) state.setValue(RubberLogBlock.stateProperty, rwState.getDry()));
         if (stacks != null) {
@@ -62,7 +62,7 @@ public class ItemTreetap extends Item implements IBoxable {
       return true;
     } else {
       boolean ret = false;
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         if (rng.nextInt(5) == 0) {
           world.setBlockAndUpdate(
               pos,
@@ -92,7 +92,8 @@ public class ItemTreetap extends Item implements IBoxable {
 
   private static void triggerToolUseEvent(
       Level world, BlockPos pos, Player player, BlockState state, boolean isElectric) {
-    player.playNotifySound(getToolUseSound(isElectric), SoundSource.PLAYERS, 1.0F, 1.0F);
+    ic2.compat.SoundCompat.notify(
+        player, getToolUseSound(isElectric), SoundSource.PLAYERS, 1.0F, 1.0F);
     world.gameEvent(GameEvent.BLOCK_CHANGE, pos, Context.of(player, state));
     // 1.21: gameEvent takes Holder<GameEvent>; wrap the raw custom event via its registry.
     world.gameEvent(

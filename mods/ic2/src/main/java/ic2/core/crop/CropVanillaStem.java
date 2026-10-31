@@ -3,7 +3,7 @@ package ic2.core.crop;
 import ic2.api.crops.ICropTile;
 import ic2.api.crops.ICropType;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public abstract class CropVanillaStem extends CropVanilla {
   public CropVanillaStem(ICropType cropType) {
@@ -11,7 +11,7 @@ public abstract class CropVanillaStem extends CropVanilla {
   }
 
   @Override
-  public List<ResourceLocation> getTexturesLocation() {
+  public List<Identifier> getTexturesLocation() {
     return this.getDefaultTexturesLocation();
   }
 

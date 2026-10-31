@@ -32,7 +32,7 @@ public class TileEntityWeightedFluidDistributor extends TileEntityFluidDistribut
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    int[] indexes = nbt.getIntArray("priority");
+    int[] indexes = nbt.getIntArray("priority").orElseGet(() -> new int[0]);
     if (indexes.length > 0) {
       for (int index : indexes) {
         this.priority.add(Direction.from3DDataValue(index));
@@ -63,7 +63,7 @@ public class TileEntityWeightedFluidDistributor extends TileEntityFluidDistribut
 
   @Override
   protected void updateConnectivity() {
-    if (!this.getLevel().isClientSide
+    if (!this.getLevel().isClientSide()
         && !this.priority.isEmpty()
         && this.priority.remove(this.getFacing())) {
       this.updatePriority(true);

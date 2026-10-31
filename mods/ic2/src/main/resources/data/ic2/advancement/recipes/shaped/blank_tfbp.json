@@ -39,7 +39,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/blank_tfbp"
+        "recipes": [
+          "ic2:shaped/blank_tfbp"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

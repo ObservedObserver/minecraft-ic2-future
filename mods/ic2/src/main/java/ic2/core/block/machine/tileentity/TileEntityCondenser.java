@@ -71,7 +71,7 @@ public class TileEntityCondenser extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getInt("progress");
+    this.progress = nbt.getIntOr("progress", 0);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class TileEntityCondenser extends TileEntityElectricMachine
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.updateTier();
     }
   }
@@ -103,7 +103,7 @@ public class TileEntityCondenser extends TileEntityElectricMachine
   @Override
   public void setChanged() {
     super.setChanged();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       this.updateTier();
     }
   }

@@ -60,7 +60,7 @@ public class TileEntityElectrolyzer extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getInt("progress");
+    this.progress = nbt.getIntOr("progress", 0);
   }
 
   @Override

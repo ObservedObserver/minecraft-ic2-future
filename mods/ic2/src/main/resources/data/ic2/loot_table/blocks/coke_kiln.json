@@ -1,9 +1,18 @@
 {
   "type": "minecraft:block",
-  "pools": [{
-    "bonus_rolls": 0.0,
-    "conditions": [{ "condition": "minecraft:survives_explosion" }],
-    "entries": [{ "type": "minecraft:item", "name": "ic2:coke_kiln" }],
-    "rolls": 1.0
-  }]
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "ic2:coke_kiln"
+        }
+      ],
+      "rolls": 1.0,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
 }

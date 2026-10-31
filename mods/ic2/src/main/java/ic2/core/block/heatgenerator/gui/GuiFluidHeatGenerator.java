@@ -3,14 +3,14 @@ package ic2.core.block.heatgenerator.gui;
 import ic2.core.Ic2Gui;
 import ic2.core.block.heatgenerator.container.ContainerFluidHeatGenerator;
 import ic2.core.gui.TankGauge;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiFluidHeatGenerator extends Ic2Gui<ContainerFluidHeatGenerator> {
-  private static final ResourceLocation background =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guifluidheatgenerator.png");
+  private static final Identifier background =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guifluidheatgenerator.png");
 
   public GuiFluidHeatGenerator(
       ContainerFluidHeatGenerator container, Inventory playerInventory, Component title) {
@@ -19,7 +19,7 @@ public class GuiFluidHeatGenerator extends Ic2Gui<ContainerFluidHeatGenerator> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     super.drawForegroundLayer(guiGraphics, mouseX, mouseY);
     this.drawString(
         guiGraphics,
@@ -38,7 +38,7 @@ public class GuiFluidHeatGenerator extends Ic2Gui<ContainerFluidHeatGenerator> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return background;
   }
 }

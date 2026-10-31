@@ -54,7 +54,7 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public void onLoad() {
-    if (!this.addedToEnet && !this.getWorldObj().isClientSide && Info.isIc2Available()) {
+    if (!this.addedToEnet && !this.getWorldObj().isClientSide() && Info.isIc2Available()) {
       EnergyNet.instance.addLocatableTile(this);
       this.addedToEnet = true;
     }
@@ -65,15 +65,15 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public void onChunkUnload() {
-    if (this.addedToEnet && !this.getWorldObj().isClientSide && Info.isIc2Available()) {
+    if (this.addedToEnet && !this.getWorldObj().isClientSide() && Info.isIc2Available()) {
       EnergyNet.instance.removeTile(this);
       this.addedToEnet = false;
     }
   }
 
   public void readFromNBT(CompoundTag tag) {
-    CompoundTag data = tag.getCompound(this.getNbtTagName());
-    this.setEnergyStored(data.getDouble("energy"));
+    CompoundTag data = tag.getCompoundOrEmpty(this.getNbtTagName());
+    this.setEnergyStored(data.getDoubleOr("energy", 0.0));
   }
 
   public CompoundTag writeToNBT(CompoundTag tag) {
@@ -104,7 +104,7 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public double addEnergy(double amount) {
-    if (this.getWorldObj().isClientSide) {
+    if (this.getWorldObj().isClientSide()) {
       return 0.0;
     }
 
@@ -123,7 +123,7 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public boolean useEnergy(double amount) {
-    if (this.canUseEnergy(amount) && !this.getWorldObj().isClientSide) {
+    if (this.canUseEnergy(amount) && !this.getWorldObj().isClientSide()) {
       this.setEnergyStored(this.getEnergyStored() - amount);
       return true;
     } else {
@@ -132,7 +132,7 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public boolean charge(ItemStack stack) {
-    if (stack != null && Info.isIc2Available() && !this.getWorldObj().isClientSide) {
+    if (stack != null && Info.isIc2Available() && !this.getWorldObj().isClientSide()) {
       double energyStored = this.getEnergyStored();
       double amount =
           ElectricItem.manager.charge(
@@ -149,7 +149,7 @@ abstract class BasicEnergyTile implements ILocatable, IEnergyTile {
   }
 
   public boolean discharge(ItemStack stack, double limit) {
-    if (stack != null && Info.isIc2Available() && !this.getWorldObj().isClientSide) {
+    if (stack != null && Info.isIc2Available() && !this.getWorldObj().isClientSide()) {
       double energyStored = this.getEnergyStored();
       double amount = this.getCapacity() - energyStored;
       if (amount <= 0.0) {

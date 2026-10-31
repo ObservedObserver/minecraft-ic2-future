@@ -2,9 +2,7 @@
   "type": "minecraft:smelting",
   "group": "uranium_ingot",
   "category": "misc",
-  "ingredient": {
-    "item": "ic2:uranium_ore"
-  },
+  "ingredient": "ic2:uranium_ore",
   "result": {
     "id": "ic2:uranium_ingot"
   },

@@ -1,7 +1,7 @@
 package ic2.core.gui;
 
 import ic2.core.ContainerBase;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,7 +24,7 @@ public class GuiFullInv<T extends ContainerBase<? extends Container>>
 
   @Override
   protected void drawBackgroundAndTitle(
-      GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+      GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
     super.drawBackgroundAndTitle(guiGraphics, partialTicks, mouseX, mouseY);
     this.drawXCenteredString(guiGraphics, this.imageWidth / 2, 6, this.title, 4210752, false);
   }

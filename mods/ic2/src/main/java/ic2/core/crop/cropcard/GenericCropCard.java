@@ -10,7 +10,7 @@ import ic2.core.util.StackUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -148,12 +148,11 @@ public class GenericCropCard extends Ic2CropCard {
   }
 
   @Override
-  public List<ResourceLocation> getTexturesLocation() {
-    List<ResourceLocation> ret = new ArrayList<>(this.getMaxAge());
+  public List<Identifier> getTexturesLocation() {
+    List<Identifier> ret = new ArrayList<>(this.getMaxAge());
 
     for (int size = 1; size <= this.getMaxAge(); size++) {
-      ret.add(
-          ResourceLocation.fromNamespaceAndPath("ic2", "blocks/crop/" + this.getId() + "_" + size));
+      ret.add(Identifier.fromNamespaceAndPath("ic2", "blocks/crop/" + this.getId() + "_" + size));
     }
 
     return ret;

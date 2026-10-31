@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:plates/iron"
+            "items": "#c:plates/iron"
           }
         ]
       },
@@ -25,7 +25,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/drill"
+        "recipes": [
+          "ic2:shaped/drill"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

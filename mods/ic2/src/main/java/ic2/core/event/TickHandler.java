@@ -13,31 +13,31 @@ public class TickHandler {
   private static Throwable lastDebugTrace;
 
   public static void onWorldTickStart(Level world) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       ChunkLoadAwareBlockHandler.onWorldTick(world);
 
       WorldData worldData = WorldData.get(world, false);
       if (worldData != null) {
-        world.getProfiler().push("updates");
+        net.minecraft.util.profiling.Profiler.get().push("updates");
         processUpdates(world, worldData);
-        world.getProfiler().popPush("Wind");
+        net.minecraft.util.profiling.Profiler.get().popPush("Wind");
         worldData.windSim.updateWind();
-        world.getProfiler().popPush("energynet");
+        net.minecraft.util.profiling.Profiler.get().popPush("energynet");
         worldData.energyNet.onTickStart();
-        world.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
       }
     }
   }
 
   public static void onWorldTickEnd(Level world) {
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
       WorldData worldData = WorldData.get(world, false);
       if (worldData != null) {
-        world.getProfiler().push("energynet");
+        net.minecraft.util.profiling.Profiler.get().push("energynet");
         worldData.energyNet.onTickEnd();
-        world.getProfiler().popPush("Networking");
+        net.minecraft.util.profiling.Profiler.get().popPush("Networking");
         IC2.network.get(true).onTickEnd(worldData);
-        world.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
       }
     }
   }
@@ -85,7 +85,7 @@ public class TickHandler {
   }
 
   private static void processUpdates(Level world, WorldData worldData) {
-    world.getProfiler().push("single-update");
+    net.minecraft.util.profiling.Profiler.get().push("single-update");
 
     IWorldTickCallback callback;
     while ((callback = worldData.singleUpdates.poll()) != null) {
@@ -96,7 +96,7 @@ public class TickHandler {
       callback.onTick(world);
     }
 
-    world.getProfiler().popPush("cont-update");
+    net.minecraft.util.profiling.Profiler.get().popPush("cont-update");
     worldData.continuousUpdatesInUse = true;
 
     for (IWorldTickCallback update : worldData.continuousUpdates) {
@@ -116,7 +116,7 @@ public class TickHandler {
     worldData.continuousUpdatesToAdd.clear();
     worldData.continuousUpdatesToRemove.forEach(worldData.continuousUpdates::remove);
     worldData.continuousUpdatesToRemove.clear();
-    world.getProfiler().pop();
+    net.minecraft.util.profiling.Profiler.get().pop();
   }
 
   public static Throwable getLastDebugTrace() {

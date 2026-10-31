@@ -5,10 +5,10 @@ import ic2.core.block.machine.container.ContainerAdvMiner;
 import ic2.core.gui.BasicButton;
 import ic2.core.gui.EnergyGauge;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiAdvMiner extends Ic2Gui<ContainerAdvMiner> {
@@ -35,7 +35,7 @@ public class GuiAdvMiner extends Ic2Gui<ContainerAdvMiner> {
   }
 
   @Override
-  protected void drawForegroundLayer(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  protected void drawForegroundLayer(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     BlockPos target = this.menu.base.getMineTarget();
     if (target != null) {
       BlockPos pos = this.menu.base.getBlockPos();
@@ -72,7 +72,7 @@ public class GuiAdvMiner extends Ic2Gui<ContainerAdvMiner> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiadvminer.png");
+  public Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiadvminer.png");
   }
 }

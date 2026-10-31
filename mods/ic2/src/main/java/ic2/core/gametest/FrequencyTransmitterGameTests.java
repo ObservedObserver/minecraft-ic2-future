@@ -1,23 +1,19 @@
 package ic2.core.gametest;
 
+import ic2.compat.GameTest;
 import ic2.core.block.machine.tileentity.TileEntityTeleporter;
 import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
 import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class FrequencyTransmitterGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -47,9 +43,10 @@ public class FrequencyTransmitterGameTests {
 
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
     helper.assertTrue(
-        nbt.getBoolean("targetSet"), "first use should store the teleporter position");
+        nbt.getBooleanOr("targetSet", false), "first use should store the teleporter position");
     helper.assertValueEqual(
-        new BlockPos(nbt.getInt("targetX"), nbt.getInt("targetY"), nbt.getInt("targetZ")),
+        new BlockPos(
+            nbt.getIntOr("targetX", 0), nbt.getIntOr("targetY", 0), nbt.getIntOr("targetZ", 0)),
         helper.absolutePos(TP1_POS),
         "stored target position");
 
@@ -91,16 +88,18 @@ public class FrequencyTransmitterGameTests {
 
     stack.getItem().useOn(Ic2GameTestUtil.useOn(helper, player, TP1_POS, Direction.UP));
     CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-    helper.assertTrue(nbt.getBoolean("targetSet"), "target should be stored");
+    helper.assertTrue(nbt.getBooleanOr("targetSet", false), "target should be stored");
 
     // the first right-click after storing a position is a grace use and keeps the target
     stack.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
     helper.assertTrue(
-        nbt.getBoolean("targetSet"), "target should survive the use right after linking");
+        StackUtil.getOrCreateNbtData(stack).getBooleanOr("targetSet", false),
+        "target should survive the use right after linking");
 
     stack.getItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
     helper.assertFalse(
-        nbt.getBoolean("targetSet"), "target should be cleared by a later use in the air");
+        StackUtil.getOrCreateNbtData(stack).getBooleanOr("targetSet", false),
+        "target should be cleared by a later use in the air");
     helper.succeed();
   }
 }

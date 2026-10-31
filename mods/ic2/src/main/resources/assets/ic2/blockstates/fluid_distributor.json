@@ -1,50 +1,52 @@
 {
   "variants": {
     "facing=east,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=east,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active",
-      "y": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=north,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=north,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active"
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=south,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=south,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active",
-      "y": 180
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=west,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=west,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active",
-      "y": 270
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=up,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=up,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active",
-      "x": -90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=down,active=false": {
-      "model": "ic2:block/machine/fluid/fluid_distributor",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     },
     "facing=down,active=true": {
-      "model": "ic2:block/machine/fluid/fluid_distributor_active",
-      "x": 90
+      "type": "ic2:be",
+      "id": "ic2:block/be/machine/fluid/fluid_distributor"
     }
   }
 }

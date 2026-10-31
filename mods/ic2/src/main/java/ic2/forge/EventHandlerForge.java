@@ -17,7 +17,7 @@ import ic2.core.item.tool.AbstractItemNanoSaber;
 import ic2.core.util.LogCategory;
 import ic2.core.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -40,8 +40,6 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkDataEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -51,6 +49,40 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class EventHandlerForge {
+  private static final java.util.concurrent.atomic.AtomicBoolean runtimeInitialized =
+      new java.util.concurrent.atomic.AtomicBoolean();
+
+  @SubscribeEvent
+  public void onCropFarmlandTrample(
+      net.neoforged.neoforge.event.level.BlockEvent.FarmlandTrampleEvent event) {
+    Block above = event.getLevel().getBlockState(event.getPos().above()).getBlock();
+    if (above instanceof ic2.core.block.tileentity.Ic2TileEntityBlock cropBlock
+        && cropBlock.getCropType() != null) {
+      event.setCanceled(true);
+    }
+  }
+
+  @SubscribeEvent
+  public void onManualFluidTransfer(PlayerInteractEvent.RightClickBlock event) {
+    ManualFluidTransfer.onRightClickBlock(event);
+  }
+
+  @SubscribeEvent
+  public void defaultComponentsBound(
+      net.neoforged.neoforge.event.DefaultDataComponentsBoundEvent event) {
+    if (event.shouldUpdateStaticData() && runtimeInitialized.compareAndSet(false, true)) {
+      FmlMod.instance.initializeDefaultComponentDependents();
+      EventHandler.onInit();
+      EventHandler.onInitLate();
+    }
+  }
+
+  @SubscribeEvent
+  public void syncRecipeContents(net.neoforged.neoforge.event.OnDatapackSyncEvent event) {
+    event.sendRecipes(
+        net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE.stream()
+            .toArray(net.minecraft.world.item.crafting.RecipeType<?>[]::new));
+  }
 
   @SubscribeEvent
   public void serverStart(ServerStartingEvent event) {
@@ -147,7 +179,7 @@ public final class EventHandlerForge {
 
   @SubscribeEvent(priority = EventPriority.LOW)
   public void onLivingFall(LivingFallEvent event) {
-    if (EventHandler.onLivingFall(event.getEntity(), event.getDistance())) {
+    if (EventHandler.onLivingFall(event.getEntity(), (float) event.getDistance())) {
       event.setCanceled(true);
     }
   }
@@ -200,21 +232,13 @@ public final class EventHandlerForge {
   }
 
   @SubscribeEvent
-  public void beforeBlockBreak(BlockEvent.BreakEvent event) {
+  public void beforeBlockBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
     Level world = (Level) event.getLevel();
     BlockPos pos = event.getPos();
     BlockEntity blockEntity = world.getBlockEntity(pos);
     if (!EventHandler.beforeBlockBreak(
         world, event.getPlayer(), pos, event.getState(), blockEntity)) {
       event.setCanceled(true);
-    }
-  }
-
-  @SubscribeEvent
-  public void onGetBurnTime(FurnaceFuelBurnTimeEvent event) {
-    Item item = event.getItemStack().getItem();
-    if (EnvProxyForge.burnTimeRecord.containsKey(item)) {
-      event.setBurnTime(EnvProxyForge.burnTimeRecord.get(item));
     }
   }
 
@@ -262,12 +286,12 @@ public final class EventHandlerForge {
     }
   }
 
-  private static final ResourceLocation NANO_SABER_DAMAGE =
-      ResourceLocation.fromNamespaceAndPath("ic2", "nano_saber_damage");
-  private static final ResourceLocation NANO_SABER_SPEED =
-      ResourceLocation.fromNamespaceAndPath("ic2", "nano_saber_speed");
-  private static final ResourceLocation CHARGED_ARMOR =
-      ResourceLocation.fromNamespaceAndPath("ic2", "charged_armor");
+  private static final Identifier NANO_SABER_DAMAGE =
+      Identifier.fromNamespaceAndPath("ic2", "nano_saber_damage");
+  private static final Identifier NANO_SABER_SPEED =
+      Identifier.fromNamespaceAndPath("ic2", "nano_saber_speed");
+  private static final Identifier CHARGED_ARMOR =
+      Identifier.fromNamespaceAndPath("ic2", "charged_armor");
 
   // Dynamic per-stack attribute modifiers (1.21 replacement for the removed Forge
   // getAttributeModifiers hook).

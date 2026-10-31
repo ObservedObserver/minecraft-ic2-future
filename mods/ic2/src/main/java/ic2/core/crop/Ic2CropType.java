@@ -76,7 +76,8 @@ public enum Ic2CropType implements StringRepresentable, ICropType {
   redTulip("red_tulip", Ic2Blocks.RED_TULIP_CROP, 3),
   orangeTulip("orange_tulip", Ic2Blocks.ORANGE_TULIP_CROP, 3),
   whiteTulip("white_tulip", Ic2Blocks.WHITE_TULIP_CROP, 3),
-  pinkTulip("pink_tulip", Ic2Blocks.PINK_TULIP_CROP, 3);
+  pinkTulip("pink_tulip", Ic2Blocks.PINK_TULIP_CROP, 3),
+  paleOakSapling("pale_oak_sapling", Ic2Blocks.PALE_OAK_SAPLING_CROP, 4);
 
   private static final Ic2CropType[] values = values();
   private final String owner;

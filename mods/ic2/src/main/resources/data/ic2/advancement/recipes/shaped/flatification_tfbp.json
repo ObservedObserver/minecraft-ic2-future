@@ -27,7 +27,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/flatification_tfbp"
+        "recipes": [
+          "ic2:shaped/flatification_tfbp"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

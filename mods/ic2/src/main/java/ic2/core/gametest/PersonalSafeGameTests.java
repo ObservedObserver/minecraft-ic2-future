@@ -1,6 +1,7 @@
 package ic2.core.gametest;
 
 import com.mojang.authlib.GameProfile;
+import ic2.compat.GameTest;
 import ic2.core.block.personal.TileEntityPersonalChest;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
 import ic2.core.item.tool.ItemToolWrench;
@@ -8,17 +9,12 @@ import ic2.core.ref.Ic2Blocks;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class PersonalSafeGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -42,7 +38,7 @@ public class PersonalSafeGameTests {
 
     GameProfile owner = safe.getOwner();
     helper.assertTrue(owner != null, "loading legacy owner NBT must not lose the owner");
-    helper.assertValueEqual(owner.getId(), OWNER_ID, "owner id after legacy load");
+    helper.assertValueEqual(owner.id(), OWNER_ID, "owner id after legacy load");
 
     ServerPlayer stranger = helper.makeMockServerPlayerInLevel();
     ItemToolWrench.WrenchResult result = wrenchSafe(helper, stranger);
@@ -50,7 +46,7 @@ public class PersonalSafeGameTests {
     helper.assertValueEqual(result, ItemToolWrench.WrenchResult.Nothing, "stranger wrench result");
     helper.assertBlockPresent(Ic2Blocks.PERSONAL_CHEST, SAFE_POS);
     helper.assertValueEqual(
-        safe.getOwner().getId(), OWNER_ID, "owner id after stranger wrench attempt");
+        safe.getOwner().id(), OWNER_ID, "owner id after stranger wrench attempt");
     helper.succeed();
   }
 
@@ -67,8 +63,8 @@ public class PersonalSafeGameTests {
 
     GameProfile owner = safe.getOwner();
     helper.assertTrue(owner != null, "fake-player owner must survive save and reload");
-    helper.assertValueEqual(owner.getId(), OWNER_ID, "owner id after reload");
-    helper.assertValueEqual(owner.getName(), "[SomeModFakePlayer]", "owner name after reload");
+    helper.assertValueEqual(owner.id(), OWNER_ID, "owner id after reload");
+    helper.assertValueEqual(owner.name(), "[SomeModFakePlayer]", "owner name after reload");
     helper.succeed();
   }
 
@@ -94,7 +90,8 @@ public class PersonalSafeGameTests {
 
   private static TileEntityPersonalChest placeSafe(GameTestHelper helper) {
     helper.setBlock(SAFE_POS, Ic2Blocks.PERSONAL_CHEST);
-    BlockEntity be = helper.getBlockEntity(SAFE_POS);
+    BlockEntity be =
+        helper.getBlockEntity(SAFE_POS, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!(be instanceof TileEntityPersonalChest)) {
       helper.fail("expected a personal safe at " + SAFE_POS + ", found " + be);
     }

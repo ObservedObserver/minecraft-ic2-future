@@ -13,3 +13,7 @@ gradle-wrapper.jar
 
 .cache/
 run-data/
+.toolchains/
+.gradle-user-home/
+
+run-ic2r-*/

@@ -29,7 +29,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:planks"
+            "items": "#minecraft:planks"
           }
         ]
       },
@@ -49,7 +49,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/energy_storage_upgrade"
+        "recipes": [
+          "ic2:shaped/energy_storage_upgrade"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

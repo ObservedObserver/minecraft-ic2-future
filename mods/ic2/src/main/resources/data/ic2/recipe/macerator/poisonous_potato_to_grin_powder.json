@@ -4,6 +4,7 @@
     "item": "minecraft:poisonous_potato"
   },
   "result": {
-    "item": "ic2:grin_powder"
+    "item": "ic2:grin_powder",
+    "count": 2
   }
 }

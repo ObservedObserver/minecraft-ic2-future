@@ -13,7 +13,6 @@ import ic2.core.gui.IClickHandler;
 import ic2.core.gui.Image;
 import ic2.core.gui.MouseButton;
 import ic2.core.gui.VanillaButton;
-import ic2.core.proxy.SideProxyClient;
 import ic2.core.util.StackUtil;
 import ic2.core.util.Util;
 import java.util.function.Predicate;
@@ -23,14 +22,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class GuiIndustrialWorkbench extends Ic2Gui<ContainerIndustrialWorkbench> {
-  private static final ResourceLocation TEXTURE =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiindustrialworkbench.png");
+  private static final Identifier TEXTURE =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiindustrialworkbench.png");
   public static Predicate<Screen> jeiScreenRecipesGuiCheck;
 
   public GuiIndustrialWorkbench(
@@ -76,7 +75,7 @@ public class GuiIndustrialWorkbench extends Ic2Gui<ContainerIndustrialWorkbench>
                                   GuiIndustrialWorkbench.this.menu.player.getGameProfile())) {
                         IC2.sideProxy.messagePlayer(
                             GuiIndustrialWorkbench.this.menu.player,
-                            "Owned by " + ((IPersonalBlock) neighbour).getOwner().getName());
+                            "Owned by " + ((IPersonalBlock) neighbour).getOwner().name());
                       } else {
                         GuiIndustrialWorkbench.closeHandler = this::onScreenClose;
                         IC2.network.get(false).requestGUI((IHasGui) neighbour);
@@ -84,7 +83,8 @@ public class GuiIndustrialWorkbench extends Ic2Gui<ContainerIndustrialWorkbench>
                     }
 
                     private void onScreenClose() {
-                      if (!this.keepOpen(SideProxyClient.mc.screen)) {
+                      if (!this.keepOpen(
+                          net.minecraft.client.Minecraft.getInstance().gui.screen())) {
                         if (!this.firstOpen) {
                           GuiIndustrialWorkbench.closeHandler = null;
                           IC2.network.get(false).requestGUI(GuiIndustrialWorkbench.this.menu.base);
@@ -167,7 +167,7 @@ public class GuiIndustrialWorkbench extends Ic2Gui<ContainerIndustrialWorkbench>
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return TEXTURE;
   }
 }

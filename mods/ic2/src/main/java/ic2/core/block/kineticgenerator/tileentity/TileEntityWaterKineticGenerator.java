@@ -24,7 +24,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -40,8 +40,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 @NotClassic
 public class TileEntityWaterKineticGenerator extends TileEntityAbstractKineticGenerator
     implements IRotorProvider, IHasGui {
-  private static final ResourceLocation woodenRotorTexture =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/item/rotor/wood_rotor_model.png");
+  private static final Identifier woodenRotorTexture =
+      Identifier.fromNamespaceAndPath("ic2", "textures/item/rotor/wood_rotor_model.png");
   public InvSlotConsumableClass rotorSlot;
   public TileEntityWaterKineticGenerator.BiomeState type =
       TileEntityWaterKineticGenerator.BiomeState.UNKNOWN;
@@ -69,7 +69,7 @@ public class TileEntityWaterKineticGenerator extends TileEntityAbstractKineticGe
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.rotationSpeed = nbt.getFloat("rotationSpeed");
+    this.rotationSpeed = nbt.getFloatOr("rotationSpeed", 0.0F);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class TileEntityWaterKineticGenerator extends TileEntityAbstractKineticGe
     this.updateSeaInfo();
     // Re-sync animation fields so clients that load the TE after a world re-entry
     // (or chunk re-watch) receive the current speed even if it does not change again.
-    if (this.getLevel() != null && !this.getLevel().isClientSide) {
+    if (this.getLevel() != null && !this.getLevel().isClientSide()) {
       IC2.network.get(true).updateTileEntityField(this, "rotationSpeed");
       IC2.network.get(true).updateTileEntityField(this, "rotorSlot");
     }
@@ -186,7 +186,7 @@ public class TileEntityWaterKineticGenerator extends TileEntityAbstractKineticGe
   }
 
   float getRotationSpeed(Level world, int crossSection, double obstructedCrossSection) {
-    float diff = (float) Math.sin(world.getDayTime() * Math.PI / 6000.0);
+    float diff = (float) Math.sin(world.getOverworldClockTime() * Math.PI / 6000.0);
     diff *= Math.abs(diff);
     this.rotationSpeed =
         (float)
@@ -365,7 +365,7 @@ public class TileEntityWaterKineticGenerator extends TileEntityAbstractKineticGe
   }
 
   @Override
-  public ResourceLocation getRotorRenderTexture() {
+  public Identifier getRotorRenderTexture() {
     ItemStack stack = this.rotorSlot.get();
     return !StackUtil.isEmpty(stack) && stack.getItem() instanceof IKineticRotor
         ? ((IKineticRotor) stack.getItem()).getRotorRenderTexture(stack)

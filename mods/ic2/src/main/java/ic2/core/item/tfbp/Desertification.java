@@ -47,7 +47,7 @@ public class Desertification extends TerraformerBase {
 
         return true;
       } else if (block != Blocks.ICE && block != Blocks.SNOW) {
-        if ((state.is(BlockTags.PLANKS) || state.is(BlockTags.LOGS_THAT_BURN))
+        if ((state.is(BlockTags.PLANKS) || (state.is(BlockTags.LOGS) && state.ignitedByLava()))
             && rng.nextInt(15) == 0) {
           world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
           return true;

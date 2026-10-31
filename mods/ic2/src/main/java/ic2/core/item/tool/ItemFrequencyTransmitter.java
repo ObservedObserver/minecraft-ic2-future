@@ -1,5 +1,6 @@
 package ic2.core.item.tool;
 
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.block.machine.tileentity.TileEntityTeleporter;
 import ic2.core.util.Ic2Tooltip;
@@ -10,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,23 +25,25 @@ public class ItemFrequencyTransmitter extends Item {
     super(settings);
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, @NotNull Player player, @NotNull InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if (IC2.sideProxy.isSimulating()) {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      boolean hadJustSet = nbtData.getBoolean("targetJustSet");
-      if (nbtData.getBoolean("targetSet") && !hadJustSet) {
-        nbtData.putBoolean("targetSet", false);
+      boolean hadJustSet = nbtData.getBooleanOr("targetJustSet", false);
+      if (nbtData.getBooleanOr("targetSet", false) && !hadJustSet) {
+        StackUtil.setTagValue(
+            stack, nbtData, "targetSet", net.minecraft.nbt.ByteTag.valueOf(false));
         IC2.sideProxy.messagePlayer(player, "ic2.frequency_transmitter.unlink_target");
       }
 
       if (hadJustSet) {
-        nbtData.putBoolean("targetJustSet", false);
+        StackUtil.setTagValue(
+            stack, nbtData, "targetJustSet", net.minecraft.nbt.ByteTag.valueOf(false));
       }
     }
 
-    return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
   }
 
   public @NotNull InteractionResult useOn(UseOnContext context) {
@@ -51,17 +53,19 @@ public class ItemFrequencyTransmitter extends Item {
     InteractionHand hand = context.getHand();
     if (player == null) {
       return InteractionResult.PASS;
-    } else if (world.isClientSide) {
+    } else if (world.isClientSide()) {
       return InteractionResult.PASS;
     } else if (!(world.getBlockEntity(pos) instanceof TileEntityTeleporter tp)) {
       return InteractionResult.PASS;
     } else {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(StackUtil.get(player, hand));
-      boolean targetSet = nbtData.getBoolean("targetSet");
+      boolean targetSet = nbtData.getBooleanOr("targetSet", false);
       boolean justSetTarget = true;
       BlockPos target =
           new BlockPos(
-              nbtData.getInt("targetX"), nbtData.getInt("targetY"), nbtData.getInt("targetZ"));
+              nbtData.getIntOr("targetX", 0),
+              nbtData.getIntOr("targetY", 0),
+              nbtData.getIntOr("targetZ", 0));
       if (!targetSet) {
         targetSet = true;
         target = tp.getBlockPos();
@@ -92,13 +96,46 @@ public class ItemFrequencyTransmitter extends Item {
         }
       }
 
-      nbtData.putBoolean("targetSet", targetSet);
-      nbtData.putBoolean("targetJustSet", justSetTarget);
-      nbtData.putInt("targetX", target.getX());
-      nbtData.putInt("targetY", target.getY());
-      nbtData.putInt("targetZ", target.getZ());
+      StackUtil.setTagValue(
+          StackUtil.get(player, hand),
+          nbtData,
+          "targetSet",
+          net.minecraft.nbt.ByteTag.valueOf(targetSet));
+      StackUtil.setTagValue(
+          StackUtil.get(player, hand),
+          nbtData,
+          "targetJustSet",
+          net.minecraft.nbt.ByteTag.valueOf(justSetTarget));
+      StackUtil.setTagValue(
+          StackUtil.get(player, hand),
+          nbtData,
+          "targetX",
+          net.minecraft.nbt.IntTag.valueOf(target.getX()));
+      StackUtil.setTagValue(
+          StackUtil.get(player, hand),
+          nbtData,
+          "targetY",
+          net.minecraft.nbt.IntTag.valueOf(target.getY()));
+      StackUtil.setTagValue(
+          StackUtil.get(player, hand),
+          nbtData,
+          "targetZ",
+          net.minecraft.nbt.IntTag.valueOf(target.getZ()));
       return InteractionResult.SUCCESS;
     }
+  }
+
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
   }
 
   public void appendHoverText(
@@ -107,14 +144,14 @@ public class ItemFrequencyTransmitter extends Item {
       @NotNull List<Component> tooltip,
       @NotNull TooltipFlag advanced) {
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-    if (nbtData.getBoolean("targetSet")) {
+    if (nbtData.getBooleanOr("targetSet", false)) {
       Ic2Tooltip.add(
           tooltip,
           Component.translatable(
               "ic2.frequency_transmitter.tooltip.target",
-              nbtData.getInt("targetX"),
-              nbtData.getInt("targetY"),
-              nbtData.getInt("targetZ")));
+              nbtData.getIntOr("targetX", 0),
+              nbtData.getIntOr("targetY", 0),
+              nbtData.getIntOr("targetZ", 0)));
     } else {
       Ic2Tooltip.add(tooltip, Component.translatable("ic2.frequency_transmitter.tooltip.blank"));
     }

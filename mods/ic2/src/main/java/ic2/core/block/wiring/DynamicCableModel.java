@@ -1,38 +1,21 @@
 package ic2.core.block.wiring;
 
-import com.mojang.datafixers.util.Pair;
 import ic2.core.IC2;
 import ic2.core.util.Util;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.Function;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
 
-public abstract class DynamicCableModel<T, E> implements UnbakedModel, BakedModel {
+public abstract class DynamicCableModel<T, E> implements DynamicBlockStateModel {
   private final CableType type;
   private final int insulation;
   private final CableFoam foam;
@@ -43,68 +26,18 @@ public abstract class DynamicCableModel<T, E> implements UnbakedModel, BakedMode
   private TextureAtlasSprite blackSprite;
   private TextureAtlasSprite particleTexture;
 
-  protected DynamicCableModel(CableType type, int insulation, CableFoam foam, boolean active) {
+  protected DynamicCableModel(
+      CableType type, int insulation, CableFoam foam, boolean active, ModelBaker baker) {
     this.type = type;
     this.insulation = insulation;
     this.foam = foam;
     this.active = active;
-  }
-
-  private static Material getTextureId(
-      CableType type, int insulation, DyeColor color, boolean active) {
-    StringBuilder sb = new StringBuilder(50);
-    sb.append("blocks/wiring/cable/");
-    sb.append(type.name());
-    sb.append("_cable_");
-    sb.append(insulation);
-    if (insulation >= type.minColoredInsulation) {
-      sb.append('_');
-      sb.append(color.getSerializedName());
-    }
-
-    if (active && (type == CableType.detector || type == CableType.splitter)) {
-      sb.append("_active");
-    }
-
-    return getTextureId(sb.toString());
-  }
-
-  private static Material getTextureId(String path) {
-    ResourceLocation atlas = TextureAtlas.LOCATION_BLOCKS;
-    return new Material(atlas, IC2.getIdentifier(path));
-  }
-
-  public Collection<ResourceLocation> getDependencies() {
-    return Collections.emptyList();
-  }
-
-  public void resolveParents(Function<ResourceLocation, UnbakedModel> resolver) {}
-
-  public Collection<Material> getMaterials(
-      Function<ResourceLocation, UnbakedModel> unbakedModelGetter,
-      Set<Pair<String, String>> unresolvedTextureReferences) {
-    if (this.insulation < this.type.minColoredInsulation) {
-      return Collections.singletonList(
-          getTextureId(this.type, this.insulation, DyeColor.BLACK, this.active));
-    }
-
-    List<Material> ret = new ArrayList<>(16);
-
-    for (DyeColor color : DyeColor.values()) {
-      ret.add(getTextureId(this.type, this.insulation, color, false));
-    }
-
-    return ret;
-  }
-
-  public BakedModel bake(
-      ModelBaker loader,
-      Function<Material, TextureAtlasSprite> textureGetter,
-      ModelState rotationContainer,
-      ResourceLocation modelId) {
+    java.util.function.Function<Material, TextureAtlasSprite> textureGetter =
+        material ->
+            baker.materials().get(material, () -> "ic2:cable/" + type + "/" + insulation).sprite();
     this.blackSprite =
         textureGetter.apply(getTextureId(this.type, this.insulation, DyeColor.BLACK, this.active));
-    if (!this.foam.isPresent()) {
+    if (this.foam == null) {
       this.particleTexture = this.blackSprite;
     } else if (this.foam.isSoft()) {
       this.particleTexture = textureGetter.apply(getTextureId("blocks/cf/foam"));
@@ -129,41 +62,34 @@ public abstract class DynamicCableModel<T, E> implements UnbakedModel, BakedMode
         this.sprites.put(color, sprite);
       }
     }
-
-    return this;
   }
 
-  public List<BakedQuad> getQuads(
-      @Nullable BlockState state, @Nullable Direction side, RandomSource random) {
-    return Collections.emptyList();
+  private static Material getTextureId(
+      CableType type, int insulation, DyeColor color, boolean active) {
+    StringBuilder sb = new StringBuilder(50);
+    sb.append("blocks/wiring/cable/");
+    sb.append(type.name());
+    sb.append("_cable_");
+    sb.append(insulation);
+    if (insulation >= type.minColoredInsulation) {
+      sb.append('_');
+      sb.append(color.getSerializedName());
+    }
+
+    if (active && (type == CableType.detector || type == CableType.splitter)) {
+      sb.append("_active");
+    }
+
+    return getTextureId(sb.toString());
   }
 
-  public boolean useAmbientOcclusion() {
-    return true;
+  private static Material getTextureId(String path) {
+    return new Material(IC2.getIdentifier(path));
   }
 
-  public boolean isGui3d() {
-    return true;
-  }
-
-  public boolean usesBlockLight() {
-    return true;
-  }
-
-  public boolean isCustomRenderer() {
-    return false;
-  }
-
-  public TextureAtlasSprite getParticleIcon() {
-    return this.particleTexture;
-  }
-
-  public ItemTransforms getTransforms() {
-    return ItemTransforms.NO_TRANSFORMS;
-  }
-
-  public ItemOverrides getOverrides() {
-    return ItemOverrides.EMPTY;
+  @Override
+  public Material.Baked particleMaterial() {
+    return new Material.Baked(particleTexture, false);
   }
 
   protected T getMesh(BlockState state) {
@@ -234,7 +160,7 @@ public abstract class DynamicCableModel<T, E> implements UnbakedModel, BakedMode
       boolean hasConnection = (connections & 1 << facing.ordinal()) != 0;
       if (hasConnection) {
         this.emitQuad(emitter, facing, sp, sp, spth, spth, 0.0F, sprite);
-        if (!this.foam.isPresent()) {
+        if (this.foam == null) {
           float zS = sp;
           float yS = sp;
           float xS = sp;
@@ -281,7 +207,7 @@ public abstract class DynamicCableModel<T, E> implements UnbakedModel, BakedMode
           this.emitQuad(emitter, facing, sp, 0.0F, spth, sp, 0.0F, this.particleTexture);
           this.emitQuad(emitter, facing, sp, spth, spth, 1.0F, 0.0F, this.particleTexture);
         }
-      } else if (!this.foam.isPresent()) {
+      } else if (this.foam == null) {
         this.emitQuad(emitter, facing, sp, sp, spth, spth, sp, sprite);
       } else {
         this.emitQuad(emitter, facing, 0.0F, 0.0F, 1.0F, 1.0F, 0.0F, this.particleTexture);

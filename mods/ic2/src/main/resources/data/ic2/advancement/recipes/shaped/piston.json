@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:ingots/bronze"
+            "items": "#c:ingots/bronze"
           }
         ]
       },
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:planks"
+            "items": "#minecraft:planks"
           }
         ]
       },
@@ -47,7 +47,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/piston"
+        "recipes": [
+          "ic2:shaped/piston"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

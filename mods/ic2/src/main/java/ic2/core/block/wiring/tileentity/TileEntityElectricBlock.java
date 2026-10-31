@@ -78,7 +78,7 @@ public abstract class TileEntityElectricBlock extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.redstoneMode = nbt.getByte("redstoneMode");
+    this.redstoneMode = nbt.getByteOr("redstoneMode", (byte) 0);
     this.energy.setDirections(
         EnumSet.complementOf(EnumSet.of(this.getFacing())), EnumSet.of(this.getFacing()));
   }
@@ -160,9 +160,9 @@ public abstract class TileEntityElectricBlock extends TileEntityInventory
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       CompoundTag nbt = StackUtil.getOrCreateNbtData(stack);
-      this.energy.addEnergy(nbt.getDouble("energy"));
+      this.energy.addEnergy(nbt.getDoubleOr("energy", 0.0));
     }
   }
 
@@ -174,7 +174,8 @@ public abstract class TileEntityElectricBlock extends TileEntityInventory
       double totalEnergy = this.energy.getEnergy();
       if (retainedRatio > 0.0 && totalEnergy > 0.0) {
         CompoundTag nbt = StackUtil.getOrCreateNbtData(drop);
-        nbt.putDouble("energy", totalEnergy * retainedRatio);
+        StackUtil.setTagValue(
+            drop, nbt, "energy", net.minecraft.nbt.DoubleTag.valueOf(totalEnergy * retainedRatio));
       }
     }
 
@@ -227,7 +228,7 @@ public abstract class TileEntityElectricBlock extends TileEntityInventory
             Math.round(EnergyNet.instance.getPowerFromTier(this.energy.getSourceTier()))));
     Ic2Tooltip.add(
         tooltip, Component.translatable("ic2.item.tooltip.Capacity", this.getCapacity()));
-    double stored = StackUtil.getOrCreateNbtData(stack).getDouble("energy");
+    double stored = StackUtil.getOrCreateNbtData(stack).getDoubleOr("energy", 0.0);
     Ic2Tooltip.add(tooltip, Component.translatable("ic2.item.tooltip.Store", (long) stored));
   }
 }

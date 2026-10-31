@@ -1,6 +1,7 @@
 package ic2.core.item.tool;
 
 import ic2.api.item.ElectricItem;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.block.generator.tileentity.TileEntityWindGenerator;
 import ic2.core.block.kineticgenerator.tileentity.TileEntityWindKineticGenerator;
@@ -14,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +39,18 @@ public class ItemWindMeter extends ItemElectricTool implements PriorityUsableIte
 
   @Override
   public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
+  public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> tooltip, TooltipFlag advanced) {
     super.appendHoverText(stack, world, tooltip, advanced);
     Ic2Tooltip.add(tooltip, Component.translatable("ic2.wind_meter.tooltipA"));
@@ -50,7 +62,7 @@ public class ItemWindMeter extends ItemElectricTool implements PriorityUsableIte
     Player player = context.getPlayer();
     Level world = context.getLevel();
     BlockPos pos = context.getClickedPos();
-    if (world.isClientSide || player == null || player.isShiftKeyDown()) {
+    if (world.isClientSide() || player == null || player.isShiftKeyDown()) {
       return InteractionResult.PASS;
     }
 
@@ -119,15 +131,14 @@ public class ItemWindMeter extends ItemElectricTool implements PriorityUsableIte
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
-      Level world, Player player, InteractionHand hand) {
+  public @NotNull InteractionResult use(Level world, Player player, InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
     if (!IC2.sideProxy.isSimulating()) {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
 
     if (!this.consumeEnergy(stack, this.operationEnergyCost, player)) {
-      return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+      return InteractionResults.withStack(InteractionResult.PASS, stack);
     }
 
     double windStrength = WorldData.get(world).windSim.getWindAt(player.getY());
@@ -137,6 +148,6 @@ public class ItemWindMeter extends ItemElectricTool implements PriorityUsableIte
 
     IC2.sideProxy.messagePlayer(
         player, Component.translatable("ic2.wind_meter.info", roundWind(windStrength)).getString());
-    return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    return InteractionResult.SUCCESS;
   }
 }

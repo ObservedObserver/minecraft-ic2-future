@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/plant_ball_2"
+        "recipes": [
+          "ic2:shaped/plant_ball_2"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

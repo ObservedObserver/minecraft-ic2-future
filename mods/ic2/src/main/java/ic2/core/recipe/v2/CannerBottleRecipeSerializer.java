@@ -17,10 +17,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class CannerBottleRecipeSerializer
-    implements RecipeSerializer<RecipeHolder<ICannerBottleRecipeManager.Input, ItemStack>> {
+    extends ic2.compat.RecipeSerializerAdapter<
+        RecipeHolder<ICannerBottleRecipeManager.Input, ItemStack>> {
   private final MapCodec<RecipeHolder<ICannerBottleRecipeManager.Input, ItemStack>> codec =
       new MapCodec<>() {
         @Override
@@ -42,7 +42,12 @@ public class CannerBottleRecipeSerializer
                       json.add(
                           key.getAsString(), ops.convertTo(JsonOps.INSTANCE, entry.getSecond()));
                     });
-            return DataResult.success(fromJson(json));
+            RecipeIo.validateTemplates(json);
+            return DataResult.success(
+                RecipeHolder.defer(
+                    () -> fromJson(json),
+                    CannerBottleRecipeSerializer.this.serializer(),
+                    Ic2RecipeTypes.CANNER_BOTTLE));
           } catch (RuntimeException e) {
             return DataResult.error(
                 () -> "Failed to parse IC2 canner bottle recipe: " + e.getMessage());
@@ -69,7 +74,7 @@ public class CannerBottleRecipeSerializer
     return new RecipeHolder<>(
         new MachineRecipe<>(new ICannerBottleRecipeManager.Input(container, fill), output),
         null,
-        this,
+        this.serializer(),
         Ic2RecipeTypes.CANNER_BOTTLE);
   }
 
@@ -81,7 +86,7 @@ public class CannerBottleRecipeSerializer
     return new RecipeHolder<>(
         new MachineRecipe<>(new ICannerBottleRecipeManager.Input(container, fill), output),
         null,
-        this,
+        this.serializer(),
         Ic2RecipeTypes.CANNER_BOTTLE);
   }
 

@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,17 +21,17 @@ public final class FluidHandler {
   static final EnvFluidHandler ENV_HANDLER = IC2.envProxy.createFluidStackHandler();
 
   public static EnvFluidHandler.FluidRefs createFluid(
-      ResourceLocation id,
+      Identifier id,
       int density,
       int viscosity,
       int luminosity,
       int temperature,
       boolean isGaseous,
-      ResourceLocation stillSpriteId,
-      ResourceLocation flowingSpriteId,
+      Identifier stillSpriteId,
+      Identifier flowingSpriteId,
       int color) {
     return ENV_HANDLER.createFluid(
-        id, density, viscosity, luminosity, temperature, stillSpriteId, flowingSpriteId, color);
+        id, density, viscosity, luminosity, temperature, isGaseous, stillSpriteId, flowingSpriteId, color);
   }
 
   public static int getDensity(Fluid fluid) {
@@ -46,11 +46,11 @@ public final class FluidHandler {
     return ENV_HANDLER.isGaseous(fluid);
   }
 
-  public static ResourceLocation getStillSpriteId(Fluid fluid) {
+  public static Identifier getStillSpriteId(Fluid fluid) {
     return ENV_HANDLER.getStillSpriteId(fluid);
   }
 
-  public static ResourceLocation getFlowingSpriteId(Fluid fluid) {
+  public static Identifier getFlowingSpriteId(Fluid fluid) {
     return ENV_HANDLER.getFlowingSpriteId(fluid);
   }
 

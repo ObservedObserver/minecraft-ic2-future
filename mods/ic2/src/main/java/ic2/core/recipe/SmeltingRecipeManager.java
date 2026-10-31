@@ -9,7 +9,6 @@ import ic2.core.IC2;
 import ic2.core.util.StackUtil;
 import java.util.Collection;
 import java.util.Collections;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -24,20 +23,21 @@ public class SmeltingRecipeManager
     SmeltingRecipe recipe =
         IC2.sideProxy
             .getRecipeManager()
-            .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(input), null)
+            .getRecipesFor(RecipeType.SMELTING, new SingleRecipeInput(input), null)
+            .findFirst()
             .map(RecipeHolder::value)
             .orElse(null);
     if (recipe == null) {
       return null;
     }
 
-    ItemStack output = recipe.getResultItem((RegistryAccess) null);
+    ItemStack output = recipe.assemble(new SingleRecipeInput(input));
     if (StackUtil.isEmpty(output)) {
       return null;
     }
 
     CompoundTag nbt = new CompoundTag();
-    nbt.putFloat("experience", recipe.getExperience() * StackUtil.getSize(output));
+    nbt.putFloat("experience", recipe.experience() * StackUtil.getSize(output));
     return new MachineRecipe<>(input, output, nbt).getResult(StackUtil.copyShrunk(input, 1));
   }
 

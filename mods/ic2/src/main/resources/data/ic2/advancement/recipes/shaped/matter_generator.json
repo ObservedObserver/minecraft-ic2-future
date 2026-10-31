@@ -51,7 +51,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/matter_generator"
+        "recipes": [
+          "ic2:shaped/matter_generator"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

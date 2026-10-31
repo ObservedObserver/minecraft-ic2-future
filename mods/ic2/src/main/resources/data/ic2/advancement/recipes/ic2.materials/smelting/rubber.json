@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:smelting/rubber"
+        "recipes": [
+          "ic2:smelting/rubber"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

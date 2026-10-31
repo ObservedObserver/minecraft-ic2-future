@@ -63,8 +63,8 @@ public class TileEntityFluidRegulator extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.outputmb = nbt.getInt("outputmb");
-    this.mode = nbt.getInt("mode");
+    this.outputmb = nbt.getIntOr("outputmb", 0);
+    this.mode = nbt.getIntOr("mode", 0);
   }
 
   @Override

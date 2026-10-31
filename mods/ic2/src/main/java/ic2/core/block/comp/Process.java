@@ -267,7 +267,7 @@ public class Process extends TileEntityComponent {
   }
 
   public void readFromNBT(CompoundTag nbt) {
-    this.progress = nbt.getInt("progress");
+    this.progress = nbt.getIntOr("progress", 0);
   }
 
   public void writeToNBT(CompoundTag nbt) {

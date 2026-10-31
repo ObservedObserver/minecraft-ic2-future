@@ -6,13 +6,12 @@ import ic2.core.block.tileentity.Ic2TileEntity;
 import java.util.Set;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.providers.nbt.LootNbtProviderType;
 import net.minecraft.world.level.storage.loot.providers.nbt.NbtProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +20,8 @@ public class Ic2BlockNbtProvider implements NbtProvider {
   public static final MapCodec<Ic2BlockNbtProvider> CODEC = MapCodec.unit(Ic2BlockNbtProvider::new);
 
   @Nullable public Tag get(LootContext context) {
-    BlockEntity blockEntity = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-    BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+    BlockEntity blockEntity = context.getOptional(LootContextParams.BLOCK_ENTITY);
+    BlockState state = context.getOptional(LootContextParams.BLOCK_STATE);
     if (state == null) {
       return null;
     }
@@ -38,11 +37,11 @@ public class Ic2BlockNbtProvider implements NbtProvider {
     return null;
   }
 
-  public Set<LootContextParam<?>> getReferencedContextParams() {
+  public Set<ContextKey<?>> getReferencedContextParams() {
     return ImmutableSet.of();
   }
 
-  public LootNbtProviderType getType() {
+  public MapCodec<? extends NbtProvider> codec() {
     return Ic2LootNbtProviderTypes.BLOCK_NBT;
   }
 }

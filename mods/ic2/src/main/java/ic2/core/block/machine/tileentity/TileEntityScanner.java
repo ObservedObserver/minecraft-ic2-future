@@ -157,12 +157,12 @@ public class TileEntityScanner extends TileEntityElectricMachine
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    this.progress = nbt.getInt("progress");
-    CompoundTag contentTag = nbt.getCompound("currentStack");
-    this.currentStack = ItemStack.parseOptional(registries, contentTag);
-    contentTag = nbt.getCompound("pattern");
-    this.pattern = ItemStack.parseOptional(registries, contentTag);
-    int stateIdx = nbt.getInt("state");
+    this.progress = nbt.getIntOr("progress", 0);
+    CompoundTag contentTag = nbt.getCompoundOrEmpty("currentStack");
+    this.currentStack = ic2.compat.NbtCompat.readItem(registries, contentTag);
+    contentTag = nbt.getCompoundOrEmpty("pattern");
+    this.pattern = ic2.compat.NbtCompat.readItem(registries, contentTag);
+    int stateIdx = nbt.getIntOr("state", 0);
     this.state =
         stateIdx < TileEntityScanner.State.values().length
             ? TileEntityScanner.State.values()[stateIdx]
@@ -175,11 +175,14 @@ public class TileEntityScanner extends TileEntityElectricMachine
     super.saveAdditional(nbt, registries);
     nbt.putInt("progress", this.progress);
     if (!StackUtil.isEmpty(this.currentStack)) {
-      nbt.put("currentStack", this.currentStack.save(registries, new CompoundTag()));
+      nbt.put(
+          "currentStack",
+          ic2.compat.NbtCompat.saveItem(this.currentStack, registries, new CompoundTag()));
     }
 
     if (!StackUtil.isEmpty(this.pattern)) {
-      nbt.put("pattern", this.pattern.save(registries, new CompoundTag()));
+      nbt.put(
+          "pattern", ic2.compat.NbtCompat.saveItem(this.pattern, registries, new CompoundTag()));
     }
 
     nbt.putInt("state", this.state.ordinal());

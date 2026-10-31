@@ -17,7 +17,7 @@ import ic2.core.util.LogCategory;
 import ic2.core.util.StackUtil;
 import ic2.core.util.Util;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +29,7 @@ public class HandHeldAdvancedUpgrade extends HandHeldInventory
   private static final int DAMAGE_GUI = 1;
   private static final int ENERGY_GUI = 2;
   private static final int ORE_GUI = 3;
-  private static final ResourceLocation GUI_XML = IC2.getIdentifier("advanced_upgrade");
+  private static final Identifier GUI_XML = IC2.getIdentifier("advanced_upgrade");
   @GuiSynced protected boolean meta;
   @GuiSynced protected boolean energy;
   @ClientModifiable protected NbtSettings nbt;
@@ -38,12 +38,12 @@ public class HandHeldAdvancedUpgrade extends HandHeldInventory
     super(player, hand, checkContainerStack(player, containerStack), 9);
     CompoundTag nbt = StackUtil.getOrCreateNbtData(containerStack);
     this.meta = readTag(nbt, "meta");
-    this.nbt = NbtSettings.getFromNBT(getTag(nbt, "nbt").getByte("type"));
+    this.nbt = NbtSettings.getFromNBT(getTag(nbt, "nbt").getByteOr("type", (byte) 0));
     this.energy = readTag(nbt, "energy");
   }
 
   private static ItemStack checkContainerStack(Player player, ItemStack containerStack) {
-    if (!player.getCommandSenderWorld().isClientSide
+    if (!player.level().isClientSide()
         && player.containerMenu instanceof ContainerHandHeldInventory
         && ((ContainerHandHeldInventory<?>) player.containerMenu).base
             instanceof HandHeldUpgradeOption) {
@@ -56,11 +56,11 @@ public class HandHeldAdvancedUpgrade extends HandHeldInventory
   }
 
   public static CompoundTag getTag(CompoundTag nbt, String name) {
-    return nbt.getCompound(name + "Settings");
+    return nbt.getCompoundOrEmpty(name + "Settings");
   }
 
   protected static boolean readTag(CompoundTag nbt, String name) {
-    return getTag(nbt, name).getBoolean("active");
+    return getTag(nbt, name).getBooleanOr("active", false);
   }
 
   protected static void writeTag(CompoundTag nbt, String name, boolean active) {
@@ -91,7 +91,7 @@ public class HandHeldAdvancedUpgrade extends HandHeldInventory
       CompoundTag tag = getTag(nbt, "nbt");
       tag.putBoolean("active", this.nbt.enabled());
       tag.putByte("type", this.nbt.getForNBT());
-      nbt.put("nbtSettings", tag);
+      StackUtil.setTagValue(this.containerStack, nbt, "nbtSettings", tag);
       writeTag(nbt, "energy", this.energy);
       StackUtil.setTag(this.containerStack, nbt);
     }

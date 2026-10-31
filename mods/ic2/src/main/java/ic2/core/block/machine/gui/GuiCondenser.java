@@ -9,12 +9,12 @@ import ic2.core.gui.SlotGrid;
 import ic2.core.gui.TankGauge;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiCondenser extends Ic2Gui<ContainerCondenser> {
-  private static final ResourceLocation BACKGROUND =
-      ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guicondenser.png");
+  private static final Identifier BACKGROUND =
+      Identifier.fromNamespaceAndPath("ic2", "textures/gui/guicondenser.png");
 
   public GuiCondenser(ContainerCondenser container, Inventory playerInventory, Component title) {
     super(container, playerInventory, title, 184);
@@ -35,7 +35,7 @@ public class GuiCondenser extends Ic2Gui<ContainerCondenser> {
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
+  protected Identifier getTextureLocation() {
     return BACKGROUND;
   }
 }

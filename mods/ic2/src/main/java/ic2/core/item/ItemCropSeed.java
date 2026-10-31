@@ -73,6 +73,19 @@ public class ItemCropSeed extends Item implements ICropSeed {
   }
 
   @OnlyIn(Dist.CLIENT)
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       ItemStack stack, Item.TooltipContext world, List<Component> info, TooltipFlag debugTooltips) {
     int scanLevel = this.getScannedFromStack(stack);
@@ -123,9 +136,11 @@ public class ItemCropSeed extends Item implements ICropSeed {
   @Override
   public CropCard getCropFromStack(ItemStack is) {
     CompoundTag nbt = StackUtil.getTag(is);
-    if (nbt != null && nbt.contains("owner", 8) && nbt.contains("id", 8)) {
-      String owner = nbt.getString("owner");
-      String id = nbt.getString("id");
+    if (nbt != null
+        && ic2.compat.NbtCompat.contains(nbt, "owner", 8)
+        && ic2.compat.NbtCompat.contains(nbt, "id", 8)) {
+      String owner = nbt.getStringOr("owner", "");
+      String id = nbt.getStringOr("id", "");
       return Crops.instance.getCropCard(owner, id);
     } else {
       return null;
@@ -145,7 +160,7 @@ public class ItemCropSeed extends Item implements ICropSeed {
   @Override
   public int getGrowthFromStack(ItemStack is) {
     CompoundTag nbt = StackUtil.getTag(is);
-    return nbt == null ? -1 : nbt.getByte("growth");
+    return nbt == null ? -1 : nbt.getByteOr("growth", (byte) 0);
   }
 
   @Override
@@ -160,7 +175,7 @@ public class ItemCropSeed extends Item implements ICropSeed {
   @Override
   public int getGainFromStack(ItemStack is) {
     CompoundTag nbt = StackUtil.getTag(is);
-    return nbt == null ? -1 : nbt.getByte("gain");
+    return nbt == null ? -1 : nbt.getByteOr("gain", (byte) 0);
   }
 
   @Override
@@ -175,7 +190,7 @@ public class ItemCropSeed extends Item implements ICropSeed {
   @Override
   public int getResistanceFromStack(ItemStack is) {
     CompoundTag nbt = StackUtil.getTag(is);
-    return nbt == null ? -1 : nbt.getByte("resistance");
+    return nbt == null ? -1 : nbt.getByteOr("resistance", (byte) 0);
   }
 
   @Override
@@ -190,7 +205,7 @@ public class ItemCropSeed extends Item implements ICropSeed {
   @Override
   public int getScannedFromStack(ItemStack is) {
     CompoundTag nbt = StackUtil.getTag(is);
-    return nbt == null ? -1 : nbt.getByte("scan");
+    return nbt == null ? -1 : nbt.getByteOr("scan", (byte) 0);
   }
 
   @Override

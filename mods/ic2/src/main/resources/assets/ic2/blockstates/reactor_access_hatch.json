@@ -1,7 +1,8 @@
 {
   "variants": {
     "": {
-      "model": "ic2:block/generator/reactor/reactor_access_hatch"
+      "type": "ic2:be",
+      "id": "ic2:block/be/generator/reactor/reactor_access_hatch"
     }
   }
 }

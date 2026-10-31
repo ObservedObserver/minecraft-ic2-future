@@ -3,7 +3,7 @@ package ic2.core.block.machine.gui;
 import ic2.core.Ic2Gui;
 import ic2.core.block.machine.container.ContainerItemBuffer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiItemBuffer extends Ic2Gui<ContainerItemBuffer> {
@@ -12,7 +12,7 @@ public class GuiItemBuffer extends Ic2Gui<ContainerItemBuffer> {
   }
 
   @Override
-  public ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui/guiitembuffer.png");
+  public Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guiitembuffer.png");
   }
 }

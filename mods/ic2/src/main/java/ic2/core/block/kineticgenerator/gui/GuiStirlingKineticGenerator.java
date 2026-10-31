@@ -4,7 +4,7 @@ import ic2.core.Ic2Gui;
 import ic2.core.block.kineticgenerator.container.ContainerStirlingKineticGenerator;
 import ic2.core.gui.TankGauge;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiStirlingKineticGenerator extends Ic2Gui<ContainerStirlingKineticGenerator> {
@@ -16,8 +16,7 @@ public class GuiStirlingKineticGenerator extends Ic2Gui<ContainerStirlingKinetic
   }
 
   @Override
-  protected ResourceLocation getTextureLocation() {
-    return ResourceLocation.fromNamespaceAndPath(
-        "ic2", "textures/gui/guistirlingkineticgenerator.png");
+  protected Identifier getTextureLocation() {
+    return Identifier.fromNamespaceAndPath("ic2", "textures/gui/guistirlingkineticgenerator.png");
   }
 }

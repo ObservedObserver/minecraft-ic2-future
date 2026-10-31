@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/uranium_block"
+        "recipes": [
+          "ic2:shaped/uranium_block"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

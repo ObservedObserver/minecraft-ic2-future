@@ -11,7 +11,8 @@ import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class ItemNuclearResource extends Item implements IBaseReactorComponent {
+public class ItemNuclearResource extends Item
+    implements IBaseReactorComponent, ic2.compat.LegacyInventoryTicker {
   private final int radiationDuration;
   private final int radiationAmplifier;
 
@@ -24,6 +25,20 @@ public class ItemNuclearResource extends Item implements IBaseReactorComponent {
   @Override
   public boolean canBePlacedIn(ItemStack stack, IReactor reactor) {
     return false;
+  }
+
+  @Override
+  public void inventoryTick(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.server.level.ServerLevel level,
+      net.minecraft.world.entity.Entity owner,
+      net.minecraft.world.entity.EquipmentSlot slot) {
+    this.inventoryTick(
+        stack,
+        level,
+        owner,
+        ic2.compat.InventoryCompat.indexOf(owner, stack, slot),
+        slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND);
   }
 
   public void inventoryTick(

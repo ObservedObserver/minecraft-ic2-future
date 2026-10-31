@@ -1,6 +1,7 @@
 package ic2.core.item.tool;
 
 import ic2.api.item.IBoxable;
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.block.misc.FoamBlock;
 import ic2.core.block.wiring.CableBlock;
@@ -19,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -49,6 +49,18 @@ public class ItemSprayer extends Item implements StandardFluidItem, IBoxable {
 
   @Override
   public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
+  public void appendHoverText(
       @NotNull ItemStack item,
       Item.TooltipContext level,
       @NotNull List<Component> components,
@@ -75,23 +87,23 @@ public class ItemSprayer extends Item implements StandardFluidItem, IBoxable {
   }
 
   @Override
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       Level world, @NotNull Player player, @NotNull InteractionHand hand) {
     ItemStack stack = StackUtil.get(player, hand);
-    if (!world.isClientSide && IC2.keyboard.isModeSwitchKeyDown(player)) {
+    if (!world.isClientSide() && IC2.keyboard.isModeSwitchKeyDown(player)) {
       CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-      int mode = nbtData.getInt("mode");
+      int mode = nbtData.getIntOr("mode", 0);
       mode = mode == 0 ? 1 : 0;
-      nbtData.putInt("mode", mode);
+      StackUtil.setTagValue(stack, nbtData, "mode", net.minecraft.nbt.IntTag.valueOf(mode));
       String sMode =
           Component.translatable(mode == 0 ? "ic2.tooltip.mode.normal" : "ic2.tooltip.mode.single")
               .getString();
       IC2.sideProxy.messagePlayer(
           player, Component.translatable("ic2.tooltip.mode", sMode).getString());
-      return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+      return InteractionResults.withStack(InteractionResult.SUCCESS, stack);
     }
 
-    return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+    return InteractionResults.withStack(InteractionResult.PASS, stack);
   }
 
   @Override
@@ -109,7 +121,7 @@ public class ItemSprayer extends Item implements StandardFluidItem, IBoxable {
       return InteractionResult.PASS;
     }
 
-    if (world.isClientSide) {
+    if (world.isClientSide()) {
       return InteractionResult.SUCCESS;
     }
 
@@ -220,7 +232,7 @@ public class ItemSprayer extends Item implements StandardFluidItem, IBoxable {
 
   private int getMaxFoamBlocks(ItemStack stack) {
     CompoundTag nbtData = StackUtil.getOrCreateNbtData(stack);
-    return nbtData.getInt("mode") == 0 ? 10 : 1;
+    return nbtData.getIntOr("mode", 0) == 0 ? 10 : 1;
   }
 
   @Override

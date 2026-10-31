@@ -1,7 +1,7 @@
 package ic2.api.tile;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface IRotorProvider {
   int getRotorDiameter();
@@ -14,5 +14,5 @@ public interface IRotorProvider {
     return 0.0F;
   }
 
-  ResourceLocation getRotorRenderTexture();
+  Identifier getRotorRenderTexture();
 }

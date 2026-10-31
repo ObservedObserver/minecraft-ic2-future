@@ -3,7 +3,7 @@ package ic2.core.ref;
 import ic2.core.IC2;
 import ic2.core.fluid.EnvFluidHandler;
 import ic2.core.fluid.FluidHandler;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class Ic2Fluids {
   public static final EnvFluidHandler.FluidRefs UU_MATTER =
@@ -56,8 +56,8 @@ public final class Ic2Fluids {
       String flowingSprite,
       int color) {
     assert color >>> 24 >= 8;
-    ResourceLocation stillSpriteId = IC2.getIdentifier("block/fluid/" + stillSprite + "_still");
-    ResourceLocation flowingSpriteId =
+    Identifier stillSpriteId = IC2.getIdentifier("block/fluid/" + stillSprite + "_still");
+    Identifier flowingSpriteId =
         flowingSprite != null ? IC2.getIdentifier("block/fluid/" + flowingSprite + "_flow") : null;
     return FluidHandler.createFluid(
         IC2.getIdentifier(name),

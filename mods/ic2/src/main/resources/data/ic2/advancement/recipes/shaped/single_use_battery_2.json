@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:dusts/coal"
+            "items": "#c:dusts/coal"
           }
         ]
       },
@@ -37,7 +37,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/single_use_battery_2"
+        "recipes": [
+          "ic2:shaped/single_use_battery_2"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

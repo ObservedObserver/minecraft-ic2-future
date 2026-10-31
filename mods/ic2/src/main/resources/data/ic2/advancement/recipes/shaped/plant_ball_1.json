@@ -3,7 +3,9 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/plant_ball_1"
+        "recipes": [
+          "ic2:shaped/plant_ball_1"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     },

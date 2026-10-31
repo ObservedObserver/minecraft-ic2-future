@@ -10,10 +10,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,12 +71,30 @@ public abstract class ItemArmorFluidTank extends ItemArmorUtility
     return Ic2FluidStack.get(stack).isEmpty();
   }
 
+  @Override
+  public void appendHoverText(
+      net.minecraft.world.item.ItemStack stack,
+      net.minecraft.world.item.Item.TooltipContext context,
+      net.minecraft.world.item.component.TooltipDisplay display,
+      java.util.function.Consumer<net.minecraft.network.chat.Component> output,
+      net.minecraft.world.item.TooltipFlag flag) {
+    if (display.hideTooltip()) return;
+    java.util.List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+    this.appendHoverText(stack, context, lines, flag);
+    lines.forEach(output);
+  }
+
   public void appendHoverText(
       @NotNull ItemStack stack,
       Item.TooltipContext world,
       @NotNull List<Component> tooltip,
       @NotNull TooltipFlag advanced) {
-    super.appendHoverText(stack, world, tooltip, advanced);
+    super.appendHoverText(
+        stack,
+        world,
+        net.minecraft.world.item.component.TooltipDisplay.DEFAULT,
+        tooltip::add,
+        advanced);
     Ic2Tooltip.add(tooltip, getTooltipComponent(stack));
   }
 

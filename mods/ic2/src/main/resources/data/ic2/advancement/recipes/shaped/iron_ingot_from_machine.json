@@ -15,7 +15,9 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ic2:shaped/iron_ingot_from_machine"
+        "recipes": [
+          "ic2:shaped/iron_ingot_from_machine"
+        ]
       },
       "trigger": "minecraft:recipe_unlocked"
     }

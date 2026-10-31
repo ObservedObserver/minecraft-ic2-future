@@ -6,7 +6,7 @@ import ic2.core.fluid.Ic2FluidTank;
 import ic2.core.proxy.SideProxyClient;
 import ic2.core.util.Util;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.material.Fluid;
@@ -55,7 +55,7 @@ public class TankGauge extends GuiElement<TankGauge> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     Ic2FluidStack fs = this.tank.getFluidStack();
     if (fs != null && !fs.isEmpty()) {

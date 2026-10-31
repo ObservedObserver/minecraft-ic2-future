@@ -1,7 +1,7 @@
 package ic2.core.gui;
 
 import ic2.core.Ic2Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class BasicButton extends Button<BasicButton> {
   private final BasicButton.ButtonStyle style;
@@ -18,7 +18,7 @@ public class BasicButton extends Button<BasicButton> {
   }
 
   @Override
-  public void drawBackground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+  public void drawBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
     bindCommonTexture();
     this.gui.drawTexturedRect(
         guiGraphics.pose(),

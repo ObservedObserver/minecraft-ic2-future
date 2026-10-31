@@ -67,13 +67,13 @@ public class TileEntityEnergyOMat extends TileEntityInventory
       this.owner = PersonalOwnerNbt.read(nbt);
     }
 
-    this.euOffer = nbt.getInt("euOffer");
-    this.paidFor = nbt.getInt("paidFor");
+    this.euOffer = nbt.getIntOr("euOffer", 0);
+    this.paidFor = nbt.getIntOr("paidFor", 0);
 
     try {
-      this.euBuffer = nbt.getDouble("euBuffer");
+      this.euBuffer = nbt.getDoubleOr("euBuffer", 0.0);
     } catch (Exception e) {
-      this.euBuffer = nbt.getInt("euBuffer");
+      this.euBuffer = nbt.getIntOr("euBuffer", 0);
     }
   }
 
@@ -95,7 +95,7 @@ public class TileEntityEnergyOMat extends TileEntityInventory
   @Override
   protected void onLoaded() {
     super.onLoaded();
-    if (!this.getLevel().isClientSide) {
+    if (!this.getLevel().isClientSide()) {
       EnergyNet.instance.addBlockEntityTile(this);
       this.addedToEnergyNet = true;
     }

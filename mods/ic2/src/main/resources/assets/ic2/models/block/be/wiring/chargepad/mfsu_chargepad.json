@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/wiring/chargepad/mfsu_chargepad"
+  "parent": "ic2:block/wiring/chargepad/mfsu_chargepad"
 }

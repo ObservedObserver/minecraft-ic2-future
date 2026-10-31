@@ -28,7 +28,7 @@ import java.util.zip.DeflaterOutputStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -43,7 +43,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class NetworkManager implements INetworkManager {
-  public static final ResourceLocation channelId = IC2.getIdentifier("m");
+  public static final Identifier channelId = IC2.getIdentifier("m");
 
   private static TeUpdateDataServer getTeUpdateData(BlockEntity te) {
     assert IC2.sideProxy.isSimulating();
@@ -68,7 +68,10 @@ public class NetworkManager implements INetworkManager {
     }
 
     result.addAll(
-        ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false));
+        ((ServerLevel) world)
+            .getChunkSource()
+            .chunkMap
+            .getPlayers(ChunkPos.containing(pos), false));
     return result;
   }
 
@@ -112,7 +115,8 @@ public class NetworkManager implements INetworkManager {
     try {
       SubPacketType.PlayerItemData.writeTo(buffer);
       buffer.writeByte(slot);
-      DataEncoder.encode(buffer, player.getInventory().items.get(slot).getItem(), false);
+      DataEncoder.encode(
+          buffer, player.getInventory().getNonEquipmentItems().get(slot).getItem(), false);
       buffer.writeVarInt(data.length);
 
       for (Object o : data) {
@@ -174,13 +178,9 @@ public class NetworkManager implements INetworkManager {
   public final void sendComponentUpdate(
       Ic2TileEntity te, String componentName, ServerPlayer player, GrowingBuffer data) {
     assert !this.isClient();
-    if (player.getCommandSenderWorld() != te.getLevel()) {
+    if (player.level() != te.getLevel()) {
       throw new IllegalArgumentException(
-          "mismatched world (te "
-              + te.getLevel()
-              + ", player "
-              + player.getCommandSenderWorld()
-              + ")");
+          "mismatched world (te " + te.getLevel() + ", player " + player.level() + ")");
     }
 
     GrowingBuffer buffer = new GrowingBuffer(64);
@@ -252,8 +252,7 @@ public class NetworkManager implements INetworkManager {
     buffer.flip();
 
     for (ServerPlayer target :
-        getPlayersInRange(
-            player.getCommandSenderWorld(), player.blockPosition(), new ArrayList<>())) {
+        getPlayersInRange(player.level(), player.blockPosition(), new ArrayList<>())) {
       if (limitRange) {
         int dX = (int) (player.getX() - target.getX());
         int dZ = (int) (player.getZ() - target.getZ());
@@ -465,7 +464,7 @@ public class NetworkManager implements INetworkManager {
   }
 
   public void onPacket(ByteBuf packet, Player player) {
-    assert !player.level().isClientSide;
+    assert !player.level().isClientSide();
 
     try {
       this.onPacketData(GrowingBuffer.wrap(packet), player);
@@ -504,7 +503,9 @@ public class NetworkManager implements INetworkManager {
               IC2.sideProxy.requestTick(
                   true,
                   () -> {
-                    BlockEntity te = DataEncoder.getValue(teDeferred, player.getServer());
+                    BlockEntity te =
+                        DataEncoder.getValue(
+                            teDeferred, ic2.compat.WorldCompat.server(player.level()));
                     if (te instanceof INetworkClientTileEntityEventListener) {
                       ((INetworkClientTileEntityEventListener) te).onNetworkEvent(player, event);
                     }
@@ -563,10 +564,12 @@ public class NetworkManager implements INetworkManager {
               simulating,
               () -> {
                 for (int i = 0; i < subData.length; i++) {
-                  subData[i] = DataEncoder.getValue(subData[i], player.getServer());
+                  subData[i] =
+                      DataEncoder.getValue(
+                          subData[i], ic2.compat.WorldCompat.server(player.level()));
                 }
 
-                ItemStack stack = player.getInventory().items.get(slot);
+                ItemStack stack = player.getInventory().getNonEquipmentItems().get(slot);
                 if (!StackUtil.isEmpty(stack)
                     && stack.getItem() == item
                     && item instanceof IPlayerItemDataListener) {
@@ -592,7 +595,7 @@ public class NetworkManager implements INetworkManager {
                   ReflectionUtil.setValueRecursive(
                       player.containerMenu,
                       fieldName,
-                      DataEncoder.getValue(value, player.getServer()));
+                      DataEncoder.getValue(value, ic2.compat.WorldCompat.server(player.level())));
                 }
               });
           break;
@@ -627,7 +630,9 @@ public class NetworkManager implements INetworkManager {
                                   container.base.getClass(), fieldName)
                               != null)) {
                     ReflectionUtil.setValueRecursive(
-                        container.base, fieldName, DataEncoder.getValue(value, player.getServer()));
+                        container.base,
+                        fieldName,
+                        DataEncoder.getValue(value, ic2.compat.WorldCompat.server(player.level())));
                   }
                 }
               });
@@ -641,13 +646,16 @@ public class NetworkManager implements INetworkManager {
           IC2.sideProxy.requestTick(
               simulating,
               () -> {
-                BlockEntity te = DataEncoder.getValue(teDeferred, player.getServer());
+                BlockEntity te =
+                    DataEncoder.getValue(teDeferred, ic2.compat.WorldCompat.server(player.level()));
                 if (te != null
                     && (NetworkManager.this.isClient()
                         || NetworkManager.this.getClientModifiableField(te.getClass(), fieldName)
                             != null)) {
                   ReflectionUtil.setValueRecursive(
-                      te, fieldName, DataEncoder.getValue(value, player.getServer()));
+                      te,
+                      fieldName,
+                      DataEncoder.getValue(value, ic2.compat.WorldCompat.server(player.level())));
                 }
               });
           break;

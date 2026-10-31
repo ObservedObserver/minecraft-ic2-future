@@ -4,6 +4,7 @@ import ic2.api.crops.CropCard;
 import ic2.api.crops.Crops;
 import ic2.api.crops.ICropSeed;
 import ic2.api.item.ElectricItem;
+import ic2.compat.GameTest;
 import ic2.core.Ic2Potion;
 import ic2.core.block.machine.tileentity.TileEntityCropHarvester;
 import ic2.core.block.machine.tileentity.TileEntityCropmatron;
@@ -25,7 +26,6 @@ import ic2.core.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
@@ -40,16 +40,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
-@GameTestHolder("ic2")
-@PrefixGameTestTemplate(false)
 public class CropGameTests {
   private static final String EMPTY = "gametest/empty3x3x3";
 
@@ -62,7 +58,8 @@ public class CropGameTests {
   private static final int RNG_ATTEMPTS = 4000;
 
   private static TileEntityCrop cropAt(GameTestHelper helper, BlockPos pos) {
-    BlockEntity be = helper.getBlockEntity(pos);
+    BlockEntity be =
+        helper.getBlockEntity(pos, net.minecraft.world.level.block.entity.BlockEntity.class);
     if (!(be instanceof TileEntityCrop crop)) {
       throw new IllegalStateException("expected a crop tile entity at " + pos + ", found " + be);
     }
@@ -72,7 +69,7 @@ public class CropGameTests {
 
   private static TileEntityCrop placeCropStick(GameTestHelper helper, BlockPos pos) {
     helper.setBlock(
-        pos.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 7));
+        pos.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7));
     // the raw default state has crossing_base=true; regular item placement always clears it
     helper.setBlock(
         pos,
@@ -688,7 +685,7 @@ public class CropGameTests {
   public static void terrainStatsFollowStorageAndMoisture(GameTestHelper helper) {
     TileEntityCrop crop = placeCropStick(helper, CROP_POS);
     helper.setBlock(
-        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 0));
+        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 0));
 
     crop = cropAt(helper, CROP_POS);
     crop.setStorageWater(0);
@@ -701,7 +698,7 @@ public class CropGameTests {
     helper.assertValueEqual(humidityWet - humidityDry, 10, "humidity gain from 200 stored water");
 
     helper.setBlock(
-        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 7));
+        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 7));
     crop = cropAt(helper, CROP_POS);
     crop.setStorageWater(200);
     crop.updateTerrainHumidity();
@@ -735,7 +732,7 @@ public class CropGameTests {
     int dirtHumidity = crop.getTerrainHumidity();
 
     helper.setBlock(
-        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 0));
+        CROP_POS.below(), Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 0));
     crop = cropAt(helper, CROP_POS);
     crop.setStorageWater(0);
     crop.updateTerrainHumidity();
@@ -880,25 +877,27 @@ public class CropGameTests {
     helper.assertValueEqual(first.getMaxStackSize(), 64, "fully analyzed seed stack limit");
     helper.assertValueEqual(unanalyzed.getMaxStackSize(), 1, "unanalyzed seed stack limit");
 
-    ItemStackHandler analyzedSlot = new ItemStackHandler(1);
+    ItemStacksResourceHandler analyzedSlot = new ItemStacksResourceHandler(1);
     helper.assertTrue(
-        analyzedSlot.insertItem(0, first, false).isEmpty(),
+        Ic2TransferTestSupport.insert(analyzedSlot, 0, first, false).isEmpty(),
         "first fully analyzed seed should enter an empty slot");
     helper.assertTrue(
-        analyzedSlot.insertItem(0, matching, false).isEmpty(),
+        Ic2TransferTestSupport.insert(analyzedSlot, 0, matching, false).isEmpty(),
         "fully analyzed seed with matching stats should merge");
     helper.assertValueEqual(
-        analyzedSlot.getStackInSlot(0).getCount(), 2, "stacked fully analyzed seeds");
+        Ic2TransferTestSupport.stack(analyzedSlot, 0).getCount(),
+        2,
+        "stacked fully analyzed seeds");
     helper.assertFalse(
-        analyzedSlot.insertItem(0, differentStats, false).isEmpty(),
+        Ic2TransferTestSupport.insert(analyzedSlot, 0, differentStats, false).isEmpty(),
         "fully analyzed seeds with different stats must not merge");
 
-    ItemStackHandler unanalyzedSlot = new ItemStackHandler(1);
-    unanalyzedSlot.insertItem(0, unanalyzed, false);
+    ItemStacksResourceHandler unanalyzedSlot = new ItemStacksResourceHandler(1);
+    Ic2TransferTestSupport.insert(unanalyzedSlot, 0, unanalyzed, false);
     ItemStack secondUnanalyzed =
         ItemCropSeed.generateItemStackFromValues(Ic2Crops.cropWheat, 2, 3, 4, 3);
     helper.assertFalse(
-        unanalyzedSlot.insertItem(0, secondUnanalyzed, false).isEmpty(),
+        Ic2TransferTestSupport.insert(unanalyzedSlot, 0, secondUnanalyzed, false).isEmpty(),
         "unanalyzed seeds must remain unstackable");
     helper.succeed();
   }
@@ -941,9 +940,21 @@ public class CropGameTests {
 
     // Simulate a save/load while the block is weed, whose blockstate cannot carry crossing_base.
     CompoundTag saved = weed.saveWithoutMetadata(helper.getLevel().registryAccess());
-    helper.setBlock(CROP_POS, Blocks.AIR);
-    helper.setBlock(CROP_POS, Ic2Blocks.WEED_CROP.defaultBlockState());
-    cropAt(helper, CROP_POS).loadWithComponents(saved, helper.getLevel().registryAccess());
+    helper.assertTrue(
+        saved.getBooleanOr("crossingBase", false),
+        "weed save must retain the second stick: " + saved);
+    // Reload the BE without breaking the plant. setBlock(AIR) invokes crop picking/reset and
+    // therefore is not a save/load operation under the native removal lifecycle.
+    BlockPos absoluteCropPos = helper.absolutePos(CROP_POS);
+    helper.getLevel().removeBlockEntity(absoluteCropPos);
+    TileEntityCrop reloaded = new TileEntityCrop(absoluteCropPos, helper.getBlockState(CROP_POS));
+    reloaded.loadWithComponents(saved, helper.getLevel().registryAccess());
+    helper.getLevel().setBlockEntity(reloaded);
+    CompoundTag restored =
+        cropAt(helper, CROP_POS).saveWithoutMetadata(helper.getLevel().registryAccess());
+    helper.assertTrue(
+        restored.getBooleanOr("crossingBase", false),
+        "loaded weed must retain the second stick: " + restored);
 
     Player player = helper.makeMockPlayer(GameType.SURVIVAL);
     ItemStack trowel = new ItemStack(Ic2Items.WEEDING_TROWEL);
@@ -955,7 +966,11 @@ public class CropGameTests {
     helper.assertTrue(
         result == InteractionResult.SUCCESS, "trowel should clear weed, got " + result);
     helper.assertTrue(
-        cropAt(helper, CROP_POS).isCrossingBase(), "removing weed must restore the crossing base");
+        cropAt(helper, CROP_POS).isCrossingBase(),
+        "removing weed must restore the crossing base: "
+            + helper.getBlockState(CROP_POS)
+            + "; "
+            + cropAt(helper, CROP_POS).saveWithoutMetadata(helper.getLevel().registryAccess()));
     helper.assertTrue(
         helper.getBlockState(CROP_POS).getValue(Ic2TileEntityBlock.CROSSING_BASE),
         "restored crop-stick block state should remain a crossing base");
@@ -987,7 +1002,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROP_HARVESTER);
-    TileEntityCropHarvester te = (TileEntityCropHarvester) helper.getBlockEntity(machinePos);
+    TileEntityCropHarvester te =
+        (TileEntityCropHarvester)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
 
@@ -1020,7 +1038,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROPMATRON);
-    TileEntityCropmatron te = (TileEntityCropmatron) helper.getBlockEntity(machinePos);
+    TileEntityCropmatron te =
+        (TileEntityCropmatron)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
     te.fertilizerSlot.put(0, new ItemStack(Ic2Items.FERTILIZER));
@@ -1069,7 +1090,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos farmlandPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROPMATRON);
-    TileEntityCropmatron te = (TileEntityCropmatron) helper.getBlockEntity(machinePos);
+    TileEntityCropmatron te =
+        (TileEntityCropmatron)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
     helper.assertValueEqual(
@@ -1080,7 +1104,7 @@ public class CropGameTests {
         "water accepted by the cropmatron");
 
     helper.setBlock(
-        farmlandPos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 0));
+        farmlandPos, Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, 0));
     te.scanX = -2;
     te.scanY = 0;
     te.scanZ = 0;
@@ -1088,7 +1112,7 @@ public class CropGameTests {
     helper.succeedWhen(
         () -> {
           helper.assertValueEqual(
-              helper.getBlockState(farmlandPos).getValue(FarmBlock.MOISTURE),
+              helper.getBlockState(farmlandPos).getValue(FarmlandBlock.MOISTURE),
               7,
               "farmland moisture after the cropmatron pass");
           helper.assertValueEqual(
@@ -1285,7 +1309,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROP_HARVESTER);
-    TileEntityCropHarvester te = (TileEntityCropHarvester) helper.getBlockEntity(machinePos);
+    TileEntityCropHarvester te =
+        (TileEntityCropHarvester)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
 
@@ -1317,7 +1344,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROP_HARVESTER);
-    TileEntityCropHarvester te = (TileEntityCropHarvester) helper.getBlockEntity(machinePos);
+    TileEntityCropHarvester te =
+        (TileEntityCropHarvester)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
 
@@ -1358,7 +1388,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROPMATRON);
-    TileEntityCropmatron te = (TileEntityCropmatron) helper.getBlockEntity(machinePos);
+    TileEntityCropmatron te =
+        (TileEntityCropmatron)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
     te.fertilizerSlot.put(0, new ItemStack(Ic2Items.FERTILIZER));
@@ -1455,7 +1488,8 @@ public class CropGameTests {
     helper.assertFalse(
         crop.rightClick(player, InteractionHand.MAIN_HAND),
         "right-clicking an immature wither rose crop must not harvest");
-    helper.assertItemEntityNotPresent(Items.BLACK_DYE, CROP_POS, 2.0);
+    helper.assertItemEntityNotPresent(
+        Items.DYE.pick(net.minecraft.world.item.DyeColor.BLACK), CROP_POS, 2.0);
     helper.assertValueEqual(
         cropAt(helper, CROP_POS).getCurrentAge(), 2, "wither rose age after the rejected harvest");
 
@@ -1481,7 +1515,8 @@ public class CropGameTests {
     }
 
     helper.assertTrue(harvested, "right-clicking a mature cornflower crop should drop dye");
-    helper.assertItemEntityPresent(Items.BLUE_DYE, CROP_POS, 2.0);
+    helper.assertItemEntityPresent(
+        Items.DYE.pick(net.minecraft.world.item.DyeColor.BLUE), CROP_POS, 2.0);
 
     TileEntityCrop remainder = cropAt(helper, CROP_POS);
     helper.assertTrue(
@@ -1501,7 +1536,10 @@ public class CropGameTests {
     BlockPos machinePos = new BlockPos(1, 1, 1);
     BlockPos cropPos = new BlockPos(0, 1, 1);
     helper.setBlock(machinePos, Ic2Blocks.CROP_HARVESTER);
-    TileEntityCropHarvester te = (TileEntityCropHarvester) helper.getBlockEntity(machinePos);
+    TileEntityCropHarvester te =
+        (TileEntityCropHarvester)
+            helper.getBlockEntity(
+                machinePos, net.minecraft.world.level.block.entity.BlockEntity.class);
     te.dischargeSlot.put(
         0, ElectricItemManager.getCharged(Ic2Items.RE_BATTERY, Double.POSITIVE_INFINITY));
 
@@ -1521,8 +1559,10 @@ public class CropGameTests {
 
     helper.succeedWhen(
         () -> {
-          if (!slotContains(te.contentSlot, Items.BLUE_DYE)) {
-            helper.assertItemEntityPresent(Items.BLUE_DYE, cropPos, 3.0);
+          if (!slotContains(
+              te.contentSlot, Items.DYE.pick(net.minecraft.world.item.DyeColor.BLUE))) {
+            helper.assertItemEntityPresent(
+                Items.DYE.pick(net.minecraft.world.item.DyeColor.BLUE), cropPos, 3.0);
           }
         });
   }
@@ -1534,7 +1574,7 @@ public class CropGameTests {
     Player player = helper.makeMockPlayer(GameType.SURVIVAL);
     player.addEffect(new MobEffectInstance(MobEffects.POISON, 600));
     player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600));
-    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600));
+    player.addEffect(new MobEffectInstance(MobEffects.SPEED, 600));
     player.addEffect(new MobEffectInstance(Ic2Potion.radiationHolder(), 1200));
     ItemTerraWart item = (ItemTerraWart) Ic2Items.TERRA_WART;
 
@@ -1543,7 +1583,7 @@ public class CropGameTests {
     helper.assertFalse(player.hasEffect(MobEffects.POISON), "terra wart should cure poison");
     helper.assertFalse(player.hasEffect(MobEffects.WEAKNESS), "terra wart should cure weakness");
     helper.assertTrue(
-        player.hasEffect(MobEffects.MOVEMENT_SPEED), "terra wart must not remove positive effects");
+        player.hasEffect(MobEffects.SPEED), "terra wart must not remove positive effects");
     MobEffectInstance radiation = player.getEffect(Ic2Potion.radiationHolder());
     helper.assertTrue(
         radiation != null && radiation.getDuration() == 600,
@@ -1561,9 +1601,13 @@ public class CropGameTests {
   // terra wart gains 100 bonus growth points per tick while snow is within its 5-block roots
   @GameTest(template = EMPTY)
   public static void terraWartGrowsFastAboveSnow(GameTestHelper helper) {
+    // Snow layers require a sturdy block underneath, including after the farmland update.
+    helper.setBlock(new BlockPos(1, -1, 1), Blocks.STONE);
     helper.setBlock(new BlockPos(1, 0, 1), Blocks.SNOW);
     TileEntityCrop crop = plant(helper, CROP_POS, Ic2Crops.cropTerraWart, 0, 0, 0, 0);
 
+    helper.assertBlockPresent(Blocks.SNOW, new BlockPos(1, 0, 1));
+    helper.assertTrue(crop.isBlockBelow(Blocks.SNOW), "terra wart roots must reach the snow");
     Ic2Crops.cropTerraWart.tick(crop);
 
     helper.assertValueEqual(
@@ -1592,6 +1636,60 @@ public class CropGameTests {
         converted.getCrop() == Ic2Crops.cropNetherWart,
         "terra wart above soul sand should become nether wart, got " + converted.getCrop());
 
+    helper.succeed();
+  }
+
+  @GameTest(template = EMPTY)
+  public static void paleOakSaplingPlantsAndPersists(GameTestHelper helper) {
+    TileEntityCrop stick = placeCropStick(helper, CROP_POS);
+    Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+    player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.PALE_OAK_SAPLING, 2));
+    helper.assertTrue(stick.rightClick(player, InteractionHand.MAIN_HAND),
+        "pale oak sapling must plant on crop sticks");
+    CropCard card = Crops.instance.getCropCard("ic2", "pale_oak_sapling");
+    TileEntityCrop planted = cropAt(helper, CROP_POS);
+    helper.assertTrue(card != null && planted.getCrop() == card, "pale oak crop identity");
+    helper.assertTrue(Crops.instance.getCropCard(new ItemStack(Items.PALE_OAK_SAPLING)) == card,
+        "sapling item resolves to its own crop");
+    helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "one sapling consumed");
+    helper.assertValueEqual(planted.getCurrentAge(), 0, "initial stage");
+    planted.setCurrentAge(4);
+    CompoundTag saved = planted.saveWithFullMetadata(helper.getLevel().registryAccess());
+    helper.setBlock(CROP_POS, Blocks.AIR);
+    helper.setBlock(CROP_POS, card.getCropBlock());
+    TileEntityCrop restored = cropAt(helper, CROP_POS);
+    restored.loadWithComponents(saved, helper.getLevel().registryAccess());
+    helper.assertTrue(restored.getCrop() == card, "pale oak identity after world save/load");
+    helper.assertValueEqual(restored.getCurrentAge(), 4, "mature stage after world save/load");
+    ItemStack seed = ItemCropSeed.generateItemStackFromValues(card, 3, 5, 7, 4);
+    helper.assertTrue(Crops.instance.getCropCard(seed) == card, "seed bag retains pale oak identity");
+    helper.succeed();
+  }
+
+  @GameTest(template = EMPTY)
+  public static void paleOakCropHarvestsPaleOakAndRegrows(GameTestHelper helper) {
+    CropCard card = Crops.instance.getCropCard("ic2", "pale_oak_sapling");
+    helper.assertTrue(card != null, "pale oak crop must be registered");
+    TileEntityCrop crop = plant(helper, CROP_POS, card, 4, 1, 31, 1);
+    helper.assertValueEqual(card.getMaxAge(), 4, "pale oak maximum stage");
+    helper.assertTrue(card.canBeHarvested(crop), "mature pale oak crop is harvestable");
+    for (int i = 0; i < 100; i++) {
+      ItemStack[] gains = card.getGains(crop);
+      helper.assertTrue(gains.length >= 1 && gains[0].is(Items.PALE_OAK_LOG), "pale oak log yield");
+      for (ItemStack gain : gains) {
+        helper.assertTrue(gain.is(Items.PALE_OAK_LOG) || gain.is(Items.PALE_OAK_SAPLING),
+            "pale oak crop must not yield another tree's items");
+      }
+    }
+    Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+    boolean harvested = false;
+    for (int i = 0; i < RNG_ATTEMPTS && !harvested; i++) {
+      cropAt(helper, CROP_POS).setCurrentAge(4);
+      harvested = cropAt(helper, CROP_POS).rightClick(player, InteractionHand.MAIN_HAND);
+    }
+    helper.assertTrue(harvested, "mature pale oak crop harvests");
+    helper.assertItemEntityPresent(Items.PALE_OAK_LOG, CROP_POS, 2.0);
+    helper.assertValueEqual(cropAt(helper, CROP_POS).getCurrentAge(), 3, "regrowth stage");
     helper.succeed();
   }
 }

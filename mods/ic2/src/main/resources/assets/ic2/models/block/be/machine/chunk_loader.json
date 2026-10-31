@@ -1,4 +1,3 @@
 {
-  "loader": "ic2:be",
-  "id": "ic2:block/be/machine/chunk_loader"
+  "parent": "ic2:block/machine/chunk_loader"
 }

@@ -69,11 +69,11 @@ public class TileEntityChunkLoader extends TileEntityInventory
   protected void loadAdditional(
       CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     super.loadAdditional(nbt, registries);
-    ListTag list = nbt.getList("loadedChunks", 4);
+    ListTag list = ic2.compat.NbtCompat.getList(nbt, "loadedChunks", 4);
     this.loadedChunks.clear();
 
     for (net.minecraft.nbt.Tag tag : list) {
-      this.loadedChunks.add(((LongTag) tag).getAsLong());
+      this.loadedChunks.add(((LongTag) tag).longValue());
     }
   }
 
@@ -91,7 +91,7 @@ public class TileEntityChunkLoader extends TileEntityInventory
   @Override
   public void setActive(boolean active) {
     Level world = this.getLevel();
-    if (!world.isClientSide && this.getActive() != active) {
+    if (!world.isClientSide() && this.getActive() != active) {
       if (active) {
         ChunkLoaderLogic.addChunkLoader((ServerLevel) world, this.worldPosition, this.loadedChunks);
       } else {
@@ -106,10 +106,14 @@ public class TileEntityChunkLoader extends TileEntityInventory
   public void onLoaded() {
     super.onLoaded();
     Level world = this.getLevel();
-    if (!world.isClientSide) {
+    if (!world.isClientSide()) {
+      if (this.normalizeLoadedChunks()) {
+        this.setChanged();
+      }
       this.setOverclockRates();
       if (this.getActive()) {
-        ChunkLoaderLogic.addChunkLoader((ServerLevel) world, this.worldPosition, this.loadedChunks);
+        ChunkLoaderLogic.updateChunkLoader(
+            (ServerLevel) world, this.worldPosition, this.loadedChunks);
       }
     }
   }
@@ -117,7 +121,7 @@ public class TileEntityChunkLoader extends TileEntityInventory
   @Override
   public void onPlaced(ItemStack stack, LivingEntity placer, Direction facing) {
     super.onPlaced(stack, placer, facing);
-    this.loadedChunks.add(ChunkPos.asLong(this.worldPosition));
+    this.loadedChunks.add(ChunkPos.pack(this.worldPosition));
   }
 
   @Override
@@ -132,30 +136,35 @@ public class TileEntityChunkLoader extends TileEntityInventory
   }
 
   public void addChunkToLoaded(ChunkPos chunk) {
-    if (this.level.isClientSide) {
+    if (this.level.isClientSide()) {
       new RuntimeException("Something tried to change the ChunkLoaderState on the client.")
           .printStackTrace();
     } else if (!this.isChunkInRange(chunk)) {
       IC2.log.warn(
           LogCategory.Block,
           "Trying to add a Chunk to loaded, however the chunk is too far away. Aborting.");
-    } else {
-      if (this.loadedChunks.add(chunk.toLong())) {
-        ChunkLoaderLogic.updateChunkLoader(
-            (ServerLevel) this.level, this.worldPosition, this.loadedChunks);
+    } else if (this.loadedChunks.contains(chunk.pack())
+        || this.loadedChunks.size() < this.getMaxChunks()) {
+      if (this.loadedChunks.add(chunk.pack())) {
+        if (this.getActive()) {
+          ChunkLoaderLogic.updateChunkLoader(
+              (ServerLevel) this.level, this.worldPosition, this.loadedChunks);
+        }
         this.setChanged();
       }
     }
   }
 
   public void removeChunkFromLoaded(ChunkPos chunk) {
-    if (this.level.isClientSide) {
+    if (this.level.isClientSide()) {
       new RuntimeException("Something tried to change the ChunkLoaderState on the client.")
           .printStackTrace();
-    } else if (ChunkPos.asLong(this.worldPosition) != chunk.toLong()) {
-      if (this.loadedChunks.remove(chunk.toLong())) {
-        ChunkLoaderLogic.updateChunkLoader(
-            (ServerLevel) this.level, this.worldPosition, this.loadedChunks);
+    } else if (ChunkPos.pack(this.worldPosition) != chunk.pack()) {
+      if (this.loadedChunks.remove(chunk.pack())) {
+        if (this.getActive()) {
+          ChunkLoaderLogic.updateChunkLoader(
+              (ServerLevel) this.level, this.worldPosition, this.loadedChunks);
+        }
         this.setChanged();
       }
     }
@@ -166,22 +175,52 @@ public class TileEntityChunkLoader extends TileEntityInventory
   }
 
   public boolean isChunkInRange(ChunkPos chunk) {
-    ChunkPos mainChunk = new ChunkPos(this.worldPosition);
-    return Math.abs(chunk.x - mainChunk.x) <= 4 && Math.abs(chunk.z - mainChunk.z) <= 4;
+    ChunkPos mainChunk = ChunkPos.containing(this.worldPosition);
+    return Math.abs(chunk.x() - mainChunk.x()) <= 4 && Math.abs(chunk.z() - mainChunk.z()) <= 4;
   }
 
   public int getMaxChunks() {
     return 9;
   }
 
+  private boolean normalizeLoadedChunks() {
+    ChunkPos own = ChunkPos.containing(this.worldPosition);
+    LongSet normalized = new LongOpenHashSet();
+    normalized.add(own.pack());
+    // Old saves could select all 81 cells. Keep the closest choices deterministically,
+    // always reserving a slot for the loader's own chunk.
+    this.loadedChunks
+        .longStream()
+        .mapToObj(ChunkPos::unpack)
+        .filter(this::isChunkInRange)
+        .filter(chunk -> !chunk.equals(own))
+        .sorted(
+            java.util.Comparator.<ChunkPos>comparingInt(
+                    chunk -> {
+                      int dx = chunk.x() - own.x();
+                      int dz = chunk.z() - own.z();
+                      return dx * dx + dz * dz;
+                    })
+                .thenComparingInt(ChunkPos::x)
+                .thenComparingInt(ChunkPos::z))
+        .limit(this.getMaxChunks() - 1L)
+        .forEach(chunk -> normalized.add(chunk.pack()));
+    if (normalized.equals(this.loadedChunks)) {
+      return false;
+    }
+    this.loadedChunks.clear();
+    this.loadedChunks.addAll(normalized);
+    return true;
+  }
+
   @Override
   public void onNetworkEvent(Player player, int event) {
     int x = (event & 15) - 8;
     int z = (event >> 4 & 15) - 8;
-    ChunkPos mainChunk = new ChunkPos(this.worldPosition);
-    ChunkPos chunk = new ChunkPos(mainChunk.x + x, mainChunk.z + z);
+    ChunkPos mainChunk = ChunkPos.containing(this.worldPosition);
+    ChunkPos chunk = new ChunkPos(mainChunk.x() + x, mainChunk.z() + z);
     if (this.isChunkInRange(chunk)) {
-      if (this.getLoadedChunks().contains(chunk.toLong())) {
+      if (this.getLoadedChunks().contains(chunk.pack())) {
         this.removeChunkFromLoaded(chunk);
       } else {
         this.addChunkToLoaded(chunk);

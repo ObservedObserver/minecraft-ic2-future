@@ -1,5 +1,6 @@
 package ic2.core.item.boat;
 
+import ic2.compat.InteractionResults;
 import ic2.core.IC2;
 import ic2.core.util.LogCategory;
 import java.lang.reflect.Constructor;
@@ -8,12 +9,12 @@ import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext.Fluid;
@@ -41,12 +42,12 @@ public class BoatItem extends Item {
     this.boatEntityType = boatEntityType;
   }
 
-  public @NotNull InteractionResultHolder<ItemStack> use(
+  public @NotNull InteractionResult use(
       @NotNull Level world, Player user, @NotNull InteractionHand hand) {
     ItemStack itemStack = user.getMainHandItem();
     BlockHitResult hitResult = getPlayerPOVHitResult(world, user, Fluid.ANY);
     if (hitResult.getType() == Type.MISS) {
-      return InteractionResultHolder.pass(itemStack);
+      return InteractionResults.pass(itemStack);
     }
 
     Vec3 vec3d = user.getViewVector(1.0F);
@@ -59,7 +60,7 @@ public class BoatItem extends Item {
       for (Entity entity : list) {
         AABB box = entity.getBoundingBox().inflate(entity.getPickRadius());
         if (box.contains(vec3d2)) {
-          return InteractionResultHolder.pass(itemStack);
+          return InteractionResults.pass(itemStack);
         }
       }
     }
@@ -68,10 +69,10 @@ public class BoatItem extends Item {
       Boat boatEntity = this.createEntity(world, hitResult);
       boatEntity.setYRot(user.getYRot());
       if (!world.noCollision(boatEntity, boatEntity.getBoundingBox())) {
-        return InteractionResultHolder.fail(itemStack);
+        return InteractionResults.fail(itemStack);
       }
 
-      if (!world.isClientSide) {
+      if (!world.isClientSide()) {
         world.addFreshEntity(boatEntity);
         world.gameEvent(user, GameEvent.ENTITY_PLACE, hitResult.getLocation());
         if (!user.getAbilities().instabuild) {
@@ -80,9 +81,9 @@ public class BoatItem extends Item {
       }
 
       user.awardStat(Stats.ITEM_USED.get(this));
-      return InteractionResultHolder.sidedSuccess(itemStack, world.isClientSide());
+      return InteractionResults.sidedSuccess(itemStack, world.isClientSide());
     } else {
-      return InteractionResultHolder.pass(itemStack);
+      return InteractionResults.pass(itemStack);
     }
   }
 
