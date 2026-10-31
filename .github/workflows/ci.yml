@@ -35,11 +35,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: ./dev build ${{ matrix.project }}
       - run: ./dev test ${{ matrix.project }}
+      - if: matrix.project == 'ic2'
+        run: ./dev gametest ic2
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports-${{ matrix.project }}
           path: |
             mods/${{ matrix.project }}/build/reports/tests/
+            mods/${{ matrix.project }}/build/reports/gametest.xml
             validation/twilightforest/build/reports/tests/
           if-no-files-found: ignore

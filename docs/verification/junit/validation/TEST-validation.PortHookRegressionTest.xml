@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="validation.PortHookRegressionTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:22:55.047Z" hostname="ElwynnMac.local" time="0.019">
+  <properties/>
+  <testcase name="incompatibleTargetsFailInsteadOfSilentlySkipping()" classname="validation.PortHookRegressionTest" time="0.005"/>
+  <testcase name="bothShippedRoutersIncludeStructureDensityWithoutChangingSurfaceEstimate()" classname="validation.PortHookRegressionTest" time="0.004"/>
+  <testcase name="coveringsRunOnceAtStartOfCarversAfterSurface()" classname="validation.PortHookRegressionTest" time="0.005"/>
+  <testcase name="visibilityAndBounceUseReal263Targets()" classname="validation.PortHookRegressionTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

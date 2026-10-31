@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-31",
+  "target": {
+    "minecraft": "26.3",
+    "neoforge": "26.3.0.83",
+    "java": 25
+  },
+  "fresh_source_builds": {
+    "ic2": true,
+    "twilightforest_universal": true
+  },
+  "junit": {
+    "ic2": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "twilightforest": {
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation": {
+      "tests": 69,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "native_ic2_gametests": {
+    "tests": 577,
+    "failures": 0,
+    "errors": 0
+  },
+  "native_suite_selector": "ic2:*",
+  "datagen_fixtures_regenerated_and_identical": {
+    "twilight_noise_gen": "70c564c965c3889246709d34755368e064c39a3c85e3c5986e04fce012e4dfe0",
+    "skylight_noise_gen": "a3ceb5e7bc35c07dc1de441b6225d061a9411d61ed93f226b31434eba2d63597"
+  },
+  "clean_clone_check": {
+    "clean_git_clone_passed": true,
+    "repository_space_in_path_passed": true,
+    "output": "Workspace checks passed; 10559 JSON files parsed, 8 release mods locked.",
+    "checked_commit": "c46ce45d919accda8c0ac9a1d7daf425de17147b",
+    "no_external_git_alternates": true
+  },
+  "imported_files_verified_identical": 17494,
+  "known_harness_issues_fixed": [
+    "Default native selector must include ic2 namespace; unqualified wildcard selected only minecraft:always_pass",
+    "Independent validation must regenerate client data instead of relying on old build/generated-port-resources"
+  ],
+  "rebuilt_artifacts": {
+    "ic2-neoforge-26.3.0-local.17.jar": {
+      "sha256": "30a42f7958c410a9da6a6619f893fce7a6928e010eebde3da41b9308d283882e",
+      "bytes": 8338065
+    },
+    "twilightforest-26.3-4.9-local.5-universal.jar": {
+      "sha256": "9f38a7dfe1f380f9c48f945781d00dc3d718e5c86b3de49329fb0011c0f0ca1e",
+      "bytes": 26377119
+    }
+  },
+  "historical_delivered_pack_replaced": false,
+  "runtime_gameplay_sources_changed_during_consolidation": false,
+  "raw_build_logs_preserved_outside_git": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/work/codebase-maintenance/build-logs",
+  "native_report_guard_negative_check": "Separately verified: selecting only minecraft:always_pass returns a nonzero maintenance CLI result, despite the vanilla test passing.",
+  "cleanup_record": "cleanup.json",
+  "total_junit_tests_passed": 162
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.util.HolderMatcherTests" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.848Z" hostname="ElwynnMac.local" time="0.003">
+  <properties/>
+  <testcase name="matchesDeferred()" classname="twilightforest.util.HolderMatcherTests" time="0.001"/>
+  <testcase name="matchesReference()" classname="twilightforest.util.HolderMatcherTests" time="0.001"/>
+  <testcase name="matchesMixed()" classname="twilightforest.util.HolderMatcherTests" time="0.0"/>
+  <testcase name="matchesDirectFailed()" classname="twilightforest.util.HolderMatcherTests" time="0.0"/>
+  <testcase name="matchesDirect()" classname="twilightforest.util.HolderMatcherTests" time="0.001"/>
+  <testcase name="matchesDeferredFailed()" classname="twilightforest.util.HolderMatcherTests" time="0.0"/>
+  <testcase name="matchesReferenceFailed()" classname="twilightforest.util.HolderMatcherTests" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

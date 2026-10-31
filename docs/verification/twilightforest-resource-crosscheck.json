@@ -1,0 +1,15 @@
+{
+  "old_sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9",
+  "rebuilt_sha256": "9f38a7dfe1f380f9c48f945781d00dc3d718e5c86b3de49329fb0011c0f0ca1e",
+  "missing_resources": [
+    "META-INF/jarjar/twilightforest-neoforge26.3.asm-4.9.jar"
+  ],
+  "added_resources": [
+    "META-INF/jarjar/twilightforest.asm-4.9-local.5.jar"
+  ],
+  "different_resources": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/jarjar/metadata.json",
+    "META-INF/neoforge.mods.toml"
+  ]
+}

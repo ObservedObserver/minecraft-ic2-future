@@ -1,0 +1,7 @@
+{
+  "clean_git_clone_passed": true,
+  "repository_space_in_path_passed": true,
+  "output": "Workspace checks passed; 10559 JSON files parsed, 8 release mods locked.",
+  "checked_commit": "c46ce45d919accda8c0ac9a1d7daf425de17147b",
+  "no_external_git_alternates": true
+}

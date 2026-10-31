@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.client.renderer.OitRenderRegressionTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:39.497Z" hostname="ElwynnMac.local" time="0.049">
+  <properties/>
+  <testcase name="everyCustomTranslucentRenderTypeProvidesAllNativeOitStages()" classname="twilightforest.client.renderer.OitRenderRegressionTests" time="0.047"/>
+  <testcase name="shieldKeepsTextureAnimationAndCloneKeepsOverlayAndLighting()" classname="twilightforest.client.renderer.OitRenderRegressionTests" time="0.0"/>
+  <testcase name="redThreadRemainsAdditiveAndVisibleThroughOpaqueTerrainInEveryStage()" classname="twilightforest.client.renderer.OitRenderRegressionTests" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

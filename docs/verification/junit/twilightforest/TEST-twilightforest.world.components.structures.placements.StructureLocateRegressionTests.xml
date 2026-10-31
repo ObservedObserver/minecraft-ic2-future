@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.world.components.structures.placements.StructureLocateRegressionTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.862Z" hostname="ElwynnMac.local" time="0.44">
+  <properties/>
+  <testcase name="restoringNativeInheritanceRetainsFrequencyAndLandmarkExclusion()" classname="twilightforest.world.components.structures.placements.StructureLocateRegressionTests" time="0.052"/>
+  <testcase name="nativeLocatorFindsAllAffectedStructureSetsAtPositiveAndNegativeCoordinates()" classname="twilightforest.world.components.structures.placements.StructureLocateRegressionTests" time="0.28"/>
+  <testcase name="nativeAndAdditionalStructureExclusionsStillRejectPlacement()" classname="twilightforest.world.components.structures.placements.StructureLocateRegressionTests" time="0.019"/>
+  <testcase name="nativeLocatorRespectsMissingStartsAndCreatesReferencesOnlyWhenRequested()" classname="twilightforest.world.components.structures.placements.StructureLocateRegressionTests" time="0.089"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

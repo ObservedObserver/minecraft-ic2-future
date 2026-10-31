@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.util.ArrayUtilTests" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.684Z" hostname="ElwynnMac.local" time="0.003">
+  <properties/>
+  <testcase name="clampedBeforeLength()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="wrappedNegative()" classname="twilightforest.util.ArrayUtilTests" time="0.001"/>
+  <testcase name="clampedZero()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="clampedBeyondLength()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="wrappedBeforeLength()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="clampedAtLength()" classname="twilightforest.util.ArrayUtilTests" time="0.001"/>
+  <testcase name="wrappedBeyondLength()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="clampedNegative()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <testcase name="wrappedAtLength()" classname="twilightforest.util.ArrayUtilTests" time="0.001"/>
+  <testcase name="wrappedZero()" classname="twilightforest.util.ArrayUtilTests" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

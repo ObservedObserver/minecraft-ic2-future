@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.block.HollowLogVerticalTests" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:39.211Z" hostname="ElwynnMac.local" time="0.286">
+  <properties/>
+  <testcase name="useItemOnNotInside()" classname="twilightforest.block.HollowLogVerticalTests" time="0.266"/>
+  <testcase name="useItemOnInside()" classname="twilightforest.block.HollowLogVerticalTests" time="0.002"/>
+  <testcase name="useItemOnVine()" classname="twilightforest.block.HollowLogVerticalTests" time="0.012"/>
+  <testcase name="useItemOnLadder()" classname="twilightforest.block.HollowLogVerticalTests" time="0.004"/>
+  <testcase name="useItemOnLadderWaterlogged()" classname="twilightforest.block.HollowLogVerticalTests" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

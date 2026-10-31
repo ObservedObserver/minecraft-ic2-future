@@ -63,9 +63,7 @@ neoForge {
 
         gameTestServer {
             type = "gameTestServer"
-            if (providers.gradleProperty('ic2TestFilter').isPresent()) {
-                programArguments.addAll '--tests', providers.gradleProperty('ic2TestFilter').get()
-            }
+            programArguments.addAll '--tests', providers.gradleProperty('ic2TestFilter').getOrElse('ic2:*')
             if (providers.gradleProperty('ic2TestRepeat').isPresent()) {
                 programArguments.addAll '--repeatCount', providers.gradleProperty('ic2TestRepeat').get()
             }

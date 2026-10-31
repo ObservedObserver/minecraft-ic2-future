@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,13 +109,16 @@ def main():
     extra = args.extra[1:] if args.extra[:1] == ["--"] else args.extra
     for target in targets:
         if target == "validation":
-            gradle("twilightforest", [":asm:classes"], [])
+            prerequisites = [":asm:classes"]
+            if args.command == "test" or (args.command == "gradle" and "test" in extra):
+                prerequisites += ["runClientData"]
+            gradle("twilightforest", prerequisites, [])
         if args.command == "build":
             tasks = ["assemble", "shadowJar"] if target == "twilightforest" else ["assemble"]
         elif args.command == "test":
             tasks = ["test"]
         elif args.command == "gametest":
-            tasks = ["runGameTestServer", "-Pic2TestFilter=*", "-Pic2TestReport=build/reports/gametest.xml"]
+            tasks = ["runGameTestServer", "-Pic2TestFilter=ic2:*", "-Pic2TestReport=build/reports/gametest.xml"]
         elif args.command == "client":
             if target == "validation":
                 raise SystemExit("The independent validation project has no playable client.")
@@ -124,6 +128,16 @@ def main():
             if not extra:
                 raise SystemExit("Provide Gradle tasks after the target, e.g. gradle ic2 tasks.")
         gradle(target, tasks, extra)
+        if args.command == "gametest":
+            report = "build/reports/gametest.xml"
+            for option in extra:
+                if option.startswith("-Pic2TestReport="):
+                    report = option.split("=", 1)[1]
+            cases = list(ET.parse(PROJECTS[target] / report).getroot().iter("testcase"))
+            cases = [c for c in cases if c.get("name", "").startswith("ic2:")]
+            if not cases or any(c.find("failure") is not None or c.find("error") is not None for c in cases):
+                raise SystemExit("No passing IC2 suite in the report; vanilla always_pass is insufficient.")
+            print(f"Verified {len(cases)} IC2 GameTests in the actual XML report.")
 
 
 if __name__ == "__main__":

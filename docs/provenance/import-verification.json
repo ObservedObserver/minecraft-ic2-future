@@ -1,5 +1,5 @@
 {
-  "checked_unchanged_imported_files": 17495,
+  "checked_unchanged_imported_files": 17494,
   "intentional_adjustments": {
     "ic2": {
       ".gitignore": {
@@ -9,6 +9,10 @@
       "gradle.properties": {
         "before": "0b2e38278e10271a51b9bc59970b356786e29b1514615bd0aea4131fb3f266ad",
         "after": "e405da097f55baf62be2351fcfeaf52a7b2a5fe9a43636f4ce98038cea1f71ac"
+      },
+      "build.gradle": {
+        "before": "fa8b534d17176b3b25886a630128892c92be9d96469b2aa79f6cec99d8fe9c65",
+        "after": "816e218c095a16759cbec769a1040aefea14320812cee187bb06f18cea1fca17"
       }
     },
     "twilightforest": {
@@ -18,6 +22,6 @@
       }
     }
   },
-  "all_production_source_files_preserved": true,
+  "all_production_java_and_resource_files_preserved": true,
   "no_nested_git": true
 }

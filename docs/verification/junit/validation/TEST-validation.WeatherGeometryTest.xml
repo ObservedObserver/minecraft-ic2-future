@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="validation.WeatherGeometryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:22:55.176Z" hostname="ElwynnMac.local" time="0.004">
+  <properties/>
+  <testcase name="rejectsPartialQuadsAndMissingAttributesBeforeGpuUpload()" classname="validation.WeatherGeometryTest" time="0.002"/>
+  <testcase name="floatColorsUseNativeByteQuantizationAndPackedLightKeepsBothChannels()" classname="validation.WeatherGeometryTest" time="0.0"/>
+  <testcase name="immutableSnapshotRetainsTextureOrderAndExactParticleAttributes()" classname="validation.WeatherGeometryTest" time="0.0"/>
+  <testcase name="uploadConsumerReceivesUnchangedPositionUvColorAndLight()" classname="validation.WeatherGeometryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

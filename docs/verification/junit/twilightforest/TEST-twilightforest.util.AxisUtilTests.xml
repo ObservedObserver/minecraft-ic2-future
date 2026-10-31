@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.util.AxisUtilTests" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.687Z" hostname="ElwynnMac.local" time="0.002">
+  <properties/>
+  <testcase name="getAxisDirectionPositiveX()" classname="twilightforest.util.AxisUtilTests" time="0.001"/>
+  <testcase name="getAxisDirectionPositiveY()" classname="twilightforest.util.AxisUtilTests" time="0.0"/>
+  <testcase name="getAxisDirectionPositiveZ()" classname="twilightforest.util.AxisUtilTests" time="0.0"/>
+  <testcase name="getAxisDirectionNegativeX()" classname="twilightforest.util.AxisUtilTests" time="0.001"/>
+  <testcase name="getAxisDirectionNegativeY()" classname="twilightforest.util.AxisUtilTests" time="0.0"/>
+  <testcase name="getAxisDirectionNegativeZ()" classname="twilightforest.util.AxisUtilTests" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.data.helpers.AdvancementDataMultiRequirementsTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.580Z" hostname="ElwynnMac.local" time="0.036">
+  <properties/>
+  <testcase name="wrap()" classname="twilightforest.data.helpers.AdvancementDataMultiRequirementsTests" time="0.036"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

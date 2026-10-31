@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="twilightforest.util.BoundingBoxUtilsTests" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:20:40.835Z" hostname="ElwynnMac.local" time="0.009">
+  <properties/>
+  <testcase name="vectorsMinMaxNull()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="getComponentToAddBoundingBoxNorth()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="getComponentToAddBoundingBoxEast()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="getComponentToAddBoundingBoxWest()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.0"/>
+  <testcase name="boundingBoxToExistingNBT()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.002"/>
+  <testcase name="NBTToBoundingBox()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.0"/>
+  <testcase name="getComponentToAddBoundingBoxDefaultDirections()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="cloneTest()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="getIntersectionOfSBBsNoIntersection()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.0"/>
+  <testcase name="vectorsMinMax()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <testcase name="getIntersectionOfSBBs()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.0"/>
+  <testcase name="cloneWithAdjustments()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.0"/>
+  <testcase name="getComponentToAddBoundingBoxCentered()" classname="twilightforest.util.BoundingBoxUtilsTests" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

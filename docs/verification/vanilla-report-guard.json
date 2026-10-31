@@ -1,0 +1,5 @@
+{
+  "selector": "minecraft:always_pass",
+  "command_exit_code": 1,
+  "vanilla_only_report_rejected": true
+}

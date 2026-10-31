@@ -1,0 +1,49 @@
+{
+  "removed": [
+    {
+      "path": ".cache",
+      "allocated_bytes": 1549750272
+    },
+    {
+      "path": "mods/ic2/.gradle",
+      "allocated_bytes": 11558912
+    },
+    {
+      "path": "mods/ic2/build",
+      "allocated_bytes": 162009088
+    },
+    {
+      "path": "mods/ic2/run-ic2r-gameTestServer",
+      "allocated_bytes": 13361152
+    },
+    {
+      "path": "mods/twilightforest/.gradle",
+      "allocated_bytes": 18841600
+    },
+    {
+      "path": "mods/twilightforest/build",
+      "allocated_bytes": 316710912
+    },
+    {
+      "path": "mods/twilightforest/run-data",
+      "allocated_bytes": 851968
+    },
+    {
+      "path": "validation/twilightforest/.gradle",
+      "allocated_bytes": 782336
+    },
+    {
+      "path": "validation/twilightforest/build",
+      "allocated_bytes": 114159616
+    },
+    {
+      "path": "tools/__pycache__",
+      "allocated_bytes": 8192
+    }
+  ],
+  "allocated_bytes_removed": 2188034048,
+  "original_source_files_verified_unchanged": 17498,
+  "original_repositories_and_user_worlds_untouched": true,
+  "source_generated_resources_retained": true,
+  "historical_release_jars_and_zip_retained": true
+}

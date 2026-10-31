@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="validation.LootArithmeticTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:22:55.108Z" hostname="ElwynnMac.local" time="0.003">
+  <properties/>
+  <testcase name="defaultIntegerConversionMatchesActual2612MathRoundIncludingNegativeHalfTies()" classname="validation.LootArithmeticTest" time="0.001"/>
+  <testcase name="exactRoundingCodecBindsNativeFloatInput()" classname="validation.LootArithmeticTest" time="0.0"/>
+  <testcase name="extraItemCountUsesOneSharedIntegerDrawForAllExtraPlayers()" classname="validation.LootArithmeticTest" time="0.001"/>
+  <testcase name="zeroOrOneQualifiedPlayerKeepsBaseAndDoesNotDrawExtras()" classname="validation.LootArithmeticTest" time="0.0"/>
+  <testcase name="largeFiniteRoundedIntegerDoesNotLosePrecisionThroughAnIntermediateFloat()" classname="validation.LootArithmeticTest" time="0.0"/>
+  <testcase name="multiplayerRollsDrawBaseFirstAndConsumeEveryAdditionalPlayerDrawEvenIfNegative()" classname="validation.LootArithmeticTest" time="0.001"/>
+  <testcase name="integerUniformProviderRetainsAnIntegerUpperEndpoint()" classname="validation.LootArithmeticTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

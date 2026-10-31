@@ -24,15 +24,15 @@
 
 `build all` 按顺序组装两个模组和独立验证工程。IC2 使用 `assemble`；暮色森林使用 `assemble shadowJar`，交付应取带 `universal` 的 JAR，因为它包含 ASM 子包和迁移所需依赖。两个 Gradle 工程保持独立，避免合并模组 ID、映射环境及资源处理流程。
 
-`test all` 按顺序运行三个工程的 JUnit。独立验证工程先构建暮色森林的 ASM 类，再加载真实迁移代码进行检查。
+`test all` 按顺序运行三个工程的 JUnit。独立验证工程先构建暮色森林的 ASM 类并执行 `runClientData`，再加载真实迁移代码，检查数据生成输出与随包资源一致；不依赖旧任务目录残留的生成文件。
 
-`gametest ic2` 执行原生游戏测试，并将 XML 写到 `mods/ic2/build/reports/gametest.xml`。这些测试与 `src/test` 下的 JUnit 是不同的一组；单独运行 JUnit 不能替代它们。
+`gametest ic2` 使用带命名空间的 `ic2:*` 选择器执行原生游戏测试，并将 XML 写到 `mods/ic2/build/reports/gametest.xml`。入口还检查报告确实含有 IC2 测试，避免只运行原版 `always_pass` 就误报通过。这些测试与 `src/test` 下的 JUnit 是不同的一组；单独运行 JUnit 不能替代它们。
 
 额外参数原样传给 Gradle：
 
 ```sh
 ./dev test twilightforest -- --tests '*OitRenderRegressionTests'
-./dev gametest ic2 -- '-Pic2TestFilter=*ItemRoutingGameTests*'
+./dev gametest ic2 -- '-Pic2TestFilter=ic2:itemroutinggametests.*'
 ./dev gradle ic2 tasks
 ./dev gradle twilightforest runClientData
 ```
