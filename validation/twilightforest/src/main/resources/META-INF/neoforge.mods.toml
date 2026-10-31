@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="LGPL-2.1-or-later"
+[[mods]]
+modId="density_sqrt_validation"
+version="0.0.1-local-test"
+displayName="Isolated density function validation"
+[[dependencies.density_sqrt_validation]]
+modId="neoforge"
+type="required"
+versionRange="[26.3.0.83]"
+ordering="NONE"
+side="BOTH"

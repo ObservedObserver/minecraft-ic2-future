@@ -1,0 +1,10 @@
+{
+  "energy": 840.0,
+  "source_chunk": "[511, 512]",
+  "default_route": "west",
+  "destination_chunk": "[512, 512]",
+  "passed": true,
+  "chest_count": 68,
+  "buffer_count": 0,
+  "players": 0
+}

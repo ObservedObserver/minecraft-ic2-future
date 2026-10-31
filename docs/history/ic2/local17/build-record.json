@@ -1,0 +1,21 @@
+{
+  "base_sha256": "3fefd3ec34c68d5eb6135b5f9e105e4d352c5ec18ceb3c22a129482b4f5e6fa3",
+  "result_sha256": "6f6a64f822f53150b59dff36d88680ea533b38193168102513fde46013fee08f",
+  "method": "incremental javac, verified production local16 overlay",
+  "all_unchanged_entries_verified_equal": true,
+  "unchanged_entry_count": 8332,
+  "source_sha256": {
+    "src/main/java/ic2/core/block/machine/tileentity/TileEntitySortingMachine.java": "0803a2989d4a919c5e07a55f932c72d285a3dd967099dfddcf91596826f3d638",
+    "src/main/java/ic2/core/block/machine/container/ContainerSortingMachine.java": "f11a8f7938718ce0f70d4619bbcb3a8d17d0be7ed72c74f96759ec705b7ab0b6",
+    "src/main/java/ic2/forge/EnvItemHandlerForge.java": "fd60f0e33156dc4d07731221a0618950655b2f58c9e7656ad74d2437f6b13f7f",
+    "src/main/java/ic2/core/gametest/ItemRoutingGameTests.java": "ea4e9281897d7491b1135ffcff96e90ae78c3569793880253aa25f374e2b8fc1"
+  },
+  "overlay_entry_sha256": {
+    "ic2/forge/EnvItemHandlerForge$HandlerForge.class": "60f0fd96bb0484d5c6094d510ba6ca32729d841f0b14319d4190572b9c9bd2ac",
+    "ic2/forge/EnvItemHandlerForge.class": "d1985b230f49e6896aeb1a62f436f97dc0f08fd5fee2a97c9697f160d1d45161",
+    "ic2/core/gametest/ItemRoutingGameTests.class": "582425d3b7820c343246a155f6ae61885bab640eb7c82b9757ee955c6ebcb396",
+    "ic2/core/block/machine/container/ContainerSortingMachine.class": "9fa17a37c3f6181330e846ef2695aacc5b7d01480d8d5095a07471585f23ef45",
+    "ic2/core/block/machine/tileentity/TileEntitySortingMachine.class": "0cebfa478969370a9fbdb07235e242728d9adb752780bfc59b5703fbffdf94a6",
+    "META-INF/neoforge.mods.toml": "90be4b83272332c97857fba1dc584fdd80f5b3cbc34c2ac86d353556522e310a"
+  }
+}

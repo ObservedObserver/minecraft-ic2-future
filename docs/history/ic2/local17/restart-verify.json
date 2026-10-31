@@ -1,0 +1,10 @@
+{
+  "filter_name": "Batch",
+  "chest_count": 68,
+  "passed": true,
+  "default_route": "west",
+  "energy": 840.0,
+  "filter_count": 8,
+  "players": 0,
+  "source_buffer_empty": true
+}

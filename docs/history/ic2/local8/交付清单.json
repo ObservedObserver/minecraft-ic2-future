@@ -1,0 +1,286 @@
+{
+  "package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local8-JEI-Xaero.zip",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.83",
+  "java": 25,
+  "base_package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local7-JEI-Xaero.zip",
+  "base_sha256": "747cc46eda7cddb74c56f9284d26488876f44e77da8742fc8b7409e264717d2a",
+  "mods": [
+    {
+      "file": "mods/ic2-neoforge-26.3.0-local.8.jar",
+      "bytes": 8237743,
+      "sha256": "021955e4dfac169d570a854e7da98605888c72a99815ecb565d57d0f571db3f0"
+    },
+    {
+      "file": "mods/jei-26.3-neoforge-31.16.0.90.jar",
+      "bytes": 4738735,
+      "sha256": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133"
+    },
+    {
+      "file": "mods/twilightforest-26.3-4.9-local.5.jar",
+      "bytes": 26377115,
+      "sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9"
+    },
+    {
+      "file": "mods/xaerominimap-neoforge-26.3-26.6.1.jar",
+      "bytes": 2179362,
+      "sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    },
+    {
+      "file": "mods/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+      "bytes": 1453922,
+      "sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    }
+  ],
+  "new_mod_sources": [
+    {
+      "project": "xaeros-world-map",
+      "project_url": "https://modrinth.com/mod/xaeros-world-map",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "wmZLa8s4",
+        "project_id": "NcUtCpym",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's World Map 1.47.1",
+        "version_number": "neoforge-26.3-1.47.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=2)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:06:02.908936Z",
+        "downloads": 12039,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ZQUKJwnf",
+            "hashes": {
+              "sha1": "8a86e23fb37b5726a2d0d6ac89fa400cb5eb5df3",
+              "sha512": "cef2c94fcb5fcebcb4a4a8c5132bffb5b0644afaaa1afefc0a8e89b87201b9b5339b24747b9683a955c834ca36c6c1636a93d10df699626f1adbcbe7909655ae"
+            },
+            "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/wmZLa8s4/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "filename": "xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "primary": true,
+            "size": 1453922,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    },
+    {
+      "project": "xaeros-minimap",
+      "project_url": "https://modrinth.com/mod/xaeros-minimap",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "jDY46foR",
+        "project_id": "1bokaNcj",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's Minimap 26.6.1",
+        "version_number": "neoforge-26.3-26.6.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=0)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:03:23.531863Z",
+        "downloads": 14954,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ptxt6sTU",
+            "hashes": {
+              "sha512": "871016d70e3e02f2f8d17977f9737b662a18d2d8c3ef191512f44aaa645107d677e2612af256f3feeb4f5257362f62232c3637a33829ea0ef3462ff6e0d42bdf",
+              "sha1": "ebb6f4326b7d4fb0f390d52a0899e9a3d99d9480"
+            },
+            "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/jDY46foR/xaerominimap-neoforge-26.3-26.6.1.jar",
+            "filename": "xaerominimap-neoforge-26.3-26.6.1.jar",
+            "primary": true,
+            "size": 2179362,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    }
+  ],
+  "verification": {
+    "new_downloads": "Modrinth release versions for Minecraft 26.3 / NeoForge; upstream SHA-512 and SHA-1 verified; JAR integrity checked",
+    "base_mods": "TF local5, JEI and both Xaero jars byte-identical to local7 package; IC2 updated to local8",
+    "game_test_scope": "local8 final artifact 455/455; IC2+JEI+Xaero maps 455/455; no new GUI play; previous TF dedicated-server limitation retained",
+    "bundled_dependency": {
+      "mod": "xaerolib",
+      "version": "1.8.3",
+      "sha256": "0fa73950a0f589d842e195ebeb59af7189c27eb084fe0c390013b5857948208e",
+      "same_library_in_both_jars": true
+    }
+  },
+  "ic2_local7_build": {
+    "method": "incremental javac; verified local6 jar overlay",
+    "base_sha256": "0294dce177d0900f35862c586c2a528bb9c0483024b8b727c1fb4bd4af6d7433",
+    "result_sha256": "460ba2226b4e5c62a7ef5e0cf8fca51e05e7eb1f645bb54a68836380a735232a",
+    "source_sha256": {
+      "src/main/java/ic2/core/Ic2Potion.java": "4899c0b0530b24fd680da9ccb31a7941d82f1654cefcd5973944f894aaea8609",
+      "src/main/java/ic2/core/entity/block/NukeEntity.java": "eead6cd0f43d071a69f381deb9ed00c7edca80a71087ec244a8bd95419dc57c8",
+      "src/main/java/ic2/api/entity/block/ExplosiveEntity.java": "89b8ab3b48c913a55db096207b3bc01767f2cc54ea7986b03947887bd551cb21",
+      "src/main/java/ic2/core/ref/Ic2Entities.java": "38d35b15a8103a0fe7c532a62576cdc59f4ba4e39a6c15d3dfe52e5eb7e17d18",
+      "src/main/java/ic2/core/block/wiring/AbstractCableBlock.java": "98a0bc746b8d6e162642f657f24ffe1ec09b69b81106187e780c9cd4ba396ccb",
+      "src/main/java/ic2/core/block/wiring/AbstractDetectorCableBlock.java": "3d1d5983cb7e49a7620afe3172464454f3f52b22c4d36b81c5a40ec7b8b6bbc6",
+      "src/main/java/ic2/core/block/inherit/Ic2SheetBlock.java": "3d24c374230bcc2fed9a416a8e7ae5c7def44cbd930ae2e0d1dc413aa604aa86",
+      "src/main/java/ic2/core/block/inherit/Ic2FenceBlock.java": "73b99a11c4009e5b49ced253f6550c7f7c99d614e8cfbed8919adbe89c05d178",
+      "src/main/java/ic2/core/block/tileentity/Ic2TileEntityBlock.java": "852a765c937f34bb1d2ac4363a0782d464d65d98d89d951beb7e2a88c8933156",
+      "src/main/java/ic2/api/energy/prefab/BasicEnergyTe.java": "76b0dee36de62e08d5e8f6a2091bb70efdecd3cb113f6f147781c7f0af22d2eb",
+      "src/main/java/ic2/core/gametest/Ic2GameTests.java": "eb31511a03dd988b5404b225e4faa160e50a7c0a10d14ae0786aec79c15c82b4",
+      "src/main/java/ic2/core/gametest/MagnetizerGameTests.java": "8eaf5a0367ed5d2e3c923eb0fe534ca964d71cde4f97a7f96e1b58ddfe499a59",
+      "src/main/java/ic2/core/gametest/NativeBlockHookGameTests.java": "08788f4bf4e4e9b0f4de2ef82af21f18ddb240538ca94dd235e965bf273c1002",
+      "src/main/java/ic2/core/gametest/NativeEffectHookGameTests.java": "e5e49c9610f27e9d089b016feb0a471ec0838a7631d9e99095f4656148740339",
+      "src/main/java/ic2/core/gametest/NativeEntityHookGameTests.java": "b910941948d53695dafbf8621f15e6869126654f0d68b467a31b54f30ac60e99"
+    },
+    "overlaid_entry_sha256": {
+      "ic2/core/Ic2Potion.class": "62c84e9a9f541becefa590a58d36f103ac3ee2ef139d23d0351cda3ea127f056",
+      "ic2/api/entity/block/ExplosiveEntity.class": "feba6b3824386581ae449b40cac9de9d5613def2e6e612cef3adb344c598d1a7",
+      "ic2/api/energy/prefab/BasicEnergyTe$Source.class": "3d19d763cb6ceae0dc61e89483dbf8fa0efa60398ea0651dd34144138248b74a",
+      "ic2/api/energy/prefab/BasicEnergyTe.class": "fc27160ded9b969313216c4d2d748016c59522a5d8c7dc94482ee035d4eaada5",
+      "ic2/api/energy/prefab/BasicEnergyTe$Sink.class": "3f107dc31ef11c4339687a5d1bb0ad7c5d73c69adb860fea925ac526c1829e35",
+      "ic2/core/ref/Ic2Entities.class": "6f4506b899a9c07531e542d48d299e4ea9f555e1a955a7721ec02ca1e7bec982",
+      "ic2/core/gametest/NativeBlockHookGameTests.class": "af438d1a698aa17a194316de78de3784dd4f1d9c25c842291ff4a0cddd877862",
+      "ic2/core/gametest/Ic2GameTests.class": "c1e9ea062e1cd2d59e2dba59abb624bd0a6668cb6d52782e6a68504ee807de5a",
+      "ic2/core/gametest/NativeEffectHookGameTests.class": "c1aa2056aaaf79836088260d377a00489cf1b9c9a6cff9abeb9491184550116a",
+      "ic2/core/gametest/NativeEntityHookGameTests.class": "0ef39db0b6481b2d18fd9374a4e25d7bbcf428beb65b7f1c1025cca52f6180ac",
+      "ic2/core/gametest/MagnetizerGameTests.class": "8065c3c352751dd3d949bc4435258d00b574f14d8651f69fc2450f394fd47d5c",
+      "ic2/core/block/wiring/AbstractCableBlock$Conductor.class": "ee49bddab41b04b0c8209c5860a7ed91bdb2a4de55b7f7ca7a4dc858b60c1342",
+      "ic2/core/block/wiring/AbstractDetectorCableBlock.class": "b7373e53d274e244a358e9c3ac8c1136d77da993214a569acb9c84387b4b3b31",
+      "ic2/core/block/wiring/AbstractCableBlock.class": "8003095a0d43c1352e9f74b499e45b266f1d9f9e4c8833bd308929d510df1872",
+      "ic2/core/block/inherit/Ic2FenceBlock.class": "bd63f0ad49f2bd8f0f58949dd4c40a3ef22d6b926e122ee58287d115ae32f449",
+      "ic2/core/block/inherit/Ic2SheetBlock.class": "f49903c77f81e3f4f9fdcf8eea2c246b479d46665e8ae2dc7bdf0789a589211a",
+      "ic2/core/block/tileentity/Ic2TileEntityBlock$DefaultDrop.class": "84fe999be272c9c4028356dc0ac1768816de121adde7fe217d1ac38f87c6f2b0",
+      "ic2/core/block/tileentity/Ic2TileEntityBlock$InitData.class": "71ba6dc129eed7639d09fd90935b8b801f9da92c84f15ccecbe30b1e25fc1cae",
+      "ic2/core/block/tileentity/Ic2TileEntityBlock.class": "b556932b8c8017683e58da3539a8b5c6024d32c5ca34a17f8f1aa8c30e0cdc1c",
+      "ic2/core/entity/block/NukeEntity.class": "391ce0c4fbd889bf8baac385b0e66332b9a51b3c5fb5dc046ce83a9b11efbd78",
+      "META-INF/neoforge.mods.toml": "8dc2b1f8d1282645833e6ba6a3ab923f135d0354e8b6a48f296a64f7aa121a6a"
+    },
+    "unchanged_entry_count": 8250,
+    "all_unchanged_entries_verified_equal": true
+  },
+  "ic2_local8_build": {
+    "method": "incremental javac, verified local7 jar overlay",
+    "base_sha256": "460ba2226b4e5c62a7ef5e0cf8fca51e05e7eb1f645bb54a68836380a735232a",
+    "result_sha256": "021955e4dfac169d570a854e7da98605888c72a99815ecb565d57d0f571db3f0",
+    "source_sha256": {
+      "src/main/java/ic2/forge/Ic2LootModifier.java": "d2d6b62cdaf2bd0bc3b7ddc42b2675c0d889a167896ab06e2bd0d897c45c0281",
+      "src/main/java/ic2/core/gametest/IridiumLootGameTests.java": "8bf14d76227d721a1433a9b90df2a179906f56618cf51e731ad54479ff2417a1",
+      "src/main/resources/data/ic2/loot_table/chests/abandoned_mineshaft.json": "fd0d3cf003f547f2bc1968a49d9df8c7eadfc86d017cd75a63e7db11d059d591",
+      "src/main/resources/data/ic2/loot_table/chests/desert_pyramid.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "src/main/resources/data/ic2/loot_table/chests/end_city_treasure.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "src/main/resources/data/ic2/loot_table/chests/igloo_chest.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "src/main/resources/data/ic2/loot_table/chests/jungle_temple.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "src/main/resources/data/ic2/loot_table/chests/nether_bridge.json": "fd0d3cf003f547f2bc1968a49d9df8c7eadfc86d017cd75a63e7db11d059d591",
+      "src/main/resources/data/ic2/loot_table/chests/simple_dungeon.json": "410ee6d8e9d79cd20fbfd5acfa9ede34ceddf30a2c5f1d662e75c1b328d5141b",
+      "src/main/resources/data/ic2/loot_table/chests/stronghold_corridor.json": "ae763b466dbe8d62037158bf129b8282a9f944e1eee6ed434a96604b1b431413",
+      "src/main/resources/data/ic2/loot_table/chests/stronghold_crossing.json": "ee4f90819fac70e564b3397b5698eb39ab4738e0d6c137dbda003ce49cfd4517",
+      "src/main/resources/data/ic2/loot_table/chests/stronghold_library.json": "ee4f90819fac70e564b3397b5698eb39ab4738e0d6c137dbda003ce49cfd4517",
+      "src/main/resources/data/ic2/loot_table/chests/village_toolsmith.json": "9d7ea0b1401042d44417d36c5a222d9aa3a3d83af16b06073288df31593dfb18",
+      "src/main/resources/data/ic2/loot_table/chests/ancient_city.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "src/main/resources/data/ic2/loot_table/chests/ancient_city_ice_box.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/reward.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/reward_ominous.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/supply.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/corridor.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/intersection.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/intersection_barrel.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/trial_chambers/entrance.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/bastion_treasure.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "src/main/resources/data/ic2/loot_table/chests/bastion_other.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "src/main/resources/data/ic2/loot_table/chests/bastion_bridge.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "src/main/resources/data/ic2/loot_table/chests/bastion_hoglin_stable.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "src/main/resources/data/ic2/loot_table/chests/shipwreck_map.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/shipwreck_supply.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/shipwreck_treasure.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "src/main/resources/data/ic2/loot_table/chests/buried_treasure.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "src/main/resources/data/ic2/loot_table/chests/ruined_portal.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/pillager_outpost.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/woodland_mansion.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "src/main/resources/data/ic2/loot_table/chests/underwater_ruin_small.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "src/main/resources/data/ic2/loot_table/chests/underwater_ruin_big.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d"
+    },
+    "overlay_entry_sha256": {
+      "ic2/forge/Ic2LootModifier.class": "c2fed4af219a04daeca5b1a16de5c3a56c36eeba9a1b4ca5d6c56b7c93fe047e",
+      "ic2/core/gametest/IridiumLootGameTests$ShardCase.class": "f3ef6db8b05b539eb00e0977ca34cab46e21c07c714e0e7b83176db2975bcef5",
+      "ic2/core/gametest/IridiumLootGameTests.class": "49eb599ff88491ca993095b794e0e3dd86cb564c3c57d92b59a1ab7b805629a9",
+      "data/ic2/loot_table/chests/abandoned_mineshaft.json": "fd0d3cf003f547f2bc1968a49d9df8c7eadfc86d017cd75a63e7db11d059d591",
+      "data/ic2/loot_table/chests/desert_pyramid.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "data/ic2/loot_table/chests/end_city_treasure.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "data/ic2/loot_table/chests/igloo_chest.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "data/ic2/loot_table/chests/jungle_temple.json": "d133c655e6a5e25a15f435bf71913ae76db633094f6107272d966bda47d724b2",
+      "data/ic2/loot_table/chests/nether_bridge.json": "fd0d3cf003f547f2bc1968a49d9df8c7eadfc86d017cd75a63e7db11d059d591",
+      "data/ic2/loot_table/chests/simple_dungeon.json": "410ee6d8e9d79cd20fbfd5acfa9ede34ceddf30a2c5f1d662e75c1b328d5141b",
+      "data/ic2/loot_table/chests/stronghold_corridor.json": "ae763b466dbe8d62037158bf129b8282a9f944e1eee6ed434a96604b1b431413",
+      "data/ic2/loot_table/chests/stronghold_crossing.json": "ee4f90819fac70e564b3397b5698eb39ab4738e0d6c137dbda003ce49cfd4517",
+      "data/ic2/loot_table/chests/stronghold_library.json": "ee4f90819fac70e564b3397b5698eb39ab4738e0d6c137dbda003ce49cfd4517",
+      "data/ic2/loot_table/chests/village_toolsmith.json": "9d7ea0b1401042d44417d36c5a222d9aa3a3d83af16b06073288df31593dfb18",
+      "data/ic2/loot_table/chests/ancient_city.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "data/ic2/loot_table/chests/ancient_city_ice_box.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/trial_chambers/reward.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "data/ic2/loot_table/chests/trial_chambers/reward_ominous.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "data/ic2/loot_table/chests/trial_chambers/supply.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/trial_chambers/corridor.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/trial_chambers/intersection.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/trial_chambers/intersection_barrel.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/trial_chambers/entrance.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/bastion_treasure.json": "27cde7897dede5fe687defee75d1a5e85965c194fb6cebeddbb3166357ed476d",
+      "data/ic2/loot_table/chests/bastion_other.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "data/ic2/loot_table/chests/bastion_bridge.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "data/ic2/loot_table/chests/bastion_hoglin_stable.json": "a0cc32d82388aa8bf3c99c5a41137cdaa485c384ed93cfcd8f6d1eba7bc635f9",
+      "data/ic2/loot_table/chests/shipwreck_map.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/shipwreck_supply.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/shipwreck_treasure.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "data/ic2/loot_table/chests/buried_treasure.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "data/ic2/loot_table/chests/ruined_portal.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/pillager_outpost.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/woodland_mansion.json": "d0bfd9320a1b9e4d56c48038502f6a64b78c5e5d650ab265ca4dfebe56b9e585",
+      "data/ic2/loot_table/chests/underwater_ruin_small.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "data/ic2/loot_table/chests/underwater_ruin_big.json": "b4d52174aa3aeaa5c8773e0385003c0d4699cd93f06ddf43dec251c9778dd00d",
+      "META-INF/neoforge.mods.toml": "28eb319b4ef059a7543025504c535dc37ca5d52fb4a7035084b26d4a19416b69"
+    },
+    "all_unchanged_entries_verified_equal": true,
+    "unchanged_entry_count": 8257
+  }
+}

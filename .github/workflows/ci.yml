@@ -1,0 +1,45 @@
+name: Source checks and tests
+on:
+  push:
+    paths: ['mods/**', 'validation/**', 'tools/project.py', 'pack/**', '.github/workflows/ci.yml']
+  pull_request:
+    paths: ['mods/**', 'validation/**', 'tools/project.py', 'pack/**', '.github/workflows/ci.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: ./dev check
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [ic2, twilightforest, validation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./dev build ${{ matrix.project }}
+      - run: ./dev test ${{ matrix.project }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-${{ matrix.project }}
+          path: |
+            mods/${{ matrix.project }}/build/reports/tests/
+            validation/twilightforest/build/reports/tests/
+          if-no-files-found: ignore

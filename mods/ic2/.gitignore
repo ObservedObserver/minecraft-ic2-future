@@ -9,7 +9,6 @@ out/
 terminals/
 agent-tools/
 
-gradle-wrapper.jar
 
 .cache/
 run-data/

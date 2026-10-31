@@ -1,0 +1,121 @@
+[
+  {
+    "id": "ic2:uu_matter",
+    "name_zh": "UU物质",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:construction_foam",
+    "name_zh": "建筑泡沫",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:coolant",
+    "name_zh": "冷却液",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:creosote",
+    "name_zh": "杂酚油",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:hot_coolant",
+    "name_zh": "热冷却液",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:pahoehoe_lava",
+    "name_zh": "熔岩岩浆",
+    "group": "熔岩",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:biomass",
+    "name_zh": "生物质",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:biogas",
+    "name_zh": "沼气",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:distilled_water",
+    "name_zh": "蒸馏水",
+    "group": "水类液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:superheated_steam",
+    "name_zh": "过热蒸汽",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:steam",
+    "name_zh": "蒸汽",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:hot_water",
+    "name_zh": "热水",
+    "group": "水类液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:weed_ex",
+    "name_zh": "除草剂",
+    "group": "其他液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:air",
+    "name_zh": "压缩空气",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:hydrogen",
+    "name_zh": "氢气",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:oxygen",
+    "name_zh": "氧气",
+    "group": "气体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  },
+  {
+    "id": "ic2:heavy_water",
+    "name_zh": "重水",
+    "group": "水类液体",
+    "local12_movement_bug": true,
+    "local13_source_and_flowing_movement_passed": true
+  }
+]

@@ -1,0 +1,274 @@
+{
+  "package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local12-JEI-Xaero-IPN.zip",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.83",
+  "java": 25,
+  "base_package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local11-JEI-Xaero-IPN.zip",
+  "base_sha256": "569d8455b04a5cfa512bd56f159cf366f3905414fa9436c9f9953fc8d2a0168f",
+  "mods": [
+    {
+      "file": "mods/InventoryProfilesNext-neoforge-26.3-2.3.8.jar",
+      "bytes": 1444212,
+      "sha256": "5412a1b09a7749995bada42d39182c56713a870f928fa339cff113a05fa908de"
+    },
+    {
+      "file": "mods/ic2-neoforge-26.3.0-local.12.jar",
+      "bytes": 8269704,
+      "sha256": "69dc96bfe9d0a1c51396cc30c625b3f97ff74554cf6a5545dd1ee0136fa30f69"
+    },
+    {
+      "file": "mods/jei-26.3-neoforge-31.16.0.90.jar",
+      "bytes": 4738735,
+      "sha256": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133"
+    },
+    {
+      "file": "mods/libIPN-neoforge-26.3-6.9.0.jar",
+      "bytes": 7774399,
+      "sha256": "49bd1a8f96720c9bc21b0db67047657d9f57667dbf20d09a7466a0349b51a99c"
+    },
+    {
+      "file": "mods/twilightforest-26.3-4.9-local.5.jar",
+      "bytes": 26377115,
+      "sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9"
+    },
+    {
+      "file": "mods/xaerominimap-neoforge-26.3-26.6.1.jar",
+      "bytes": 2179362,
+      "sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    },
+    {
+      "file": "mods/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+      "bytes": 1453922,
+      "sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    }
+  ],
+  "new_mod_sources": [
+    {
+      "project": "xaeros-world-map",
+      "project_url": "https://modrinth.com/mod/xaeros-world-map",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "wmZLa8s4",
+        "project_id": "NcUtCpym",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's World Map 1.47.1",
+        "version_number": "neoforge-26.3-1.47.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=2)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:06:02.908936Z",
+        "downloads": 12039,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ZQUKJwnf",
+            "hashes": {
+              "sha1": "8a86e23fb37b5726a2d0d6ac89fa400cb5eb5df3",
+              "sha512": "cef2c94fcb5fcebcb4a4a8c5132bffb5b0644afaaa1afefc0a8e89b87201b9b5339b24747b9683a955c834ca36c6c1636a93d10df699626f1adbcbe7909655ae"
+            },
+            "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/wmZLa8s4/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "filename": "xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "primary": true,
+            "size": 1453922,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    },
+    {
+      "project": "xaeros-minimap",
+      "project_url": "https://modrinth.com/mod/xaeros-minimap",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "jDY46foR",
+        "project_id": "1bokaNcj",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's Minimap 26.6.1",
+        "version_number": "neoforge-26.3-26.6.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=0)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:03:23.531863Z",
+        "downloads": 14954,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ptxt6sTU",
+            "hashes": {
+              "sha512": "871016d70e3e02f2f8d17977f9737b662a18d2d8c3ef191512f44aaa645107d677e2612af256f3feeb4f5257362f62232c3637a33829ea0ef3462ff6e0d42bdf",
+              "sha1": "ebb6f4326b7d4fb0f390d52a0899e9a3d99d9480"
+            },
+            "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/jDY46foR/xaerominimap-neoforge-26.3-26.6.1.jar",
+            "filename": "xaerominimap-neoforge-26.3-26.6.1.jar",
+            "primary": true,
+            "size": 2179362,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    },
+    {
+      "project": "inventory-profiles-next",
+      "project_url": "https://modrinth.com/mod/inventory-profiles-next",
+      "source_url": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+      "license": {
+        "id": "AGPL-3.0-or-later",
+        "name": "GNU Affero General Public License v3.0 or later",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only",
+        "id": "5gXp3J2W",
+        "project_id": "O7RBXm3n",
+        "author_id": "4AVTjs5A",
+        "featured": false,
+        "name": "Inventory Profiles Next 2.3.8 for neoforge 26.3",
+        "version_number": "neoforge-26.3-2.3.8",
+        "changelog": "## What's new\n\n### 2.3.8\n\n- support for Minecraft 26.3\n- added options to swap click when moving shulkers and bundles. This can be when you have a mod that changes the default for bundles and adds bundle like actions to the shulkers.\n",
+        "changelog_url": null,
+        "date_published": "2026-09-27T13:31:58.706937Z",
+        "downloads": 54857,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "JRJ1KOW1",
+            "hashes": {
+              "sha1": "0f7ef2fe5395148a8695fdaba6215a4058e20a9a",
+              "sha512": "e60ad4f04a02b85af20cd39d92b2e2be8c7525dde5952bd2d3a79920b0de570ff55acbe9f1603d984841c2ae8737af1a7313a15252af3aba5d94736f1a07b657"
+            },
+            "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/5gXp3J2W/InventoryProfilesNext-neoforge-26.3-2.3.8.jar",
+            "filename": "InventoryProfilesNext-neoforge-26.3-2.3.8.jar",
+            "primary": true,
+            "size": 1444212,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "onSQdWhM",
+            "file_name": null,
+            "dependency_type": "required"
+          }
+        ]
+      }
+    },
+    {
+      "project": "libipn",
+      "project_url": "https://modrinth.com/mod/libipn",
+      "source_url": "https://github.com/blackd/libIPN",
+      "license": {
+        "id": "AGPL-3.0-or-later",
+        "name": "GNU Affero General Public License v3.0 or later",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only",
+        "id": "gMDIlFM0",
+        "project_id": "onSQdWhM",
+        "author_id": "4AVTjs5A",
+        "featured": false,
+        "name": "libIPN 6.9.0 for neoforge 26.3",
+        "version_number": "neoforge-26.3-6.9.0",
+        "changelog": "## What's new\n\n### 6.9.0\n\n- added support for Minecraft 26.3\n",
+        "changelog_url": null,
+        "date_published": "2026-09-27T13:09:55.508003Z",
+        "downloads": 73124,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "1gCwHhM4",
+            "hashes": {
+              "sha1": "da687142fb62c0154de52b1487b8c0371c6e9b4b",
+              "sha512": "7f959439f404fb076878cd85d7ac1184449b6d1fcd6939c60db5f884b43ebe77469cb85393d47d1a033cbaf05db61df674e7f4cf35f14ecc1f5423bb6bb621f2"
+            },
+            "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/gMDIlFM0/libIPN-neoforge-26.3-6.9.0.jar",
+            "filename": "libIPN-neoforge-26.3-6.9.0.jar",
+            "primary": true,
+            "size": 7774399,
+            "file_type": null
+          }
+        ],
+        "dependencies": []
+      }
+    }
+  ],
+  "ic2_version": "26.3.0-local.12",
+  "validation": {
+    "before": {
+      "tests": 7,
+      "failed": [
+        "ic2:machinegametests.charcoalgrindsoneforoneatcoalrateandenergy"
+      ]
+    },
+    "after": {
+      "tests": 7,
+      "failed": []
+    },
+    "full_suite_rerun": false,
+    "client_rerun": false,
+    "patch_apply_check_passed": true,
+    "scope": "native GameTest server, actual coal and charcoal macerator progress, energy, yield and remaining input"
+  },
+  "six_other_mod_jars_verified_identical": true
+}

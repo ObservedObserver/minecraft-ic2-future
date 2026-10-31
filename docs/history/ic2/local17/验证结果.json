@@ -1,0 +1,101 @@
+{
+  "base": "26.3.0-local.16",
+  "result": "26.3.0-local.17",
+  "tested_jar_sha256": "6f6a64f822f53150b59dff36d88680ea533b38193168102513fde46013fee08f",
+  "before": {
+    "tests": 22,
+    "passed": 14,
+    "failed": [
+      {
+        "name": "ic2:itemroutinggametests.auditdefaultroutenetworkchangemarkschunkdirty",
+        "message": "(13547250, 4, -208369) default-route GUI change must mark the owning chunk for saving on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.auditghostfilterguichangemarkschunkdirty",
+        "message": "(13547258, 4, -208369) filter GUI change must mark owning chunk for saving on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.audittransferatchunkbordermarkssourcechunkdirty",
+        "message": "(13547266, 4, -208369) source inventory decrement must be persisted independently of destination chunk on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.potioncontentsandtooldamagehavedistinctroutes",
+        "message": "(13547274, 4, -208369) healing potion matches its component filter on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.auditbatchcanusefreespaceacrossmultipledestinationslots",
+        "message": "(13547266, 4, -208359) Expected batch must fill four spaces then use next empty slot to be 68: was 60 on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.auditselectingformerfilteredsideasdefaultdoesnotjam",
+        "message": "(13547274, 4, -208359) Expected default route ignores its old filter row to be 1: was 0 on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.filtercomponentsandsparserulessurvivenbtreload",
+        "message": "(13547282, 4, -208369) reloading sparse NBT clears obsolete rules on tick 0"
+      },
+      {
+        "name": "ic2:itemroutinggametests.auditmodernitemcomponentsremaindistinctwhenfiltering",
+        "message": "(13547282, 4, -208359) Expected renamed B must not match renamed A filter to be 0: was 1 on tick 0"
+      }
+    ]
+  },
+  "targeted": {
+    "tests": 22,
+    "passed": 22,
+    "failed": []
+  },
+  "all": {
+    "tests": 577,
+    "passed": 577,
+    "failed": []
+  },
+  "native_restart": {
+    "restart-setup.json": {
+      "energy": 840.0,
+      "source_chunk": "[511, 512]",
+      "default_route": "west",
+      "destination_chunk": "[512, 512]",
+      "passed": true,
+      "chest_count": 68,
+      "buffer_count": 0,
+      "players": 0
+    },
+    "restart-verify.json": {
+      "filter_name": "Batch",
+      "chest_count": 68,
+      "passed": true,
+      "default_route": "west",
+      "energy": 840.0,
+      "filter_count": 8,
+      "players": 0,
+      "source_buffer_empty": true
+    }
+  },
+  "client": {
+    "west_dirt_after": 3,
+    "source_buffer_empty": true,
+    "east_cobblestone_after": 68,
+    "passed": true,
+    "east_filter_count": 8,
+    "hopper_empty": true,
+    "energy_after": 780.0,
+    "default_route": "west",
+    "east_cobblestone_before": 60,
+    "filter_changed_via_native_container_input": true,
+    "default_changed_via_native_mouse_event": true,
+    "real_screen_frames": 253,
+    "environment": "actual eight production mods plus temporary probe; real managed GUI, native input/network, vanilla hopper and two chests crossing a chunk border"
+  },
+  "client_tested_jar_sha256": "6f6a64f822f53150b59dff36d88680ea533b38193168102513fde46013fee08f",
+  "other_seven_client_mods_sha256": {
+    "InventoryProfilesNext-neoforge-26.3-2.3.8.jar": "5412a1b09a7749995bada42d39182c56713a870f928fa339cff113a05fa908de",
+    "jei-26.3-neoforge-31.16.0.90.jar": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133",
+    "libIPN-neoforge-26.3-6.9.0.jar": "49bd1a8f96720c9bc21b0db67047657d9f57667dbf20d09a7466a0349b51a99c",
+    "tea-craft-neoforge-26.3-1.4.19.jar": "7f1cf5386b9244d9c75771aa20ae3f0a584c36a4d32b615917bc59854a231ee4",
+    "twilightforest-26.3-4.9-local.5.jar": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9",
+    "xaerominimap-neoforge-26.3-26.6.1.jar": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112",
+    "xaeroworldmap-neoforge-26.3-1.47.1.jar": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+  },
+  "all_other_client_mods_unchanged": true
+}

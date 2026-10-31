@@ -1,0 +1,224 @@
+{
+  "package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local9-JEI-Xaero.zip",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.83",
+  "java": 25,
+  "base_package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local8-JEI-Xaero.zip",
+  "base_sha256": "b3bca2c783f56705dd73c84bfb8bdba776271ac7571486023bd97170e227c833",
+  "mods": [
+    {
+      "file": "mods/ic2-neoforge-26.3.0-local.9.jar",
+      "bytes": 8248727,
+      "sha256": "5cf7124b2af5ba0530bb8a426b9db8946a6707304bc21ebbcc3b125563d5637a"
+    },
+    {
+      "file": "mods/jei-26.3-neoforge-31.16.0.90.jar",
+      "bytes": 4738735,
+      "sha256": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133"
+    },
+    {
+      "file": "mods/twilightforest-26.3-4.9-local.5.jar",
+      "bytes": 26377115,
+      "sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9"
+    },
+    {
+      "file": "mods/xaerominimap-neoforge-26.3-26.6.1.jar",
+      "bytes": 2179362,
+      "sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    },
+    {
+      "file": "mods/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+      "bytes": 1453922,
+      "sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    }
+  ],
+  "new_mod_sources": [
+    {
+      "project": "xaeros-world-map",
+      "project_url": "https://modrinth.com/mod/xaeros-world-map",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "wmZLa8s4",
+        "project_id": "NcUtCpym",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's World Map 1.47.1",
+        "version_number": "neoforge-26.3-1.47.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=2)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:06:02.908936Z",
+        "downloads": 12039,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ZQUKJwnf",
+            "hashes": {
+              "sha1": "8a86e23fb37b5726a2d0d6ac89fa400cb5eb5df3",
+              "sha512": "cef2c94fcb5fcebcb4a4a8c5132bffb5b0644afaaa1afefc0a8e89b87201b9b5339b24747b9683a955c834ca36c6c1636a93d10df699626f1adbcbe7909655ae"
+            },
+            "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/wmZLa8s4/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "filename": "xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "primary": true,
+            "size": 1453922,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    },
+    {
+      "project": "xaeros-minimap",
+      "project_url": "https://modrinth.com/mod/xaeros-minimap",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "jDY46foR",
+        "project_id": "1bokaNcj",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's Minimap 26.6.1",
+        "version_number": "neoforge-26.3-26.6.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=0)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:03:23.531863Z",
+        "downloads": 14954,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ptxt6sTU",
+            "hashes": {
+              "sha512": "871016d70e3e02f2f8d17977f9737b662a18d2d8c3ef191512f44aaa645107d677e2612af256f3feeb4f5257362f62232c3637a33829ea0ef3462ff6e0d42bdf",
+              "sha1": "ebb6f4326b7d4fb0f390d52a0899e9a3d99d9480"
+            },
+            "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/jDY46foR/xaerominimap-neoforge-26.3-26.6.1.jar",
+            "filename": "xaerominimap-neoforge-26.3-26.6.1.jar",
+            "primary": true,
+            "size": 2179362,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    }
+  ],
+  "all_four_other_mods_verified_identical": true,
+  "build": {
+    "method": "incremental javac, verified local8 jar overlay",
+    "base_sha256": "021955e4dfac169d570a854e7da98605888c72a99815ecb565d57d0f571db3f0",
+    "result_sha256": "5cf7124b2af5ba0530bb8a426b9db8946a6707304bc21ebbcc3b125563d5637a",
+    "source_sha256": {
+      "src/main/java/ic2/forge/ManualFluidTransfer.java": "768d1dcb222b134d04080777110fe3827098ccf7e24dd57b3b6605802b08e323",
+      "src/main/java/ic2/forge/EventHandlerForge.java": "830786250c14b4c2354d129ba3b81e0cdaeeaf39dca9af46df420be8b143f7ef",
+      "src/main/java/ic2/core/gametest/ManualFluidTransferGameTests.java": "153ac8b224d5f8ac8a1ad813d06b5c64a74242acb856924b0cd7335422ffd382",
+      "src/main/java/ic2/core/gametest/Ic2GameTests.java": "21d14f532b635fa1e9032c16cf077b6392e6f8bf50dfb72c6ab445c0f2d6ee69"
+    },
+    "overlay_entry_sha256": {
+      "ic2/forge/EventHandlerForge.class": "c4398e6abdbc4bee91fa0cb9cd96afd5736ebba5bfbe482053871420292be3d7",
+      "ic2/forge/ManualFluidTransfer.class": "60b5f9349e7307f43a8cc7193df9a94967923bcdc7afbcbed946bfb6349fbb4c",
+      "ic2/core/gametest/ManualFluidTransferGameTests$1.class": "c345ff1ba259bd5b61171ea243bfe4a8a163b0971ae7f11f3779b45a449d0632",
+      "ic2/core/gametest/Ic2GameTests.class": "d46381b41f2c80944ac17577591fce2f26eae1d3c148a0b2ea51118f0f026ef7",
+      "ic2/core/gametest/ManualFluidTransferGameTests.class": "0dba757d5d218d5d040052c5c55a738afe4762cd9645b15daf163c42abc3d555",
+      "META-INF/neoforge.mods.toml": "54ace95cc6d1616b6dfd2d9cb491423e62348109b18c0eda01b903069ff78cc1"
+    },
+    "all_unchanged_entries_verified_equal": true,
+    "unchanged_entry_count": 8291
+  },
+  "validation": {
+    "candidate_sha256": "5cf7124b2af5ba0530bb8a426b9db8946a6707304bc21ebbcc3b125563d5637a",
+    "reports": {
+      "all-local9-final.xml": {
+        "tests": 470,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "a784df6284ff9b050c862c4b543bc87996ac48caf6e7265519d7cbe1e1c2b58a"
+      },
+      "all-local9.xml": {
+        "tests": 470,
+        "failures": 1,
+        "failed_cases": [
+          "ic2:cropgametests.cropharvestercollectsmaturecropgains"
+        ],
+        "sha256": "cad23430dd9e4465813bd39d9415263311e17c46c03bc8cc81429f628279835e"
+      },
+      "manual-before.xml": {
+        "tests": 15,
+        "failures": 10,
+        "failed_cases": [
+          "ic2:manualfluidtransfergametests.waterbucketfillsthroughnativeeventonallsixsides",
+          "ic2:manualfluidtransfergametests.wateranddistilledcellsfillonallsixsides",
+          "ic2:manualfluidtransfergametests.stackedcellstransferexactlyoneperclick",
+          "ic2:manualfluidtransfergametests.fulltankrejectswithoutconsumptionorspill",
+          "ic2:manualfluidtransfergametests.lessthanonebucketspacerollsbacktankandinventory",
+          "ic2:manualfluidtransfergametests.fullinventoryreturnsemptycellasdrop",
+          "ic2:manualfluidtransfergametests.creativefillpreservescontainerwithoutemptycopies",
+          "ic2:manualfluidtransfergametests.offhandfillleavesmainhanduntouched",
+          "ic2:manualfluidtransfergametests.differentwatertypescannotmix",
+          "ic2:manualfluidtransfergametests.lavacannotfillorspillbesideboiler"
+        ],
+        "sha256": "72e5adf1fc5bb4d145e7698e94033ab2c5a0aba6c5d025f69002c7a827a3dcf2"
+      },
+      "manual-after.xml": {
+        "tests": 15,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "f233a80c65b210eff4caa95040cc9b450169b8a840c7ae7e2bf9c83180a4c2cb"
+      },
+      "integration-local9.xml": {
+        "tests": 470,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "7c21059dd1c3b3e36a15f9e914882c36afccb27a6a11f8344f37b392a179ed3a"
+      }
+    },
+    "patch_check": true,
+    "graphical_client_tested": false,
+    "full_five_mod_dedicated_server_tested": false,
+    "integration_mods": [
+      "IC2 local9",
+      "JEI 31.16.0.90",
+      "Xaero Minimap 26.6.1",
+      "Xaero World Map 1.47.1"
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+neoForge {
+    version = '26.3.0.83'
+    mods {
+        density_sqrt_validation { sourceSet sourceSets.main }
+    }
+    unitTest {
+        enable()
+        testedMod = mods.density_sqrt_validation
+        loadedMods = [mods.density_sqrt_validation]
+    }
+}
+repositories { mavenCentral(); maven { url = 'https://maven.neoforged.net/releases' } }
+
+// Compile the real port source, without loading the rest of the unfinished mod.
+sourceSets.main.java {
+    setSrcDirs(['../../mods/twilightforest/src/main/java', 'src/main/java'])
+    include 'twilightforest/world/components/chunkgenerators/SqrtDensityFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/QuartSampleFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/PointDensityFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/ColumnDensitySampler.java'
+    include 'twilightforest/world/components/chunkgenerators/CustomTerrainBeardifier.java'
+    include 'twilightforest/world/components/chunkgenerators/FocusedDensityFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/AbsoluteDifferenceFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/HollowHillFunction.java'
+    include 'twilightforest/world/components/chunkgenerators/TanhHillFunction.java'
+    include 'twilightforest/world/components/feature/runtime/*.java'
+    include 'twilightforest/world/components/carver/*.java'
+    include 'twilightforest/world/components/TFCavesCarver.java'
+    include 'twilightforest/world/components/CarverWallProvider.java'
+    include 'twilightforest/world/components/NoiseCarverWallProvider.java'
+    include 'twilightforest/world/components/placements/ChunkCenterModifier.java'
+    include 'twilightforest/loot/runtime/*.java'
+    include 'twilightforest/util/landmarks/LandmarkGridMath.java'
+    include 'twilightforest/world/components/structures/placements/AvoidLandmarkGridPlacement.java'
+    include 'twilightforest/client/renderer/TFRenderPipelines.java'
+    include 'twilightforest/client/renderer/AuroraRenderer.java'
+    include 'twilightforest/client/renderer/ModelSubmission.java'
+    include 'twilightforest/client/renderer/WeatherGeometry.java'
+    include 'twilightforest/client/renderer/WeatherGeometryRenderer.java'
+    include 'twilightforest/init/TFMaterialAssetGroup.java'
+    include 'twilightforest/init/TFFuelComponents.java'
+    include 'validation/DensityValidationMod.java'
+}
+dependencies {
+    testImplementation files('../../mods/twilightforest/asm/build/classes/java/main')
+    testImplementation 'net.neoforged.fancymodloader:loader:12.0.12'
+    testImplementation 'org.ow2.asm:asm-analysis:9.9.1'
+    testImplementation platform('org.junit:junit-bom:6.0.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test {
+    useJUnitPlatform()
+    inputs.dir file('../../mods/twilightforest/src/generated/resources/data/twilightforest/worldgen/feature')
+    inputs.dir file('../../mods/twilightforest/src/generated/resources/data/twilightforest/trim_material')
+    inputs.dir file('../../mods/twilightforest/src/main/resources/assets/twilightforest/textures/palettes/trim')
+    systemProperty 'twilightforest.projectRoot', file('../../mods/twilightforest').absolutePath
+    systemProperty 'twilightforest.featureResources', file('../../mods/twilightforest/src/generated/resources/data/twilightforest/worldgen/feature').absolutePath
+}

@@ -1,0 +1,147 @@
+[
+  {
+    "archive": "docs/history/ic2/local7/系统排查与修复报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-静默迁移遗漏系统排查/系统排查与修复报告.md",
+    "sha256": "4540aa48f9b592b2e1dc7b6975f19c38fd7c77e9be5d3257831231fa4be58a28"
+  },
+  {
+    "archive": "docs/history/ic2/local7/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-静默迁移遗漏系统排查/交付清单.json",
+    "sha256": "a0a53802a6ab1f7067824f12de1b19383f325c2ece387eb575528b82af15e048"
+  },
+  {
+    "archive": "docs/history/ic2/local8/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-铱碎片增强-local8/交付清单.json",
+    "sha256": "bce1101b18fef4abd394f7d808a16c39cc6a0531fe6fe1317b5157de19a0ef2a"
+  },
+  {
+    "archive": "docs/history/ic2/local9/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-蒸汽机注水修复-local9/交付清单.json",
+    "sha256": "d7f1e45eef3fd246792ad9454d02267eba9f063f5c34ffb1d5a8331e77375fed"
+  },
+  {
+    "archive": "docs/history/ic2/local10/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-暮色森林铱碎片支持-local10/交付清单.json",
+    "sha256": "37745424abfb83d615d62bf29ae7734643a81b493f46bcab0cc8f51095614793"
+  },
+  {
+    "archive": "docs/history/ic2/local11/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-储物箱与苍白树苗修复-local11/build-record.json",
+    "sha256": "eab95346924e898c5c91606068fafc4b5bd1bc750f51beb854d080212e624e92"
+  },
+  {
+    "archive": "docs/history/ic2/local11/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-储物箱与苍白树苗修复-local11/交付清单.json",
+    "sha256": "fcebb5b1401d316ba9e978384e9a19a0fc7fa47814d468011706d079d0643137"
+  },
+  {
+    "archive": "docs/history/ic2/local12/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-木炭打粉-local12/build-record.json",
+    "sha256": "1d6be07f860d781f4981748567118f0b6219de588e0c4ddff56bc10e13dcd142"
+  },
+  {
+    "archive": "docs/history/ic2/local12/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-木炭打粉-local12/交付清单.json",
+    "sha256": "ec3eb9aeb0757edf0bbcfc9ef4627f9751fa7cc55eab5d3063ccb9353db580ab"
+  },
+  {
+    "archive": "docs/history/ic2/local13/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-全部流体移动修复-local13/build-record.json",
+    "sha256": "2a541fcb8f9deeacebc00448db5017782ad107fdffbeaef478ff909c4ca8e4c3"
+  },
+  {
+    "archive": "docs/history/ic2/local13/排查与修复报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-全部流体移动修复-local13/排查与修复报告.md",
+    "sha256": "74cd6e7f991b7b52d542b93bb9bb98fa31978b4056abedcd26f276bf39c3a2f8"
+  },
+  {
+    "archive": "docs/history/ic2/local13/全部流体清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-全部流体移动修复-local13/全部流体清单.json",
+    "sha256": "ead5e8abb5c6f6e2c49f0ff4df030d0d103e1d1e5b51585ce3d410a1a75a0c5e"
+  },
+  {
+    "archive": "docs/history/ic2/local14/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-硝石火药与蛤蛤粉扩展-local14/build-record.json",
+    "sha256": "763bb3e9e981e66bfc71ef9b55a25b4d14fef2ce564846989a8b201f56748819"
+  },
+  {
+    "archive": "docs/history/ic2/local14/更新与验证报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-硝石火药与蛤蛤粉扩展-local14/更新与验证报告.md",
+    "sha256": "80e8ba7a6804f9b0921995202a340409d50c27463653e6178152a9706ad9711d"
+  },
+  {
+    "archive": "docs/history/ic2/local15/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-作物架踩踏与穿地修复-local15/build-record.json",
+    "sha256": "f61f39667ce319d71af1acad14de2e89d22bc5fdd478bccac2daa225f9e99d5f"
+  },
+  {
+    "archive": "docs/history/ic2/local15/排查与修复报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-作物架踩踏与穿地修复-local15/排查与修复报告.md",
+    "sha256": "490bb4ed2de02f720225acca96d1c123676b0c23b997fbd1a27b60475c717bbe"
+  },
+  {
+    "archive": "docs/history/ic2/local16/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-区块加载器修复-local16/build-record.json",
+    "sha256": "eeec31ea668ff130df8238c7d23a5c0463ceebda6ad5501cb1961f1b7be2f699"
+  },
+  {
+    "archive": "docs/history/ic2/local16/修复与验证报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-区块加载器修复-local16/修复与验证报告.md",
+    "sha256": "6ccd1d2e5e3a3a7eb997428d5cefb5174a584bf4cfa84aca813d81b8c9c2e9c8"
+  },
+  {
+    "archive": "docs/history/ic2/local17/build-record.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/build-record.json",
+    "sha256": "c4c3b27740c05d3f4b7504c70a96f7dc614af7dcf72c8162fd1fd9d9a4d5e052"
+  },
+  {
+    "archive": "docs/history/ic2/local17/验证结果.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/验证结果.json",
+    "sha256": "a94c4141a885a918947f667bef8182ca0fb1ec6e9d0f88eb56b6568d4b77e442"
+  },
+  {
+    "archive": "docs/history/ic2/local17/修复与验证报告.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/修复与验证报告.md",
+    "sha256": "d38396f9f5cbaa2c60ab0a72056a86aa814fbb2bac965b37dd1ff9a6e45a8801"
+  },
+  {
+    "archive": "docs/history/ic2/local17/all-final.xml",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/all-final.xml",
+    "sha256": "13b6bee2e7a86814d34123cac359d87f6d80136baaa2f211cba47bd1bc7af9ee"
+  },
+  {
+    "archive": "docs/history/ic2/local17/targeted-final.xml",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/targeted-final.xml",
+    "sha256": "ea147f64db5fb59fd94a4e715caab789236a6dc963b4580e3800c6be5429c44f"
+  },
+  {
+    "archive": "docs/history/ic2/local17/before-witness.xml",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/before-witness.xml",
+    "sha256": "f8d757bf8bf494187bd2f664f42a07181ef0cfa37d6d62a261af722b53e39860"
+  },
+  {
+    "archive": "docs/history/ic2/local17/restart-setup.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/restart-setup.json",
+    "sha256": "8b1643b8435d6952d57abcc7bccfaf680970377250f9abe2e70fa7a87278b51d"
+  },
+  {
+    "archive": "docs/history/ic2/local17/restart-verify.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/restart-verify.json",
+    "sha256": "768eadbe463c29d2da64acede7d871c30fbeb0e8df334505a67defbc34c660b4"
+  },
+  {
+    "archive": "docs/history/ic2/local17/client-validation.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/IC2-分拣器修复-local17/client-validation.json",
+    "sha256": "737ff8fc6b61cd97944c072ddd34332023a9576f09ed7738b8533a8d6beaa8f5"
+  },
+  {
+    "archive": "docs/history/twilightforest/local5/交付清单.json",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/Minecraft26.3-透明渲染与定位修复/交付清单.json",
+    "sha256": "f4a4d40fde5e20bda2c492562b670c6cbeb25bfdbd7b6e005e26a7fbb1655d50"
+  },
+  {
+    "archive": "docs/history/twilightforest/local5/修复-checklist.md",
+    "original": "/Users/observedobserver/Documents/Codex/2026-10-25/users-observedobserver-documents-codex-2026-10/outputs/Minecraft26.3-透明渲染与定位修复/修复-checklist.md",
+    "sha256": "99cb60e3153a708bb0fc6a9f7487fb71991d591e606cf7cf25c21595eb778372"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "base_sha256": "7a3d21e8fb2edf69506eb9bef1fcbe62d99dc15d33bf50b436dba6f477eaaf61",
+  "result_sha256": "051488304064679a1e49ca2dc50ab76de73568e162f95d53e74c97e71c5848ad",
+  "method": "incremental javac, verified production local14 overlay",
+  "all_unchanged_entries_verified_equal": true,
+  "unchanged_entry_count": 8332,
+  "source_sha256": {
+    "src/main/java/ic2/core/crop/TileEntityCrop.java": "6112426a9381d14a814dbc690c74279478f974ddeba9b3b12b9777e30a367270",
+    "src/main/java/ic2/forge/EventHandlerForge.java": "f2f1449d4971c727f029ee510caef9afba4774c98f38aca4e70d535f24c104bf",
+    "src/main/java/ic2/core/gametest/Ic2GameTests.java": "675c43428dc51d8668c1520af32576b251b4884f21092592a70db3556f6cebba",
+    "src/main/resources/data/minecraft/tags/block/maintains_farmland.json": "20f74a7c43457f05382870a18a4223a45b5ccc2a2fb89b47cf7adeba6e61030b",
+    "src/main/java/ic2/core/gametest/CropGroundGameTests.java": "46b26520833032e21aa0a0359687d0dc8557bdfc8734819c49d7060d1664bf0a"
+  },
+  "overlay_entry_sha256": {
+    "ic2/forge/EventHandlerForge.class": "61ce8e38400217aa4c4b2354f3bf561a75baf75c3b2851df87765ca88dee17db",
+    "ic2/core/gametest/Ic2GameTests.class": "cf50534c7f8d2ba13468356d069c5d6795927bfd0d4b563a5b856725399dea2a",
+    "ic2/core/gametest/CropGroundGameTests.class": "de68577a87bc3906962a925abb4b5b898457bbcfca0143de958f893a8c6ba585",
+    "ic2/core/crop/TileEntityCrop.class": "d6c6ab90d6380d0b1d6e06f33531229443cc00a7293d287b71a6b274001702f2",
+    "data/minecraft/tags/block/maintains_farmland.json": "20f74a7c43457f05382870a18a4223a45b5ccc2a2fb89b47cf7adeba6e61030b",
+    "META-INF/neoforge.mods.toml": "00dbf8220598a85996d789f10150d3ed9c4411525197e9590ed5f5b1f03658fa"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local10-JEI-Xaero.zip",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.83",
+  "java": 25,
+  "base_package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local9-JEI-Xaero.zip",
+  "base_sha256": "fc76e0b8d2e1cdbcbc6c5ad8bf11ae8857b6de1b5193350d4a48145dcabd1e24",
+  "mods": [
+    {
+      "file": "mods/ic2-neoforge-26.3.0-local.10.jar",
+      "bytes": 8265701,
+      "sha256": "4127e20a68a80dd33c9320bb3e2bcda1b24a5bca8098fcefb873d12666957de6"
+    },
+    {
+      "file": "mods/jei-26.3-neoforge-31.16.0.90.jar",
+      "bytes": 4738735,
+      "sha256": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133"
+    },
+    {
+      "file": "mods/twilightforest-26.3-4.9-local.5.jar",
+      "bytes": 26377115,
+      "sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9"
+    },
+    {
+      "file": "mods/xaerominimap-neoforge-26.3-26.6.1.jar",
+      "bytes": 2179362,
+      "sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    },
+    {
+      "file": "mods/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+      "bytes": 1453922,
+      "sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    }
+  ],
+  "new_mod_sources": [
+    {
+      "project": "xaeros-world-map",
+      "project_url": "https://modrinth.com/mod/xaeros-world-map",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "wmZLa8s4",
+        "project_id": "NcUtCpym",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's World Map 1.47.1",
+        "version_number": "neoforge-26.3-1.47.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=2)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:06:02.908936Z",
+        "downloads": 12039,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ZQUKJwnf",
+            "hashes": {
+              "sha1": "8a86e23fb37b5726a2d0d6ac89fa400cb5eb5df3",
+              "sha512": "cef2c94fcb5fcebcb4a4a8c5132bffb5b0644afaaa1afefc0a8e89b87201b9b5339b24747b9683a955c834ca36c6c1636a93d10df699626f1adbcbe7909655ae"
+            },
+            "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/wmZLa8s4/xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "filename": "xaeroworldmap-neoforge-26.3-1.47.1.jar",
+            "primary": true,
+            "size": 1453922,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "adb31959c8acc2f141e3c517142f32fcf6215a76c85d3f9ec4c4af8c6925d56d"
+    },
+    {
+      "project": "xaeros-minimap",
+      "project_url": "https://modrinth.com/mod/xaeros-minimap",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "version": {
+        "game_versions": [
+          "26.3"
+        ],
+        "loaders": [
+          "neoforge"
+        ],
+        "environment": "client_only_server_optional",
+        "id": "jDY46foR",
+        "project_id": "1bokaNcj",
+        "author_id": "ANNqL3WC",
+        "featured": false,
+        "name": "Xaero's Minimap 26.6.1",
+        "version_number": "neoforge-26.3-26.6.1",
+        "changelog": "[Read changelogs](https://chocolateminecraft.com/update.php?mod_id=0)",
+        "changelog_url": null,
+        "date_published": "2026-10-20T11:03:23.531863Z",
+        "downloads": 14954,
+        "version_type": "release",
+        "status": "listed",
+        "requested_status": null,
+        "files": [
+          {
+            "id": "ptxt6sTU",
+            "hashes": {
+              "sha512": "871016d70e3e02f2f8d17977f9737b662a18d2d8c3ef191512f44aaa645107d677e2612af256f3feeb4f5257362f62232c3637a33829ea0ef3462ff6e0d42bdf",
+              "sha1": "ebb6f4326b7d4fb0f390d52a0899e9a3d99d9480"
+            },
+            "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/jDY46foR/xaerominimap-neoforge-26.3-26.6.1.jar",
+            "filename": "xaerominimap-neoforge-26.3-26.6.1.jar",
+            "primary": true,
+            "size": 2179362,
+            "file_type": null
+          }
+        ],
+        "dependencies": [
+          {
+            "version_id": null,
+            "project_id": "gF3BGWvG",
+            "file_name": null,
+            "dependency_type": "optional"
+          }
+        ]
+      },
+      "verified_sha256": "c824af7339a6d5c6fd2b2603f3a0424ee2607843ec76e94a37532aac1df0e112"
+    }
+  ],
+  "all_four_other_mods_verified_identical": true,
+  "build": {
+    "method": "incremental javac, verified local9 jar overlay",
+    "base_sha256": "5cf7124b2af5ba0530bb8a426b9db8946a6707304bc21ebbcc3b125563d5637a",
+    "result_sha256": "4127e20a68a80dd33c9320bb3e2bcda1b24a5bca8098fcefb873d12666957de6",
+    "metadata_template_sha256": "1ce65964635706fe951914504f95eea432e38ae875fd24683fb94b005571a163",
+    "source_sha256": {
+      "src/main/java/ic2/forge/TwilightForestLoot.java": "a4a8c7cfc5f99c2a8b5c2b8e6c11e25e471876350bf9c412a930b52033c693ff",
+      "src/main/java/ic2/forge/Ic2LootModifier.java": "63a5919d4d525566eb42d22b323fbc85f624b4c5b9bc30eac9a160b1ea543222",
+      "src/main/java/ic2/core/gametest/TwilightForestLootGameTests.java": "73d707bb67e19652252b4bcdcf8b9b3ad0d12714ae3bde802eedac928a462688",
+      "src/main/java/ic2/core/gametest/Ic2GameTests.java": "63eb5b1749b88813d597e76d9c25803ceeefec4b903a6b8d82e6c3ac59b2587c",
+      "src/main/java/ic2/mixin/TwilightKnightRewardMixin.java": "eb70e9814cac327d9fed356ed3f1a1a67780f2cf0376ace3c90cd33782839093",
+      "src/main/java/ic2/mixin/TwilightBossBufferAccess.java": "30ac65596a7fb82c6ea163abed3f36e2c4dacd92b020b53eacd3ff57434e5cb3",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/common.json": "56381c70ba983da9211da34c6dce3c811633b9c98652c8ee67e9448e52b13943",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/early.json": "e28db5fc493b8e6015828ccfe5f678dbd896c7da770d41a5a3cf16fde29532f7",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/middle.json": "0323e05a463422631ccf85364963e9bfe23450131b2e9363f4182f393d40d0e8",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/high.json": "a71ee5d967e7610ecf347b90232d288b93c6f76c92ca3c78e2ed833ca3bfa1a9",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/advanced.json": "e658f8c9ffd8004231fc013e759b68e972f3de79c948977735bda49d86459476",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/vault.json": "811bb5c7cfdfb26517fe5217f8c551963d6a54bb22924d10ed2209202d4df544",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/jackpot.json": "830c9d785e7aa3832d71cc9fff07209132cb16de0527e2bccf09c64c31cda4de",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/final_boss.json": "e992b4ec63ee3a0da4a580e85e248660ca1b2b7acf58266b8475e9d6f3211ae5",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/lich.json": "6026041751ea27ee6e27abd4f0c93527309ae743d44bc0903a371df90fc23406",
+      "src/main/resources/data/ic2/loot_table/chests/twilightforest/middle_boss.json": "65cbd6e50c9bb1861d7e53465328233e9e3c167c5745ecb58035e6d25469587c",
+      "src/main/resources/ic2.mixins.json": "25a33dcc560c6de3c335cad8010a112c799f4feeb257347364222c7f5a4c6236"
+    },
+    "overlay_entry_sha256": {
+      "ic2/mixin/TwilightKnightRewardMixin.class": "e54c7f0d02744e3ec1da597e6fa5e86112dfee29fd23a5dfcb03dad96ec74a37",
+      "ic2/mixin/TwilightBossBufferAccess.class": "af541bcd6faccd519ab7a06ba27a10c2e3699a06428acbe3ad61446a93760425",
+      "ic2/forge/Ic2LootModifier.class": "4200db75e15324557a0d4bf26721d3817c49aadfd9272507a258ac756829c245",
+      "ic2/forge/TwilightForestLoot.class": "5ca103d81fc874e3bd1c52261e4a25ccdbc663a270773e36c4710422c51e459b",
+      "ic2/forge/TwilightForestLoot$Reward.class": "2b4379ec659ee2b123d9bc5864cda9ee087858110218fb76b4ecc1528e1f5d59",
+      "ic2/core/gametest/TwilightForestLootGameTests.class": "fe79215ffecf194dba512b049af7241a544d78af4d2aa5687e42390c8e35abda",
+      "ic2/core/gametest/Ic2GameTests.class": "7b630c548cba8ccd5c4708b28af8c6a5aac1e757db9ffc468de6f0db426449a4",
+      "ic2/core/gametest/TwilightForestLootGameTests$Expected.class": "2cd9dfa77bc796738f72e7da2f3f1484b64b6f3d72d8e94d5e242927f7c124d9",
+      "data/ic2/loot_table/chests/twilightforest/common.json": "56381c70ba983da9211da34c6dce3c811633b9c98652c8ee67e9448e52b13943",
+      "data/ic2/loot_table/chests/twilightforest/early.json": "e28db5fc493b8e6015828ccfe5f678dbd896c7da770d41a5a3cf16fde29532f7",
+      "data/ic2/loot_table/chests/twilightforest/middle.json": "0323e05a463422631ccf85364963e9bfe23450131b2e9363f4182f393d40d0e8",
+      "data/ic2/loot_table/chests/twilightforest/high.json": "a71ee5d967e7610ecf347b90232d288b93c6f76c92ca3c78e2ed833ca3bfa1a9",
+      "data/ic2/loot_table/chests/twilightforest/advanced.json": "e658f8c9ffd8004231fc013e759b68e972f3de79c948977735bda49d86459476",
+      "data/ic2/loot_table/chests/twilightforest/vault.json": "811bb5c7cfdfb26517fe5217f8c551963d6a54bb22924d10ed2209202d4df544",
+      "data/ic2/loot_table/chests/twilightforest/jackpot.json": "830c9d785e7aa3832d71cc9fff07209132cb16de0527e2bccf09c64c31cda4de",
+      "data/ic2/loot_table/chests/twilightforest/final_boss.json": "e992b4ec63ee3a0da4a580e85e248660ca1b2b7acf58266b8475e9d6f3211ae5",
+      "data/ic2/loot_table/chests/twilightforest/lich.json": "6026041751ea27ee6e27abd4f0c93527309ae743d44bc0903a371df90fc23406",
+      "data/ic2/loot_table/chests/twilightforest/middle_boss.json": "65cbd6e50c9bb1861d7e53465328233e9e3c167c5745ecb58035e6d25469587c",
+      "ic2.mixins.json": "25a33dcc560c6de3c335cad8010a112c799f4feeb257347364222c7f5a4c6236",
+      "META-INF/neoforge.mods.toml": "fe684e4246de7efae041b9264ca0d11ecf45a0551f51cb99ae344b7247389935"
+    },
+    "all_unchanged_entries_verified_equal": true,
+    "unchanged_entry_count": 8293
+  },
+  "validation": {
+    "jar_sha256": "4127e20a68a80dd33c9320bb3e2bcda1b24a5bca8098fcefb873d12666957de6",
+    "reports": {
+      "integration-local10.xml": {
+        "tests": 477,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "2f7f85d3c1b9b74c7a374a980fad1150688a81e6f79d4411b9404d918fc962dc"
+      },
+      "tf-loot-after.xml": {
+        "tests": 7,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "def6974ae986c519fedc36e3b31b7828015e1ad6b182bace19fcf918bc00e7a3"
+      },
+      "all-local10.xml": {
+        "tests": 477,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "10c5142410feb996ccbe7016343e0af7c099f1544ad1b2a52669cc9f32bece3f"
+      },
+      "integration-local10-final.xml": {
+        "tests": 477,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "709a5c7a8bbd4240b817fbb69c78b87242219749ba95f03604893da27c12c70e"
+      },
+      "tf-loot-before.xml": {
+        "tests": 7,
+        "failures": 2,
+        "failed_cases": [
+          "ic2:twilightforestlootgametests.allthirtysixchestmappingsmatchapprovedplan",
+          "ic2:twilightforestlootgametests.alleightbossrewardmappingsmatchapprovedplan"
+        ],
+        "sha256": "cdbcacbe0b5c55b057318b45cdd4c82ba7fda8abd9a577996a15602f5927a10e"
+      },
+      "integration-local10-wind-failed.xml": {
+        "tests": 477,
+        "failures": 3,
+        "failed_cases": [
+          "ic2:kineticgeneratorgametests.windkineticgeneratordestroyswornoutrotor",
+          "ic2:kineticgeneratorgametests.windkineticgeneratorproduceskuataltitude",
+          "ic2:kineticgeneratorgametests.windkineticgeneratorspinsurvivessaveandload"
+        ],
+        "sha256": "fbf867fe412d00205c0c7bba0d89637ac2d90c20d72dc3c748ab653cfcb138c3"
+      },
+      "all-local10-final.xml": {
+        "tests": 477,
+        "failures": 0,
+        "failed_cases": [],
+        "sha256": "27d45ba3881d57c2cfb49c3d4585712ed551432af6105b45a7a64bb54ef532a7"
+      }
+    },
+    "client_passed": true,
+    "chest_tables": 36,
+    "boss_categories": 8,
+    "knight_groups_chest_enabled": 64,
+    "knight_groups_chest_disabled": 64,
+    "source_patch_check": true,
+    "full_five_mod_dedicated_server_tested": false,
+    "unchanged_entry_count": 8293
+  }
+}

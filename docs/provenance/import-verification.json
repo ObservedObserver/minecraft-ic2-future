@@ -1,0 +1,23 @@
+{
+  "checked_unchanged_imported_files": 17495,
+  "intentional_adjustments": {
+    "ic2": {
+      ".gitignore": {
+        "before": "64e8772c3fdbf84dbea8d4c61ddc09200cc6510466d30da203b6caade4f85d0f",
+        "after": "e934443b6a60cc8bf22160e1172ec576574b1cbbefe3bc49e4033c3ee3b7f67d"
+      },
+      "gradle.properties": {
+        "before": "0b2e38278e10271a51b9bc59970b356786e29b1514615bd0aea4131fb3f266ad",
+        "after": "e405da097f55baf62be2351fcfeaf52a7b2a5fe9a43636f4ce98038cea1f71ac"
+      }
+    },
+    "twilightforest": {
+      "gradle.properties": {
+        "before": "036f6016e8cdaca89130933a6eb077ca008a5fe31c86c83dd0038d8c9596fa17",
+        "after": "e46288e7a57c943a60e2ff1edfb5405dc2ce22fbd70c610e57282f397fc14b69"
+      }
+    }
+  },
+  "all_production_source_files_preserved": true,
+  "no_nested_git": true
+}

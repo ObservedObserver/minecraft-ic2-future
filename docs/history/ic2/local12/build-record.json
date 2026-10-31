@@ -1,0 +1,16 @@
+{
+  "base_sha256": "ccac43d8a045b2c887373e23859cbef9bda08cdbb7f06b391d5bfce8a6603321",
+  "result_sha256": "69dc96bfe9d0a1c51396cc30c625b3f97ff74554cf6a5545dd1ee0136fa30f69",
+  "method": "incremental javac, verified production local11 overlay",
+  "all_unchanged_entries_verified_equal": true,
+  "unchanged_entry_count": 8318,
+  "source_sha256": {
+    "src/main/resources/data/ic2/recipe/macerator/charcoal_to_coal_dust.json": "9b856872d4534886f615111b723213390598dfc6fe646c0ba266751c7d576b51",
+    "src/main/java/ic2/core/gametest/MachineGameTests.java": "2742ecd2a691903e6fcb2885be96ff4dc0cd19d6af4e30a9c7fcdcaa0fb175a8"
+  },
+  "overlay_entry_sha256": {
+    "ic2/core/gametest/MachineGameTests.class": "2964a9d49cf1137141381c7c5c178b70a37fe5a0a888f36cbc65952875d04bd6",
+    "data/ic2/recipe/macerator/charcoal_to_coal_dust.json": "9b856872d4534886f615111b723213390598dfc6fe646c0ba266751c7d576b51",
+    "META-INF/neoforge.mods.toml": "adc28c613559381b3f236736b58456421916030aa99b0172f9879393b87ef7d1"
+  }
+}

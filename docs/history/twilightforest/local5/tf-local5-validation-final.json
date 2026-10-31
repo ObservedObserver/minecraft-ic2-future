@@ -1,0 +1,20 @@
+{
+  "project": "/Users/observedobserver/Documents/Codex/2026-10-24/task/validation/density-sqrt",
+  "command": [
+    "/bin/sh",
+    "gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "-Duser.home=/Users/observedobserver/Documents/Codex/2026-10-24/task/build-cache/java-home",
+    "-Dmaven.repo.local=/Users/observedobserver/Documents/Codex/2026-10-24/task/build-cache/java-home/m2",
+    "-Dorg.gradle.java.installations.auto-download=false",
+    "test"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 8.95,
+  "java_home": "/Users/observedobserver/Documents/Codex/2026-10-24/task/toolchains/jdk-25.0.5+8/Contents/Home",
+  "gradle_user_home": "/Users/observedobserver/Documents/Codex/2026-10-24/task/build-cache/gradle",
+  "log": "/Users/observedobserver/Documents/Codex/2026-10-24/task/evidence/builds/tf-local5-validation-final.log"
+}

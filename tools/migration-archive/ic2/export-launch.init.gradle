@@ -1,0 +1,16 @@
+import groovy.json.JsonOutput
+allprojects {
+    tasks.register('exportIc2ClientLaunch') {
+        dependsOn 'prepareClientRun'
+        doLast {
+            def run = project.tasks.named('runClient').get()
+            project.file('evidence/client-launch.json').text = JsonOutput.prettyPrint(JsonOutput.toJson([
+                classpath: run.classpathProvider.files.collect { it.absolutePath },
+                jvmArgs: run.allJvmArgs + run.jvmArgumentProviders.collectMany { it.asArguments().toList() },
+                args: run.args + run.argumentProviders.collectMany { it.asArguments().toList() },
+                mainClass: run.mainClass.get(),
+                workingDir: run.gameDirectory.get().asFile.absolutePath
+            ])) + '\n'
+        }
+    }
+}

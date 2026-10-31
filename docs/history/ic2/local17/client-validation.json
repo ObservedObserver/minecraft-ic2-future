@@ -1,0 +1,15 @@
+{
+  "west_dirt_after": 3,
+  "source_buffer_empty": true,
+  "east_cobblestone_after": 68,
+  "passed": true,
+  "east_filter_count": 8,
+  "hopper_empty": true,
+  "energy_after": 780.0,
+  "default_route": "west",
+  "east_cobblestone_before": 60,
+  "filter_changed_via_native_container_input": true,
+  "default_changed_via_native_mouse_event": true,
+  "real_screen_frames": 253,
+  "environment": "actual eight production mods plus temporary probe; real managed GUI, native input/network, vanilla hopper and two chests crossing a chunk border"
+}

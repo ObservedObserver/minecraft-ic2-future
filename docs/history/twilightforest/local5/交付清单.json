@@ -1,0 +1,68 @@
+{
+  "package": "Minecraft26.3-NeoForge-TF-local5-IC2R-local6-JEI-31.16.0.90.zip",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.83",
+  "java": 25,
+  "mods": [
+    {
+      "file": "mods/ic2-neoforge-26.3.0-local.6.jar",
+      "sha256": "0294dce177d0900f35862c586c2a528bb9c0483024b8b727c1fb4bd4af6d7433",
+      "bytes": 8215192
+    },
+    {
+      "file": "mods/jei-26.3-neoforge-31.16.0.90.jar",
+      "sha256": "a7b095a510fc0247628967853b8576c8832957b0a272eebd4f00d5e186bd9133",
+      "bytes": 4738735
+    },
+    {
+      "file": "mods/twilightforest-26.3-4.9-local.5.jar",
+      "sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9",
+      "bytes": 26377115
+    }
+  ],
+  "tests": {
+    "twilightforest-neoforge26.3": {
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/density-sqrt": {
+      "tests": 69,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "incremental_files": [
+    "src/main/java/twilightforest/client/renderer/TFRenderPipelines.java",
+    "src/main/java/twilightforest/client/renderer/TFRenderTypes.java",
+    "src/main/java/twilightforest/client/event/ClientRegistrationEvents.java",
+    "src/main/java/twilightforest/world/components/structures/placements/AvoidLandmarkGridPlacement.java",
+    "src/main/java/twilightforest/init/TFStructurePlacementTypes.java",
+    "src/main/java/twilightforest/client/renderer/WeatherGeometryRenderer.java",
+    "src/main/java/twilightforest/network/AreaProtectionPacket.java",
+    "src/main/resources/assets/twilightforest/shaders/core/red_thread/oit_red_thread.fsh",
+    "src/test/java/twilightforest/client/renderer/OitRenderRegressionTests.java",
+    "src/test/java/twilightforest/client/renderer/WeatherTextureRegressionTests.java",
+    "src/test/java/twilightforest/world/components/structures/placements/StructureLocateRegressionTests.java",
+    "src/test/java/twilightforest/network/ProtectionBoxRegressionTests.java"
+  ],
+  "runtime_verification": {
+    "date": "2026-10-25",
+    "platform": "macOS / OpenGL",
+    "mode": "singleplayer, isolated copied test world",
+    "loaded_twilightforest_sha256": "329d3ccf6477163e5cdc3a18f899e46555c9d3767fb69c74e5894f7e844f20d9",
+    "oit_on_and_off": true,
+    "resource_reload": true,
+    "native_locate": [
+      "hollow_tree",
+      "swamp_hollow_tree",
+      "fallen_trunk",
+      "camp"
+    ],
+    "render_packet_errors": 0,
+    "expected_offline_auth_errors": 3,
+    "clean_shutdown": true
+  }
+}

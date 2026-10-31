@@ -1,0 +1,23 @@
+{
+  "base_sha256": "051488304064679a1e49ca2dc50ab76de73568e162f95d53e74c97e71c5848ad",
+  "result_sha256": "3fefd3ec34c68d5eb6135b5f9e105e4d352c5ec18ceb3c22a129482b4f5e6fa3",
+  "method": "incremental javac, verified production local15 overlay",
+  "all_unchanged_entries_verified_equal": true,
+  "unchanged_entry_count": 8331,
+  "source_sha256": {
+    "src/main/java/ic2/core/ChunkLoaderLogic.java": "d20c034cc408dda602d6b27b5459eb843a5dbb3380b13d25625eb9a26a390248",
+    "src/main/java/ic2/core/block/machine/tileentity/TileEntityChunkLoader.java": "43b9ad6f769d2d2ce32784aaf35f5feeccf005f747afbcb04ff98c2b4d1eabc7",
+    "src/main/java/ic2/core/block/machine/gui/GuiChunkLoader.java": "adb2ee7810e1f0d4f3d5170e0d8f3b8f5e5cd74ebb517db3b14d72a8cdea7529",
+    "src/main/java/ic2/core/event/EventHandler.java": "609b64fa6c9a12c0a217befcea07766900537207501379d40ae0207afa0475bb",
+    "src/main/java/ic2/core/gametest/ChunkLoaderGameTests.java": "a88b14266898708d339a00fabd255114ac5b7dc7e8ff4f4df0401d9811df92e4"
+  },
+  "overlay_entry_sha256": {
+    "ic2/core/ChunkLoaderLogic.class": "5401d7a6cd8e7bb0f4e595a946a6b606466e92a49ea2dc5e29dd1e53f9407d05",
+    "ic2/core/ChunkLoaderLogic$SavedState.class": "1af1c5a024b23ed00005d57aebe93b1a483f51769156badd167f360bad89424a",
+    "ic2/core/gametest/ChunkLoaderGameTests.class": "8d468a0db9cab2c6453dcdd85d9cf7ba208a2e940897ae9a51f3f120818a099f",
+    "ic2/core/event/EventHandler.class": "4adb0ecbfd9e3e01864d0cbf2c43cf44e29b846adabdd324691dab2dfeff6a38",
+    "ic2/core/block/machine/gui/GuiChunkLoader.class": "0d571e909c12c8ab1f4261af711082a7b66a37e1267ec776ed66cff94a8265c7",
+    "ic2/core/block/machine/tileentity/TileEntityChunkLoader.class": "3ae2c3c80278def3f7c4800fef86b0d4983b23c28a1e2dcca01d96d12dc31390",
+    "META-INF/neoforge.mods.toml": "ab40dfcd1bccc72dae4fc7783ebea093ecb24645a5a4071ec823abaead7b4542"
+  }
+}

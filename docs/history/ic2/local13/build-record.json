@@ -1,0 +1,32 @@
+{
+  "base_sha256": "69dc96bfe9d0a1c51396cc30c625b3f97ff74554cf6a5545dd1ee0136fa30f69",
+  "result_sha256": "21fc2c7cf110a2274dbf614dcd1056f26e46db3f8fdae06dbd251f8b4ddd7c14",
+  "method": "incremental javac, verified production local12 overlay",
+  "all_unchanged_entries_verified_equal": true,
+  "unchanged_entry_count": 8314,
+  "source_sha256": {
+    "src/main/java/ic2/core/fluid/EnvFluidHandler.java": "271b7b834a0119deb4122a16e6c3c3194dbd7ee0b9be23b3422394fc5b6cf90b",
+    "src/main/java/ic2/core/fluid/FluidHandler.java": "a3ea817ba5d7fe4bf6c05b0d54c41a377499a05b9e78c0fc4a2500c2fca94a76",
+    "src/main/java/ic2/forge/EnvFluidHandlerForge.java": "8be342580b83b0eca9835491caf4451b53bb1dbcd966312d509bd708315de361",
+    "src/main/java/ic2/mixin/LivingEntityFluidMovementAccess.java": "0dd2d31137c2d183ac5e6bf8370dcf120c410d4c72e955263b682d30246a9499",
+    "src/main/java/ic2/forge/Ic2FluidType.java": "1e2d0f7fe05019b629b4707e30307dd707d2ab4fd9110aa4c09affd7580a00f7",
+    "src/main/resources/ic2.fluid-movement.mixins.json": "6a9c8f19fc1bfe0ebb7b5435ba64a6b7e9dfc95906b931537e31b8ad912bc3f6",
+    "src/main/templates/META-INF/neoforge.mods.toml": "29a078446f527dbc71dfb540802f4d25574a5533007b694ca3cb9a6db381fd06",
+    "src/main/java/ic2/core/gametest/FluidPlacementGameTests.java": "a60ef49ad5a283898c3a617320f332b00e2d49fcb6b091cce39aa434984d20bd",
+    "src/main/java/ic2/mixin/LivingEntityGasJumpMixin.java": "212caae5471cf9d3438e0a81393d613e1c77d71f7120193cc15dbf9bd6fb65e3"
+  },
+  "overlay_entry_sha256": {
+    "ic2/mixin/LivingEntityFluidMovementAccess.class": "224033b27ba6d8bf3e5708197e0d154263d4704b9eb4c7bbfbd8850c4198fe8d",
+    "ic2/mixin/LivingEntityGasJumpMixin.class": "9da792839cc4542463da9baa3c0265a8de51d88adf70fa9f28dfccb8a2e64175",
+    "ic2/forge/EnvFluidHandlerForge.class": "302ef35271c1157083419a0a67ca02bc9acacd1b3785a9fef5e35230bcf41688",
+    "ic2/forge/Ic2FluidType$Movement.class": "92334c269c7e5a818263fbb0ac63d2564ddec63e39512f46cb6b508ce6a001c4",
+    "ic2/forge/Ic2FluidType.class": "1cea9cece19b2afff1af6f8acc88a3412c5477abd0beee5a3518b8f45b4a8545",
+    "ic2/forge/EnvFluidHandlerForge$FluidVisual.class": "b075d3475528d6d6c0da895b34f55c712975f0724f3c432f7edafc722f9d1974",
+    "ic2/core/gametest/FluidPlacementGameTests.class": "8f72aec3f1bb617aef809a6838bf362b482e18e2ee9a7e5b37f5e3effe7f7048",
+    "ic2/core/fluid/EnvFluidHandler.class": "0499675b2ec4b31d7459339acd2c5bea8c22665284c926f54be8e7137765306c",
+    "ic2/core/fluid/FluidHandler.class": "267643be79072c9df614709e6cc8e75448c3a6cfdb7fea4b188fe0be81f0f21f",
+    "ic2/core/fluid/EnvFluidHandler$FluidRefs.class": "8f296c50f57572b8b429adfd50012770518f08eee24b9cbd66615f59b2669e55",
+    "ic2.fluid-movement.mixins.json": "6a9c8f19fc1bfe0ebb7b5435ba64a6b7e9dfc95906b931537e31b8ad912bc3f6",
+    "META-INF/neoforge.mods.toml": "e4f3f589651c955f1467acbadb1fa146ea140ea933c551e84a321c5fdaeca89d"
+  }
+}
