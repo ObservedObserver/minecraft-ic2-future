@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-31",
+  "baseline_head": "4875e8409548458390cfeaa5b0ad6e43378c803d",
+  "branch": "main",
+  "commits_all_refs": 12,
+  "tracked_files": 17670,
+  "reachable_blobs": 19809,
+  "reachable_blob_bytes": 62077007,
+  "historical_distinct_paths": 17862,
+  "historical_teacraft_paths": [],
+  "historical_teacraft_content_paths": [
+    "AGENTS.md",
+    "NOTICE.md",
+    "docs/consolidation.md",
+    "docs/history/ic2/local17/修复与验证报告.md",
+    "docs/history/ic2/local17/验证结果.json",
+    "docs/known-issues.md",
+    "docs/provenance/local-deliveries.json",
+    "docs/releases.md",
+    "pack/mods.lock.json"
+  ],
+  "historical_archive_or_class_magic_paths": [
+    "mods/ic2/gradle/wrapper/gradle-wrapper.jar",
+    "mods/twilightforest/gradle/wrapper/gradle-wrapper.jar"
+  ],
+  "gitleaks": {
+    "version": "8.30.1",
+    "history_command": "gitleaks git . --log-opts=--all --redact=100 --ignore-gitleaks-allow --no-banner --no-color --report-format=json --report-path=.local/open-source-audit/history-secrets.json",
+    "worktree_command": "gitleaks dir .local/open-source-audit/worktree --redact=100 --ignore-gitleaks-allow --no-banner --no-color --report-format=json --report-path=.local/open-source-audit/worktree-secrets.json",
+    "worktree_export": "git ls-files --cached --others --exclude-standard -z; copy existing regular files preserving repository-relative paths",
+    "worktree_export_file_count": 17808,
+    "history_exit_code": 1,
+    "worktree_exit_code": 1,
+    "findings_each_scope": 64,
+    "reviewed_false_positives_each_scope": {
+      "sha256_in_manifests": 62,
+      "lapis_localization_strings": 2
+    },
+    "confirmed_credentials": 0,
+    "limits": "Pattern scan and manual review; not a proof that every possible secret is absent. Ignored local runtime files and unreachable Git objects excluded."
+  },
+  "privacy": {
+    "local_home_path_files": [
+      "docs/history/twilightforest/local5/tf-local5-build.json",
+      "docs/history/twilightforest/local5/tf-local5-protection-final.json",
+      "docs/history/twilightforest/local5/tf-local5-tests-final.json",
+      "docs/history/twilightforest/local5/tf-local5-validation-final.json",
+      "docs/history/twilightforest/local5/tf-local5-weather-final.json",
+      "docs/provenance/archived-evidence.json",
+      "docs/provenance/local-deliveries.json",
+      "docs/provenance/upstream.json",
+      "docs/verification/consolidation.json",
+      "docs/verification/junit/twilightforest/TEST-twilightforest.asmhooks.PortEffectRegressionTests.xml"
+    ],
+    "private_network_files": []
+  },
+  "commit_email": "Personal QQ email present in all 12 commits; exact address intentionally not duplicated here.",
+  "git_remote_count": 0,
+  "scope": "Read-only publication audit plus new report/evidence only. Existing uncommitted logistics work excluded from this session commit.",
+  "validation": {
+    "workspace_check": {
+      "command": "./dev check",
+      "exit_code": 0,
+      "resource_json_count": 10627,
+      "historical_mod_count": 8
+    },
+    "report_relative_links": "all resolve",
+    "evidence_json": "parsed",
+    "code_or_game_tests": "not run; documentation-only audit"
+  }
+}
