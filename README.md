@@ -37,6 +37,7 @@ docs/provenance/           上游基线、导入时的逐文件哈希与来源
 - [整合包发布流程](docs/releases.md)
 - [仓库整理与核对结果](docs/consolidation.md)
 - [物流资源首版与美术评审](mods/logistics/README.md)
+- [特斯拉远程输电线圈设计草案，未实现](docs/design/wireless-power.md)
 - [原作者与许可](NOTICE.md)
 
 旧任务目录继续保留作历史资料；后续维护以本仓库为准。这里只创建了本地 Git 仓库，没有配置推送目标。
