@@ -25,6 +25,9 @@ public class ContainerSortingMachine extends ContainerElectricMachine<TileEntity
 
     for (int i = 0; i < Util.ALL_DIRS.length; i++) {
       Direction dir = Util.ALL_DIRS[i];
+      if (dir == Direction.UP) {
+        continue;
+      }
       ItemStack[] filterSlots = be.getFilterSlots(dir);
 
       for (int j = 0; j < filterSlots.length; j++) {

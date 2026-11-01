@@ -1,0 +1,11 @@
+=== setup ===
+SORTING_PRODUCTION_JAR file:/Users/gaoxiaoli/Desktop/micro%20project/mc%20mod/minecraft-ic2-future/.local/delivery/ic2-neoforge-26.3.0-local.21-topinput.1.jar
+SORTING_RESTART_PROBE source=2 buffer=3 east=0 energy=1000.0
+=== verify ===
+SORTING_PRODUCTION_JAR file:/Users/gaoxiaoli/Desktop/micro%20project/mc%20mod/minecraft-ic2-future/.local/delivery/ic2-neoforge-26.3.0-local.21-topinput.1.jar
+SORTING_RESTART_PROBE source=2 buffer=3 east=0 energy=1000.0
+SORTING_PRODUCTION_JAR file:/Users/gaoxiaoli/Desktop/micro%20project/mc%20mod/minecraft-ic2-future/.local/delivery/ic2-neoforge-26.3.0-local.21-topinput.1.jar
+SORTING_RESTART_PROBE source=1 buffer=0 east=4 energy=920.0
+=== verify-final ===
+SORTING_PRODUCTION_JAR file:/Users/gaoxiaoli/Desktop/micro%20project/mc%20mod/minecraft-ic2-future/.local/delivery/ic2-neoforge-26.3.0-local.21-topinput.1.jar
+SORTING_RESTART_PROBE source=1 buffer=0 east=4 energy=920.0

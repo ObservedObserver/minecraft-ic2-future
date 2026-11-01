@@ -46,6 +46,31 @@ public class GuiSortingMachine extends Ic2Gui<ContainerSortingMachine> {
                   return StackUtil.ENV.getAdjacentInventory(container.base, cDir) != null ? 15 : 33;
                 }
               }));
+      if (dir == Direction.UP) {
+        this.addElement(
+            Image.create(
+                    this,
+                    42,
+                    18 + dir.ordinal() * 20,
+                    18,
+                    18,
+                    texture,
+                    256,
+                    256,
+                    new FixedSizeOverlaySupplier(18) {
+                      @Override
+                      public int getUS() {
+                        return 230;
+                      }
+
+                      @Override
+                      public int getVS() {
+                        return 15;
+                      }
+                    })
+                .withTooltip("ic2.SortingMachine.input"));
+        continue;
+      }
       this.addElement(
           new CustomButton(
                   this,

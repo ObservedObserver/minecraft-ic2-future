@@ -1,0 +1,10 @@
+{
+  "installed_jar_sha256": "240878e16276fafdf5aaec1b6cb36e6a08bedc2915f66a332ee57ab904c81913",
+  "normalized_bytecode_equal": {
+    "ic2.core.block.machine.tileentity.TileEntitySortingMachine": true,
+    "ic2.core.block.machine.container.ContainerSortingMachine": true,
+    "ic2.core.block.machine.gui.GuiSortingMachine": true,
+    "ic2.core.block.machine.gui.GuiSortingMachine$1": true,
+    "ic2.core.block.machine.gui.GuiSortingMachine$2": true
+  }
+}
