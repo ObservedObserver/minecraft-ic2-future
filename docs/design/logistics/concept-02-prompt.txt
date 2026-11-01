@@ -1,0 +1,13 @@
+Use case: precise-object-edit / stylized-concept.
+Edit the attached concept review board into a corrected second version. This is a functional Minecraft mod concept, not a real-world conveyor construction kit.
+Critical correction: EACH conveyor segment is ONE Minecraft block placed in ONE grid cell using ONE conveyor item. All visible belt, thin edge trim and tiny rollers belong to that single block model. No multi-block machine assembly. A conveyor may float in midair with absolutely NO supports, pillars, legs, scaffolding, foundation, mounting cubes, or hanging cables. The game does not require gravity support. Players can separately add decorative structures, but show none.
+Keep the original restrained pixel-textured iron and dark rubber material language, isometric presentation, light neutral background and readability, but simplify the geometry radically to thin belt tiles, approximately 2/16 to 3/16 of a block high. No massive sidewalls, bolts, structural frame or machine base. One center lane with clear direction arrows.
+Change the layout to THREE spacious panels:
+"01 ONE TILE = ONE BLOCK" — a large close-up of one standalone thin conveyor tile, exactly one square grid cell wide and long, with a faint wireframe one-block bounding cube around it showing the belt is low-profile inside a full block cell. No solid plinth. One small iron ingot on top.
+"02 PLACE AND CONNECT" — a short orthogonal conveyor line with a right-angle turn and a T side inlet, composed of clearly visible repeated one-cell tiles, all edges aligned with the faint Minecraft square grid. No diagonal planar paths. Main belt straight through the T, side inlet joins it. The tiles themselves comprise the entire conveyor. No independent crossing.
+"03 BUILD IN THE AIR" — a continuous thin conveyor with a lower horizontal section, an ascending sequence of slope tiles and an upper horizontal section, entirely suspended above a distant ground grid with visibly empty air below the entire structure. No support blocks of any kind. Include faint dashed unit-cell outlines near a slope segment as an illustrative coordinate guide, not structural objects. Each slope segment is also one conveyor block; exact geometry remains conceptual.
+Top title "LOGISTICS / CONCEPT 02".
+Bottom caption "SINGLE-BLOCK TILES / NO SUPPORTS REQUIRED".
+Do not include an inserter in this sheet: the review focuses specifically on single-block conveyor placement and floating elevated routes.
+Avoid: legs, feet, pillars, stone cubes, pedestals, trusses, bolts, towers, separate assembly parts, exploded assembly drawings, realistic factory machinery. Treat wireframe cubes as annotation only.
+This is an art direction preview, not a game screenshot or production model.
