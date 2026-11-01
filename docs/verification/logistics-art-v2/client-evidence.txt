@@ -1,0 +1,8 @@
+Selected lines from isolated 26.3 client; not a gameplay test.
+[20:17:49] [Render thread/INFO]: Reloading ResourceManager: vanilla, vanilla, file/logistics-art-v1-resources.zip
+[20:18:56] [Server thread/INFO]: Starting integrated minecraft server version 26.3
+[20:18:56] [Server thread/INFO]: System chat: ArtReview joined the game
+[20:18:56] [Render thread/WARN]: Requested post effect does not exist: minecraft:end_of_frame
+[20:19:23] [Server thread/INFO]: Saving players
+[20:19:23] [Server thread/INFO]: Saving worlds
+[20:19:29] [Render thread/INFO]: Stopping!

@@ -1,4 +1,4 @@
-# Logistics 美术资源首版
+# Logistics 美术资源评审版
 
 独立物流模组的资源阶段，工作命名空间为 `logistics`。本目录目前没有 Java 注册、Gradle 工程或可运行物流 JAR。用户要求先完成美术供评审，再推进功能。资源可以打成 26.3 的独立资源包，用原版物品模型组件验证，不修改 IC2 或暮色。
 
@@ -42,8 +42,8 @@ give @s minecraft:paper[minecraft:item_model="logistics:high_inserter"]
 
 可选展示场景：运行 `python3 mods/logistics/art/build_showcase.py`，将生成的 `build/logistics-art-showcase` 复制进新建测试世界的 `datapacks`，执行 `reload` 后执行 `function logistics_review:setup`。该函数会清空坐标 `-12 80 -8` 至 `12 90 16` 并铺设展示地面，因此只在本任务新建的隔离世界使用。场景使用物品展示实体，不证明真实方块碰撞、库存传输或区块生命周期。
 
-几何边界：平带带面高 2/16 格，边缘 2.5/16 格；升降段采用逐像素细阶几何，仍为一个方块模型。最高端带面与边缘会伸入上方空隙，后续放置逻辑必须检查相应净空，不能以添加支撑代替碰撞检查。上坡和下坡用于同一种物品的不同状态，不要求玩家拼装坡道。分拣器旋转轴为 `[8,8,8]`，活动臂独立；实际抓取位置、搬运周期和持货动画需要后续逻辑阶段校准。
+几何边界：平带带面高 2/16 格，边缘 2.5/16 格；升降段采用连续 45° 斜面，仍为一个方块模型。最高端带面与边缘会伸入上方空隙，后续放置逻辑必须检查相应净空，不能以添加支撑代替碰撞检查。上坡和下坡用于同一种物品的不同状态，不要求玩家拼装坡道。分拣器旋转轴为 `[8,8,8]`，活动臂独立；实际抓取位置、搬运周期和持货动画需要后续逻辑阶段校准。
 
 方块状态 JSON 为待实现 Java 类预留 `facing`、`shape`、`running` 属性。本轮未实现这些属性或完成 NeoForge 客户端联调。真实材质动画由 Minecraft `.mcmeta` 驱动，分拣器摆动仅在评审页面演示。游戏的暂停状态切换、渲染器和逻辑同步尚未实现。
 
-本轮验收与限制见 [验证记录](../../docs/verification/logistics-art-v1/README.md)。
+当前修订为 art-v2：带面 32px、边框和机身 16px，连续斜面、提亮配色；修复网页支带反向。保持原评审页路径和资源包文件名，版本以 `art/manifest.json` 为准。当前验收见 [第二版验证](../../docs/verification/logistics-art-v2/README.md)，[首版记录](../../docs/verification/logistics-art-v1/README.md)保留为历史。

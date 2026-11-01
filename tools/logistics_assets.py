@@ -45,15 +45,15 @@ def png(path, rows):
     path.write_bytes(data)
 
 
-def pixels(color):
-    return [[rgb(color) for _ in range(16)] for _ in range(16)]
+def pixels(color, size=16):
+    return [[rgb(color) for _ in range(size)] for _ in range(size)]
 
 
 def texture(tier, name, frames):
     path = ASSETS / 'textures/block' / tier['id'] / (name + '.png')
     png(path, [row for frame in frames for row in frame])
     if len(frames) > 1:
-        write_json(Path(str(path) + '.mcmeta'), {'animation': {'frametime': tier['frame_ticks'], 'width': 16, 'height': 16, 'interpolate': False}})
+        write_json(Path(str(path) + '.mcmeta'), {'animation': {'frametime': tier['frame_ticks'], 'width': len(frames[0][0]), 'height': len(frames[0]), 'interpolate': False}})
     return 'logistics:block/' + tier['id'] + '/' + name
 
 
@@ -63,7 +63,7 @@ def arrow(p, x, y, color, facing='north'):
         if facing == 'east': dx,dy = -dy,dx
         if facing == 'west': dx,dy = dy,-dx
         xx, yy = x+dx, y+dy
-        if 0 <= xx < 16 and 0 <= yy < 16: p[yy][xx] = color
+        if 0 <= xx < len(p[0]) and 0 <= yy < len(p): p[yy][xx] = color
 
 
 def make_textures(t):
@@ -92,27 +92,29 @@ def make_textures(t):
         for y in range(4,12):
             for x in range(3+i*4,5+i*4): label[y][x] = rgb(t['accent'])
     texture(t, 'badge', [label])
+    size = CONFIG['belt_texture_size']
     for shape in ['straight','left','right','merge_left','merge_right']:
         frames=[]
         for phase in range(8):
-            p=pixels('#282e32')
-            for y in range(16):
-                for x in range(16):
-                    # Lanes move toward north. Turns use nested square elbows.
-                    d = y
-                    if shape == 'left': d=max(15-x,y)
+            p=pixels('#30383d',size)
+            for y in range(size):
+                for x in range(size):
+                    d=y
+                    if shape == 'left': d=max(size-1-x,y)
                     if shape == 'right': d=max(x,y)
-                    if shape == 'merge_left' and x<6 and 5<y<11: d=15-x
-                    if shape == 'merge_right' and x>9 and 5<y<11: d=x
-                    stripe=(d+phase)%8
-                    p[y][x]=rgb('#171d21' if stripe==0 else '#424a50' if stripe==1 else '#30373c' if stripe==2 else '#282e32')
-            if shape == 'left':
-                arrow(p,7,10,rgb(t['accent']),'east')
-                arrow(p,8,1,rgb(t['accent']))
-            elif shape == 'right':
-                arrow(p,8,10,rgb(t['accent']),'west')
-                arrow(p,8,1,rgb(t['accent']))
-            else: arrow(p,8,4,rgb(t['accent']))
+                    if shape == 'merge_left' and x<12 and 12<y<21: d=size-1-x
+                    if shape == 'merge_right' and x>19 and 12<y<21: d=x
+                    # Narrow, low-contrast seams; less noise than broad black treads.
+                    stripe=(d+phase)%16
+                    p[y][x]=rgb('#424c52' if stripe==0 else '#2b3338' if stripe==1 else '#30383d')
+                    if x in (3,28): p[y][x]=rgb('#56636a')
+            if shape in ('left','merge_left'):
+                arrow(p,11,17,rgb(t['accent']),'east')
+                arrow(p,16,7,rgb(t['accent']))
+            elif shape in ('right','merge_right'):
+                arrow(p,20,17,rgb(t['accent']),'west')
+                arrow(p,16,7,rgb(t['accent']))
+            else: arrow(p,16,11,rgb(t['accent']))
             frames.append(p)
         texture(t, 'belt_'+shape, frames)
         texture(t, 'belt_'+shape+'_idle', [frames[0]])
@@ -143,14 +145,16 @@ def model(t, shape, idle=False):
     textures['particle']=textures['frame']
     e=[]
     if slope:
-        # Fine one-pixel treads keep all JSON elements axis aligned and editable.
-        # At the upper end the two-pixel deck extends above the block cell.
-        # Future placement must reserve that clearance, not require a support.
-        for z in range(16):
-            y=15-z if shape=='ascending' else z
-            e.append(box(f'deck_{z}',[0,y,z],[16,y+2,z+1],'#bottom','#belt',faces=['up','down','north','south']))
-            for x in (0,15):
-                e.append(box(f'edge_{x}_{z}',[x,y,z],[x+1,y+2.5,z+1],faces=['up','west','east','north','south']))
+        # A single rotated slab spans a one-cell rise. Top endpoints are y=2/18,
+        # z=16/0 for ascending; no staircase ribs or supporting structure.
+        half=8*math.sqrt(2)
+        for name,x0,x1,top in [('deck',0,16,10),('left_edge',0,1,10.35),('right_edge',15,16,10.35)]:
+            element=box(name,[x0,10-math.sqrt(2),8-half],[x1,top,8+half],
+                        '#bottom' if name=='deck' else '#frame',
+                        '#belt' if name=='deck' else None,uv=[0,0,16,16])
+            element['rotation']={'origin':[8,10,8],'axis':'x',
+                                 'angle':45 if shape=='ascending' else -45,'rescale':False}
+            e.append(element)
     else:
         e.append(box('deck',[0,0,0],[16,2,16],'#bottom','#belt'))
         if shape not in ('left','merge_left'): e.append(box('left_edge',[0,0,0],[1,2.5,16]))
@@ -216,7 +220,7 @@ def build():
             write_json(ASSETS/'blockstates'/f'{ident}.json',{'variants':variants})
             inventory.append({'id':'logistics:'+ident,'name':zh['block.logistics.'+ident],'tier':tier,'kind':kind,'model':mref})
     write_json(ASSETS/'lang/zh_cn.json',zh); write_json(ASSETS/'lang/en_us.json',en)
-    write_json(RES/'pack.mcmeta',{'pack':{'min_format':[97,1],'max_format':[97,1],'description':'Logistics art-v1 · review resources · no gameplay'}})
+    write_json(RES/'pack.mcmeta',{'pack':{'min_format':[97,1],'max_format':[97,1],'description':'Logistics '+CONFIG['revision']+' · review resources · no gameplay'}})
     write_json(ART/'rig.json',{'inserter':{'base_model':'{tier}/inserter_base','arm_model':'{tier}/inserter_arm','pivot':[8,8,8],'axis':'y','preview_angles':[0,180],'note':'Review pose animation only. Does not implement item transfer or a block-entity renderer.'}})
     # Vanilla item_model components let these exact models be inspected without mod registration.
     pack=MOD/'build/logistics-art-v1-resources.zip'
@@ -241,7 +245,7 @@ def build():
         texture_data[key]={'url':'data:image/png;base64,'+base64.b64encode(f.read_bytes()).decode(), 'animation':json.loads(meta.read_text())['animation'] if meta.exists() else None}
     payload={'tiers':CONFIG['tiers'],'models':preview_models,'textures':texture_data,'items':inventory,'rig':json.loads((ART/'rig.json').read_text())}
     (REVIEW/'assets.js').write_text('window.LOGISTICS_ASSETS = '+json.dumps(payload,ensure_ascii=False,separators=(',',':'))+';\n')
-    write_json(ART/'manifest.json',{'revision':'art-v1','namespace':'logistics','items':inventory,'shapes':SHAPES,'gameplay_implemented':False,'resource_pack':str(pack.relative_to(ROOT)), 'resource_pack_sha256':hashlib.sha256(pack.read_bytes()).hexdigest()})
+    write_json(ART/'manifest.json',{'revision':CONFIG['revision'],'namespace':'logistics','items':inventory,'shapes':SHAPES,'gameplay_implemented':False,'resource_pack':str(pack.relative_to(ROOT)), 'resource_pack_sha256':hashlib.sha256(pack.read_bytes()).hexdigest()})
     print('Built',len(preview_models),'models,',len(texture_data),'textures,',len(inventory),'device definitions.')
 
 
@@ -258,15 +262,18 @@ def check():
         for e in m['elements']:
             assert all(-16<=v<=32 for v in e['from']+e['to']),path
             assert all(a<=b for a,b in zip(e['from'],e['to'])),path
+            if 'rotation' in e:
+                assert e['rotation']['axis'] in ('x','y','z')
+                assert e['rotation']['angle'] in (-45,-22.5,0,22.5,45)
             for face,data in e['faces'].items():
                 assert face in FACES and data['texture'][1:] in tex,(path,face)
                 assert len(data['uv'])==4 and all(math.isfinite(v) for v in data['uv']),path
                 face_count+=1
     for path in pngs:
         data=path.read_bytes(); assert data[:8]==b'\x89PNG\r\n\x1a\n'
-        w,h=struct.unpack('>II',data[16:24]); assert w==16 and h in (16,128),(path,w,h)
+        w,h=struct.unpack('>II',data[16:24]); assert w in (16,32) and h in (w,w*8),(path,w,h)
         meta=Path(str(path)+'.mcmeta')
-        assert meta.exists()==(h==128),path
+        assert meta.exists()==(h==w*8),path
     for path in (ASSETS/'blockstates').glob('*.json'):
         for v in json.loads(path.read_text())['variants'].values():
             assert (ASSETS/'models'/(v['model'].split(':')[1]+'.json')).exists()
@@ -285,7 +292,7 @@ def check():
         assert not any(n.startswith('assets/minecraft/') for n in z.namelist())
         assert len(z.namelist())==len([p for p in RES.rglob('*') if p.is_file()])+len(SHAPES)*len(CONFIG['tiers'])
     report={'status':'passed','models':len(models),'textures':len(pngs),'faces_checked':face_count,'devices':2*len(CONFIG['tiers']),'blockstates':2*len(CONFIG['tiers']),'animated_textures':5*len(CONFIG['tiers']),'resource_pack_sha256':manifest['resource_pack_sha256'],'scope':'Static JSON/resource/PNG/link/ZIP validation, not an in-game or gameplay test.'}
-    write_json(ROOT/'docs/verification/logistics-art-v1/static-check.json',report)
+    write_json(ROOT/f'docs/verification/logistics-{CONFIG["revision"]}/static-check.json',report)
     print(json.dumps(report,ensure_ascii=False))
 
 

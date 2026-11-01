@@ -1,5 +1,5 @@
 {
-  "revision": "art-v1",
+  "revision": "art-v2",
   "namespace": "logistics",
   "items": [
     {
@@ -56,5 +56,5 @@
   ],
   "gameplay_implemented": false,
   "resource_pack": "mods/logistics/build/logistics-art-v1-resources.zip",
-  "resource_pack_sha256": "1054d9d070f408a3ed9f2e4a46fdcfc91bea74b5ad00cf235538552400aefbb2"
+  "resource_pack_sha256": "dca6476cddfdd310168c34b3c21667b9147f05937f227730a8765cbe1f9768f9"
 }
