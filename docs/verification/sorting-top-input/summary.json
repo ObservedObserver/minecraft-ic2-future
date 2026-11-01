@@ -1,0 +1,59 @@
+{
+  "baseline_commit": "c238ea1f1fe5ed5a3c33bbe9f2baa74d243fb4e3",
+  "reports": {
+    "routing-29.xml": {
+      "tests": 29,
+      "failures": []
+    },
+    "source-local17-full-584.xml": {
+      "tests": 584,
+      "failures": [
+        {
+          "name": "ic2:advminergametests.advminerskipsoreoutsidewhitelist",
+          "message": "(7561823, 4, -6366042) gold ore is not on the whitelist and must not be mined on tick 120"
+        }
+      ]
+    },
+    "delivered-local21-full-637.xml": {
+      "tests": 637,
+      "failures": []
+    },
+    "old-witness.xml": {
+      "tests": 1,
+      "failures": [
+        {
+          "name": "ic2:itemroutinggametests.topinputnaturallypullsfromchestandfilterseast",
+          "message": "(-7357401, 4, -11787115) top chest emptied through normal server ticks on tick 202"
+        }
+      ]
+    }
+  },
+  "junit": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0
+  },
+  "restarts": {
+    "production_sha256": "4df58cb3532b7169d01c598d488d63799f6e838756b2c12e639925491a46cd7c",
+    "phases": [
+      {
+        "phase": "setup",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "phase": "verify",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "phase": "verify-final",
+        "passed": true,
+        "exit_code": 0
+      }
+    ]
+  },
+  "delivery": "output/sorting-top-input/IC2-local21-top-input-patch.zip",
+  "live_instances_modified": false,
+  "client_visual_test_performed": false
+}

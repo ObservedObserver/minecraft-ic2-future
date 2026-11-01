@@ -108,6 +108,179 @@ public class ItemRoutingGameTests {
         });
   }
 
+  @GameTest(template = EMPTY, timeoutTicks = 200)
+  public static void topInputNaturallyPullsFromChestAndFiltersEast(GameTestHelper h) {
+    var te = auditSetup(h);
+    h.setBlock(MACHINE_POS.above(), Blocks.CHEST);
+    var source = getTe(h, MACHINE_POS.above(), ChestBlockEntity.class);
+    source.setItem(0, new ItemStack(Items.IRON_INGOT, 8));
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT, 1);
+    h.succeedWhen(
+        () -> {
+          h.assertTrue(source.isEmpty(), "top chest emptied through normal server ticks");
+          h.assertTrue(te.buffer.isEmpty(), "all pulled items left the buffer");
+          h.assertValueEqual(
+              countItems(getTe(h, EAST_POS, ChestBlockEntity.class), Items.IRON_INGOT),
+              8,
+              "eight ingots reached the east chest without a hopper");
+          h.assertTrue(
+              getTe(h, DOWN_POS, ChestBlockEntity.class).isEmpty(), "no filtered items default");
+          h.assertValueEqual((int) te.getEnergy(), 14840, "only successful outputs cost 20EU each");
+        });
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputWaitsForPowerAndPreservesComponents(GameTestHelper h)
+      throws Exception {
+    var te = auditSetup(h);
+    h.setBlock(MACHINE_POS.above(), Blocks.CHEST);
+    var source = getTe(h, MACHINE_POS.above(), ChestBlockEntity.class);
+    ItemStack named = new ItemStack(Items.IRON_INGOT);
+    named.set(
+        net.minecraft.core.component.DataComponents.CUSTOM_NAME,
+        net.minecraft.network.chat.Component.literal("top input sample"));
+    source.setItem(0, named.copy());
+    te.getFilterSlots(Direction.EAST)[0] = named.copy();
+    var energy = te.getComponent(Energy.class);
+    energy.useEnergy(energy.getEnergy());
+    energy.addEnergy(19);
+    auditTick(te);
+    h.assertValueEqual(countItems(source, Items.IRON_INGOT), 1, "19EU cannot start intake");
+    h.assertTrue(te.buffer.isEmpty(), "unpowered intake leaves buffer empty");
+    energy.addEnergy(1);
+    auditTick(te);
+    var east = getTe(h, EAST_POS, ChestBlockEntity.class);
+    h.assertTrue(source.isEmpty() && te.buffer.isEmpty(), "source consumed exactly once");
+    h.assertTrue(
+        ItemStack.isSameItemSameComponents(east.getItem(0), named),
+        "modern item components survive intake and output");
+    h.assertValueEqual(east.getItem(0).getCount(), 1, "one item arrived");
+    h.assertValueEqual((int) te.getEnergy(), 0, "exactly 20EU consumed");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputAccumulatesWholeFilteredBatch(GameTestHelper h) throws Exception {
+    var te = auditSetup(h);
+    h.setBlock(MACHINE_POS.above(), Blocks.CHEST);
+    var source = getTe(h, MACHINE_POS.above(), ChestBlockEntity.class);
+    source.setItem(0, new ItemStack(Items.IRON_INGOT, 3));
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT, 4);
+    for (int i = 0; i < 3; i++) auditTick(te);
+    h.assertValueEqual(countItems(te, Items.IRON_INGOT), 3, "underfilled batch waits in buffer");
+    h.assertTrue(getTe(h, EAST_POS, ChestBlockEntity.class).isEmpty(), "no partial batch output");
+    h.assertValueEqual((int) te.getEnergy(), 15000, "intake alone does not charge output energy");
+    source.setItem(0, new ItemStack(Items.IRON_INGOT));
+    auditTick(te);
+    h.assertTrue(source.isEmpty() && te.buffer.isEmpty(), "complete batch moved exactly once");
+    h.assertValueEqual(
+        countItems(getTe(h, EAST_POS, ChestBlockEntity.class), Items.IRON_INGOT),
+        4,
+        "four-item filtered batch delivered east");
+    h.assertValueEqual((int) te.getEnergy(), 14920, "four outputs cost 80EU");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputBlockedDestinationNeverReturnsItemsToSource(GameTestHelper h)
+      throws Exception {
+    var te = auditSetup(h);
+    h.setBlock(MACHINE_POS.above(), Blocks.CHEST);
+    var source = getTe(h, MACHINE_POS.above(), ChestBlockEntity.class);
+    var east = getTe(h, EAST_POS, ChestBlockEntity.class);
+    for (int i = 0; i < east.getContainerSize(); i++)
+      east.setItem(i, new ItemStack(Items.DIRT, 64));
+    source.setItem(0, new ItemStack(Items.IRON_INGOT, 8));
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT);
+    // Even an obsolete in-memory top output cannot send anything back to the supply chest.
+    te.defaultRoute = Direction.UP;
+    for (int i = 0; i < 16; i++) auditTick(te);
+    h.assertTrue(source.isEmpty(), "eight items pulled once instead of cycling back upstairs");
+    h.assertValueEqual(countItems(te, Items.IRON_INGOT), 8, "blocked items retained in buffer");
+    h.assertValueEqual((int) te.getEnergy(), 15000, "blocked output costs no energy");
+    east.setItem(0, ItemStack.EMPTY);
+    for (int i = 0; i < 8; i++) auditTick(te);
+    h.assertValueEqual(countItems(east, Items.IRON_INGOT), 8, "output resumes after freeing space");
+    h.assertTrue(source.isEmpty() && te.buffer.isEmpty(), "no loss or duplication after unblock");
+    h.assertValueEqual((int) te.getEnergy(), 14840, "eight successful outputs charged");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputFullBufferDoesNotRemoveSourceItems(GameTestHelper h) throws Exception {
+    var te = auditSetup(h);
+    h.setBlock(DOWN_POS, Blocks.AIR);
+    h.setBlock(MACHINE_POS.above(), Blocks.CHEST);
+    var source = getTe(h, MACHINE_POS.above(), ChestBlockEntity.class);
+    source.setItem(0, new ItemStack(Items.IRON_INGOT));
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT);
+    for (int i = 0; i < te.buffer.size(); i++) te.buffer.put(i, new ItemStack(Items.DIRT, 64));
+    auditTick(te);
+    h.assertValueEqual(countItems(source, Items.IRON_INGOT), 1, "full buffer leaves source alone");
+    h.assertValueEqual(countItems(te, Items.DIRT), 704, "full buffer retained");
+    h.assertValueEqual((int) te.getEnergy(), 15000, "no space costs no energy");
+    te.buffer.put(0, new ItemStack(Items.IRON_INGOT, 63));
+    auditTick(te);
+    h.assertTrue(source.isEmpty(), "matching partial stack is usable even without an empty slot");
+    h.assertValueEqual(
+        countItems(te, Items.IRON_INGOT)
+            + countItems(getTe(h, EAST_POS, ChestBlockEntity.class), Items.IRON_INGOT),
+        64,
+        "all 64 ingots conserved across buffer and destination");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputReadsOtherHalfOfDoubleChest(GameTestHelper h) throws Exception {
+    var te = auditSetup(h);
+    var left =
+        Blocks.CHEST
+            .defaultBlockState()
+            .setValue(net.minecraft.world.level.block.ChestBlock.FACING, Direction.NORTH)
+            .setValue(
+                net.minecraft.world.level.block.ChestBlock.TYPE,
+                net.minecraft.world.level.block.state.properties.ChestType.LEFT);
+    var right =
+        left.setValue(
+            net.minecraft.world.level.block.ChestBlock.TYPE,
+            net.minecraft.world.level.block.state.properties.ChestType.RIGHT);
+    h.setBlock(MACHINE_POS.above(), left);
+    h.setBlock(EAST_POS.above(), right);
+    var source = getTe(h, EAST_POS.above(), ChestBlockEntity.class);
+    source.setItem(0, new ItemStack(Items.IRON_INGOT));
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT);
+    auditTick(te);
+    h.assertTrue(source.isEmpty(), "item extracted from the remote half of the double chest");
+    h.assertValueEqual(
+        countItems(getTe(h, EAST_POS, ChestBlockEntity.class), Items.IRON_INGOT),
+        1,
+        "remote-half item delivered east");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputMigratesLegacyTopDefaultAndIgnoresTopGhosts(GameTestHelper h)
+      throws Exception {
+    var te = auditSetup(h);
+    te.defaultRoute = Direction.UP;
+    te.getFilterSlots(Direction.UP)[0] = new ItemStack(Items.DIRT);
+    te.getFilterSlots(Direction.EAST)[0] = new ItemStack(Items.IRON_INGOT);
+    var tag = te.saveWithFullMetadata(h.getLevel().registryAccess());
+    te.loadWithComponents(tag, h.getLevel().registryAccess());
+    h.assertTrue(te.defaultRoute == Direction.DOWN, "old top default migrates to down");
+    h.assertTrue(te.getFilterSlots(Direction.EAST)[0].is(Items.IRON_INGOT), "east rule preserved");
+    te.onNetworkEvent(
+        h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL), Direction.UP.ordinal());
+    h.assertTrue(te.defaultRoute == Direction.DOWN, "top cannot be selected as an output");
+    te.buffer.put(0, new ItemStack(Items.DIRT));
+    auditTick(te);
+    h.assertValueEqual(
+        countItems(getTe(h, DOWN_POS, ChestBlockEntity.class), Items.DIRT),
+        1,
+        "old top ghost cannot block unmatched default output");
+    h.succeed();
+  }
+
   // item buffer: an ejector upgrade pushes the buffered items into an adjacent inventory one item
   // per tick
   @GameTest(template = EMPTY, timeoutTicks = 200)

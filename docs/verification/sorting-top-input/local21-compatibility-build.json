@@ -1,0 +1,21 @@
+{
+  "version": "26.3.0-local.21-topinput.1",
+  "method": "Full source build of the sorting change, restricted local21 compatibility overlay",
+  "baseline_sha256": "240878e16276fafdf5aaec1b6cb36e6a08bedc2915f66a332ee57ab904c81913",
+  "compiled_source_jar_sha256": "2f4e87701530b3541a88466d48a7f42bffe6e4baed897121d8a65d409ba23760",
+  "result_sha256": "4df58cb3532b7169d01c598d488d63799f6e838756b2c12e639925491a46cd7c",
+  "unchanged_entries_verified_equal": 8582,
+  "replacement_sha256": {
+    "ic2/core/block/machine/tileentity/TileEntitySortingMachine.class": "44ea7c6547ce57558e2ea4b0955933a16435dba92dac344e2a73e092814701d8",
+    "ic2/core/block/machine/container/ContainerSortingMachine.class": "e550823c740aba303b01e2ef0315aebab67dc8ab328cd47e51dd47c22c1521f2",
+    "ic2/core/block/machine/gui/GuiSortingMachine.class": "63a7ac39bc4583b0b996ec07d61d52aa18153fabe493669a92a563c95cb2a354",
+    "ic2/core/block/machine/gui/GuiSortingMachine$1.class": "0cb5f7d87fa9de00e31e237a959a2fb8139a5f9b7e8cf00fcb12171bbc4ce1eb",
+    "ic2/core/block/machine/gui/GuiSortingMachine$2.class": "c52e9845f777166585aa8472c13b25129880abc2d57fc9ed966a7af9e6d35bc2",
+    "ic2/core/block/machine/gui/GuiSortingMachine$3.class": "25e31fd0299cd09f40a2b96df9a6b25d63013673e8b8d48676e907e0bb7523c4",
+    "ic2/core/gametest/ItemRoutingGameTests.class": "3f9ccfd555d9992d343637575a5ae4073624372eb789b938ea4e03d03de9c65d",
+    "META-INF/neoforge.mods.toml": "3e93733a55f9e73ec668747b6881665b19555956f50229a85be2972b404bef72",
+    "assets/ic2/lang/zh_cn.json": "04d125d36f91b590506d6aa9ef14fd51746baeffaed62bd46705874d0ac3cfcc",
+    "assets/ic2/lang/en_us.json": "01ec067b5cc78fb6e6b9a8e6574fb235147f8b29588a6f6a2adb738520881705"
+  },
+  "limitations": "Complete local21 source is not in this repository; merge upstream before a future normal release."
+}
