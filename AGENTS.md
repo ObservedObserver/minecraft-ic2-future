@@ -1,10 +1,123 @@
-# Maintenance instructions
+# Agent 开发与维护约定
 
-- Maintain the actual mod sources in `mods/ic2` and `mods/twilightforest`. These are ordinary directories in this repository, not submodules.
-- Target Minecraft 26.3, NeoForge 26.3.0.83 and Java 25 unless a task explicitly changes the target.
-- Keep each mod's license and upstream attribution. Do not apply a single license to all imported sources or assets.
-- Use `./dev` for build and test commands. See `docs/development.md` for the distinction between JUnit, native GameTests and client verification.
-- Update the relevant mod version for future releases. Keep historical release hashes in `pack/mods.lock.json` unchanged until a new release is actually verified.
-- Commit source, required generated game resources, tests and documentation. Do not commit Gradle caches, worlds, credentials, dependency jars or modpack ZIPs. Gradle wrapper jars are intentional exceptions.
-- Do not rerun `tools/migration-archive` scripts against current sources. They record one-time migrations and refer to the former workspace.
-- Write documentation as Markdown in this repository. Keep known problems and unverified behavior explicit in `docs/known-issues.md`.
+本仓库维护 Minecraft 26.3 / NeoForge 26.3.0.83 / Java 25 的整合包系列。重点是 IC2 Refactored 和暮色森林的定制源码。新 session 从本文件开始，延续已经确认的玩法与验证流程；用户本轮明确要求优先于这里的默认约定。
+
+## 开工时先确认
+
+1. 阅读 [README](README.md)、[开发说明](docs/development.md)、[累计修改](docs/changes.md) 和 [已知问题](docs/known-issues.md)。涉及发布时再读 [发布流程](docs/releases.md) 与 `pack/mods.lock.json`。
+2. 检查当前分支、`git status --short` 和近期相关提交，确认用户目标、已有未提交修改及本 session 的范围。已有修改不自动属于自己，不覆盖、不回滚、不顺手提交。
+3. 实际源码在 `mods/ic2`、`mods/twilightforest`，独立迁移验证在 `validation/twilightforest`。它们是同一仓库中的普通目录，不是子模块。
+4. 使用当前源码、锁定版本的 API、实际调用入口和产物核实问题。旧任务绝对路径只是历史定位记录，不能成为当前构建依赖。`tools/migration-archive` 是一次性迁移脚本档案，不再对当前源码重跑。
+5. 仓库整理时的已验证基线是 IC2 local17、暮色森林 local5。之后的当前版本以各模组 `gradle.properties`、Git 历史及最新验证记录为准；`pack/mods.lock.json` 记录已交付包，可能落后于开发中的源码。
+
+## 已完成的定制与修复
+
+这些是需要保留的累计工作，不要因为上游默认行为不同就删除。完整文件差异可用 `git diff upstream-baselines -- mods/ic2` 或对应暮色目录查看。`upstream-baselines` 保存的是上游源码快照，未导入完整上游提交图，也没有虚构早期逐版本提交。
+
+### IC2
+
+| 阶段 | 已落地的工作与维护重点 |
+| --- | --- |
+| 26.3 迁移及 local1 至 local6 | Java/NeoForge API、注册、现代物品组件与 NBT、资源/配方、界面和原生挂钩迁移；树脂橡胶互通及本地化等累计修复。 |
+| local7 | 辐射伤害及同类效果、方块、实体原生入口审计与修复。重点防范旧方法保留却不再被原版调用。 |
+| local8 | 铱碎片相对旧方案概率翻倍、每次数量翻倍，补充古城等高版本原版战利品入口。当前各表具体数值以资源为准。 |
+| local9 | 修复蒸汽机通过手持流体容器注水的路径。 |
+| local10 | 暮色森林不同档次箱子及相关 Boss/奖励入口支持铱碎片，包含可选联动和奖励缓冲路径。 |
+| local11 | 木质储物箱破坏、携带、放置后保留内容；苍白橡树树苗支持 IC2 作物架。 |
+| local12 | 木炭允许 1:1 打成煤粉。这是用户确认的平衡性选择。 |
+| local13 | 修复蒸馏水等 IC2 流体的移动、漂浮、跳跃及气体行为，不能把所有流体一律当作水。 |
+| local14 | 砂岩提取 9 个硝石粉；硝石粉、煤粉、硫磺粉各 1 合成 3 火药；扩展蛤蛤粉原料及暮色硫磺互通。 |
+| local15 | 修复作物架下耕地被踩坏及相关碰撞穿地问题。 |
+| local16 | 区块加载器界面坐标、区块选择、票据生命周期和保存等修复。 |
+| local17 | 分拣器目标跨槽容量、默认出口过滤、现代组件匹配、规则/物品/能量保存通知，以及稀疏规则重载。 |
+
+配方细节已确认：发酵蛛眼打粉得 4 蛤蛤粉，河豚得 2，4 腐肉得 1；保留其他已有配方。配方、标签及数量以 `mods/ic2/src/main/resources/data` 的当前实现为最终核对对象，不用聊天记忆覆盖源码。
+
+已确认的玩法边界：
+
+- 分拣机需要漏斗或主动输出管道供料，不主动抽取邻箱或吸地上物品；过滤数量表示每批发送量，未凑齐时等待，成功发送每个物品耗 20 EU。命中非默认过滤口但无法输出时，不泄漏到默认口。
+- 分拣匹配要区分名称、药水、耐久等现代组件，同时保留 IC2 对旧 `CUSTOM_DATA` 里充电量等动态键的既有豁免。模拟传输不能改库存或扣电。
+- 鞘翅与背包合并尚未实现；现有附加配方明确禁止鞘翅，只接受电力喷气背包、连接部件和允许的胸甲。普通喷气背包实际使用沼气。
+- 询问、讨论或审计不等于已经实现新玩法。橡胶树产出慢等讨论不能自动记成已证实并修复的 bug；查对应证据后再作判断。
+
+IC2 的版本资料在 [docs/history/ic2](docs/history/ic2)，总索引见 [docs/changes.md](docs/changes.md)。
+
+### 暮色森林
+
+| 阶段 | 已落地的工作与维护重点 |
+| --- | --- |
+| 26.3 迁移及 local1 至 local3 | 世界生成、注册、资源 Codec、渲染、网络、ASM 目标、装备效果等累计迁移。 |
+| local4 | 补足结构地形密度贡献；恢复黑暗森林冠层/冰川覆盖挂钩；修正皇帝布帛可见度签名及无拘无束黏液反弹挂钩。 |
+| local5 | 补齐 OIT 透明管线、红线材质、保护屏障/天气渲染；修复空心树、沼泽空心树、倒木、营地的原生结构定位路径。 |
+
+修改时保留这些约束：结构密度贡献不能重复叠加，地表估计仍使用预期基础地形；覆盖层写入不能越过允许的区块边界；ASM 要检查精确签名、唯一注入点、调用顺序和堆栈；透明管线要分别验证改进透明渲染开启和关闭的路径。
+
+已知问题没有因仓库整理而消失：local5 独立专服仍有 `RegistrationEvents.setupPackets` 引用客户端类的问题；`SpawnerProcessor` 的属性列表、SpawnData 和 scale 分支仍有条件风险。不要把 IC2 单模组专服测试通过写成完整整合包专服可用。详见 [已知问题](docs/known-issues.md) 和 [local5 记录](docs/history/twilightforest/local5)。
+
+### 其他整合内容
+
+已交付八模组包还包含 TeaCraft 1.4.19、JEI、Xaero 小地图和世界地图、Inventory Profiles Next 与 libIPN。这些只锁定版本、来源和哈希，没有把第三方源码收进本仓库。不要在修复 IC2 或暮色时顺带升级或替换其他模组。保留各模组许可、署名和暮色资源许可，不能套一个根许可证覆盖所有内容。
+
+## 每次开发的流程
+
+1. **确定范围和预期。** 先分清原有机制、用户定制、迁移遗漏和新功能。核对源码与用户实际使用 JAR/整合包的版本和 SHA-256，避免审查了一个版本却测试另一个。已授权的修复继续完成，新增概率、配方或能力不要自行扩大范围。
+2. **建立可复现证据。** 找到真实原版/NeoForge 入口、注册、客户端/服务端分支及保存路径。构造最小场景和正常行为对照。方法单测能证明方法问题，不能单凭它宣称自然生成或实际玩家操作必定触发。
+3. **修复并补回归。** 优先在真实调用链上修小范围根因。测试断言物品、能量、流体、坐标和持久化等外部结果；不要只断言实现调用了某个方法。能安全运行旧版见证时，确认同一回归在旧版失败、修复版通过。期望值使用独立快照，尤其不要让输入与期望共用可变 `ItemStack`。
+4. **构建和分层测试。** 先针对性检查，再按下面的验收表扩展。使用 `./dev` 和完整源码构建作为正常维护流程。此前增量覆盖 JAR 是历史空间受限时的交付方式，不能长期依赖旧 JAR 掩盖源码不完整或遗留桥接类。
+5. **实际游戏验收。** 涉及界面、网络、输入、渲染或整合联动时，在隔离客户端核对实际入口。涉及库存、能量、规则或区块票据时，实际保存、关闭并重启，检查重载结果。修改生成逻辑使用隔离新区域/新世界，不动玩家旧世界来制造通过结果。
+6. **复核产物和结论。** 确认测试实际加载的类、资源及 JAR 与准备交付的产物一致。复杂改动检查同类入口和共有处理器的影响。用户要求独立审查时落实；历史使用过的模型不构成每次必须调用特定模型的要求，也不默认启动子 agent。
+7. **记录、提交与交付。** 写清根因、最终改动、真实执行的命令/结果、产物哈希、尚未验证项和存档影响。新的已确认定制/修复追加到 `docs/changes.md`，影响后续维护的行为约束和流程经验同步本文件，未解决问题更新 `docs/known-issues.md`。提交本 session 的改动。按用户已授权范围打包或托管；远端推送、公网发布不自动包含在本地维护中。
+
+文档和低影响整理只做相应静态检查，不为了走流程重复下载数 GB 依赖或重跑全套游戏。代码改动则选择足以验证风险的层次，不能用历史通过记录代替本次测试。
+
+## 命令与验收选择
+
+先设置 JDK 25 的 `JAVA_HOME`。统一命令和输出位置见 [docs/development.md](docs/development.md)。
+
+```sh
+./dev check
+./dev build ic2
+./dev test ic2
+./dev gametest ic2 -- '-Pic2TestFilter=ic2:itemroutinggametests.*'
+./dev gametest ic2
+./dev build twilightforest
+./dev test twilightforest
+./dev test validation
+```
+
+| 改动范围 | 需要重点验证 |
+| --- | --- |
+| 文档、说明、维护规则 | 链接、命令与当前工具一致，`git diff --check`；不冒充执行了游戏测试。 |
+| 配方、标签、战利品 | `./dev check`；实际加载/Codec 或对应游戏回归；核对概率、数量、原配方及未覆盖入口。 |
+| IC2 机器、共有处理器、效果/原生挂钩 | 完整构建、针对性 GameTests、相关 JUnit；共有逻辑或跨类改动再跑完整 IC2 GameTests，检查缺电、塞满、部分容量、模拟/回滚及无丢失/复制。 |
+| 库存、能量、配置、区块加载 | 增加实际保存、关闭、重启；跨区块目标及无玩家在线等相关边界。检查源和目标，不只检查目标变了。 |
+| 暮色生成、Codec、ASM、数据生成 | 暮色完整构建和 JUnit、独立验证；审核数据生成结果，必要时实际生成新区域、执行原生定位或验证变换后的目标类。 |
+| 界面、客户端、网络、渲染 | 实际容器输入/鼠标/生产网络事件和界面渲染；按范围验证完整整合环境、重载、OIT 开关和方向对应。 |
+
+两条必须保留的测试入口约束：
+
+- IC2 使用 **`ic2:*`** 等带命名空间的选择器。无命名空间的 `*` 曾只执行 `minecraft:always_pass`。检查新 XML 中的 IC2 用例与失败数，不能只看 Gradle 返回成功。统一入口已有报告保护，不绕过它误报通过。
+- `./dev test validation` 会先构建暮色 ASM 并实际执行 `runClientData`。独立测试依赖新生成的 `build/generated-port-resources`，不能依靠旧工作区残留文件，也不能把测试输入和期望都替换成同一份随包资源。
+
+修改数据生成源码后，审核输出再同步必要变更到已提交的 `src/generated/resources`。不要只提交生成器，也不要整目录盲目覆盖资源。暮色交付取 `universal` JAR，保留 ASM 嵌入及所需依赖。
+
+整理基线曾实际通过 IC2 8 项 JUnit、577 项原生 GameTests、暮色 85 项 JUnit、独立验证 69 项。记录在 [docs/verification/consolidation.json](docs/verification/consolidation.json)。这些数字只是带日期的基线，不是后续任务固定应有数量，更不是新 session 已经跑过测试的证明。
+
+## 多 session 协作与交接
+
+- 并行修改优先使用各自已分配的 Git 工作树和分支，避免在同一 checkout 同时改同一文件或运行同一工程的 Gradle 任务。共享 Gradle 缓存可复用，但缓存清理必须先确认没有其他任务使用。
+- 开工记录基线提交、负责范围和正在修改的文件。较长任务或跨 session 工作使用独立的 `docs/sessions/<日期>-<任务>.md`，从 [交接模板](docs/session-template.md) 开始；不要让每个 agent 都改同一个全局状态文件。
+- `gradle.properties`、共有处理器、注册入口、`pack/mods.lock.json`、`AGENTS.md` 等重叠文件先协调归属。遇到他人改动时先读差异，继续不冲突的工作；不使用 reset、clean、stash 或覆盖文件来消除别人的修改。
+- 不替其他 session 提交文件，使用明确路径暂存自己的改动。合并或接入别人的提交后，根据实际组合重新检查受影响路径，不能把各分支分别通过当成合并后通过。
+- 同一批发布由一个 session 协调版本号、最终构建、哈希和清单。记录测试所用基线，防止测试后又混入其他修改。交接时给出当前 HEAD、未提交差异、已完成/待做项、真实证据位置及自己的进程/临时目录。
+- 只停止自己创建且身份已核实的进程；不操作其他 session 的客户端、世界、下载服务或测试进程。
+
+## 发布、磁盘和证据
+
+- 后续发布提高对应模组版本号，历史 `pack/mods.lock.json` 哈希在新交付验证完成前保持原样。重编译哈希可能变化，不能据此直接判定逻辑变化，也不能未经核对就覆盖历史交付记录。
+- 打包时一个模组只保留一个版本，保留其他模组和许可；不混入测试探针、依赖缓存或玩家存档。按 [发布流程](docs/releases.md) 核对 ZIP 与各 JAR。局域网下载若在授权范围内，还要实际下载并核对完整字节数及 SHA-256；不沿用历史 IP 假装已托管。
+- 真实客户端测试用最终候选 JAR。临时探针不改变生产逻辑，验收后移除。记录自动探针、人工观察、单模组服务器与完整整合环境之间的区别，以及缺资源等实际限制。
+- 用户重视磁盘空间。构建前检查空闲空间，默认缓存为 `.cache/gradle`，可用 `GRADLE_USER_HOME` 放到其他磁盘。不要复制整套 JDK、依赖、世界和整合包作为日常代码快照。
+- 文档默认用仓库 Markdown。新任务证据放到独立位置，例如 `docs/verification/<任务>/`；保留简洁报告、关键 JSON/XML 和必要复现源码。不要覆盖既有历史报告来制造“最新通过”。原始大日志和运行产物放忽略目录，归档必要证据后再清理。
+- Git 提交源码、必要生成资源、测试、文档和 wrapper JAR。不要提交构建/依赖 JAR、ZIP、缓存、运行世界、凭据或整树格式化。保留 IC2、暮色代码与资源各自的许可证和署名。
+- 收尾说明改了什么、验证了什么、还缺什么；未完成或未执行的验收如实列出。清理仅限本任务拥有且已停止使用的目录，保留源码、关键证据和已交付包，不删除玩家存档或共享缓存。

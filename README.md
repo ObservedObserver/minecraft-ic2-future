@@ -28,6 +28,8 @@ docs/provenance/           上游基线、导入时的逐文件哈希与来源
 
 入口文档：
 
+新 agent session 先读 [AGENTS.md](AGENTS.md)，其中包含累计定制、开发验收流程和多 session 协作约定。跨会话任务可使用 [交接模板](docs/session-template.md)。
+
 - [开发、测试与构建](docs/development.md)
 - [累计修改与版本](docs/changes.md)
 - [已知问题与验证边界](docs/known-issues.md)
