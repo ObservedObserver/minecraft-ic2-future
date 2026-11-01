@@ -1,0 +1,17 @@
+{
+  "inserter": {
+    "base_model": "{tier}/inserter_base",
+    "arm_model": "{tier}/inserter_arm",
+    "pivot": [
+      8,
+      8,
+      8
+    ],
+    "axis": "y",
+    "preview_angles": [
+      0,
+      180
+    ],
+    "note": "Review pose animation only. Does not implement item transfer or a block-entity renderer."
+  }
+}

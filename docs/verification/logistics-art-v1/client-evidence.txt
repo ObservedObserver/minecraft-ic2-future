@@ -1,0 +1,28 @@
+Isolated official Minecraft 26.3 art review; selected log lines, not complete log.
+[18:55:24] [Render thread/INFO]: SDL [SYSTEM]: App version: 26.3
+[18:55:29] [Render thread/INFO]: Reloading ResourceManager: vanilla, vanilla, file/logistics-art-v1-resources.zip
+[18:56:23] [Render thread/INFO]: Found new data pack file/logistics-art-showcase, loading it automatically
+[18:56:24] [Server thread/INFO]: Starting integrated minecraft server version 26.3
+[18:56:24] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:overworld
+[18:56:24] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_nether
+[18:56:24] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_end
+[18:56:26] [Server thread/INFO]: System chat: ArtReview joined the game
+[18:56:26] [Render thread/WARN]: Requested post effect does not exist: minecraft:end_of_frame
+[18:57:35] [Server thread/INFO]: System chat: [ArtReview: Running function logistics_review:setup]
+[18:57:35] [Render thread/INFO]: [System] [CHAT] Running function logistics_review:setup
+[18:58:00] [Server thread/INFO]: System chat: [ArtReview: Set own game mode to Spectator Mode]
+[18:58:00] [Render thread/INFO]: [System] [CHAT] Set own game mode to Spectator Mode
+[18:58:06] [Server thread/INFO]: System chat: [ArtReview: Teleported ArtReview to 7.500000, 84.000000, 8.500000]
+[18:58:06] [Render thread/INFO]: [System] [CHAT] Teleported ArtReview to 7.500000, 84.000000, 8.500000
+[18:58:21] [Server thread/INFO]: System chat: [ArtReview: Teleported ArtReview to 1.500000, 85.000000, 18.500000]
+[18:58:21] [Render thread/INFO]: [System] [CHAT] Teleported ArtReview to 1.500000, 85.000000, 18.500000
+[18:58:35] [Server thread/INFO]: Saving and pausing game...
+[18:58:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:overworld
+[18:58:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_nether
+[18:58:36] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_end
+[18:58:47] [Server thread/INFO]: Saving players
+[18:58:47] [Server thread/INFO]: Saving worlds
+[18:58:47] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:overworld
+[18:58:47] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_nether
+[18:58:47] [Server thread/INFO]: Saving chunks for level 'ServerLevel[Logistics Art Review]'/minecraft:the_end
+[18:58:52] [Render thread/INFO]: Stopping!

@@ -1,0 +1,60 @@
+{
+  "revision": "art-v1",
+  "namespace": "logistics",
+  "items": [
+    {
+      "id": "logistics:low_conveyor",
+      "name": "低速传送带",
+      "tier": "low",
+      "kind": "conveyor",
+      "model": "logistics:block/low/belt_straight"
+    },
+    {
+      "id": "logistics:low_inserter",
+      "name": "低速分拣器",
+      "tier": "low",
+      "kind": "inserter",
+      "model": "logistics:block/low/inserter"
+    },
+    {
+      "id": "logistics:medium_conveyor",
+      "name": "中速传送带",
+      "tier": "medium",
+      "kind": "conveyor",
+      "model": "logistics:block/medium/belt_straight"
+    },
+    {
+      "id": "logistics:medium_inserter",
+      "name": "中速分拣器",
+      "tier": "medium",
+      "kind": "inserter",
+      "model": "logistics:block/medium/inserter"
+    },
+    {
+      "id": "logistics:high_conveyor",
+      "name": "高速传送带",
+      "tier": "high",
+      "kind": "conveyor",
+      "model": "logistics:block/high/belt_straight"
+    },
+    {
+      "id": "logistics:high_inserter",
+      "name": "高速分拣器",
+      "tier": "high",
+      "kind": "inserter",
+      "model": "logistics:block/high/inserter"
+    }
+  ],
+  "shapes": [
+    "straight",
+    "left",
+    "right",
+    "merge_left",
+    "merge_right",
+    "ascending",
+    "descending"
+  ],
+  "gameplay_implemented": false,
+  "resource_pack": "mods/logistics/build/logistics-art-v1-resources.zip",
+  "resource_pack_sha256": "1054d9d070f408a3ed9f2e4a46fdcfc91bea74b5ad00cf235538552400aefbb2"
+}

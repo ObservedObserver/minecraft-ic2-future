@@ -1,0 +1,8 @@
+{
+  "block.logistics.low_conveyor": "低速传送带",
+  "block.logistics.low_inserter": "低速分拣器",
+  "block.logistics.medium_conveyor": "中速传送带",
+  "block.logistics.medium_inserter": "中速分拣器",
+  "block.logistics.high_conveyor": "高速传送带",
+  "block.logistics.high_inserter": "高速分拣器"
+}

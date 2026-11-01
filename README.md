@@ -8,6 +8,7 @@
 mods/ic2/                  IC2 全部源码、资源、GameTests、JUnit 与 Gradle 工程
 mods/twilightforest/        暮色森林全部源码、资源、ASM 子工程与 JUnit
 validation/twilightforest/  密度、地形、资源及原生 ASM 挂钩独立验证工程
+mods/logistics/            独立物流模组的美术资源草稿，尚无可运行物流 JAR
 tools/project.py           统一构建与检查入口
 tools/migration-archive/    一次性迁移脚本档案，不作为日常构建步骤
 pack/mods.lock.json        已交付八模组版本、来源与哈希
@@ -35,6 +36,7 @@ docs/provenance/           上游基线、导入时的逐文件哈希与来源
 - [已知问题与验证边界](docs/known-issues.md)
 - [整合包发布流程](docs/releases.md)
 - [仓库整理与核对结果](docs/consolidation.md)
+- [物流资源首版与美术评审](mods/logistics/README.md)
 - [原作者与许可](NOTICE.md)
 
 旧任务目录继续保留作历史资料；后续维护以本仓库为准。这里只创建了本地 Git 仓库，没有配置推送目标。

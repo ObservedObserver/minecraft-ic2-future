@@ -1,0 +1,8 @@
+{
+  "block.logistics.low_conveyor": "Low-speed Conveyor",
+  "block.logistics.low_inserter": "Low-speed Inserter",
+  "block.logistics.medium_conveyor": "Medium-speed Conveyor",
+  "block.logistics.medium_inserter": "Medium-speed Inserter",
+  "block.logistics.high_conveyor": "High-speed Conveyor",
+  "block.logistics.high_inserter": "High-speed Inserter"
+}

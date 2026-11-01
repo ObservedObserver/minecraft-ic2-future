@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "logistics:block/high/inserter",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "logistics:block/high/inserter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "logistics:block/high/inserter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "logistics:block/high/inserter",
+      "y": 270
+    }
+  }
+}

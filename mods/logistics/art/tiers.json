@@ -1,0 +1,11 @@
+{
+  "namespace": "logistics",
+  "revision": "art-v1",
+  "texture_size": 16,
+  "tiers": [
+    {"id":"low","zh":"低速","en":"Low-speed","marks":1,"frame_ticks":4,"trim":["#473c2e","#70583d","#9e7b4e","#c6a270"],"accent":"#e3c48a"},
+    {"id":"medium","zh":"中速","en":"Medium-speed","marks":2,"frame_ticks":2,"trim":["#4a3029","#855038","#bc794d","#e3a873"],"accent":"#ffce91"},
+    {"id":"high","zh":"高速","en":"High-speed","marks":3,"frame_ticks":1,"trim":["#303c48","#536779","#8ea8b5","#ccdde0"],"accent":"#85e0d2"}
+  ],
+  "notes": "Visual animation timings only, not gameplay throughput. IDs and names do not encode recipe ingredients. Palette is editable; no recipes are supplied."
+}

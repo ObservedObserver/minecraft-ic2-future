@@ -1,0 +1,228 @@
+{
+  "variants": {
+    "facing=north,running=true,shape=straight": {
+      "model": "logistics:block/medium/belt_straight",
+      "y": 0
+    },
+    "facing=north,running=false,shape=straight": {
+      "model": "logistics:block/medium/belt_straight_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=left": {
+      "model": "logistics:block/medium/belt_left",
+      "y": 0
+    },
+    "facing=north,running=false,shape=left": {
+      "model": "logistics:block/medium/belt_left_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=right": {
+      "model": "logistics:block/medium/belt_right",
+      "y": 0
+    },
+    "facing=north,running=false,shape=right": {
+      "model": "logistics:block/medium/belt_right_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left",
+      "y": 0
+    },
+    "facing=north,running=false,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right",
+      "y": 0
+    },
+    "facing=north,running=false,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending",
+      "y": 0
+    },
+    "facing=north,running=false,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending_idle",
+      "y": 0
+    },
+    "facing=north,running=true,shape=descending": {
+      "model": "logistics:block/medium/belt_descending",
+      "y": 0
+    },
+    "facing=north,running=false,shape=descending": {
+      "model": "logistics:block/medium/belt_descending_idle",
+      "y": 0
+    },
+    "facing=east,running=true,shape=straight": {
+      "model": "logistics:block/medium/belt_straight",
+      "y": 90
+    },
+    "facing=east,running=false,shape=straight": {
+      "model": "logistics:block/medium/belt_straight_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=left": {
+      "model": "logistics:block/medium/belt_left",
+      "y": 90
+    },
+    "facing=east,running=false,shape=left": {
+      "model": "logistics:block/medium/belt_left_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=right": {
+      "model": "logistics:block/medium/belt_right",
+      "y": 90
+    },
+    "facing=east,running=false,shape=right": {
+      "model": "logistics:block/medium/belt_right_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left",
+      "y": 90
+    },
+    "facing=east,running=false,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right",
+      "y": 90
+    },
+    "facing=east,running=false,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending",
+      "y": 90
+    },
+    "facing=east,running=false,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending_idle",
+      "y": 90
+    },
+    "facing=east,running=true,shape=descending": {
+      "model": "logistics:block/medium/belt_descending",
+      "y": 90
+    },
+    "facing=east,running=false,shape=descending": {
+      "model": "logistics:block/medium/belt_descending_idle",
+      "y": 90
+    },
+    "facing=south,running=true,shape=straight": {
+      "model": "logistics:block/medium/belt_straight",
+      "y": 180
+    },
+    "facing=south,running=false,shape=straight": {
+      "model": "logistics:block/medium/belt_straight_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=left": {
+      "model": "logistics:block/medium/belt_left",
+      "y": 180
+    },
+    "facing=south,running=false,shape=left": {
+      "model": "logistics:block/medium/belt_left_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=right": {
+      "model": "logistics:block/medium/belt_right",
+      "y": 180
+    },
+    "facing=south,running=false,shape=right": {
+      "model": "logistics:block/medium/belt_right_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left",
+      "y": 180
+    },
+    "facing=south,running=false,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right",
+      "y": 180
+    },
+    "facing=south,running=false,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending",
+      "y": 180
+    },
+    "facing=south,running=false,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending_idle",
+      "y": 180
+    },
+    "facing=south,running=true,shape=descending": {
+      "model": "logistics:block/medium/belt_descending",
+      "y": 180
+    },
+    "facing=south,running=false,shape=descending": {
+      "model": "logistics:block/medium/belt_descending_idle",
+      "y": 180
+    },
+    "facing=west,running=true,shape=straight": {
+      "model": "logistics:block/medium/belt_straight",
+      "y": 270
+    },
+    "facing=west,running=false,shape=straight": {
+      "model": "logistics:block/medium/belt_straight_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=left": {
+      "model": "logistics:block/medium/belt_left",
+      "y": 270
+    },
+    "facing=west,running=false,shape=left": {
+      "model": "logistics:block/medium/belt_left_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=right": {
+      "model": "logistics:block/medium/belt_right",
+      "y": 270
+    },
+    "facing=west,running=false,shape=right": {
+      "model": "logistics:block/medium/belt_right_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left",
+      "y": 270
+    },
+    "facing=west,running=false,shape=merge_left": {
+      "model": "logistics:block/medium/belt_merge_left_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right",
+      "y": 270
+    },
+    "facing=west,running=false,shape=merge_right": {
+      "model": "logistics:block/medium/belt_merge_right_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending",
+      "y": 270
+    },
+    "facing=west,running=false,shape=ascending": {
+      "model": "logistics:block/medium/belt_ascending_idle",
+      "y": 270
+    },
+    "facing=west,running=true,shape=descending": {
+      "model": "logistics:block/medium/belt_descending",
+      "y": 270
+    },
+    "facing=west,running=false,shape=descending": {
+      "model": "logistics:block/medium/belt_descending_idle",
+      "y": 270
+    }
+  }
+}

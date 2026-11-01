@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "models": 51,
+  "textures": 42,
+  "faces_checked": 3732,
+  "devices": 6,
+  "blockstates": 6,
+  "animated_textures": 15,
+  "resource_pack_sha256": "1054d9d070f408a3ed9f2e4a46fdcfc91bea74b5ad00cf235538552400aefbb2",
+  "scope": "Static JSON/resource/PNG/link/ZIP validation, not an in-game or gameplay test."
+}
