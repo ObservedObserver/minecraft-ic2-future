@@ -21,9 +21,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 @NotClassic
@@ -65,6 +67,10 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
     if (defaultRouteIdx >= 0 && defaultRouteIdx < Util.ALL_DIRS.length) {
       this.defaultRoute = Util.ALL_DIRS[defaultRouteIdx];
     }
+    // The top is now an input. Migrate the former default output without discarding filters.
+    if (this.defaultRoute == Direction.UP) {
+      this.defaultRoute = Direction.DOWN;
+    }
   }
 
   @Override
@@ -98,7 +104,7 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
   protected void updateEntityServer() {
     super.updateEntityServer();
 
-    boolean changed = false;
+    boolean changed = this.energy.getEnergy() >= 20.0 && this.pullFromAbove();
     slots:
     for (int index = 0; index < this.buffer.size(); index++) {
       if (this.energy.getEnergy() < 20.0) {
@@ -109,6 +115,9 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
         continue;
       }
       for (EnvItemHandler.AdjacentInventory inv : StackUtil.ENV.getAdjacentInventories(this)) {
+        if (inv.getSide() == Direction.UP) {
+          continue;
+        }
         if (inv.getSide() == this.defaultRoute) {
           if (!this.matchesFilteredRoute(stack)) {
             int amount = StackUtil.ENV.deposit(inv, StackUtil.copyWithSize(stack, 1), false);
@@ -149,9 +158,59 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
     }
   }
 
+  private boolean pullFromAbove() {
+    BlockPos sourcePos = this.worldPosition.above();
+    BlockState sourceState = this.level.getBlockState(sourcePos);
+    if (!(sourceState.getBlock() instanceof ChestBlock chestBlock)) {
+      return false;
+    }
+    // Resolve both halves of a double chest, just as the existing chest output adapter does.
+    Container source =
+        ChestBlock.getContainer(chestBlock, sourceState, this.level, sourcePos, true);
+    if (source == null) {
+      return false;
+    }
+    for (int sourceSlot = 0; sourceSlot < source.getContainerSize(); sourceSlot++) {
+      ItemStack candidate = source.getItem(sourceSlot);
+      if (candidate.isEmpty()) {
+        continue;
+      }
+      int destination = -1;
+      for (int i = 0; i < this.buffer.size(); i++) {
+        ItemStack stored = this.buffer.get(i);
+        if (StackUtil.isEmpty(stored)) {
+          if (destination < 0) {
+            destination = i;
+          }
+        } else if (ItemStack.isSameItemSameComponents(stored, candidate)
+            && stored.getCount()
+                < Math.min(stored.getMaxStackSize(), this.buffer.getStackSizeLimit())) {
+          destination = i;
+          break;
+        }
+      }
+      if (destination < 0) {
+        continue;
+      }
+      // Vanilla chest removal and buffer insertion run together on the server thread. Never
+      // remove from the source until there is room; use the removed stack to retain components.
+      ItemStack extracted = source.removeItem(sourceSlot, 1);
+      if (extracted.isEmpty()) {
+        continue;
+      }
+      ItemStack stored = this.buffer.get(destination);
+      this.buffer.put(
+          destination,
+          extracted.copyWithCount(StackUtil.isEmpty(stored) ? 1 : stored.getCount() + 1));
+      source.setChanged();
+      return true;
+    }
+    return false;
+  }
+
   private boolean matchesFilteredRoute(ItemStack stack) {
     for (Direction side : Util.ALL_DIRS) {
-      if (side == this.defaultRoute) {
+      if (side == Direction.UP || side == this.defaultRoute) {
         continue;
       }
       for (ItemStack filter : this.getFilterSlots(side)) {
@@ -182,7 +241,10 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
 
   @Override
   public void onNetworkEvent(Player player, int event) {
-    if (event >= 0 && event <= 5 && this.defaultRoute != Util.ALL_DIRS[event]) {
+    if (event >= 0
+        && event <= 5
+        && Util.ALL_DIRS[event] != Direction.UP
+        && this.defaultRoute != Util.ALL_DIRS[event]) {
       this.defaultRoute = Util.ALL_DIRS[event];
       this.setChanged();
     }

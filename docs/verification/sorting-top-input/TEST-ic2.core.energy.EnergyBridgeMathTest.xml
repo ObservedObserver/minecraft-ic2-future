@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ic2.core.energy.EnergyBridgeMathTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-01T11:44:38.354Z" hostname="CysteinedeMacBook-Pro.local" time="0.013">
+  <properties/>
+  <testcase name="feToEu_defaultRatio_andRoundTrip()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.009"/>
+  <testcase name="boundary_zeroAndInvalid()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.001"/>
+  <testcase name="residual_simulatePartialAccept()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.001"/>
+  <testcase name="euToFeConverter_pushAccounting_floorAndResidual()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.0"/>
+  <testcase name="euToFe_defaultRatio_ceilAndFloor()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.0"/>
+  <testcase name="euToFe_overflowSaturates_andPartialAcceptResidue()" classname="ic2.core.energy.EnergyBridgeMathTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,4 +1,5 @@
 {
+  "ic2.SortingMachine.input": "上方输入：有电时每刻从紧贴的箱子取入 1 个物品",
   "advancements.ic2.acquire_insulated_cable": "防止触电",
   "advancements.ic2.acquire_insulated_cable.desc": "制造绝缘“质铜”导线",
   "advancements.ic2.acquire_matter": "粉色液体",

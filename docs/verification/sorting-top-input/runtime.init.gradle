@@ -1,0 +1,26 @@
+allprojects {
+    afterEvaluate {
+        tasks.register('writeSortingProbeClasspath') {
+            doLast {
+                rootProject.file('../../.local/sorting-restart-probe/compile-classpath.txt').text =
+                    sourceSets.main.compileClasspath.asPath + File.pathSeparator + sourceSets.main.output.classesDirs.asPath
+            }
+        }
+        ['runServer', 'runGameTestServer'].each { taskName ->
+            tasks.named(taskName).configure {
+                doFirst {
+                    def targetJar = System.getenv('IC2_SORTING_RUNTIME_JAR')
+                    if (!targetJar) throw new GradleException('IC2_SORTING_RUNTIME_JAR is required for actual-JAR validation')
+                    def modProviders = jvmArgumentProviders.findAll { it.class.name.contains('ModFoldersProvider') }
+                    if (modProviders.size() != 1) throw new GradleException('Unexpected mod-folder argument providers: ' + modProviders)
+                    jvmArgumentProviders.removeAll(modProviders)
+                    def folders = 'ic2%%' + targetJar
+                    def probeJar = System.getenv('IC2_SORTING_PROBE_JAR')
+                    if (probeJar) folders += File.pathSeparator + 'sortingprobe%%' + probeJar
+                    jvmArgs('-Dfml.modFolders=' + folders)
+                }
+            }
+        }
+        neoForge.runs.server.programArguments.addAll('--universe', rootProject.file('../../.local/sorting-restart-probe/world').absolutePath, '--world', 'sorting-restart', '--port', '0')
+    }
+}

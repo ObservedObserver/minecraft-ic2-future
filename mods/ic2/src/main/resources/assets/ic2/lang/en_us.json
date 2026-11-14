@@ -1,4 +1,5 @@
 {
+  "ic2.SortingMachine.input": "Top input: pulls 1 item per tick from the chest directly above while powered",
   "advancements.ic2.acquire_insulated_cable": "防止触电",
   "advancements.ic2.acquire_insulated_cable.desc": "Craft an Insulated Copper Cable",
   "advancements.ic2.acquire_matter": "Pink Liquid",
