@@ -10,10 +10,13 @@ import ic2.core.block.machine.tileentity.TileEntityWeightedItemDistributor;
 import ic2.core.block.tileentity.Ic2TileEntityBlock;
 import ic2.core.ref.Ic2Blocks;
 import ic2.core.ref.Ic2Items;
+import java.util.ArrayList;
+import java.util.Collections;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -278,6 +281,34 @@ public class ItemRoutingGameTests {
         countItems(getTe(h, DOWN_POS, ChestBlockEntity.class), Items.DIRT),
         1,
         "old top ghost cannot block unmatched default output");
+    h.succeed();
+  }
+
+  @GameTest(template = EMPTY, batch = "sorting_audit")
+  public static void topInputPreservesLegacyMenuIndices(GameTestHelper h) throws Exception {
+    var te = auditSetup(h);
+    var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+    var menu = te.createServerScreenHandler(1, player);
+    int firstFilter = 36 + 1 + 3 + 11;
+    int topIndex = firstFilter + Direction.UP.ordinal() * 7;
+    int eastIndex = firstFilter + Direction.EAST.ordinal() * 7;
+    h.assertValueEqual(menu.slots.size(), 93, "legacy menu has 93 slots");
+    var oldContents = new ArrayList<>(Collections.nCopies(93, ItemStack.EMPTY));
+    oldContents.set(topIndex, new ItemStack(Items.GOLD_INGOT));
+    oldContents.set(eastIndex, new ItemStack(Items.IRON_INGOT));
+    te.getFilterSlots(Direction.UP)[0] = new ItemStack(Items.DIRT);
+    menu.initializeContents(1, oldContents, ItemStack.EMPTY);
+    for (int i = 0; i < 7; i++) {
+      h.assertTrue(!menu.getSlot(topIndex + i).isActive(), "top position is hidden");
+      h.assertTrue(!menu.getSlot(topIndex + i).hasItem(), "top position remains empty");
+    }
+    h.assertTrue(te.getFilterSlots(Direction.EAST)[0].is(Items.IRON_INGOT), "east sync is aligned");
+    menu.setCarried(new ItemStack(Items.IRON_INGOT));
+    menu.clicked(topIndex, 0, ContainerInput.PICKUP, player);
+    h.assertTrue(te.getFilterSlots(Direction.UP)[0].is(Items.DIRT), "top sample is untouched");
+    h.assertValueEqual(menu.getCarried().getCount(), 1, "top click keeps the carried item");
+    menu.clicked(eastIndex, 0, ContainerInput.PICKUP, player);
+    h.assertValueEqual(te.getFilterSlots(Direction.EAST)[0].getCount(), 2, "east click edits east");
     h.succeed();
   }
 
