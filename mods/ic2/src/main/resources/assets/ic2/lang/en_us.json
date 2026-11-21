@@ -1,4 +1,6 @@
 {
+  "ic2.SortingMachine.inputWhitelist": "D input route: automatically pull matching items from this side (empty list disables input)",
+  "ic2.SortingMachine.outputWhitelist": "Whitelist output: send matching batches to this side, one item per tick",
   "ic2.SortingMachine.input": "Top input: pulls 1 item per tick from the chest directly above while powered",
   "advancements.ic2.acquire_insulated_cable": "防止触电",
   "advancements.ic2.acquire_insulated_cable.desc": "Craft an Insulated Copper Cable",

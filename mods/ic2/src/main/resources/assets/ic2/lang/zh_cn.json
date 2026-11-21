@@ -1,4 +1,6 @@
 {
+  "ic2.SortingMachine.inputWhitelist": "D 输入路径：从此方向按白名单自动取料（空名单禁用）",
+  "ic2.SortingMachine.outputWhitelist": "白名单输出：向此方向发送，数量为成批门槛，逐个弹出",
   "ic2.SortingMachine.input": "上方输入：有电时每刻从紧贴的箱子取入 1 个物品",
   "advancements.ic2.acquire_insulated_cable": "防止触电",
   "advancements.ic2.acquire_insulated_cable.desc": "制造绝缘“质铜”导线",
