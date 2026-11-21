@@ -1,0 +1,59 @@
+{
+  "baseline": "5addaeb8",
+  "version": "26.3.0-local.17-directional.1",
+  "jar_sha256": "d027b70d3e7cc4a974c2e7e97c207f96c606ba28afdb2ce02096d05259361964",
+  "reports": {
+    "directional-21.xml": {
+      "tests": 21,
+      "failures": []
+    },
+    "full-580.xml": {
+      "tests": 580,
+      "failures": [
+        {
+          "name": "ic2:advminergametests.advminerskipsoreoutsidewhitelist",
+          "message": "(-4959285, 4, -9717920) gold ore is not on the whitelist and must not be mined on tick 120"
+        }
+      ]
+    },
+    "upstream-isolated-miner.xml": {
+      "tests": 1,
+      "failures": []
+    },
+    "candidate-isolated-miner.xml": {
+      "tests": 1,
+      "failures": []
+    }
+  },
+  "junit": {
+    "tests": 8,
+    "failures": 0
+  },
+  "restarts": {
+    "production_sha256": "d027b70d3e7cc4a974c2e7e97c207f96c606ba28afdb2ce02096d05259361964",
+    "phases": [
+      {
+        "phase": "setup",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "phase": "verify",
+        "passed": true,
+        "exit_code": 0
+      },
+      {
+        "phase": "verify-final",
+        "passed": true,
+        "exit_code": 0
+      }
+    ]
+  },
+  "subagent_review": "two P2 findings fixed; final review found no blocking directional logic issues",
+  "limits": [
+    "full suite has one failing advanced-miner case; isolated upstream test is not equivalent full-suite baseline proof",
+    "no host or full-pack GUI validation",
+    "not a complete local35 upgrade"
+  ],
+  "live_instances_modified": false
+}

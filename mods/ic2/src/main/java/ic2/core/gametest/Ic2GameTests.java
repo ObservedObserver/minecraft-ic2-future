@@ -52,6 +52,7 @@ public final class Ic2GameTests {
     IridiumLootGameTests.class,
     TwilightForestLootGameTests.class,
     ItemRoutingGameTests.class,
+    DirectionalSortingGameTests.class,
     JetpackGameTests.class,
     KineticGeneratorGameTests.class,
     MachineGameTests.class,

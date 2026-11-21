@@ -6,7 +6,6 @@ import ic2.core.gui.CustomButton;
 import ic2.core.gui.EnergyGauge;
 import ic2.core.gui.FixedSizeOverlaySupplier;
 import ic2.core.gui.Image;
-import ic2.core.util.StackUtil;
 import ic2.core.util.Util;
 import java.util.function.Supplier;
 import net.minecraft.core.Direction;
@@ -43,34 +42,9 @@ public class GuiSortingMachine extends Ic2Gui<ContainerSortingMachine> {
 
                 @Override
                 public int getVS() {
-                  return StackUtil.ENV.getAdjacentInventory(container.base, cDir) != null ? 15 : 33;
+                  return container.base.hasAdjacentInventory(cDir) ? 15 : 33;
                 }
               }));
-      if (dir == Direction.UP) {
-        this.addElement(
-            Image.create(
-                    this,
-                    42,
-                    18 + dir.ordinal() * 20,
-                    18,
-                    18,
-                    texture,
-                    256,
-                    256,
-                    new FixedSizeOverlaySupplier(18) {
-                      @Override
-                      public int getUS() {
-                        return 230;
-                      }
-
-                      @Override
-                      public int getVS() {
-                        return 15;
-                      }
-                    })
-                .withTooltip("ic2.SortingMachine.input"));
-        continue;
-      }
       this.addElement(
           new CustomButton(
                   this,
@@ -95,8 +69,8 @@ public class GuiSortingMachine extends Ic2Gui<ContainerSortingMachine> {
                   (Supplier<String>)
                       () ->
                           container.base.defaultRoute != cDir
-                              ? "ic2.SortingMachine.whitelist"
-                              : "ic2.SortingMachine.default"));
+                              ? "ic2.SortingMachine.outputWhitelist"
+                              : "ic2.SortingMachine.inputWhitelist"));
     }
   }
 

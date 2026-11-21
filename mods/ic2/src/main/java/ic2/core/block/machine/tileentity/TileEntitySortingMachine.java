@@ -9,7 +9,6 @@ import ic2.core.IHasGui;
 import ic2.core.block.invslot.InvSlot;
 import ic2.core.block.invslot.InvSlotUpgrade;
 import ic2.core.block.machine.container.ContainerSortingMachine;
-import ic2.core.item.EnvItemHandler;
 import ic2.core.network.GrowingBuffer;
 import ic2.core.profile.NotClassic;
 import ic2.core.ref.Ic2BlockEntities;
@@ -21,12 +20,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 @NotClassic
 public class TileEntitySortingMachine extends TileEntityElectricMachine
@@ -35,7 +38,11 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
   public final InvSlotUpgrade upgradeSlot;
   public final InvSlot buffer;
   private final ItemStack[][] filters;
+  // Retain the legacy field/network/NBT name; D now designates the selected INPUT face.
   public Direction defaultRoute = Direction.DOWN;
+  private final ItemStack[] batchItems = new ItemStack[6];
+  private final ItemStack[] batchRules = new ItemStack[6];
+  private final int[] batchRemaining = new int[6];
 
   public TileEntitySortingMachine(BlockPos pos, BlockState state) {
     super(Ic2BlockEntities.SORTING_MACHINE, pos, state, 15000, 2, false);
@@ -67,9 +74,21 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
     if (defaultRouteIdx >= 0 && defaultRouteIdx < Util.ALL_DIRS.length) {
       this.defaultRoute = Util.ALL_DIRS[defaultRouteIdx];
     }
-    // The top is now an input. Migrate the former default output without discarding filters.
-    if (this.defaultRoute == Direction.UP) {
-      this.defaultRoute = Direction.DOWN;
+    java.util.Arrays.fill(this.batchRemaining, 0);
+    java.util.Arrays.fill(this.batchItems, ItemStack.EMPTY);
+    java.util.Arrays.fill(this.batchRules, ItemStack.EMPTY);
+    for (var element : ic2.compat.NbtCompat.getList(nbt, "routingBatches", 10)) {
+      if (!(element instanceof CompoundTag tag)) continue;
+      int side = tag.getIntOr("side", -1);
+      if (side < 0 || side >= 6 || Util.ALL_DIRS[side] == this.defaultRoute) continue;
+      ItemStack item = ic2.compat.NbtCompat.readItem(registries, tag.getCompoundOrEmpty("item"));
+      ItemStack rule = ic2.compat.NbtCompat.readItem(registries, tag.getCompoundOrEmpty("rule"));
+      int remaining = tag.getIntOr("remaining", 0);
+      if (remaining > 0 && remaining <= rule.getCount() && matchesFilter(rule, item)) {
+        this.batchItems[side] = item.copyWithCount(1);
+        this.batchRules[side] = rule;
+        this.batchRemaining[side] = remaining;
+      }
     }
   }
 
@@ -90,6 +109,21 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
 
     nbt.put("filters", filtersTag);
     nbt.putByte("defaultroute", (byte) this.defaultRoute.ordinal());
+    ListTag batches = new ListTag();
+    for (int side = 0; side < 6; side++) {
+      if (this.batchRemaining[side] <= 0) continue;
+      CompoundTag tag = new CompoundTag();
+      tag.putInt("side", side);
+      tag.putInt("remaining", this.batchRemaining[side]);
+      tag.put(
+          "item",
+          ic2.compat.NbtCompat.saveItem(this.batchItems[side], registries, new CompoundTag()));
+      tag.put(
+          "rule",
+          ic2.compat.NbtCompat.saveItem(this.batchRules[side], registries, new CompoundTag()));
+      batches.add(tag);
+    }
+    nbt.put("routingBatches", batches);
   }
 
   @Override
@@ -103,123 +137,147 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
   @Override
   protected void updateEntityServer() {
     super.updateEntityServer();
-
-    boolean changed = this.energy.getEnergy() >= 20.0 && this.pullFromAbove();
-    slots:
-    for (int index = 0; index < this.buffer.size(); index++) {
-      if (this.energy.getEnergy() < 20.0) {
-        break;
+    if (this.energy.getEnergy() < 20.0) return;
+    boolean changed = this.pullFromInput();
+    for (Direction side : Util.ALL_DIRS) {
+      if (side == this.defaultRoute || this.energy.getEnergy() < 20.0) continue;
+      var target = this.adjacentHandler(side);
+      if (target == null) continue;
+      int index = side.ordinal();
+      // Changing a ghost rule cancels the pending batch before another item can leave.
+      if (this.batchRemaining[index] > 0
+          && (!this.hasBatchRule(side) || this.countBuffered(this.batchItems[index]) == 0)) {
+        this.batchRemaining[index] = 0;
+        changed = true;
       }
-      ItemStack stack = this.buffer.get(index);
-      if (StackUtil.isEmpty(stack)) {
+      if (this.batchRemaining[index] == 0) {
+        if (this.tryBeginBatch(side, target)) changed = true;
         continue;
       }
-      for (EnvItemHandler.AdjacentInventory inv : StackUtil.ENV.getAdjacentInventories(this)) {
-        if (inv.getSide() == Direction.UP) {
-          continue;
-        }
-        if (inv.getSide() == this.defaultRoute) {
-          if (!this.matchesFilteredRoute(stack)) {
-            int amount = StackUtil.ENV.deposit(inv, StackUtil.copyWithSize(stack, 1), false);
-            if (amount > 0) {
-              this.buffer.put(index, StackUtil.decSize(stack, amount));
-              this.energy.useEnergy(amount * 20.0);
-              changed = true;
-            }
-            continue slots;
-          }
-        } else {
-          for (ItemStack filter : this.getFilterSlots(inv.getSide())) {
-            if (matchesFilter(filter, stack)
-                && stack.getCount() >= filter.getCount()
-                && this.energy.canUseEnergy(filter.getCount() * 20.0)) {
-              ItemStack batch = stack.copyWithCount(filter.getCount());
-              // A short simulation must leave both inventories and the energy unchanged.
-              if (StackUtil.ENV.deposit(inv, batch, true) == batch.getCount()) {
-                int amount = StackUtil.ENV.deposit(inv, batch, false);
-                if (amount > 0) {
-                  stack = StackUtil.decSize(stack, amount);
-                  this.buffer.put(index, stack);
-                  this.energy.useEnergy(amount * 20.0);
-                  changed = true;
-                  if (StackUtil.isEmpty(stack)) {
-                    continue slots;
-                  }
-                }
-              }
-              break;
-            }
-          }
-        }
+      if (this.transferOne(side, target, this.batchItems[index])) {
+        this.batchRemaining[index]--;
+        changed = true;
       }
+      // One ordinary ejector upgrade transfers 4^(1-1) = 1 item/face/server tick.
     }
-    if (changed) {
-      this.setChanged();
-    }
+    if (changed) this.setChanged();
   }
 
-  private boolean pullFromAbove() {
-    BlockPos sourcePos = this.worldPosition.above();
-    BlockState sourceState = this.level.getBlockState(sourcePos);
-    if (!(sourceState.getBlock() instanceof ChestBlock chestBlock)) {
-      return false;
-    }
-    // Resolve both halves of a double chest, just as the existing chest output adapter does.
-    Container source =
-        ChestBlock.getContainer(chestBlock, sourceState, this.level, sourcePos, true);
-    if (source == null) {
-      return false;
-    }
-    for (int sourceSlot = 0; sourceSlot < source.getContainerSize(); sourceSlot++) {
-      ItemStack candidate = source.getItem(sourceSlot);
-      if (candidate.isEmpty()) {
+  private boolean pullFromInput() {
+    var source = this.adjacentHandler(this.defaultRoute);
+    if (source == null) return false;
+    var destination = new WorldlyContainerWrapper(this, this.defaultRoute);
+    for (int slot = 0; slot < source.size(); slot++) {
+      var resource = source.getResource(slot);
+      if (resource.isEmpty() || !this.matchesWhitelist(this.defaultRoute, resource.toStack()))
         continue;
+      try (var transaction = Transaction.open(Transaction.getCurrentOpenedTransaction())) {
+        if (source.extract(slot, resource, 1, transaction) != 1
+            || destination.insert(resource, 1, transaction) != 1) continue;
+        transaction.commit();
       }
-      int destination = -1;
-      for (int i = 0; i < this.buffer.size(); i++) {
-        ItemStack stored = this.buffer.get(i);
-        if (StackUtil.isEmpty(stored)) {
-          if (destination < 0) {
-            destination = i;
-          }
-        } else if (ItemStack.isSameItemSameComponents(stored, candidate)
-            && stored.getCount()
-                < Math.min(stored.getMaxStackSize(), this.buffer.getStackSizeLimit())) {
-          destination = i;
-          break;
-        }
-      }
-      if (destination < 0) {
-        continue;
-      }
-      // Vanilla chest removal and buffer insertion run together on the server thread. Never
-      // remove from the source until there is room; use the removed stack to retain components.
-      ItemStack extracted = source.removeItem(sourceSlot, 1);
-      if (extracted.isEmpty()) {
-        continue;
-      }
-      ItemStack stored = this.buffer.get(destination);
-      this.buffer.put(
-          destination,
-          extracted.copyWithCount(StackUtil.isEmpty(stored) ? 1 : stored.getCount() + 1));
-      source.setChanged();
       return true;
     }
     return false;
   }
 
-  private boolean matchesFilteredRoute(ItemStack stack) {
-    for (Direction side : Util.ALL_DIRS) {
-      if (side == Direction.UP || side == this.defaultRoute) {
-        continue;
+  private ResourceHandler<ItemResource> adjacentHandler(Direction side) {
+    var pos = this.worldPosition.relative(side);
+    var handler = this.level.getCapability(Capabilities.Item.BLOCK, pos, side.getOpposite());
+    if (handler != null) return handler;
+    var target = this.level.getBlockEntity(pos);
+    if (target instanceof net.minecraft.world.WorldlyContainer container) {
+      return new WorldlyContainerWrapper(container, side.getOpposite());
+    }
+    if (target instanceof net.minecraft.world.Container container) {
+      return VanillaContainerWrapper.of(container);
+    }
+    return null;
+  }
+
+  public boolean hasAdjacentInventory(Direction side) {
+    return this.level != null && this.adjacentHandler(side) != null;
+  }
+
+  private boolean matchesWhitelist(Direction side, ItemStack stack) {
+    for (ItemStack filter : this.getFilterSlots(side)) {
+      if (matchesFilter(filter, stack)) return true;
+    }
+    return false;
+  }
+
+  private int countBuffered(ItemStack item) {
+    int available = 0;
+    for (ItemStack candidate : this.buffer) {
+      if (!StackUtil.isEmpty(candidate) && ItemStack.isSameItemSameComponents(candidate, item)) {
+        available += candidate.getCount();
       }
-      for (ItemStack filter : this.getFilterSlots(side)) {
-        if (matchesFilter(filter, stack)) {
-          return true;
-        }
+    }
+    return available;
+  }
+
+  private boolean transferOne(
+      Direction side, ResourceHandler<ItemResource> target, ItemStack item) {
+    var resource = ItemResource.of(item);
+    var source = new WorldlyContainerWrapper(this, side);
+    try (var transaction = Transaction.open(Transaction.getCurrentOpenedTransaction())) {
+      if (source.extract(resource, 1, transaction) != 1
+          || target.insert(resource, 1, transaction) != 1) return false;
+      transaction.commit();
+    }
+    this.energy.useEnergy(20.0);
+    return true;
+  }
+
+  private boolean tryBeginBatch(Direction side, ResourceHandler<ItemResource> target) {
+    int index = side.ordinal();
+    for (ItemStack rule : this.getFilterSlots(side)) {
+      if (StackUtil.isEmpty(rule)) continue;
+      for (ItemStack item : this.buffer) {
+        if (!matchesFilter(rule, item)
+            || this.countBuffered(item) < rule.getCount()
+            || !this.energy.canUseEnergy(rule.getCount() * 20.0)) continue;
+        // Save an independent snapshot: committing extraction can mutate the buffer's stack.
+        ItemStack batchItem = item.copyWithCount(1);
+        if (!this.transferOne(side, target, batchItem)) continue;
+        this.batchItems[index] = batchItem;
+        this.batchRules[index] = rule.copy();
+        this.batchRemaining[index] = rule.getCount() - 1;
+        return true;
       }
     }
     return false;
+  }
+
+  private boolean hasBatchRule(Direction side) {
+    int index = side.ordinal();
+    for (ItemStack rule : this.getFilterSlots(side)) {
+      if (!StackUtil.isEmpty(rule)
+          && rule.getCount() == this.batchRules[index].getCount()
+          && ItemStack.isSameItemSameComponents(rule, this.batchRules[index])) return true;
+    }
+    return false;
+  }
+
+  @Override
+  public int[] getSlotsForFace(Direction side) {
+    return java.util.stream.IntStream.range(
+            this.getBaseIndex(this.buffer), this.getBaseIndex(this.buffer) + this.buffer.size())
+        .toArray();
+  }
+
+  @Override
+  public boolean canPlaceItemThroughFace(int index, ItemStack stack, Direction side) {
+    return side == this.defaultRoute
+        && this.matchesWhitelist(side, stack)
+        && super.canPlaceItemThroughFace(index, stack, side);
+  }
+
+  @Override
+  public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction side) {
+    return side != this.defaultRoute
+        && this.matchesWhitelist(side, stack)
+        && super.canTakeItemThroughFace(index, stack, side);
   }
 
   private static boolean matchesFilter(ItemStack filter, ItemStack stack) {
@@ -241,11 +299,9 @@ public class TileEntitySortingMachine extends TileEntityElectricMachine
 
   @Override
   public void onNetworkEvent(Player player, int event) {
-    if (event >= 0
-        && event <= 5
-        && Util.ALL_DIRS[event] != Direction.UP
-        && this.defaultRoute != Util.ALL_DIRS[event]) {
+    if (event >= 0 && event <= 5 && this.defaultRoute != Util.ALL_DIRS[event]) {
       this.defaultRoute = Util.ALL_DIRS[event];
+      java.util.Arrays.fill(this.batchRemaining, 0);
       this.setChanged();
     }
   }
